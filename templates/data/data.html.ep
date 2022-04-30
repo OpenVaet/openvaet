@@ -49,7 +49,7 @@
     </ul>
     <h2>Running the project.</h2>
     <div class="text_separator"></div>
-    The complete project code can be downloaded from the <a href="#" title="Open the Github Repository" target="_blank">Github repository</a>. The code can be used & modified freely, assuming a spirit of neutrality toward the data is preserved. Librairies used are subject to their own specific licences. 
+    The complete project code can be downloaded from the <a href="https://github.com/OpenVaet/openvaet" title="Open the Github Repository" target="_blank">Github repository</a>. The code can be used & modified freely, assuming a spirit of neutrality toward the data is preserved. Librairies used are subject to their own specific licences. 
     <h3>General Dependencies.</h3>
     You'll need an SQL compatible database local server (for instance, MySQL Community Server - <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">downloadable here</a>).
     <div class="text_separator"></div>
@@ -119,7 +119,7 @@
     </ul>
     <h2>Exécuter le projet.</h2>
     <div class="text_separator"></div>
-    Le code complet du projet peut être téléchargé <a href="#" title="Open the Github Repository" target="_blank">sur notre dépôt Github</a>. Le code peut être utilisé et/ou modifié librement - pour autant qu'un esprit de neutralité vis-à-vis de la donnée soit respecté. Les Librairies employées sont sujettes à leurs licences spécifiques.
+    Le code complet du projet peut être téléchargé <a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire GitHub" target="_blank">sur notre dépôt Github</a>. Le code peut être utilisé et/ou modifié librement - pour autant qu'un esprit de neutralité vis-à-vis de la donnée soit respecté. Les Librairies employées sont sujettes à leurs licences spécifiques.
     <h3>Dépendences Générales.</h3>
     Vous aurez besoin d'un serveur SQL compatible (par exemple, MySQL Community Server - <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">téléchargeable ici</a>).
     <div class="text_separator"></div>

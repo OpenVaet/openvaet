@@ -19,12 +19,12 @@ sub index {
     my $toAge           = $self->param('toAge')           // '17y';
     my $reporter        = $self->param('reporter')        // 'na';
     my $sexGroup        = $self->param('sexGroup')        // 'na';
-    say "currentLanguage : [$currentLanguage]";
-    say "fetchedStat     : [$fetchedStat]";
-    say "fromAge         : [$fromAge]";
-    say "toAge           : [$toAge]";
-    say "reporter        : [$reporter]";
-    say "sexGroup        : [$sexGroup]";
+    # say "currentLanguage : [$currentLanguage]";
+    # say "fetchedStat     : [$fetchedStat]";
+    # say "fromAge         : [$fromAge]";
+    # say "toAge           : [$toAge]";
+    # say "reporter        : [$reporter]";
+    # say "sexGroup        : [$sexGroup]";
 
     # Loggin session if unknown.
     session::session_from_self($self);
@@ -258,7 +258,7 @@ sub index {
         $substances{$substanceCategory}->{$eventsReported}->{'percentOfTotal'} = $percentOfTotal;
         $substances{$substanceCategory}->{$eventsReported}->{'substances'}->{$substanceName} = 1;
     }
-    p%substances;
+    # p%substances;
 
     $self->render(
         covidTotalCases           => $covidTotalCases,
