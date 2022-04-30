@@ -1,0 +1,122 @@
+% layout 'default';
+% title 'COVID 19 - ECDC Substances Details';
+
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+
+<style type="text/css">
+	div.table-container {
+		width: 100%;
+	}
+	div.tabs-container {
+		background-color: #91a7c9;
+		color: #fff!important;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	button.tabs-button {
+		background-color: #91a7c9;
+		align-items: flex-start;
+		padding: 8px 16px;
+		float: left;
+		width: auto;
+		border: none;
+		display: block;
+		outline: 0;
+	}
+</style>
+<div class="content-container">
+  <div class="text_separator"></div>
+	<a href="/data/ecdc/substances">&#10229; Return to ECDC's substances</a>
+  <div class="text_separator"></div>
+  <div style="width: 100%;text-align: center;">
+  	<b><%=$ecdcDrugName%></b> - <a href="<%=$ecdcDrugUrl%>" target="_blank">Source</a> 
+  </div>
+  <div class="text_separator"></div>
+	<div class="tabs-container">
+	  <button class="tabs-button" onclick="openTab('indexationBySeriousnesses')">Indexation By Seriousnesses</button>
+	  <!-- <button class="tabs-button" onclick="openTab('overviewStats')">Overview Stats</button>
+	  <button class="tabs-button" onclick="openTab('detailedStats')">Detailed Stats</button> -->
+	</div>
+	<div id="indexationBySeriousnesses" class="w3-container city">
+		<div class="table-container">
+			<table id="ecdc-substances-table" style="width: 100%;text-align: center;">
+				  <thead>
+				    <tr>
+				        <th>Year</th>
+				        <th>Seriousness</th>
+				        <th>Total Cases</th>
+				        <th>Updated On</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  % my %ecdcDrugYearSeriousnesses = %$ecdcDrugYearSeriousnesses;
+				  % for my $ecdcYearName (sort{$b <=> $a} keys %ecdcDrugYearSeriousnesses) {
+				  	% for my $ecdcSeriousness (sort{$a <=> $b} keys %{$ecdcDrugYearSeriousnesses{$ecdcYearName}}) {
+				  		% my $ecdcSeriousnessName = $ecdcDrugYearSeriousnesses{$ecdcYearName}->{$ecdcSeriousness}->{'ecdcSeriousnessName'} // die;
+				  		% my $totalCases          = $ecdcDrugYearSeriousnesses{$ecdcYearName}->{$ecdcSeriousness}->{'totalCases'}          // die;
+				  		% my $updateDatetime      = $ecdcDrugYearSeriousnesses{$ecdcYearName}->{$ecdcSeriousness}->{'updateDatetime'}      // die;
+				  		<tr>
+				  			<td><%=$ecdcYearName%></td>
+				  			<td><%=$ecdcSeriousnessName%></td>
+				  			<td><%=$totalCases%></td>
+				  			<td><%=$updateDatetime%></td>
+				  		</tr>
+			  		% }
+			  	% }
+				  </tbody>
+				</table>
+
+				<script type="text/javascript">
+				  $(document).ready( function () {
+				    $('#ecdc-substances-table').DataTable({
+				        "paging": false,
+				        "searching": true,
+				        "order": [[ 2, "desc" ]],
+				        "columnDefs": [
+				          { "searchable": false, "targets": 1 },
+				          { "searchable": false, "targets": 2 },
+				          { "searchable": false, "targets": 3 },
+				          { "searchable": false, "targets": 4 },
+				          { "searchable": false, "targets": 5 },
+				          { "searchable": false, "targets": 6 },
+				          { "sortable": false, "targets": 6 }
+				        ]
+				    });
+				  } );
+				</script>
+			</table>
+		</div>
+	</div>
+
+	<div id="overviewStats" class="w3-container city" style="display:none">
+	  <h2>overviewStats</h2>
+	  <p>overviewStats is the capital of France.</p> 
+	</div>
+
+	<div id="detailedStats" class="w3-container city" style="display:none">
+	  <h2>detailedStats</h2>
+	  <p>detailedStats is the capital of Japan.</p>
+	</div>
+</div>
+
+<style type="text/css">
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
+
+
+
+<script type="text/javascript">
+	function openTab(cityName) {
+		var i;
+		var x = document.getElementsByClassName("city");
+		for (i = 0; i < x.length; i++) {
+			x[i].style.display = "none";
+		}
+		document.getElementById(cityName).style.display = "block";
+	}
+</script>

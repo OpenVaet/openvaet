@@ -1,0 +1,74 @@
+% layout 'default';
+% title 'OPENVAET - CDC Data';
+
+<div class="content-container">
+    % if ($currentLanguage eq 'en') {
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Return to Data</div>
+    <h3>CDC's Data Summary</h3>
+    The Center for Disease Control (CDC) is the USA's organism in charge of - among other things - collecting & surveying the safety of the drugs allowed or tested in the United States, through its VAERS platform.
+    <div class="text_separator"></div>
+    Datasets can also be downloaded <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">directly here</a>.
+    <div class="text_separator"></div>
+    <a target="_blank" href="https://wonder.cdc.gov/vaers.html">CDC's Data</a> is accessible through a very complete search (while it's older than EU's platform, it's obviously far more transparent).
+    <div class="text_separator"></div>
+    <a target="_blank" href="https://wonder.cdc.gov/vaers.html">The report direct search</a> allows you to check any report reference we feature has correct data, by simply copying it on the VAERS search.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/report_search.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/report_search.png" style="width:400px;display:block;margin:auto;"></div>
+    <h3>VAERS's Data Update</h3>
+    First, <a target="_blank" href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip">download the VAERS up to date data</a> (there is an annoying captcha we haven't taken the time to pass).
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/archive.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/archive.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    <h3>Parse VAERS Data</h3>
+    Copy the unzipped <b>AllVAERSDataCSVS folder</b> to the project's path <b>/raw_data/AllVAERSDataCSVS</b>.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/raw_data_folder.png');return;" style="width:200px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/raw_data_folder.png" style="width:200px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Run <b>perl tasks/cdc/parse_cdc_archive.pl</b> and patient until it has fully parsed & integrated the VAERS' data in the database.
+    <div class="text_separator"></div>
+    <h3>Reports Details Inspection</h3>
+    % if ($environment eq 'local') {
+    To date, <%=$totalReports%> notices are indexed. Their details can be reviewed on <span class="url-link" onclick="openLocation('/data/cdc/notices');return;">this page</span>.
+    % } else {
+    To date, <%=$totalReports%> notices are indexed. <b>Their details can be reviewed in details by running the project localy, as illustrated below</b>.
+    % }
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/local_search_overview.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/local_search_overview.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    % } else {
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour aux data</div>
+    <h3>Aperçu de la donnée CDC</h3>
+    Le "Center for Disease Control" (CDC) est l'organisme des Etats-Unis en charge - entre autres choses - de collecter et surveyer la séurité des médicaments autorisés ou testés aux Etats-Unis, qui communiquent ceux-ci via leur plateforme VAERS.
+    <div class="text_separator"></div>
+    Des sets de données peuvent être téléchargés <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">directement ici</a>.
+    <div class="text_separator"></div>
+    <a target="_blank" href="https://wonder.cdc.gov/vaers.html">La donnée CDC</a> est accessible à travers une recherche très détaillée (bien que plus ancien que la base européenne, le VAERS est à l'évidence bien plus transparent et performant).
+    <div class="text_separator"></div>
+    <a target="_blank" href="https://wonder.cdc.gov/vaers.html">La recherche directe de rapport</a> permet de vérifier la donnée de n'importe quel rapport que nous affichons, en copiant simplement sa référence VAERS dans la zone de recherche.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/report_search.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/report_search.png" style="width:400px;display:block;margin:auto;"></div>
+    <h3>Intégration de la donnée VAERS</h3>
+    Pour commencer, <a target="_blank" href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip">téléchargez la donnée VAERS mise à jour ici</a> (un captcha ennuyeux nous empêche pour l'instant de l'intégrer automatiquement).
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/archive.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/archive.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    <h3>Intégrer la donnée VAERS</h3>
+    Copiez la donnée décompressée du répertoire <b>AllVAERSDataCSVS</b> à l'emplacement <b>/raw_data/AllVAERSDataCSVS</b> au sein du projet.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/raw_data_folder.png');return;" style="width:200px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/raw_data_folder.png" style="width:200px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Exécutez le script <b>perl tasks/cdc/parse_cdc_archive.pl</b> (depuis un terminal ouvert dans la racine du projet) et patientez jusqu'à ce que la donnée VAERS soit intégrée dans la base de données.
+    <div class="text_separator"></div>
+    <h3>Inspection du détail des rapports</h3>
+    % if ($environment eq 'local') {
+    A cette date, <%=$totalReports%> rapports sont indexés. Leur détails peuvent être revus sur <span class="url-link" onclick="openLocation('/data/cdc/notices');return;">cette page</span>.
+    % } else {
+    A cette date, <%=$totalReports%> rapports sont indexés. <b>Leur détails peuvent être revus en exécutant le projet localement, comme illustré sur l'image ci-dessous</b>.
+    % }
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/cdc/local_search_overview.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/local_search_overview.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    % }
+</div>

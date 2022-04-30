@@ -1,0 +1,40 @@
+% layout 'default';
+% title 'OPENVAET - OMS Data';
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Return to Data</div>
+    <h3>OMS's Data Summary</h3>
+    The OMS data on drugs is centralized on <a target="_blank" href="http://www.vigiaccess.org">VigiAccess</a>.
+    <div class="text_separator"></div>
+    OMS data has very little interest :
+    <ul>
+        <li>no substance index (you have to know the official drug name in advance - and sometimes the official french designation doesn't correspond to any notice).</li>
+        <li>no details on specific reports ; just global statistics</li>
+        <li>substances are regrouped in broad groups without distinction (for example 4 of the 5 vaccines allowed in Europe : Comirnaty, Spikevax, COVID-19 Vaccine Janssen, Vaxzevria are all grouped among the same "Covid-19 vaccine". Novavax NVX-CoV2373 (as labelled by the French ANSM) hasn't been located).</li>
+    </ul>
+    <div class="text_separator"></div>
+    Given these parameters, the OMS data hasn't been integrated until proven useful.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/oms/report.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/oms/report.png" style="width:400px;display:block;margin:auto;"></div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour aux data</div>
+    <h3>Résumé de la donnée OMS</h3>
+    La donnée publique de l'OMS sur les médicaments est centralisée via la plateforme <a target="_blank" href="http://www.vigiaccess.org">VigiAccess</a>.
+    <div class="text_separator"></div>
+    La donnée OMS a hélas très peu d'intérêt :
+    <ul>
+        <li>aucun index des substances (vous devez connaitre d'avance le "nom officiel" du médicament - et parfois la désignation officielle en France ne correspond à rien).</li>
+        <li>aucun détail sur des incidents spécifiques ne sont forunis - juste des statistiques globales</li>
+        <li>les médicaments sont regroupés par "groupes" sans aucun sérieux ou distinction (par exemple 4 des 5 vaccins COVID-19 autorisés en Europe  Comirnaty, Spikevax, COVID-19 Vaccine Janssen, Vaxzevria sont tous regroupés sous la même catégorie "vaccins Covid-19". Novavax NVX-CoV2373 (comme étiqueté par l'ANSM française ) n'a pas pu être trouvé).</li>
+    </ul>
+    <div class="text_separator"></div>
+    Compte tenu de ces paramètres, la donnée de l'OMS n'a pas été intégrée jusqu'à nouvel ordre.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/oms/report.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/oms/report.png" style="width:400px;display:block;margin:auto;"></div>
+    % } else {
+
+    % }
+
+</div>

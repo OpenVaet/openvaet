@@ -1,0 +1,96 @@
+% layout 'default';
+% title 'OPENVAET - ECDC Substances';
+
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+
+<style type="text/css">
+	div.table-container {
+		width: 100%;
+	}
+	.navigation-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+</style>
+
+<div class="content-container" style="width:100%;max-width: 100%;">
+  <div class="text_separator"></div>
+  <div class="navigation-container">
+  	<div style="width:190px;"><span class="url-link noselect" onclick="openLocation('/data/ecdc');return;">&#10229; Return to ECDC's Data</span></div>
+  	<div style="width: calc(50% - 190px - 60px);"></div>
+  	<div style="width:120px;">
+  		<input type="checkbox" id="indexedOnly" name="indexedOnly" class="clickable noselect" onclick="loadSubstances();return;" checked>
+  		<label for="indexedOnly" class="clickable noselect">Indexed Only</label>
+		</div>
+  	<div style="width: calc(50% - 60px);"></div>
+		<div class="table-container" id="substancesContainer">
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    	loadSubstances();
+    });
+
+		function loadSubstances() {
+			let indexedCheckBox = document.getElementById("indexedOnly");
+			indexedCheckBox.disabled = true;
+			let indexedOnly = indexedCheckBox.checked;
+			console.log('indexedOnly : ' + indexedOnly);
+      let request = $.ajax({
+          url: "/data/ecdc/load_substances",
+          type: "POST",
+          data: {
+              indexedOnly : indexedOnly
+          }
+      });
+
+      request.done(function(data) {
+				indexedCheckBox.disabled = false;
+      	$('#substancesContainer').html(data);
+      });
+
+      // Printing error message if case of failure
+      request.fail(function(jqXHR, textStatus) {
+          alert("Something went wrong : " + textStatus)
+      });
+		}
+
+		% if ($environment eq 'local') {
+	    function setSubstanceIndexation(ecdcDrugId, isIndexed) {
+
+	        let request = $.ajax({
+	            url: "/data/ecdc/set_ecdc_drug_indexation",
+	            type: "POST",
+	            data: {
+	                ecdcDrugId : ecdcDrugId,
+	                isIndexed : isIndexed
+	            }
+	        });
+
+	        request.done(function(data) {
+	            if (isIndexed == 0) {
+	                $('#' + ecdcDrugId + '-isIndexed').html('<img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSubstanceIndexation(' + ecdcDrugId + ', 1);return;">');
+	            } else {
+	                $('#' + ecdcDrugId + '-isIndexed').html('<img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSubstanceIndexation(' + ecdcDrugId + ', 0);return;">');
+	            }
+	        });
+
+	        // Printing error message if case of failure
+	        request.fail(function(jqXHR, textStatus) {
+	            alert("Something went wrong : " + textStatus)
+	        });
+	    }
+		% }
+</script>

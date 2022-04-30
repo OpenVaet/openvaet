@@ -1,0 +1,159 @@
+% layout 'default';
+% title 'OPENVAET - Contact Us';
+
+<style type="text/css">
+
+	.contact-and-get-informed {
+		width: 95%;
+		padding-left: 5px;
+		padding-right: 5px;
+		margin: auto;
+		display: block;
+		text-align: center;
+	}
+
+	.contact-me-text-area {
+		margin-left: 15px;
+		width:calc(100% - 30px);
+		min-width: 90px;
+		min-height: 300px;
+		display: block;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 8px;
+		border-radius: 10px;
+	}
+
+	.contact-email-input {
+		margin-left: 15px;
+		width:calc(100% - 30px);
+		min-width: 90px;
+		display: block;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 8px;
+		border-radius: 10px;
+	}
+
+	.contact-me-button {
+		margin: auto;
+		display: block;
+		border: 1px solid #3f4854;
+		border-radius: 5px;
+		background: #3f4854;
+		height: 25px;
+		color: #fff;
+		padding-top: 5px;
+		width: 150px;
+		font-size: 14px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	.contact-me-button:hover {
+		background: #677587;
+		border: 1px solid #677587;
+	}
+
+	.contact-response {
+		padding-left: 5px;
+		padding-right: 5px;
+		font-size: 13px;
+		font-weight: bold;
+		width: 100%;
+	}
+</style>
+
+<div class="content-container">
+	<div class="contact-and-get-informed">
+		<div class="text_separator"></div>
+	    % if ($currentLanguage eq 'en') {
+		<b><i>To contact us, simply complete the forms below.</b></i>
+		<div class="text_separator"></div>
+		<input type="text" id="userEmail" class="contact-email-input" placeholder="Your email address">
+		<div class="text_separator"></div>
+		<textarea class="contact-me-text-area" id="contactText" placeholder="Your message"></textarea>
+		<div class="text_separator"></div>
+		<div class="contact-response" id="contactResponse">
+			
+		</div>
+		<div class="text_separator"></div>
+		<div class="contact-me-button noselect" id="contactMeButton" onclick="contactUs();return;">Contact Us</div>
+		<div class="text_separator"></div>
+		% } elsif ($currentLanguage eq 'fr') {
+		<b><i>Pour nous contacter, remplissez simplement les formulaires ci-dessous.</b></i>
+		<div class="text_separator"></div>
+		<input type="text" id="userEmail" class="contact-email-input" placeholder="Votre addresse courriel">
+		<div class="text_separator"></div>
+		<textarea class="contact-me-text-area" id="contactText" placeholder="Votre message"></textarea>
+		<div class="text_separator"></div>
+		<div class="contact-response" id="contactResponse">
+			
+		</div>
+		<div class="text_separator"></div>
+		<div class="contact-me-button noselect" id="contactMeButton" onclick="contactUs();return;">Nous Contacter</div>
+		<div class="text_separator"></div>
+		% } else {
+
+		% }
+		<div class="text_separator"></div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	
+
+    function contactUs() {
+    	let currentLanguage = '<%=$currentLanguage%>';
+    	let userEmail       = $('#userEmail').val();
+		let contactText     = $('#contactText').val();
+		contactText         = contactText.replace(/\r?\n/g, '<br />');
+    	if (!userEmail) {
+		    % if ($currentLanguage eq 'en') {
+    		$('#contactResponse').html('<span style="color:darkred;">Please input an email address</span>');
+	    	% } elsif ($currentLanguage eq 'fr') {
+    		$('#contactResponse').html('<span style="color:darkred;">Veuillez saisir votre addresse courriel</span>');
+			% } else {
+
+			% }
+    		return;
+    	}
+    	if (!contactText) {
+		    % if ($currentLanguage eq 'en') {
+    		$('#contactResponse').html('<span style="color:darkred;">Please input the message you wish to send us</span>');
+	    	% } elsif ($currentLanguage eq 'fr') {
+    		$('#contactResponse').html('<span style="color:darkred;">Veuillez saisir le message à nous envoyer</span>');
+			% } else {
+
+			% }
+    		return;
+    	}
+
+		let request    = $.ajax({
+		    url: "/contact_us/send_contact_us",
+		    type: "POST",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+		    data: JSON.stringify({
+		    	userEmail : userEmail,
+		    	currentLanguage : currentLanguage,
+		    	contactText : contactText
+		   })
+		});
+
+		request.done(function(data) {
+			if (data.status == 'ok') {
+			    % if ($currentLanguage eq 'en') {
+    			$('#contactResponse').html('<span style="color:darkgreen;">Thank you. We will reply to you as soon as possible.</span>');
+		    	% } elsif ($currentLanguage eq 'fr') {
+	    		$('#contactResponse').html('<span style="color:darkgreen;">Merci. Nous vous répondrons aussitôt que possible.</span>');
+				% } else {
+
+				% }
+			} else {
+    			$('#contactResponse').html('<span style="color:darkred;">' + data.status + '.</span>');
+			}
+		});
+    }
+</script>

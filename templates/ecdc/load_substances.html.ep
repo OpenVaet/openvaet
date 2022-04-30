@@ -1,0 +1,77 @@
+
+<table id="ecdc-substances-table" style="width: 100%;text-align: center;">
+	  <thead>
+	    <tr>
+	        <th>Name</th>
+	        <th>Avg A.E. Cases / Year</th>
+	        <th>Earliest Year With A.E.</th>
+	        <th>Earliest Date With A.E.</th>
+	        <th>Total A.E. Cases Displayed</th>
+	        <th>Total A.E. Cases Scrapped</th>
+	        <th>ECS Approval</th>
+	        <th>Indexed</th>
+	        <th>Updated on</th>
+	        <th>Source</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+        % for my $drugData (@$ecdcDrugs) {
+            % my $ecdcDrugId          = %$drugData{'ecdcDrugId'}          || die;
+            % my $name                = %$drugData{'name'}                || die;
+            % my $url                 = %$drugData{'url'}                 || die;
+            % my $earliestAEYear      = %$drugData{'earliestAEYear'}      // 'NA';
+            % my $earliestAERDate     = %$drugData{'earliestAERDate'}     // 'NA';
+            % my $totalCasesScrapped  = %$drugData{'totalCasesScrapped'}  // 0;
+            % my $casesYearlyAverage  = %$drugData{'casesYearlyAverage'}  // 0;
+            % my $totalCasesDisplayed = %$drugData{'totalCasesDisplayed'} // die;
+            % my $ecsApproval         = %$drugData{'ecsApproval'}         || die;
+            % my $isIndexed           = %$drugData{'isIndexed'}           // die;
+            % my $scrappingDatetime   = %$drugData{'scrappingDatetime'};
+            <tr>
+                <td><a href="/data/ecdc/substance_details?ecdcDrugId=<%=$ecdcDrugId%>"><%=$name%></td>
+                <td><%=$casesYearlyAverage%></td>
+                <td><%=$earliestAEYear%></td>
+                <td><%=$earliestAERDate%></td>
+                <td><%=$totalCasesDisplayed%></td>
+                <td><%=$totalCasesScrapped%></td>
+                <td><%=$ecsApproval%></td>
+                <td id="<%=$ecdcDrugId%>-isIndexed" style="cursor: pointer;">
+                	% if ($environment eq 'local') {
+				            % if ($isIndexed) {
+				            <img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSubstanceIndexation('<%=$ecdcDrugId%>', 0);return;">
+				            % } else {
+				            <img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSubstanceIndexation('<%=$ecdcDrugId%>', 1);return;">
+				            % }
+            		% } else {
+
+        			% }
+                </td>
+                <td><%=$scrappingDatetime%></td>
+                <td><a target="_blank" href="<%=$url%>">ECDC</td>
+            </tr>
+        % }
+	  </tbody>
+	</table>
+
+	<script type="text/javascript">
+	  $(document).ready( function () {
+	    $('#ecdc-substances-table').DataTable({
+	        "paging": false,
+	        "searching": true,
+	        "order": [[ 1, "desc" ]],
+	        "columnDefs": [
+	          { "searchable": false, "targets": 1 },
+	          { "searchable": false, "targets": 2 },
+	          { "searchable": false, "targets": 3 },
+	          { "searchable": false, "targets": 4 },
+	          { "searchable": false, "targets": 5 },
+	          { "searchable": false, "targets": 6 },
+	          { "searchable": false, "targets": 7 },
+	          { "searchable": false, "targets": 8 },
+	          { "searchable": false, "targets": 9 },
+	          { "sortable": false, "targets": 7 }
+	        ]
+	    });
+	  } );
+	</script>
+</table>

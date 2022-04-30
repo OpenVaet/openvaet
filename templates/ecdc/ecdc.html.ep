@@ -1,0 +1,192 @@
+% layout 'default';
+% title 'OPENVAET - ECDC Data';
+
+<div class="content-container">
+    % if ($currentLanguage eq 'en') {
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Return to Data</div>
+    <h3>ECDC's Data Summary</h3>
+    EudraVigilance (<b>E</b>uropean <b>U</b>nion <b>D</b>rug <b>R</b>egulating <b>A</b>uthorities Pharmaco<b>vigilance</b>), the European database for adverse drug reaction reports, is the tool that the European Medicines Agency (EMA) and members national competent authorities "use for monitoring the safety of all authorised medicines in the EU as well as medicines studied in clinical trials" (see the annual report below, page 1).
+    <div class="text_separator"></div>
+    The platform is more extensively described in the EMA's latest <a href="/pdf/2020-annual-report-eudravigilance-european-parliament-council-commission_en.pdf" target="_blank">annual report</a>.
+    <div class="text_separator"></div>
+    The data is sent by either healthcare professionals (legally bound to do so when an adverse effect is observed) or private individuals (adverse effect's subject, city's mayor, etc).
+    <h3>ECDC's Data Collection</h3>
+    <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance's data</a> is rendered substance by substance ; <a href="https://www.adrreports.eu/en/disclaimer.html" target="_blank">once the disclaimer</a> has been accepted by the scrapper.
+    <h4>Substances Index Fetching</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/index.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/index.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    The scrapper first fetches all the substances listed (A to Z pages, 0-9 page).
+    <div class="text_separator"></div>
+    The fact that the substance has been approved through the <a target="_blank" href="https://www.ema.europa.eu/en/documents/leaflet/european-regulatory-system-medicines-european-medicines-agency-consistent-approach-medicines_fr.pdf">European Centralized System</a> procedure is indicated by an asterix on the ECDC's listing. Said asterix is removed by the scrapper and converted to an exploitable attribute (ECS Approval in the substances listing).
+    <div class="text_separator"></div>
+    Aside for updates which may have occured since our last pass (<%=$indexUpdateDatetime%>), <span class="url-link" onclick="openLocation('/data/ecdc/substances');return;"><%=$ecdcTotalSubstances%> substances</span> are listed. Downloading their details or not can be set through this same page if you're executing the project localy (we don't update every vaccine weekly given the extreme slowness and lack of stability of the European platform).
+    <div class="text_separator"></div>
+    Their unicity in our own database is verified using the ECDC's id (an integer designating the incremental order of integration in their system) of the substance.
+    <br>
+    Unknown substances are inserted in the database. For already known substances, the name and ECS status are verified (we assume they may change), and they are verified for deletion. Such changes would be logged but haven't been observed so far.
+    <div class="text_separator"></div>
+    This step is relatively fast (a few minutes), "bug free", and straightforward.
+    <h4>Substances Statistics & Incidents Reports Fetching</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/substance_dashboard.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/substance_dashboard.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    The scrapper then browses every substance set for indexing and extracts the relevant data.
+    <br>
+    Every substance details are hosted on an Oracle Analytics dashboard. To date, the data fetching is extremely slow, crashing randomly, and it's impossible to redirect the reader to a specific tab ; therefore, specific data you would like to verify has to be located manually on a given substance page.
+    <div class="text_separator"></div>
+    <b>- On the main page</b> (Number of individual cases), each substance has a dedicated template allowing its "analysis" by Age Group, Sex, Geographic Origin, Reporter Group. The total of adverse effect cases effect reported is displayed, along with the ECDC's latest publication date (this date is global). Drugs which already have been indexed for this ECDC's date are loaded - and substances which already have been updated are skipped to shorten the overall procedure.
+    <br>
+    These statistics are extracted.
+    <br>
+    <div class="text_separator"></div>
+    <i>On the secondary pages, cases can be visualized :</i>
+    <div class="text_separator"></div>
+    <b>- Over Time</b> (month by month).
+    <br>
+    This data is skipped as it can be reconstituted from the listing data.
+    <br>
+    <b>- By EEA (European Economic Area) countries.</b>
+    <br>
+    These "country by country" statistics are extracted, when present (Countries aren't reported unless they had more than 3 cases observed).
+    <br>
+    <b>- By Reaction Groups</b> (By Age Group, By Sex, By Seriousness, By Reporter Group, By Geographic Origin)
+    <br>
+    This data corresponds to ECDC's sub-categorizations of the incidents. It is for now ignored.
+    <br>
+    <b>- By Individual Cases for a selected reaction group</b>
+    <br>
+    This data corresponds to ECDC's sub-categorizations of the incidents. It is for now ignored.
+    <br>
+    <b>- By Individual Cases for a selected reaction</b>
+    <br>
+    This data corresponds to ECDC's sub-categorizations of the incidents. It is for now ignored.
+    <br>
+    <b>- By Line Listing</b>
+    <br>
+    This section allows access the "raw data". The scrapper first retrieves all other details, then updates notices when new cases have been observed on a given substance.
+    <h4>Substances Notices Fetching</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Given that the years listed in the form aren't necessarly the ones corresponding to the current drug, the scrapper first has to identify the first year with adverse effects reported in relation with each drug (the Gateway Date is the sole mandatory data to perform an export).
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing_2.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing_2.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    The scrapper then lists, year by year, seriousness by seriousness (as evaluated by the ECDC), every event reported.
+    <div class="text_separator"></div>
+    Due to the fact that exports are limited to 249900 rows, some drugs/year/seriousness exports have to be refined using additional criterions.
+    <div class="text_separator"></div>
+    The following criterions are applied up to sufficient restriction of the export : <b>Age Group, Sex, Geographic Origin, Reporter Group</b>.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing_export.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing_export.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    .CSV Exports are generated using the bottom of the page link, downloaded, and parsed for integration.
+    <div class="text_separator"></div>
+    % if ($environment eq 'local') {
+    It results in <a href="/data/ecdc/notices"><%=$totalReports%> notices, which can be browsed in detail on this page</a>.
+    % } else {
+    It results in <%=$totalReports%> notices. <b>Their details can be reviewed by executing the project localy, as illustrated on the picture below</b>.
+    % }
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/local_search_overview.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/local_search_overview.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    An additional set of scripts provides the possibily to download & verify the PDF forms related to each incident, but this exercice has proven to have little use so far.
+    <div class="text_separator"></div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour aux data</div>
+    <h3>Aperçu de la donnée ECDC</h3>
+    EudraVigilance (<b>E</b>uropean <b>U</b>nion <b>D</b>rug <b>R</b>egulating <b>A</b>uthorities Pharmaco<b>vigilance</b>), la base de données européenne sur les effets secondaires aux médicaments, est l'outil qu'utilisent l'agence Européenne du médicament (EMA), et les autorités nationales membres compétentes, afin de "monitorer la sureté de tous les médicaments autorisés dans l'Union Européenne, et les médicaments étudiés en essais cliniques (voir le rapport annuel plus bas, page 1).".
+    <div class="text_separator"></div>
+    La plateforme est plus amplement décrite dans le <a href="/pdf/2020-annual-report-eudravigilance-european-parliament-council-commission_en.pdf" target="_blank">dernier rapport annuel de l'EMA</a> (en anglais).
+    <div class="text_separator"></div>
+    La donnée collectée est soit envoyée par des professionnels de santé (légalement obligés de signaler les effets secondaires possibles qui leur sont rapportés) ou des individus privés (sujets à des effets secondaires, maire d'un village, proche, etc.).
+    <h3>Intégrer la donnée ECDC</h3>
+    <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">La donnée EudraVigilance</a> est affichée par médicament ; <a href="https://www.adrreports.eu/en/disclaimer.html" target="_blank">une fois que le "disclaimer"</a> a été accepté par le scrapper.
+    <h4>Indexation des médicaments</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/index.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/index.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Le scrapper indexe ensuite tous les médicaments listés (page A à Z, page 0-9).
+    <div class="text_separator"></div>
+    Le fait que les substances ont été approuvées via le <a target="_blank" href="https://www.ema.europa.eu/en/documents/leaflet/european-regulatory-system-medicines-european-medicines-agency-consistent-approach-medicines_fr.pdf">la procédère d'approbation centralisée européenne</a> est indiqué par un astérix dans le listing de l'ECDC. Le-dit astérix est retiré et converti en un tag ("Ecs Approval" dans le listing des médicaments).
+    <div class="text_separator"></div>
+    Mis à part les mises à jour qui auraient pu survenir depuis notre dernière passe (<%=$indexUpdateDatetime%>), <span class="url-link" onclick="openLocation('/data/ecdc/substances');return;"><%=$ecdcTotalSubstances%> médicaments</span> sont listés. Télécharger ou non leurs détails peut être défini via la page suivante si vous exécutez le projet localement (sur votre propre ordinateur). Nous ne mettons par à jour tous les médicaments à cause de l'extrême lenteur et instabilité de la plateforme européenne.
+    <div class="text_separator"></div>
+    Leur unicitié dans notre propre database est vérifiée via l'identifiant unique de l'ECDC (un identifiant numérique qui signale l'ordre d'intégration dans leurs systèmes) pour chaque médicament.
+    <br>
+    Les médicaments inconnus sont insérés dans la base de données. Les médicaments déjà connus voient leurs données vérifiées (nous supposons qu'elles peuvent changer) et sont vérifiés pour suppression. De tels changements seraient loggés mais n'ont pas été observés en l'état.
+    <div class="text_separator"></div>
+    Cette étape est relativement rapide (quelques minutes), libre de bugs, et directe.
+    <h4>Indexation des statistiques liés aux médicaments & rapports d'incidents</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/substance_dashboard.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/substance_dashboard.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Le scrapper parcourt ensuite chaque médicament défini pour indexation et extrait la donnée pertinente.
+    <br>
+    Chaque détail de médicament est hébergé par l'ECDC sur un tableau de bord Oracle. A cette date, le parcours des données est extrêmement lent, crash aléatoirement, et il est impossible de rediriger le lecteur à une tabulation spécifique ; par conséquent, une donnée précise que vous voudriez vérifier demandera de parcourir en détail les différents tableaux.
+    <div class="text_separator"></div>
+    <b>- Sur la page principale</b> ("Number of individual cases"), chaque médicament a un template permettant son "analyse" par groupe d'âge, sexe, origine géographique, type de rapporteur de l'indicident. Le totale d'effets secondaires rapporté est affiché, ainsi que la dernière date de publication par l'ECDC (cette date est la même pour chaque médicament sur la plateforme). Les médicaments qui ont déjà été indexés pour cette date sont chargés - et les médicaments qui ont déjà mis à jour à cette date sont passés, pour raccourcir cette procédure sans perte de données.
+    <br>
+    Ces statistiques sont extraites.
+    <br>
+    <div class="text_separator"></div>
+    <i>Sur les tabulations secondaires, les cas peuvent être revus :</i>
+    <div class="text_separator"></div>
+    <b>- Mois par mois</b> (month by month).
+    <br>
+    Cette donnée est passée dans la mesure où elle peut être reconsituée depuis la donnée détaillée (listing data).
+    <br>
+    <b>- Par Pays EEA/ Non EEA (European Economic Area - Zone économique européenne).</b>
+    <br>
+    Cette donnée "pays par pays" est extraite, quand présente (les pays ne sont pas rapportés s'ils ont eu moins de 3 cas rapportés).
+    <br>
+    <b>- Par groupe de réactions</b> (Par groupe d'âge, sexe, caractère serieux ou non de l'incident, type de rapporteur, origine géographique)
+    <br>
+    Cette donnée est passée dans la mesure où elle peut être reconsituée depuis la donnée détaillée (listing data).
+    <br>
+    <b>- Par cas individuels selon un type de cas</b>
+    <br>
+    Cette donnée est passée dans la mesure où elle peut être reconsituée depuis la donnée détaillée (listing data).
+    <br>
+    <b>- Par cas individuels selon un type de réaction</b>
+    <br>
+    Cette donnée est passée dans la mesure où elle peut être reconsituée depuis la donnée détaillée (listing data).
+    <br>
+    <b>- Par "Line Listing"</b>
+    <br>
+    Cette section permet l'accès à la "donnée brute". Le scrapper commence par charger tous les effets secondaires connus, puis intègre les nouveaux cas qui ont été observés pour un médicament donné.
+    <h4>Indexation des rapports d'incidents</h4>
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Dans la mesure où les années listées pour chaque médicament ne sont pas nécessairement celles où un effet secondaire a été observé, le scrapper identifie d'abord la première année où un effet secondaire a été rapporté en relation avec chaque médicament (la "Gateway Date" - année de réception d'un rapport - est la seule donnée obligatoire pour réaliser un "Export").
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing_2.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing_2.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Le scrapper indexe ensuite année par année, "caractère sérieux ou non" (tel qu'évalué par l'ECDC), chaque rapport.
+    <div class="text_separator"></div>
+    A cause du fait que les exports sont listés (sans que ça soit précisé nulle part) à 249900 entrés, certains médicaments doivent être filtrés en utilisant des critères additionnels.
+    <div class="text_separator"></div>
+    Les critères suivants sont appliqués jusqu'à restriction suffisante de l'échantillon exporté : <b>Groupe d'âge, Sexe, Origine Géographique, Type de rapporteur</b>.
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/line_listing_export.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing_export.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Des exports .CSV sont générés en utilisant le lien en bas de page, téléchargés, et intégrés dans la base de données.
+    <div class="text_separator"></div>
+    % if ($environment eq 'local') {
+    Il en résulte <a href="/data/ecdc/notices"><%=$totalReports%>rapports, qui peuvent être parcourus via cette page</a>.
+    % } else {
+    Il en résulte <%=$totalReports%> rapports, qui peuvent être parcourus si vous exécutez le projet locallement comme illustré sur l'image ci-dessous.
+    % }
+    <div class="text_separator"></div>
+    <div onclick="openInNewTab('/doc/ecdc/local_search_overview.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/local_search_overview.png" style="width:400px;display:block;margin:auto;"></div>
+    <div class="text_separator"></div>
+    Un jeu additionnel de scripts permet de télécharger & vérifier la donnée de chaque PDF joint aux incidents, mais cet exercice s'est avéré de peu d'utilité en l'état.
+    <div class="text_separator"></div>
+    % } else {
+
+    % }
+</div>

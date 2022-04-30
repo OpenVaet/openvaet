@@ -1,0 +1,25 @@
+% my @stateYears = @$stateYears;
+% use Data::Printer;
+<script type="text/javascript">
+    $(document).ready( function () {
+		console.log(table);
+	% my $n = 0;
+	% for my $stateYearData (@stateYears) {
+		% # p$stateYearData;
+		% $n++;
+		% my $cdcStateYearId = %$stateYearData{'cdcStateYearId'} // die;
+		% my $cdcStateName   = %$stateYearData{'cdcStateName'}   // die;
+		% my $year           = %$stateYearData{'year'}           // die;
+		% my $totalReports   = %$stateYearData{'totalReports'}   // die;
+		% my $updateDatetime = %$stateYearData{'updateDatetime'} // die;
+	    let html<%=$n%> = '<tr>';
+	    html<%=$n%> = html<%=$n%> + '<td><%==$cdcStateName%></td>';
+	    html<%=$n%> = html<%=$n%> + '<td><%==$year%></td>';
+	    html<%=$n%> = html<%=$n%> + '<td><%==$totalReports%></td>';
+	    html<%=$n%> = html<%=$n%> + '<td><%==$updateDatetime%></td>';
+	    html<%=$n%> = html<%=$n%> + '</tr>';
+	    table.row.add( $(html<%=$n%>) ).draw();
+		console.log(html<%=$n%>);
+	% }
+    } );
+</script>

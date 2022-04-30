@@ -1,0 +1,127 @@
+% layout 'default';
+% title 'COVID 19 - CDC Reports By States';
+
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+</head>
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    <span class="url-link noselect" onclick="openLocation('/data/cdc');return;">&#10229; Return to CDC's Data</span>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <table id="cdc-states-table" style="width: 100%;text-align: center;font-size: 14px;">
+      <thead>
+        <tr>
+            <th>State</th>
+            <th>Year</th>
+            <th>Total Reports</th>
+            <th>Updated on</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    var table;
+    $(document).ready( function () {
+        table = $('#cdc-states-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "ordering": false,
+            "columnDefs": [
+              { "orderable": false, "targets": 0 },
+              { "orderable": false, "targets": 1 },
+              { "searchable": false, "targets": 2 },
+              { "searchable": false, "targets": 3 }
+            ]
+        });
+        let html = '<tr><td><select class="js-example-basic-single" id="cdcStateId" style="width: 95%;height: 95%;">' +
+                    '<option value=""></option>' +
+                    '<option value="0"></option>';
+        % my %cdcStates = %$cdcStates;
+        % my %cdcYears  = %$cdcYears;
+        % for my $cdcStateName (sort keys %cdcStates) {
+            % my $cdcStateId   = $cdcStates{$cdcStateName}->{'cdcStateId'} // die;
+            % my $htmlAddendum = "<option value=\"" . $cdcStateId . "\">" . $cdcStateName . "</option>";
+            % say $htmlAddendum;
+            html = html + '<%==$htmlAddendum%>';
+        % }
+        html = html + '<\/select></td><td><select class="js-example-basic-single" id="cdcYear" style="width: 95%;height: 95%;">' +
+                    '<option value=""></option>' +
+                    '<option value="0"></option>';
+        % for my $cdcYear (sort{$b <=> $a} keys %cdcYears) {
+            % my $htmlAddendum = "<option value=\"" . $cdcYear . "\">" . $cdcYear . "</option>";
+            % say $htmlAddendum;
+            html = html + '<%==$htmlAddendum%>';
+        % }
+        html = html + '</td><td></td><td></td></tr>';
+        table.row.add( $(html) ).draw();
+        $('#cdcStateId').select2({
+            width: 'element',
+            height: 'resolve',
+            dropdownAutoWidth : true,
+            placeholder: 'Filter By State'
+        });
+        $('#cdcStateId').on("select2:select select2:unselect", function(e) {
+            loadStateYears();
+        });
+        $('#cdcYear').select2({
+            width: 'element',
+            height: 'resolve',
+            dropdownAutoWidth : true,
+            placeholder: 'Filter By Year'
+        });
+        $('#cdcYear').on("select2:select select2:unselect", function(e) {
+            loadStateYears();
+        });
+        loadStateYears();
+    } );
+
+    function flushAllRows() {
+        //get first element
+        var firstElement = $('tbody > tr').first();
+
+        /*remove all <tr> which are coming after the first element and
+        redraw the table */
+        table.rows(firstElement.nextAll('tr')).remove().draw();
+    }
+
+    function loadStateYears() {
+        flushAllRows();
+
+        let cdcStateId = $('#cdcStateId').val();
+        let cdcYear    = $('#cdcYear').val();
+        console.log('cdcStateId : ' + cdcStateId);
+        console.log('cdcYear    : ' + cdcYear);
+        let request    = $.ajax({
+            url: "/data/cdc/load_state_years",
+            type: "POST",
+            data: {
+                cdcStateId : cdcStateId,
+                cdcYear : cdcYear
+            }
+        });
+
+        request.done(function(data) {
+            $("#tableFilling").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
+<div id="tableFilling"></div>
+
+<style type="text/css">
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>

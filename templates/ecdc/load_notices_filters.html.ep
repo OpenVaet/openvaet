@@ -1,0 +1,267 @@
+<style type="text/css">
+
+	div.scrollable-table-header {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		display: block;
+	}
+	div.scrollable-table-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		display: block;
+		height:65vh;
+		min-height: 65vh;
+		max-height: 65vh;
+		overflow-y: scroll;
+	}
+	div.row-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.noselect {
+	  -webkit-touch-callout: none; /* iOS Safari */
+	    -webkit-user-select: none; /* Safari */
+	     -khtml-user-select: none; /* Konqueror HTML */
+	       -moz-user-select: none; /* Old versions of Firefox */
+	        -ms-user-select: none; /* Internet Explorer/Edge */
+	            user-select: none; /* Non-prefixed version, currently
+	                                  supported by Chrome, Edge, Opera and Firefox */
+	}
+	input.text-input {
+		height: 29px !important;
+		width: 98%;
+		text-align: center;
+		color: #444;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	}
+	input.text-input ::placeholder {
+		color: #999;
+	}
+</style>
+% my %forms = %$forms;
+<div  class="scrollable-table-header">
+	<div style="width:100%">
+		<hr>
+	</div>
+	<div class="row-container noselect">
+	    <div style="width: 125px;max-width: 125px;">
+	        <select class="js-example-basic-single" id="ecdcYear" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $ecdcYear (sort{$b <=> $a} keys %{$forms{'ecdcYear'}}) {
+						% my $id = $forms{'ecdcYear'}->{$ecdcYear} // die;
+      			<option value="<%=$id%>"><%=$ecdcYear%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 250px;max-width: 250px;">
+	    	<input class="text-input" type="text" id="noticeSearch" placeholder="Search notice reference" style="width: 95%;max-width: 95%;"></input>
+	    </div>
+	    <div style="width: 250px;max-width: 250px;">
+	        <select class="js-example-basic-single" id="ecdcSex" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $id (sort{$a <=> $b} keys %{$forms{'ecdcSex'}}) {
+						% my $ecdcSex = $forms{'ecdcSex'}->{$id} // die;
+      			<option value="<%=$id%>"><%=$ecdcSex%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 370px;max-width: 370px;">
+	        <select class="js-example-basic-single" id="ecdcDrug" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>sss
+					% for my $ecdcDrug (sort keys %{$forms{'ecdcDrug'}}) {
+						% my $id = $forms{'ecdcDrug'}->{$ecdcDrug} // die;
+      			<option value="<%=$id%>"><%=$ecdcDrug%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 370px;max-width: 370px;">
+	        <select class="js-example-basic-single" id="ecdcReaction" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $ecdcReaction (sort keys %{$forms{'ecdcReaction'}}) {
+							% my $id = $forms{'ecdcReaction'}->{$ecdcReaction} // die;
+	      			<option value="<%=$id%>"><%=$ecdcReaction%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 370px;max-width: 370px;">
+	        <select class="js-example-basic-single" id="ecdcReactionOutcome" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $ecdcReactionOutcome (sort keys %{$forms{'ecdcReactionOutcome'}}) {
+							% my $id = $forms{'ecdcReactionOutcome'}->{$ecdcReactionOutcome} // die;
+	      			<option value="<%=$id%>"><%=$ecdcReactionOutcome%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 250px;max-width: 250px;">
+	        <select class="js-example-basic-single" id="ecdcAgeGroup" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $id (sort{$a <=> $b} keys %{$forms{'ecdcAgeGroup'}}) {
+							% my $ecdcAgeGroup = $forms{'ecdcAgeGroup'}->{$id} // die;
+	      			<option value="<%=$id%>"><%=$ecdcAgeGroup%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="ecdcSeriousness" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $ecdcSeriousness (sort keys %{$forms{'ecdcSeriousness'}}) {
+							% my $id = $forms{'ecdcSeriousness'}->{$ecdcSeriousness} // die;
+	      			<option value="<%=$id%>"><%=$ecdcSeriousness%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="ecdcGeographicalOrigin" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $ecdcGeographicalOrigin (sort keys %{$forms{'ecdcGeographicalOrigin'}}) {
+							% my $id = $forms{'ecdcGeographicalOrigin'}->{$ecdcGeographicalOrigin} // die;
+	      			<option value="<%=$id%>"><%=$ecdcGeographicalOrigin%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="ecdcReporterType" style="width: 95%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+						% for my $ecdcReporterType (sort keys %{$forms{'ecdcReporterType'}}) {
+							% my $id = $forms{'ecdcReporterType'}->{$ecdcReporterType} // die;
+	      			<option value="<%=$id%>"><%=$ecdcReporterType%></option>
+						% }
+	        </select>
+		</div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important">
+	    </div>
+	</div>
+	<div class="text_separator"></div>
+	<div class="row-container noselect">
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;">
+	    	<input type="checkbox" id="covidVaccinesOnly">
+			<label for="covidVaccinesOnly"><b>COVID Vaccines Only</b></label>
+		</div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 400px;max-width: 400px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 400px;max-width: 400px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"></div>
+	</div>
+	<div style="width:100%">
+		<hr>
+	</div>
+	<div class="row-container noselect">
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"><b>Gateway Year</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Receipt Date</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>ECDC's Reference</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Sex Group</b></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"><b>Related Substance(s)</b></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"><b>Reaction(s)</b></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"><b>Reactions' Outcome(s)</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Age Group</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>ECDC Seriousness</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Geographical Origin</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>ECDC's Reporter Type</b></div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"><b>Source</b></div>
+	</div>
+	<div style="width:100%">
+		<hr>
+	</div>
+</div>
+<div id="noticesList"  class="scrollable-table-container"></div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		initDropdowns();
+		loadNotices();
+	});
+
+	function initDropdowns() {
+		$('#ecdcYear').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Gateway Year'
+		});
+		$('#ecdcDrug').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Related Substance'
+		});
+		$('#ecdcSex').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By ECDC Sex Group'
+		});
+		$('#ecdcReaction').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Related Reaction'
+		});
+		$('#ecdcReactionOutcome').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Reaction Outcome'
+		});
+		$('#ecdcAgeGroup').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By ECDC Age Group'
+		});
+		$('#ecdcSeriousness').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By ECDC Seriousness'
+		});
+		$('#formSeriousness').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Form Seriousness'
+		});
+		$('#ecdcGeographicalOrigin').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Geographical Origin'
+		});
+		$('#ecdcReporterType').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By ECDC Reporter Type'
+		});
+		$('#ecdcReporterOrganisation').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Form Reporter Organisation'
+		});
+		$('#formReporterType').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Form Reporter Type'
+		});
+	}
+</script>

@@ -1,0 +1,81 @@
+% my @ecdcNotices = @$ecdcNotices;
+% my $alt = 0;
+% for my $noticeData (@$ecdcNotices) {
+    % my $ecdcYearName                 = %$noticeData{'ecdcYearName'}               || die;
+    % my $receiptDate                  = %$noticeData{'receiptDate'}                || die;
+    % my $name                         = %$noticeData{'name'}                       || die;
+    % my $url                          = %$noticeData{'url'}                        || die;
+    % my $ecdcSexName                  = %$noticeData{'ecdcSexName'}                // die;
+    % my $ecdcSeriousnessName          = %$noticeData{'ecdcSeriousnessName'}        // die;
+    % my $ecdcReporterTypeName         = %$noticeData{'ecdcReporterTypeName'}       || die;
+    % my $ecdcAgeGroupName             = %$noticeData{'ecdcAgeGroupName'}           || die;
+    % my $formSeriousnessName          = %$noticeData{'formSeriousnessName'};
+    % my $formReporterTypeName         = %$noticeData{'formReporterTypeName'};
+    % my $ecdcGeographicalOriginName   = %$noticeData{'ecdcGeographicalOriginName'} || die;
+    % my $scrappingDatetime            = %$noticeData{'scrappingDatetime'};
+	% $alt++;
+    % if ($alt == 2) {
+    	% $alt = 0;
+    <div style="width:100%;min-width: 100%;display: flex;flex-wrap: wrap;text-align: center;background-color: #f2f2f2;padding-top: 5px;padding-bottom: 5px;">
+	% } else {
+    <div style="width:100%;min-width: 100%;display: flex;flex-wrap: wrap;text-align: center;padding-top: 5px;padding-bottom: 5px;">
+	% }
+        <div style="width: 125px;min-width: 125px;max-width: 125px;"><%=$ecdcYearName%></div>
+        <div style="width: 200px;min-width: 200px;max-width: 200px;"><%=$receiptDate%></div>
+        <div style="width: 250px;min-width: 250px;max-width: 250px;"><a target="_blank" href="<%=$url%>"><%=$name%></a></div>
+        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$ecdcSexName%></div>
+        <div style="width: 370px;min-width: 370px;max-width: 370px;text-align: left;">
+        	% for my $substanceData (@{%$noticeData{'substances'}}) {
+        		% my $substanceName = %$substanceData{'name'} // die;
+        		<li><%=$substanceName%></li>
+    		% }
+        </div>
+        <div style="width: 370px;min-width: 370px;max-width: 370px;text-align: left;">
+        	% if (%$noticeData{'reactions'}) {
+	        	% for my $reactionData (@{%$noticeData{'reactions'}}) {
+	        		% my $reactionName = %$reactionData{'name'} // die;
+	        		<li><%=$reactionName%></li>
+	    		% }
+    		% }
+        </div>
+        <div style="width: 370px;min-width: 370px;max-width: 370px;text-align: left;">
+        	% if (%$noticeData{'reactions'}) {
+	        	% for my $reactionData (@{%$noticeData{'reactions'}}) {
+	        		% my $outcome = %$reactionData{'outcome'} // die;
+	        		<li><%=$outcome%></li>
+	    		% }
+    		% }
+        </div>
+        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$ecdcAgeGroupName%></div>
+        <div style="width: 200px;min-width: 200px;max-width: 200px;"><%=$ecdcSeriousnessName%></div>
+        <div style="width: 200px;min-width: 200px;max-width: 200px;"><%=$ecdcGeographicalOriginName%></div>
+        <div style="width: 200px;min-width: 200px;max-width: 200px;"><%=$ecdcReporterTypeName%></div>
+        <div style="width: 125px;min-width: 125px;max-width: 125px;"><a target="_blank" href="<%=$url%>">ECDC</a></div>
+    </div>
+% }
+<script type="text/javascript"> 
+	$(document).ready(function() {
+		% my $pageHtml;
+		% for my $num (sort{$a <=> $b} keys %$pages) {
+			% my $pageNum = %$pages{$num} // die;
+			% my $block;
+			% if ($pageNum eq $pageNumber) {
+				% $block   = '<div style="width:48px;border: solid 1px;background-color:#3b3b3b;color:white;">' . $pageNum . '</div>';
+			% } elsif ($pageNum eq '..') {
+				% $block   = '<div style="width:50px;">' . $pageNum . '</div>';
+			% } else {
+				% $block   = '<div onclick="loadNotices(' . $pageNum . ');return;" style="width:48px;border: solid 1px;cursor:pointer;">' . $pageNum . '</div>';
+			% }
+			% $pageHtml  .= $block if $pageHtml;
+			% $pageHtml   = $block if !$pageHtml;
+		% }
+		% $pageHtml .= "</div>";
+		let pagination = '<div style="width:100%;display:flex;flex-wrap:wrap;text-align:center;"><div style="width:calc(100% - 750px);"></div>' +
+						 '<div style="width:340px;"><b><%=$totalEcdcNotices%> notice(s)</b> corresponding to your filters.</div>' +
+						 '<div style="width:60px;">Page : </div>' +
+						 '<div style="width:350px;display:flex;flex-wrap:wrap;">' +
+						 '<%==$pageHtml%>';
+    	$("#noticesPages").html(pagination);
+    	$("#searchButton").prop("disabled", false);
+	});
+</script>

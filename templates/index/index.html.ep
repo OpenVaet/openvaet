@@ -1,0 +1,862 @@
+% layout 'default';
+% title 'OPENVAET - Home';
+
+<head>
+  <link href="/css/select2.min.css" rel="stylesheet" />
+  <script src="/js/select2.min.js"></script>
+</head>
+
+<style type="text/css">
+	h2 {
+		font-size: 16px;
+	}
+	.chart-container {
+		width: 100%;
+		height: calc(100% - 650px);
+		min-height: 550px;
+	}
+
+	.select-options{
+		font-size:14px;
+	}
+
+	.download-source {
+		width: 95%;
+		text-align: right;
+		font-size: 12px;
+		color: darkblue;
+	}
+
+	.contact-and-get-informed {
+		width: 95%;
+		padding-left: 5px;
+		padding-right: 5px;
+		background: #b2cef7;
+		margin: auto;
+		border-radius: 5px;
+		display: block;
+		text-align: center;
+	}
+
+	.contact-email-input {
+		margin-left: 15px;
+		width:calc(100% - 210px);
+		min-width: 90px;
+		display: block;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		padding-left: 8px;
+		border-radius: 10px;
+	}
+
+	.contact-me-button {
+		margin-left: 10px;
+		border: 1px solid #3f4854;
+		border-radius: 5px;
+		background: #3f4854;
+		color: #fff;
+		padding-top: 5px;
+		width: 150px;
+		font-size: 14px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	.contact-me-button:hover {
+		background: #677587;
+		border: 1px solid #677587;
+	}
+
+	.contact-response {
+		padding-left: 5px;
+		padding-right: 5px;
+		font-size: 13px;
+		font-weight: bold;
+		width: 100%;
+	}
+
+	/* The Full Screen Modal (background) */
+	.full-screen-modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 100; /* Sit on top, unless a priority pops */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow-x: hidden;
+		overflow-y: hidden;
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Full Screen Modal Content/Box */
+	.full-screen-modal-content {
+		background-color: #fefefe;
+		margin: auto;
+		margin-top: 15px;
+		padding: 20px;
+		border: 1px solid #888;
+		width: 90%; /* Could be more or less, depending on screen size */
+		max-width: 1000px;
+		height: calc(100%  - 75px);
+		overflow-y: auto;
+	}
+
+	/* The Close Button */
+	.full-screen-modal-close {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+	}
+
+	.full-screen-modal-close:hover,
+	.full-screen-modal-close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.full-screen-modal_inner_content {
+		height: calc(100% - 50px);
+		width: 80%;
+		margin: auto;
+	}
+
+	.substance-category-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		background: #647287;
+		font-size: 13px;
+		min-height: 21px;
+		padding-top: 5px;
+		padding-left: 5px;
+		color: #fff;
+		font-weight: bold;
+	}
+
+	.substance-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		font-size: 13px;
+		min-height: 15px;
+	}
+
+	.substance-label-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		font-size: 13px;
+		min-height: 20px;
+		padding-top: 5px;
+	}
+
+	.substance-percent-container {
+		background: #91a7c9;
+		font-size: 13px;
+	}
+</style>
+% my %substances   = %$substances;
+% my %fetchedStats = %$fetchedStats;
+% my %fromAges     = %$fromAges;
+% my %toAges       = %$toAges;
+% my %fromYears    = %$fromYears;
+% my %toYears      = %$toYears;
+% my %sexGroups    = %$sexGroups;
+% my %reporters    = %$reporters;
+<div id="contentContainer" class="content-container">
+
+  <!-- The Full Screen Modal -->
+  <div id="fullScreenModal" class="full-screen-modal">
+
+    <!-- Full Screen Modal content -->
+    <div class="full-screen-modal-content">
+        <span id="full-screen-modal-close" class="full-screen-modal-close">&times;</span>
+        <div id="fullScreenModalInnerContent" class="full-screen-modal_inner_content">
+        	% for my $substanceCategory (sort keys %substances) {
+    				<div class="substance-category-container"><%=$substanceCategory%></div>
+        		% for my $totalEvents (sort{$b <=> $a} keys %{$substances{$substanceCategory}}) {
+      				% my $percentOfTotal = $substances{$substanceCategory}->{$totalEvents}->{'percentOfTotal'} // 0;
+        			% for my $substanceName (sort keys %{$substances{$substanceCategory}->{$totalEvents}->{'substances'}}) {
+    					<div class="substance-label-container">
+	    						<%=$substanceName%>
+  						</div>
+    					<div class="substance-container">
+	    					<div class="substance-percent-container" style="width:<%=$percentOfTotal%>%;">
+	  						</div>
+	  						 &nbsp;&nbsp;<%=$totalEvents%> events
+  						</div>
+  						<hr>
+      				% }
+      			% }
+				    <div class="text_separator"></div>
+				    <div class="text_separator"></div>
+      		% }
+			    <div class="text_separator"></div>
+			    <div class="text_separator"></div>
+        </div>
+    </div>
+  </div> 
+	<div>
+    <div class="text_separator"></div>
+		<div id="disclaimer" style="width: calc(100% - 70px);margin-left: 10px;text-align: center;background: #b2cef7;padding-top: 5px;padding-bottom: 15px;border-radius: 15px;padding-left: 25px;padding-right: 25px;">
+		    <div style="width: 100%;text-align: right;font-size: 18px;font-weight: bold;"><span style="width:20px;height:20px;cursor: pointer;" onclick="closeDisclaimer();return;">&times;</span></div>
+		    % if ($currentLanguage eq 'en') {
+		    <div style="font-weight: bold;font-size: 16px;">Disclaimer</div>
+		    <div class="text_separator"></div>
+		    This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to <b>compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations</b>.
+		    <div class="text_separator"></div>
+		    Every data or statistic featured here directly inherits from the public sources it's fed on. Everything has been made as easy to verify as possible, <span class="url-link" onclick="openLocation('/data');return;">shall the user wish to cross-check our data</span>.
+		    <div class="text_separator"></div>
+		    By using this website, you aknowledge that you have read & understood the complete <span class="url-link" onclick="openLocation('/disclaimer');return;">disclaimer here</span>.
+	    	% } elsif ($currentLanguage eq 'fr') {
+		    <div style="font-weight: bold;font-size: 16px;">Déclaration de principe</div>
+		    <div class="text_separator"></div>
+		    Ce projet Source Ouverte vise à étendre le débat public sur les effets secondaires des vaccins, et à améliorer l'accessibilité aux données pour le public & les professionnels, dans un format aisé à utiliser. Spécifiquement, dans cette première version, notre cible a été de <b>comparer les effets secondaires des vaccins les plus communs (Diphtérie, Tétanos, Hépatithe B, Polyomélite), administrés à l'essentiel des populations des Etats-Unis et d'Europe, et les vaccins COVID, désormais eux-aussi administrés à l'essentiel des populations américaines & européennes.</b>
+		    <div class="text_separator"></div>
+		    Chaque donnée ou statistique affichée sur ce site hérite directement des données publiques depuis lesquelles le projet est nourri. Tout a été fait pour que les vérifications soient le plus faciles possible, <span class="url-link" onclick="openLocation('/data');return;">si l'utilisateur désire vérifier nos données</span>.
+		    <div class="text_separator"></div>
+		    En utilisant ce site, vous confirmez que vous avez lu & accepté <span class="url-link" onclick="openLocation('/disclaimer');return;">l'accord d'utilisation</span>.
+    		% } else {
+
+    		% }
+		</div>
+	    <div style="width:100%;display: flex;flex-wrap: wrap;margin-top: 10px;text-align: center;font-size:12px;">
+		    <div style="width: 100%;max-width:100%;padding-top: 7px;font-weight: bold;font-size: 18px;">
+		    % if ($currentLanguage eq 'en') {
+		    	European & USA Data - Comparison between reported after effects of COVID vaccines & Common vaccines
+	    	% } elsif ($currentLanguage eq 'fr') {
+		    	Data Europe & USA - Comparaison entre les effets secondaires rapportés des vaccins COVID & des vaccins communs
+    		% } else {
+
+    		% }
+			</div>
+		    <div class="text_separator"></div>
+		    <div class="text_separator"></div>
+		    <div style="display: flex;flex-wrap: wrap;margin:auto;max-width: 473px;">
+			    <div style="width:100%;display: flex;flex-wrap: wrap;">
+				    <div style="width: 50%;padding-top: 7px;font-weight: bold;text-align: right;">
+		    % if ($currentLanguage eq 'en') {
+				    	Type
+	    	% } elsif ($currentLanguage eq 'fr') {
+				    	Type
+    		% } else {
+
+    		% }
+					</div>
+				    <div style="display: flex;flex-wrap: wrap;width:50%;">
+					    <div style="width: calc(65px);padding-top: 7px;font-weight: bold;text-align: left;">
+					    % if ($currentLanguage eq 'en') {
+					    	&nbsp;Of Report
+				    	% } elsif ($currentLanguage eq 'fr') {
+					    	&nbsp;D'Incident
+			    		% } else {
+
+			    		% }
+						</div>
+					    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
+					        <select class="js-example-basic-single" id="fetchedStat" style="width: 95%;height: 95%;">
+								% for my $valNum (sort{$a <=> $b} keys %fetchedStats) {
+									% my $value = $fetchedStats{$valNum}->{'value'} // die;
+									% my $label = $fetchedStats{$valNum}->{'label'} // die;
+									% if ($fetchedStat eq $value) {
+				      			<option value="<%=$value%>" selected><%=$label%></option>
+									% } else {
+				      			<option value="<%=$value%>"><%=$label%></option>
+									% }
+								% }
+					        </select>
+						</div>
+					</div>
+			    </div>
+			    <div class="text_separator"></div>
+		    	<div class="text_separator"></div>
+			    <div style="width:100%;display: flex;flex-wrap: wrap;">
+				    <div style="width: calc(71px);padding-top: 7px;font-weight: bold;">
+					    % if ($currentLanguage eq 'en') {
+				    		From Year
+				    	% } elsif ($currentLanguage eq 'fr') {
+				    		De l'année
+			    		% } else {
+
+			    		% }
+					</div>
+				    <div style="width: calc(50% - 76px);max-width:160px;margin-left: 5px;">
+				        <select class="js-example-basic-single" id="fromYear" style="width: 100%;height: 100%;">
+							% for my $valNum (sort{$a <=> $b} keys %fromYears) {
+								% my $label = $fromYears{$valNum}->{'label'} // die;
+								% my $value = $fromYears{$valNum}->{'value'} // die;
+								% if ($fromYear eq $value) {
+			      			<option value="<%=$value%>" selected><%=$label%></option>
+								% } else {
+			      			<option value="<%=$value%>"><%=$label%></option>
+								% }
+							% }
+				        </select>
+					</div>
+				    <div style="width: calc(63px);padding-top: 7px;margin-left: 5px;font-weight: bold;">
+					    % if ($currentLanguage eq 'en') {
+				    		To Year
+				    	% } elsif ($currentLanguage eq 'fr') {
+				    		A l'année
+			    		% } else {
+
+			    		% }
+					</div>
+				    <div style="width: calc(50% - 80px);max-width:154px;margin-left: 5px;">
+				        <select class="js-example-basic-single" id="toYear" style="width: 100%;height: 100%;">
+							% for my $valNum (sort{$a <=> $b} keys %toYears) {
+								% my $value = $toYears{$valNum}->{'value'} // die;
+								% if ($toYear eq $value) {
+			      			<option value="<%=$value%>" selected><%=$value%></option>
+								% } else {
+			      			<option value="<%=$value%>"><%=$value%></option>
+								% }
+							% }
+				        </select>
+					</div>
+			    </div>
+			    <div class="text_separator"></div>
+		    	<div class="text_separator"></div>
+			    <div style="width:100%;display: flex;flex-wrap: wrap;">
+				    <div style="width: calc(71px);padding-top: 7px;font-weight: bold;">
+					    % if ($currentLanguage eq 'en') {
+				    		Sex Group
+				    	% } elsif ($currentLanguage eq 'fr') {
+				    		Sexe
+			    		% } else {
+
+			    		% }
+					</div>
+				    <div style="width: calc(50% - 76px);max-width:160px;margin-left: 5px;">
+				        <select class="js-example-basic-single" id="sexGroup" style="width: 100%;height: 100%;">
+							% for my $valNum (sort{$a <=> $b} keys %sexGroups) {
+								% my $value = $sexGroups{$valNum}->{'value'} // die;
+								% my $label = $sexGroups{$valNum}->{'label'} // die;
+								% if ($sexGroup eq $value) {
+			      			<option value="<%=$value%>" selected><%=$label%></option>
+								% } else {
+			      			<option value="<%=$value%>"><%=$label%></option>
+								% }
+							% }
+				        </select>
+					</div>
+				    <div style="width: calc(63px);padding-top: 7px;margin-left: 5px;font-weight: bold;">
+					    % if ($currentLanguage eq 'en') {
+				    		Reporter
+				    	% } elsif ($currentLanguage eq 'fr') {
+				    		Rapporteur
+			    		% } else {
+
+			    		% }
+					</div>
+				    <div style="width: calc(50% - 80px);max-width:154px;margin-left: 5px;">
+				        <select class="js-example-basic-single" id="reporter" style="width: 100%;height: 100%;">
+							% for my $valNum (sort{$a <=> $b} keys %reporters) {
+								% my $value = $reporters{$valNum}->{'value'} // die;
+								% my $label = $reporters{$valNum}->{'label'} // die;
+								% if ($reporter eq $value) {
+			      			<option value="<%=$value%>" selected><%=$label%></option>
+								% } else {
+			      			<option value="<%=$value%>"><%=$label%></option>
+								% }
+							% }
+				        </select>
+					</div>
+			    </div>
+		    	<div class="text_separator"></div>
+		    	<div class="text_separator"></div>
+			    <div style="width: calc(65px);padding-top: 7px;font-weight: bold;">
+				    % if ($currentLanguage eq 'en') {
+			    		From Age
+			    	% } elsif ($currentLanguage eq 'fr') {
+			    		De l'âge de
+		    		% } else {
+
+		    		% }
+				</div>
+			    <div style="width: calc(50% - 76px);max-width:161px;margin-left: 11px;">
+			        <select class="js-example-basic-single" id="fromAge" style="width: 100%;height: 100%;">
+						% for my $valNum (sort{$a <=> $b} keys %fromAges) {
+							% my $value   = $fromAges{$valNum}->{'value'}   // die;
+							% my $ageType = $fromAges{$valNum}->{'ageType'} // die;
+							% my $label   = $fromAges{$valNum}->{'label'}   // die;
+							% if ($fromAge eq $value) {
+								% if ($ageType eq 'month') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Month Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Monthes Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } elsif ($ageType eq 'year') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Year Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> An</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Years Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> Ans</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } else {
+									% die "unplaned type";
+								% }
+							% } else {
+								% if ($ageType eq 'month') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Month Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Monthes Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } elsif ($ageType eq 'year') {
+								    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Years Old</option>
+							    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Ans</option>
+						    		% } else {
+
+						    		% }
+								% } else {
+									% die "unplaned type";
+								% }
+							% }
+						% }
+			        </select>
+				</div>
+			    <div style="width: calc(58px);padding-top: 7px;margin-left: 5px;font-weight: bold;">
+				    % if ($currentLanguage eq 'en') {
+			    		To Age
+			    	% } elsif ($currentLanguage eq 'fr') {
+			    		A l'âge de
+		    		% } else {
+
+		    		% }
+				</div>
+			    <div style="width: calc(50% - 82px);max-width:155px;margin-left: 10px;">
+			        <select class="js-example-basic-single" id="toAge" style="width: 100%;height: 100%;">
+						% for my $valNum (sort{$a <=> $b} keys %toAges) {
+							% my $value   = $toAges{$valNum}->{'value'}   // die;
+							% my $label   = $toAges{$valNum}->{'label'}   // die;
+							% my $ageType = $toAges{$valNum}->{'ageType'} // die;
+							% if ($toAge eq $value) {
+								% if ($ageType eq 'month') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+			      			<option value="<%=$value%>" selected><%=$label%> Month Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+			      			<option value="<%=$value%>" selected><%=$label%> An</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Monthes Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } elsif ($ageType eq 'year') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Year Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> An</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>" selected><%=$label%> Years Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>" selected><%=$label%> Ans</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } else {
+									% die "unplaned type";
+								% }
+							% } else {
+								% if ($ageType eq 'month') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Month Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Monthes Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Mois</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } elsif ($ageType eq 'year') {
+									% if ($label eq '0' || $label eq '1') {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Year Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> An</option>
+							    		% } else {
+
+							    		% }
+									% } else {
+									    % if ($currentLanguage eq 'en') {
+		      			<option value="<%=$value%>"><%=$label%> Years Old</option>
+								    	% } elsif ($currentLanguage eq 'fr') {
+		      			<option value="<%=$value%>"><%=$label%> Ans</option>
+							    		% } else {
+
+							    		% }
+									% }
+								% } else {
+									% die "unplaned type";
+								% }
+							% }
+						% }
+			        </select>
+				</div>
+			</div>
+	    </div>
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 20px);font-size: 15px;font-weight: bold;text-align: center;padding-left: 10px;">
+	    % if ($currentLanguage eq 'en') {
+    		Reported Adverse Effects - COVID-19 Vaccines (<%=$covidTotalDrugs%> substances) / Common Vaccines (<%=$allOthersTotalDrugs%> substances)
+    	% } elsif ($currentLanguage eq 'fr') {
+    		Effets Secondaires Rapportés - Vaccins COVID-19 (<%=$covidTotalDrugs%> substances) / Vaccins Communs (<%=$allOthersTotalDrugs%> substances)
+		% } else {
+
+		% }
+    </div>
+    <div id="chart-container" class="chart-container">
+			<div id="barchart_values_adv_effects">
+				
+			</div>
+    </div>
+    % if ($currentLanguage eq 'en') {
+    <div class="download-source">
+    	You can consult <span class="url-link" onclick="openSubstanceDetails();return;">the detail of the cases by substances, corresponding to your criterions, here</span>.
+    </div>
+    <div class="download-source">
+    	You can also download the Individual Reports' synthetized data for VAERS & EudraVigilance suspected deaths  <span class="url-link" onclick="openLocation('/data');return;">on this page</span>.
+    </div>
+  	% } elsif ($currentLanguage eq 'fr') {
+    <div class="download-source">
+    	Vous pouvez consulter <span class="url-link" onclick="openSubstanceDetails();return;">le détail des cas par substance, pour vos critères, ici</span>.
+    </div>
+    <div class="download-source">
+    	Vous pouvez aussi télécharger la donnée synthétisée des rapports individuels de décès VAERS & EudraVilance <span class="url-link" onclick="openLocation('/data');return;">sur cette page</span>.
+    </div>
+		% } else {
+
+		% }
+    <div class="text_separator"></div>
+    <hr>
+    <div class="contact-and-get-informed">
+    	<div class="text_separator"></div>
+	    % if ($currentLanguage eq 'en') {
+    	<b><i>If you wish to be informed by email when an update is performed, simply provide your email address below.</b></i>
+    	<div class="text_separator"></div>
+    	<div style="width:100%;display: flex;flex-wrap: wrap;">
+    		<input type="text" id="userEmail" class="contact-email-input" placeholder="Your email address">
+    		<div class="contact-me-button noselect" id="contactMeButton" onclick="contactMeOnUpdate();return;">Contact Me</div>
+    	</div>
+		<div class="text_separator"></div>
+		<div class="contact-response" id="contactResponse">
+			
+		</div>
+    	<div class="text_separator"></div>
+    	<hr>
+    	<div class="text_separator"></div>
+    	<b><i>If you wish to report an error, a typo, or to make any constructive feedback, you can <span class="url-link" onclick="openLocation('/contact_us');return;">reach us through this page</span>.</b></i>
+    	% } elsif ($currentLanguage eq 'fr') {
+    	<b><i>Si vous souhaitez être informé par courriel lorsque nous effectuons une mise à jour, fournissez simplement votre addresse courriel ci-dessous.</b></i>
+    	<div class="text_separator"></div>
+    	<div style="width:100%;display: flex;flex-wrap: wrap;">
+    		<input type="text" id="userEmail" class="contact-email-input" placeholder="Votre addresse courriel">
+    		<div class="contact-me-button noselect" id="contactMeButton" onclick="contactMeOnUpdate();return;">Me Contacter</div>
+    	</div>
+		<div class="text_separator"></div>
+		<div class="contact-response" id="contactResponse">
+			
+		</div>
+    	<div class="text_separator"></div>
+    	<hr>
+    	<div class="text_separator"></div>
+    	<b><i>Si vous souhaitez signaler une erreur, une typo, ou nous faire part de tout retour constructif, vous pouvez <span class="url-link" onclick="openLocation('/contact_us');return;">nous joindre via cette page</span>.</b></i>
+		% } else {
+
+		% }
+		<div class="text_separator"></div>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+
+<script type="text/javascript">
+	var chartAdvEffects;
+	$('#fetchedStat').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#fetchedStat').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#fetchedStat").select2({ dropdownCssClass: "select-options" });
+	$('#fromAge').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#fromAge').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#fromAge").select2({ dropdownCssClass: "select-options" });
+	$('#toAge').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#toAge').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#toAge").select2({ dropdownCssClass: "select-options" });
+	$('#reporter').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#reporter').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#reporter").select2({ dropdownCssClass: "select-options" });
+	$('#sexGroup').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#sexGroup').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#sexGroup").select2({ dropdownCssClass: "select-options" });
+	$('#fromYear').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#fromYear').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#fromYear").select2({ dropdownCssClass: "select-options" });
+	$('#toYear').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#toYear').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#toYear").select2({ dropdownCssClass: "select-options" });
+
+	let chartWidth = document.getElementById("barchart_values_adv_effects").clientWidth;
+	console.log('chartWidth : ' + chartWidth);
+
+	google.charts.load("current", {packages:["corechart"]});
+	google.charts.setOnLoadCallback(drawChartAdvEffects);
+	function drawChartAdvEffects() {
+		var dataAdvEffects = google.visualization.arrayToDataTable([
+	    % if ($currentLanguage eq 'en') {
+			["Substances Category", "Total Cases", { role: "style" } ],
+			["Covid-19 Vaccines",          <%=$covidTotalCases%>,           "#6e3216"],
+			["Covid-19 + Common Vaccines", <%=$covidPlusOthersTotalCases%>, "#a69280"],
+			["Common Vaccines",            <%=$allOthersTotalCases%>,       "#4a8bbd"]
+    	% } elsif ($currentLanguage eq 'fr') {
+			["Categorie de Substances", "Cas Totaux", { role: "style" } ],
+			["Vaccins Covid-19",          <%=$covidTotalCases%>,           "#6e3216"],
+			["Vaccins Covid-19 + Communs", <%=$covidPlusOthersTotalCases%>, "#a69280"],
+			["Vaccins Communs",            <%=$allOthersTotalCases%>,       "#4a8bbd"]
+		% } else {
+
+		% }
+		]);
+
+		var viewAdvEffects = new google.visualization.DataView(dataAdvEffects);
+		viewAdvEffects.setColumns(
+			[
+				0, 1,
+				{
+					calc: "stringify",
+					sourceColumn: 1,
+					type: "string",
+					role: "annotation"
+				},
+				2
+			]
+		);
+
+		var optionsAdvEffects = {
+			colors: ['#fff'],
+			width: chartWidth,
+			height: 550,
+			bar: {groupWidth: "95%"},
+			chartArea:{
+			    left:5,
+			    top: 50,
+			    width: '100%',
+			    height: '400'
+			}
+		};
+		chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("barchart_values_adv_effects"));
+		chartAdvEffects.draw(viewAdvEffects, optionsAdvEffects);
+	
+		// Every time the table fires the "select" event, it calls the loadDetails function.
+		google.visualization.events.addListener(chartAdvEffects, 'select', loadDetails);
+	}
+
+	function reloadData() {
+    let fetchedStatElem = document.getElementById("fetchedStat");
+    fetchedStatElem.style.display  = "none";
+  	let currentLanguage  = '<%=$currentLanguage%>';
+  	let fetchedStat      = $('#fetchedStat').val();
+  	let reporter         = $('#reporter').val();
+  	let sexGroup         = $('#sexGroup').val();
+  	let fromAge          = $('#fromAge').val();
+  	let toAge            = $('#toAge').val();
+  	let fromYear         = $('#fromYear').val();
+  	let toYear           = $('#toYear').val();
+    mainLoader = document.getElementById("mainLoader");
+    mainLoader.style.display  = "inline-block";
+		console.log('chartWidth : ' + chartWidth);
+    blankContainer = document.getElementById("blankContainer");
+    blankContainer.style.display  = "inline-block";
+    window.location.href = '/?currentLanguage=' + currentLanguage + '&fetchedStat=' + fetchedStat + '&fromAge=' + fromAge + '&toAge=' + toAge + '&fromYear=' + fromYear + '&toYear=' + toYear + '&reporter=' + reporter + '&sexGroup=' + sexGroup;
+	}
+
+	function loadDetails(e) {
+  // 	var selectedItem = chartAdvEffects.getSelection()[0].row;
+		// console.log(selectedItem);
+		// alert('A table row was selected : ' + selectedItem);
+	}
+
+  $( document ).ready(function() {
+
+  	// Attending to the loader.
+    mainLoader = document.getElementById("mainLoader");
+    mainLoader.style.display  = "none";
+    blankContainer = document.getElementById("blankContainer");
+    blankContainer.style.display  = "none";
+    
+    // Get the main modal
+    var modal = document.getElementById("fullScreenModal");
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Get the <span> element that closes the main modal
+    var span = document.getElementsByClassName("full-screen-modal-close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+  });
+
+  function closeDisclaimer() {
+  	let disclaimer = document.getElementById('disclaimer');
+  	disclaimer.style.display = 'none';
+  }
+
+  function contactMeOnUpdate() {
+  	let currentLanguage  = '<%=$currentLanguage%>';
+  	let userEmail = $('#userEmail').val();
+  	if (!userEmail) {
+	    % if ($currentLanguage eq 'en') {
+  		$('#contactResponse').html('<span style="color:darkred;">Please input an email address</span>');
+    	% } elsif ($currentLanguage eq 'fr') {
+  		$('#contactResponse').html('<span style="color:darkred;">Veuillez saisir votre addresse courriel</span>');
+		% } else {
+
+		% }
+  		return;
+  	}
+
+		let request    = $.ajax({
+		    url: "/contact_email",
+		    type: "POST",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+		    data: JSON.stringify({
+		    	userEmail : userEmail,
+		    	currentLanguage : currentLanguage
+		   })
+		});
+
+		request.done(function(data) {
+			if (data.status == 'ok') {
+			    % if ($currentLanguage eq 'en') {
+    			$('#contactResponse').html('<span style="color:darkgreen;">Thank you. An email will be sent to you as soon as an update is performed.</span>');
+		    	% } elsif ($currentLanguage eq 'fr') {
+	    		$('#contactResponse').html('<span style="color:darkgreen;">Merci. Un courriel vous sera envoyé aussitôt qu\'une mise à jour sera effectuée.</span>');
+				% } else {
+
+				% }
+			} else {
+    			$('#contactResponse').html('<span style="color:darkred;">' + data.status + '.</span>');
+			}
+		});
+  }
+
+  function openSubstanceDetails() {
+  	let modal = document.getElementById('fullScreenModal');
+  	modal.style.display = 'block';
+  }
+</script>

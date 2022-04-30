@@ -1,0 +1,65 @@
+% layout 'default';
+% title 'OPENVAET - Disclaimer';
+
+<div class="content-container" class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to home</div>
+    <div class="text_separator"></div>
+    <div style="text-align:center;">
+    <h2>Disclaimer</h2>
+    <div class="text_separator"></div>
+    This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format.
+    <div class="text_separator"></div>
+    Specificaly, in this first release, our target has been to <b>compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations</b>.
+    <div class="text_separator"></div>
+    Every data or statistic featured here directly inherits from the public sources it's fed on. Everything has been made as easy to verify as possible, <span class="url-link" onclick="openLocation('/data');return;">shall the user wish to cross-check our figures</span>.
+    <div class="text_separator"></div>
+    The COVID pandemic has been the occasion for great improvements we salute, in the domain of medical data's publicity (particularly as far as caracterizing the epidemy & its impacts was concerned) ; but it seemed to us the subject of the potential adverse effects wasn't subject to as much clarity as it should.
+    <div class="text_separator"></div>
+    <b>As any disclaimer of our sources advertises, it's useful to remind the visitor that a "suspected adverse effect" isn't the proof of a correlation between the substance (or vaccine) administration and the after-effect observed on the patient.</b>
+    <div class="text_separator"></div>
+    As explained on <a target="_blank" href="https://www.factcheck.org/2021/11/scicheck-benefits-outweigh-risks-of-pediatric-covid19-vaccine-contrary-to-posts-misusing-vaers-data/">factcheck.org</a>, CDC's data is <b>slightly underestimated</b> at best ; not over-estimated. We were unable to find accurate data about the reporting rate in EU so far.
+    <div class="text_separator"></div>
+    It's the role of the CDC's VAERS or ECDC's EudraVigilance to take actions to regulate the risk, based on the statisticly significant events fed to them.
+    <div class="text_separator"></div>
+    It's therefore most important to collect as much as possible statistics to establish accurate "potential adverse effects" lists.
+    <div class="text_separator"></div>
+    It's a legal duty for a vaccine manufacturer to report any potential after effects he gains knowledge about.
+    <div class="text_separator"></div>
+    It's a legal duty, in USA or in most EU's country, for an healthcare provider to report to its country medical authorities a potential adverse effect.
+    <div class="text_separator"></div>
+    In addition, in USA or european countries, reports are opened to private persons submissions.
+    </div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+    <div class="text_separator"></div>
+    <div style="text-align:center;">
+    <h2>Accord d'utilisation</h2>
+    <div class="text_separator"></div>
+    Ce projet Source Ouverte vise à étendre le débat public sur les effets secondaires des vaccins, et à améliorer l'accessibilité aux données pour le public & les professionnels, dans un format aisé à utiliser.
+    <div class="text_separator"></div>
+    Spécifiquement, dans cette première version, notre cible a été de <b>comparer les effets secondaires des vaccins les plus communs (Diphtérie, Tétanos, Hépatithe B, Polyomélite), administrés à l'essentiel des populations des Etats-Unis et d'Europe, et les vaccins COVID, désormais eux-aussi administrés à l'essentiel des populations américaines & européennes.</b>
+    <div class="text_separator"></div>
+    Chaque donnée ou statistique affichée sur ce site hérite directement des données publiques depuis lesquelles le projet est nourri. Tout a été fait pour que les vérifications soient le plus faciles possible, <span class="url-link" onclick="openLocation('/data');return;">si l'utilisateur désire vérifier nos chiffres</span>.
+    <div class="text_separator"></div>
+    La pandémie COVID a été l'occasion de nombreuses améliorations - que nous saluons, dans le domaine du caractère publique des statistiques médicales (particulièrement dans la mesure où il s'agissait de caractériser l'épidémie et ses impacts) ; mais il nous a semblé que le sujet des potentiels effets secondaires n'était pas sujet à autant de clareté qu'il l'aurait dû.
+    <div class="text_separator"></div>
+    <b>Comme chaque disclaimer de nos sources le précise, il est utile de rappeler au lecteur qu'un "effet secondaire soupçonné" n'est pas la preuve d'une corrélation entre l'administration du médicament (ou vaccin) et l'effet secondaire observé sur le patient.</b>
+    <div class="text_separator"></div>
+    Comme expliqué sur <a target="_blank" href="https://www.factcheck.org/2021/11/scicheck-benefits-outweigh-risks-of-pediatric-covid19-vaccine-contrary-to-posts-misusing-vaers-data/">factcheck.org</a>, la donnée du CDC <b>est légèrement sous-estimée</b> au mieux ; pas sur-estimée. Nous avons été incapable à cette date de trouver une évaluation sérieuse du taux d'effets secondaires rapportés en Europe.
+    <div class="text_separator"></div>
+    C'est le rôle du VAERS du CDC et de l'EudraVigilance pour l'Europe de prendre des mesures pour réguler ce risque, sur la base des évènements qu'ils estiment statistiquement significatifs, à grande échelle.
+    <div class="text_separator"></div>
+    C'est, par conséquent, des plus importants qu'ils puissent collecter autant d'évènements que possible pour établir des listes précises d'"effets secondaires potentiels".
+    <div class="text_separator"></div>
+    C'est une obligation légale pour un fabriquant de vaccin de signaler tout effet secondaire dont il acquiert la connaissance.
+    <div class="text_separator"></div>
+    C'est une obligation légale pour les professionels de santé dans la plupart  des pays de l'Union Européenne et Etats des USA de signaler les effets secondaires qui lui sont signalés par un patient.
+    <div class="text_separator"></div>
+    De plus, aux USA & dans les pays européens, la soumission directe d'un rapport est ouverte aux particuliers.
+    </div>
+    % } else {
+
+    % }
+</div>

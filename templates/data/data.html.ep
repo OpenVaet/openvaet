@@ -1,0 +1,174 @@
+% layout 'default';
+% title 'OPENVAET - Data';
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to home</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+    % } else {
+
+    % }
+    % if ($currentLanguage eq 'en') {
+    <h2>Downloading the data.</h2>
+    You can download the data synthetized to generate the statistics related to deaths on the index <a href="/json/deaths.zip" target="_blank">by clicking this link</a> (<b>JSON compressed as .zip - 5 Mo</b>).
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2>Téléchargement de la donnée.</h2>
+    Vous pouvez télécharger la donnée synthétisée utilisée pour générer les statistiques de décès affichées en index <a href="/json/deaths.zip" target="_blank">via ce lien</a> (<b>JSON compressé en .zip - 5 Mo</b>).
+    % } else {
+
+    % }
+    % if ($currentLanguage eq 'en') {
+    <h2>Exploring the data.</h2>
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2>Exploration de la donnée.</h2>
+    % } else {
+
+    % }
+    % if ($currentLanguage eq 'en') {
+    <div class="text_separator"></div>
+    <b>Dedicated pages in these sub-sections are allowing in-depth exploration of each source's data if you're running the project localy.
+    <div class="text_separator"></div>
+    Given generating these in-depth analytics requires to parse millions of reports, it consumes too much resources to allow these pages directly online - at this stage.
+    <div class="text_separator"></div>We are actively working on optimizing this to allow these direct online searches.</b>
+    <div class="text_separator"></div>
+    Our data is collected using scrappers (programs dedicated to fetch the data on a given website, written in Perl 5) browsing public sources :
+    <ul>
+        <li class="url-link" onclick="openLocation('/data/cdc');return;">Center For Disease Control & Prevention (CDC) - VAERS Data</li>
+        <li class="url-link" onclick="openLocation('/data/ecdc');return;">European Center For Disease Control & Prevention (ECDC) - EudraVigilance Data</li>
+    </ul>
+    <div class="text_separator"></div>
+    Algorithms' behaviors are detailed on each dedicated page.
+    <div class="text_separator"></div>
+    CDC & ECDC's data are updated weekly, every Friday.
+    <div class="text_separator"></div>
+    Other public sources have been reviewed but haven't been integrated for reasons detailed on their pages :
+    <ul>
+        <li class="url-link" onclick="openLocation('/data/oms');return;">OMS (VigiAccess)</li>
+    </ul>
+    <h2>Running the project.</h2>
+    <div class="text_separator"></div>
+    The complete project code can be downloaded from the <a href="#" title="Open the Github Repository" target="_blank">Github repository</a>. The code can be used & modified freely, assuming a spirit of neutrality toward the data is preserved. Librairies used are subject to their own specific licences. 
+    <h3>General Dependencies.</h3>
+    You'll need an SQL compatible database local server (for instance, MySQL Community Server - <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">downloadable here</a>).
+    <div class="text_separator"></div>
+    <b>Beware MYSQL Server's Password Encryption must be set set as "Legacy" to support Perl's DBI Driver.</b>
+    <div class="text_separator"></div>
+    You'll need <a href="https://www.google.com/chrome" target="_blank">Google Chrome</a> & the <a href="https://chromedriver.chromium.org/downloads" target="_blank">Selenium's driver</a> corresponding to your OS in order to use the CDC & ECDC scrappers. Just install Chrome, and place your unzipped Selenium driver on the project's folder.
+    <div class="text_separator"></div>
+    <h3>Running The Project On Windows.</h3>
+    <div class="text_separator"></div>
+    You'll need Strawberry Perl (<a href="https://strawberryperl.com/releases.html" target="_blank">downloadable here</a>) (recommended) or Active Perl (<a href="https://www.activestate.com/products/downloads/" target="_blank">downloadable here</a>) to run the code.
+    <div class="text_separator"></div>
+    You'll need the required libraries, which you can install using cpanminus, by double-clicking the config/dependencies.bat file.
+    <h3>Running The Project On Linux.</h3>
+    You'll need the required libraries, which you can install using cpanminus, by executing the ./config/dependencies.sh file.
+    <h3>Database Building.</h3>
+    Having MySQL server installed, you can build the database from the scratch by simply applying data/history.sql (database has it has been built during the project construction).
+    <h3>Configuration File.</h3>
+    Having the database built from the history file, or imported from a structure or complete dump, you must configure the config/openvaet.conf file (simply open it in a text editor such as Notepad, SublimeText, etc.).
+    <div class="text_separator"></div>
+    <ul>
+        <li>Replace the "secrets" entry by a 40 chars random string.</li>
+        <li>Replace the "databaseHost", "databaseUser", "databasePort", "databasePassword" by the ones you configured by installing MySQL Server (remember your MyQSL Password Encryption must be set to Legacy to support Perl's Driver).</li>
+        <li>Save your changes & exit.</li>
+    </ul>
+    <h3>Reviewing the code.</h3>
+    All scripts required to run the project are Perl scripts, which means you can freely edit & read the code.
+    <div class="text_separator"></div>
+    Despite our best efforts to guarantee the code is bug-free and readable (and as a general guideline for your own security), we strongly encourage you to review the code.
+    <h3>Indexing or Updating CDC's Data.</h3>
+    Download the up to date VAERS data ("All Years Data*") (<a href="https://vaers.hhs.gov/data/datasets.html" target="_blank">available on this URL</a>).
+    <div class="text_separator"></div>
+    The script will parse & index in the database the VAERS data, to allow a more optimized post-treatment.
+    <h3>Indexing or Updating ECDC's Data.</h3>
+    Open a terminal in the project's folder & simply run "perl tasks/ecdc/get_eu_database.pl" (without quotes).
+    <div class="text_separator"></div>
+    ECDC's platform is exceptionally unstable and crashes very regularly.
+    <div class="text_separator"></div>
+    Although we did our best to make it as resilient as possible (2000 more lines than CDC's scrapper to do the same thing...), it still crashes - if only because ECDC's regularly trigger random alerts blocking the scrapper or simply goes down for hours...
+    <div class="text_separator"></div>
+    <b>Therefore, ECDC's update must be - at this stage - monitored. If the script fails, simply close its chrome session & resume it.</b>
+    <div class="text_separator"></div>
+    You'll need to run the scrapper a first time to index all substances.
+    <div class="text_separator"></div>
+    Then, activate the substances you wish to index from the <span class="url-link" onclick="openLocation('/data/ecdc/substances');return;">substances' page</span> of the ECDC section linked above (We originally went for indexing all substances, but ECDC's platform is, to date, simply too unstable to update it weekly this way).
+    <h3>Unifying the data.</h3>
+    Open a terminal in the project's folder & simply run "perl tasks/generate_stats.pl" (without quotes). This script will generate the "end-user" JSON files used by the interface from the CDC & ECDC data.
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="text_separator"></div>
+    <b>Des pages dédiées au sein des sous-sections présentées permettent l'exploration en profondeur de la donnée de chaque source, si vous executez le projet localement.
+    <div class="text_separator"></div>
+    Dans la mesure où ces analyses en profondeur demandent de parcourir des millions de rapports d'incidents, cela consomme, à l'heure actuelle, trop de ressources serveur pour autoriser l'exploration directement en ligne, à ce stade.
+    <div class="text_separator"></div>Nous travaillons activement à optimiser cet aspect pour permettre de telles recherches directement en ligne.</b>
+    <div class="text_separator"></div>
+    Nos données sont collectées en utilisant des "scrappers" (programmes dédiés qui récoltent la donnée sur un site donné, écrits en Perl 5), qui parcourent plusieurs sources publiques :
+    <ul>
+        <li class="url-link" onclick="openLocation('/data/cdc');return;">Centre de Contrôle et de Prévention des Maladies (CDC) - Data VAERS</li>
+        <li class="url-link" onclick="openLocation('/data/ecdc');return;">Centre Européen de Contrôle et de Prévention des Maladies (ECDC) - Data EudraVigilance</li>
+    </ul>
+    <div class="text_separator"></div>
+    Le détail des algorithmes et fourni sur chaque page dédiée.
+    <div class="text_separator"></div>
+    Les données du VAERS & d'EudraVigilance sont mises à jour par ces organismes chaque vendredi.
+    <div class="text_separator"></div>
+    D'autres sources publiques sur le sujet ont été revues mais n'ont pas été intégrées pour des raisons détaillées sur chaque page :
+    <ul>
+        <li class="url-link" onclick="openLocation('/data/oms');return;">OMS (VigiAccess)</li>
+    </ul>
+    <h2>Exécuter le projet.</h2>
+    <div class="text_separator"></div>
+    Le code complet du projet peut être téléchargé <a href="#" title="Open the Github Repository" target="_blank">sur notre dépôt Github</a>. Le code peut être utilisé et/ou modifié librement - pour autant qu'un esprit de neutralité vis-à-vis de la donnée soit respecté. Les Librairies employées sont sujettes à leurs licences spécifiques.
+    <h3>Dépendences Générales.</h3>
+    Vous aurez besoin d'un serveur SQL compatible (par exemple, MySQL Community Server - <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">téléchargeable ici</a>).
+    <div class="text_separator"></div>
+    <b>Prenez-garde au fait que vous devez régler l'encryption des mots de passe de MySQL Server en mode "Legacy" pour que le driver DBI de Perl le supporte.</b>
+    <div class="text_separator"></div>
+    Vous aurez besoin de <a href="https://www.google.com/chrome" target="_blank">Google Chrome</a> & du <a href="https://chromedriver.chromium.org/downloads" target="_blank">driver Selenium</a> correspondant à votre système d'exploitation pour utiliser les programmes dédiés à l'ECDC. Installez simplement Chrome, et placez le driver (décompressé) à la racine du répertoire du projet.
+    <div class="text_separator"></div>
+    <h3>Exécuter le projet sous Windows.</h3>
+    <div class="text_separator"></div>
+    Vous aurez besoin de Strawberry Perl (<a href="https://strawberryperl.com/releases.html" target="_blank">téléchargeable ici</a>) (recommandé) ou Active Perl (<a href="https://www.activestate.com/products/downloads/" target="_blank">téléchargeable ici</a>) pour éxécuter le code.
+    <div class="text_separator"></div>
+    Vous aurez besoin des librairies requises par le projet, que vous pouvez installer manuellement en utilisant cpan, ou en double-cliquant le fichier config/dependencies.bat.
+    <h3>Exécuter le projet sous Linux.</h3>
+    Vous aurez besoin des librairies requises par le projet, que vous pouvez installer manuellement en utilisant cpan, ou en éxécutant le fichier ./config/dependencies.sh.
+    <h3>Construction de la base de données.</h3>
+    Ayant MySQL Server installé, vous pouvez construire la base de données en exécutant data/history.sql (la base de donnée telle qu'elle a été construite au fil du projet). L'avantage de l'importation de la dernière version est que vous gagnerez quelque temps d'indexation de la donnée du CDC & de l'Union Européenne.
+    <h3>Fichier de Configuration.</h3>
+    Ayant construit la base de donnée depuis le fichier d'historique ou ayant importé la copie d'icelle, vous devez configurer le fichier config/openvaet.conf (ouvrez le simplement dans un éditeur de texte ou votre IDE).
+    <div class="text_separator"></div>
+    <ul>
+        <li>Remplacez l'entrée "secrets" par une chaine aléatoire de 40 caractères.</li>
+        <li>Remplacez "databaseHost", "databaseUser", "databasePort", "databasePassword" par ceux que vous avez configurer en installant MySQL Server (Souvenez-vous que votre encryption de mot de passe doit être en mode Legacy pour que Perl puisse se connecter).</li>
+        <li>Sauvegardez vos changements et fermez le fichier.</li>
+    </ul>
+    <h3>Revoir le code.</h3>
+    Tous les scripts utilisés par le projet sont des scripts Perl (non compilés, ce qui signifie que vous pouvez librement revoir le code exécuté).
+    <div class="text_separator"></div>
+    Malgré nos meilleurs efforts pour fournir un code clair, lisible & libres de bugs (et comme considération générale pour votre sécurité), nous vous encourageons fortement à revoir le code.
+    <h3>Indexer ou mettre à jour la donnée CDC.</h3>
+    Téléchargez les données à jour du VAERS ("All Years Data*") (<a href="https://vaers.hhs.gov/data/datasets.html" target="_blank">disponibles à cette addresse</a>).
+    <div class="text_separator"></div>
+    Ouvrez un terminal dans le répertoire du projet & exécutez simplement "perl tasks/cdc/parse_cdc_archive.pl" (sans les guillemets).
+    <div class="text_separator"></div>
+    Le script va lire & indexer dans la base de données les données du VAERS, pour permettre un post traitement plus optimisé.
+    <h3>Indexer ou mettre à jour la donnée ECDC.</h3>
+    Exécutez un terminal dans le répertoire du projet & éxécutez simplement "perl tasks/ecdc/get_eu_database.pl" (sans guillemets).
+    <div class="text_separator"></div>
+    La plateforme de l'ECDC est exceptionnellement lente, instable, et crash très régulièrement.
+    <div class="text_separator"></div>
+    Bien que nous ayons fait de notre mieux pour rendre le scrapper le plus résilients possible (2000 lignes de plus que le CDC pour faire la même chose ...), il crash toujours (ne serait-ce que parce que l'ECDC déclenche fréquemment des alertes navigateurs bloquant la navigation ; ou simplement passe hors ligne pour plusieurs heures).
+    <div class="text_separator"></div>
+    <b>Par conséquent, l'update de la donnée ECDC doit être, dans l'immédiat, monitorée. Si la mise à jour échoue, fermez simplement la session Chrome liée et relancez le script.</b>
+    <div class="text_separator"></div>
+    Vous devrez exécuter le scrapper une première fois pour indexer toutes les substances, et déterminer lesquelles vous souhaitez mettre à jour via la <span class="url-link" onclick="openLocation('/data/ecdc/substances');return;">page dédiée</span>.
+    <div class="text_separator"></div>
+    Ensuite, activez les substances que vous désirez indexer (nous avons à l'origine indexé toutes les substances, mais la plateforme de l'ECDC est simplement trop instable pour soutenir une mise à jour quotidienne de toutes les substances à ce stade).
+    <h3>Unifier la donnée.</h3>
+    Ouvrez un terminal dans le répertoire du projet & exécutez simplement "perl tasks/generate_stats.pl" (sans les guillemets). Ce script generera les fichiers JSON "end-user" utilisés par l'interface depuis les données de l'ECDC & du CDC.
+    % } else {
+
+    % }
+</div>

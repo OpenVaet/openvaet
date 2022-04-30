@@ -1,0 +1,88 @@
+{
+    "ageGroup" : {
+        "1" : "0-1 Month",
+        "2" : "2 Months - 2 Years",
+        "3" : "3-11 Years",
+        "4" : "12-17 Years",
+        "5" : "18-64 Years",
+        "6" : "65-85 Years",
+        "7" : "More than 85 Years",
+        "8" : "Not Specified"
+    },
+    "cdcSex" : {
+        "1" : "Female",
+        "2" : "Male",
+        "3" : "Unknown"
+    },
+    "cdcVaccineAdministrator" : {
+        "1" : "Military",
+        "2" : "Other",
+        "3" : "Private",
+        "4" : "Public",
+        "5" : "Unknown",
+        "6" : "Pharmacy",
+        "7" : "Work",
+        "8" : "School",
+        "9" : "Senior Living"
+    },
+    "cdcSeriousness" : {
+        "1" : "Yes",
+        "2" : "No",
+        "3" : "Unknown"
+    },
+    "ecdcAgeGroup" : {
+        "1" : "0-1 Month",
+        "2" : "2 Months - 2 Years",
+        "3" : "3-11 Years",
+        "4" : "12-17 Years",
+        "5" : "18-64 Years",
+        "6" : "65-85 Years",
+        "7" : "More than 85 Years",
+        "8" : "Not Specified"
+    },
+    "ecdcGeographicalOrigin" : {
+        "1" : "European Economic Area",
+        "2" : "Non European Economic Area",
+        "3" : "Not Specified"
+    },
+    "ecdcReporterType" : {
+        "1" : "Healthcare Professional",
+        "2" : "Non Healthcare Professional",
+        "3" : "Not Specified"
+    },
+    "ecdcReportType" : {
+        "1" : "Spontaneous"
+    },
+    "ecdcSeriousness" : {
+        "1" : "Serious",
+        "2" : "Non-Serious",
+        "3" : "Not Available"
+    },
+    "formReporterType" : {
+        "1" : "Healthcare Professional",
+        "2" : "Non Healthcare Professional",
+        "3" : "Not Specified"
+    },
+    "formSenderType" : {
+        "1" : "Pharmaceutical Company",
+        "2" : "Regulatory authority",
+        "3" : "Distributor, Study Sponsor, or Contract Research Organization",
+        "4" : "Not available",
+        "5" : "Healthcare Professional",
+        "6" : "Patient / Consumer"
+    },
+    "formSeriousness" : {
+        "1" : "Serious",
+        "2" : "Non-Serious",
+        "3" : "Not Available"
+    },
+    "reporterType" : {
+        "1" : "Healthcare Professional",
+        "2" : "Non Healthcare Professional"
+    },
+    "sex" : {
+        "1" : "Female",
+        "2" : "Male",
+        "3" : "Unknown"
+    }
+}
