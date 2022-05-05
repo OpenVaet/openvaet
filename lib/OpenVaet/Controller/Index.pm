@@ -508,10 +508,10 @@ sub events_details {
     my $toEntry      = $pageNumber * 50;
     my $fromEntry    = $toEntry - 49;
     my @reports      = ();
-    # say "folder : [stats/*/$substanceCategory/$fetchedStat.json]";
-    for my $yearFile (glob "stats/*/$substanceCategory/$fetchedStat.json") {
+    # say "folder : [stats/*/*/$substanceCategory/$fetchedStat.json]";
+    for my $yearFile (glob "stats/*/*/$substanceCategory/$fetchedStat.json") {
         # say "yearFile : $yearFile";
-        my ($yearName) = $yearFile =~ /stats\/(.*)\/$substanceCategory\/$fetchedStat\.json/;
+        my ($yearName) = $yearFile =~ /stats\/(.*)\/.*\/$substanceCategory\/$fetchedStat\.json/;
         if ($fromYear ne 'na') {
             next if $fromYear > $yearName;
         }

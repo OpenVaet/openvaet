@@ -107,7 +107,7 @@ sub parse_day {
 		    if ($patientDied == 1) {
 		        unless (exists $eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory}) {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
-		    		push @{$deaths{$yearName}->{$substanceCategory}}, \%$reportData;
+		    		push @{$deaths{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
 		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
 		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
@@ -116,7 +116,7 @@ sub parse_day {
 			} elsif ($seriousnessName eq 'Serious') {
 		        unless (exists $eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory}) {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
-	    			push @{$serious{$yearName}->{$substanceCategory}}, \%$reportData;
+	    			push @{$serious{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
 		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
 		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
@@ -127,7 +127,7 @@ sub parse_day {
 		        # die;
 		        unless (exists $eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory}) {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
-	    			push @{$nonSerious{$yearName}->{$substanceCategory}}, \%$reportData;
+	    			push @{$nonSerious{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
 		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
 		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
@@ -157,40 +157,46 @@ sub print_reports {
 	my $statsFolder = 'stats';
 	make_path($statsFolder) unless (-d $statsFolder);
 	for my $year (sort{$a <=> $b} keys %deaths) {
-		for my $substanceCategory (sort keys %{$deaths{$year}}) {
-			my @obj = \@{$deaths{$year}->{$substanceCategory}};
-			# p@obj;
-			make_path("$statsFolder/$year/$substanceCategory") unless (-d "$statsFolder/$year/$substanceCategory");
-			open my $outDeaths, '>:utf8', "$statsFolder/$year/$substanceCategory/deaths.json";
-			my $deaths = encode_json\@obj;
-			say $outDeaths $deaths;
-			close $outDeaths;
+		for my $intDate (sort{$a <=> $b} keys %{$deaths{$year}}) {
+			for my $substanceCategory (sort keys %{$deaths{$year}->{$intDate}}) {
+				my @obj = \@{$deaths{$year}->{$intDate}->{$substanceCategory}};
+				# p@obj;
+				make_path("$statsFolder/$year/$intDate/$substanceCategory") unless (-d "$statsFolder/$year/$intDate/$substanceCategory");
+				open my $outDeaths, '>:utf8', "$statsFolder/$year/$intDate/$substanceCategory/deaths.json";
+				my $deaths = encode_json\@obj;
+				say $outDeaths $deaths;
+				close $outDeaths;
+			}
 		}
 	}
 
 	say "printing serious abstract ...";
 	for my $year (sort{$a <=> $b} keys %serious) {
-		for my $substanceCategory (sort keys %{$serious{$year}}) {
-			my @obj = \@{$serious{$year}->{$substanceCategory}};
-			# p@obj;
-			make_path("$statsFolder/$year/$substanceCategory") unless (-d "$statsFolder/$year/$substanceCategory");
-			open my $outSerious, '>:utf8', "$statsFolder/$year/$substanceCategory/serious.json";
-			my $serious = encode_json\@obj;
-			say $outSerious $serious;
-			close $outSerious;
+		for my $intDate (sort{$a <=> $b} keys %{$serious{$year}}) {
+			for my $substanceCategory (sort keys %{$serious{$year}->{$intDate}}) {
+				my @obj = \@{$serious{$year}->{$intDate}->{$substanceCategory}};
+				# p@obj;
+				make_path("$statsFolder/$year/$intDate/$substanceCategory") unless (-d "$statsFolder/$year/$intDate/$substanceCategory");
+				open my $outSerious, '>:utf8', "$statsFolder/$year/$intDate/$substanceCategory/serious.json";
+				my $serious = encode_json\@obj;
+				say $outSerious $serious;
+				close $outSerious;
+			}
 		}
 	}
 
 	say "printing non-serious abstract ...";
 	for my $year (sort{$a <=> $b} keys %nonSerious) {
-		for my $substanceCategory (sort keys %{$nonSerious{$year}}) {
-			my @obj = \@{$nonSerious{$year}->{$substanceCategory}};
-			# p@obj;
-			make_path("$statsFolder/$year/$substanceCategory") unless (-d "$statsFolder/$year/$substanceCategory");
-			open my $outNonSerious, '>:utf8', "$statsFolder/$year/$substanceCategory/nonSerious.json";
-			my $nonSerious = encode_json\@obj;
-			say $outNonSerious $nonSerious;
-			close $outNonSerious;
+		for my $intDate (sort{$a <=> $b} keys %{$nonSerious{$year}}) {
+			for my $substanceCategory (sort keys %{$nonSerious{$year}->{$intDate}}) {
+				my @obj = \@{$nonSerious{$year}->{$intDate}->{$substanceCategory}};
+				# p@obj;
+				make_path("$statsFolder/$year/$intDate/$substanceCategory") unless (-d "$statsFolder/$year/$intDate/$substanceCategory");
+				open my $outNonSerious, '>:utf8', "$statsFolder/$year/$intDate/$substanceCategory/nonSerious.json";
+				my $nonSerious = encode_json\@obj;
+				say $outNonSerious $nonSerious;
+				close $outNonSerious;
+			}
 		}
 	}
 

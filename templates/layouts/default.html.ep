@@ -184,8 +184,8 @@
             position: absolute;
             margin-left: calc(50% - 40px);
             margin-top: calc(40vh - 40px);
-            width: 80px;
-            height: 80px;
+            width: auto;
+            height: auto;
         }
         .main-loader div {
             transform-origin: 40px 40px;
@@ -297,7 +297,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.2&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.4&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

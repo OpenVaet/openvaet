@@ -10,6 +10,34 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.4</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Improved yearly events split to a daily events split to minimize RAM consummed.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Division des évènements d'annuel à journalier pour minimiser la RAM consommée.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.3</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Deleted a few console logs, fixed a loader issue on index.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Retrait de quelques logs console, correction d'un bug d'icone de chargement sur l'accueil.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.2</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

@@ -178,6 +178,15 @@
 		background: #91a7c9;
 		font-size: 13px;
 	}
+
+	.main-loader-container {
+		width: auto;
+		display: none;
+    z-index: 199;
+    position: relative;
+    margin-left: calc(50% - 40px);
+    margin-top: calc(40vh - 40px);
+	}
 </style>
 % my %fetchedStats = %$fetchedStats;
 % my %fromAges     = %$fromAges;
@@ -191,7 +200,18 @@
   <!-- The Full Screen Modal -->
   <div id="fullScreenModal" class="full-screen-modal">
       <!-- Center-screen loader -->
-  	  <div class="main-loader" id="modalLoader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	  	<div id="modalLoader" class="main-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	  	<b>Fetching reports corresponding to your query ; this may take a few minutes ...</b></div>
 
     <!-- Full Screen Modal content -->
     <div class="full-screen-modal-content">
