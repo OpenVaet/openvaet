@@ -24,6 +24,7 @@ sub startup {
     # load and configure CORS
     $self->plugin('SecureCORS');
     $self->plugin('SecureCORS', { max_age => undef });
+    $self->plugin('RemoteAddr');
 
     # set app-wide CORS defaults
     $self->hook(
@@ -34,6 +35,20 @@ sub startup {
             $c->res->headers->access_control_allow_origin('*');
             my $forwardBase = $c->req->headers->header('X-Forwarded-Base');
             $c->req->url->base(Mojo::URL->new($forwardBase)) if $forwardBase;
+        }
+    );
+    $self->hook(
+        after_dispatch => sub { 
+            my $c        = shift;
+            my $referrer = $c->req->headers->referrer || '';
+            my $method   = $c->req->method || '';
+            if ($method eq 'OPTIONS') {
+                $c->res->headers->header('Access-Control-Allow-Origin' => '*'); 
+                $c->res->headers->access_control_allow_origin('*');
+                $c->res->headers->header('Access-Control-Allow-Methods' => 'GET, POST, OPTIONS');
+                $c->res->headers->header('Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+                $c->respond_to(any => { data => '', status => 200 });
+            }
         }
     );
 
@@ -64,6 +79,8 @@ sub startup {
 	# Unprotected routes
 	$r->get('/')->to('index#index');
 	$r->post('/contact_email')->to('index#contact_email');
+	$r->post('/index/events_by_substances')->to('index#events_by_substances');
+	$r->post('/index/events_details')->to('index#events_details');
 	$r->get('/disclaimer')->to('disclaimer#disclaimer');
 	$r->get('/contact_us')->to('contact_us#contact_us');
 	$r->post('/contact_us/send_contact_us')->to('contact_us#send_contact_us');
@@ -84,6 +101,7 @@ sub startup {
 	$r->post('/data/ecdc/load_notices_filters')->to('ecdc#load_notices_filters');
 	$r->get('/data/data_gouv_fr')->to('data_gouv_fr#data_gouv_fr');
 	$r->get('/data/oms')->to('oms#oms');
+	$r->get('/changelog')->to('changelog#changelog');
 }
 
 sub connect_dbi

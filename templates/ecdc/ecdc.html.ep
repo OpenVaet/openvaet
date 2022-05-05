@@ -177,7 +177,7 @@
     Des exports .CSV sont générés en utilisant le lien en bas de page, téléchargés, et intégrés dans la base de données.
     <div class="text_separator"></div>
     % if ($environment eq 'local') {
-    Il en résulte <a href="/data/ecdc/notices"><%=$totalReports%>rapports, qui peuvent être parcourus via cette page</a>.
+    Il en résulte <a href="/data/ecdc/notices"><%=$totalReports%> rapports, qui peuvent être parcourus via cette page</a>.
     % } else {
     Il en résulte <%=$totalReports%> rapports, qui peuvent être parcourus si vous exécutez le projet locallement comme illustré sur l'image ci-dessous.
     % }

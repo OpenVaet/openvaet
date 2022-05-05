@@ -11,15 +11,6 @@
 
     % }
     % if ($currentLanguage eq 'en') {
-    <h2>Downloading the data.</h2>
-    You can download the data synthetized to generate the statistics related to deaths on the index <a href="/json/deaths.zip" target="_blank">by clicking this link</a> (<b>JSON compressed as .zip - 5 Mo</b>).
-    % } elsif ($currentLanguage eq 'fr') {
-    <h2>Téléchargement de la donnée.</h2>
-    Vous pouvez télécharger la donnée synthétisée utilisée pour générer les statistiques de décès affichées en index <a href="/json/deaths.zip" target="_blank">via ce lien</a> (<b>JSON compressé en .zip - 5 Mo</b>).
-    % } else {
-
-    % }
-    % if ($currentLanguage eq 'en') {
     <h2>Exploring the data.</h2>
     % } elsif ($currentLanguage eq 'fr') {
     <h2>Exploration de la donnée.</h2>

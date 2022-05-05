@@ -121,7 +121,7 @@
             font-size: 14px;
             font-weight: bold;
             top: 15px;
-            z-index: 1;
+            z-index: 2;
         }
 
         /* Layout language menu */
@@ -178,7 +178,7 @@
 
         /* Main Loader */
         .main-loader {
-            z-index: 99;
+            z-index: 199;
             display: none;
             color: official;
             position: absolute;
@@ -297,7 +297,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                v 1.0&nbsp;
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.2&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

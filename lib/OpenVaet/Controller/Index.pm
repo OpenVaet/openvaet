@@ -16,7 +16,7 @@ sub index {
     my $fromYear        = $self->param('fromYear')        // '2020';
     my $toYear          = $self->param('toYear')          // '2022';
     my $fromAge         = $self->param('fromAge')         // '0m';
-    my $toAge           = $self->param('toAge')           // '17y';
+    my $toAge           = $self->param('toAge')           // '64y';
     my $reporter        = $self->param('reporter')        // 'na';
     my $sexGroup        = $self->param('sexGroup')        // 'na';
     # say "currentLanguage : [$currentLanguage]";
@@ -148,24 +148,23 @@ sub index {
     my $allOthersTotalCases       = 0;
     my $covidTotalDrugs           = 0;
     my $allOthersTotalDrugs       = 0;
-    my $statsFile                 = "stats.json";
-    my %substancesFetched         = ();
-    if (-f $statsFile) {
+    my $eventStats                = "stats/events_stats.json";
+    if (-f $eventStats) {
         my $json;
-        open my $in, '<:utf8', $statsFile;
+        open my $in, '<:utf8', $eventStats;
         while (<$in>) {
             $json .= $_;
         }
         close $in;
-        my $stats = decode_json($json);
-        my %stats = %$stats;
-        if (exists $stats{'eventsCategorized'}->{$fetchedStat}) {
-            for my $yearName (sort{$a <=> $b} keys %{$stats{'eventsCategorized'}->{$fetchedStat}}) {
-                if ($fromYear ne 'NA') {
+        my $eventStats = decode_json($json);
+        my %eventStats = %$eventStats;
+        if (exists $eventStats{$fetchedStat}) {
+            for my $yearName (sort{$a <=> $b} keys %{$eventStats{$fetchedStat}}) {
+                if ($fromYear ne 'na') {
                     next if $fromYear > $yearName;
                 }
                 next if $toYear  < $yearName;
-                for my $reporterTypeName (sort keys %{$stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}}) {
+                for my $reporterTypeName (sort keys %{$eventStats{$fetchedStat}->{$yearName}}) {
                     if ($reporter ne 'na') {
                         if ($reporter eq 'md') {
                             next if $reporterTypeName ne 'Healthcare Professional';
@@ -175,7 +174,10 @@ sub index {
                             die "reporter : $reporter";
                         }
                     }
-                    for my $ageGroupName (sort keys %{$stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}}) {
+                    for my $ageGroupName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}}) {
+                        if ($fromAge ne '0m' || $toAge ne '86y') {
+                            next if $ageGroupName eq 'Not Specified';
+                        }
                         if ($fromAge ne '0m') {
                             if ($fromAge eq '2m') {
                                 next if $ageGroupName eq '0-1 Month';
@@ -210,55 +212,30 @@ sub index {
                                 die "toAge : $toAge";
                             }
                         }
-                        for my $sexName (sort keys %{$stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}}) {
-                            my $covidAfterEffects = $stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19'} // 0;
-                            my $otherVaccinesAfterEffects = $stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'OTHER'} // 0;
-                            my $covidPlusOtherVaccinesAfterEffects = $stats{'eventsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19+OTHER'} // 0;
-                            $covidTotalCases+= $covidAfterEffects;
-                            $allOthersTotalCases+= $otherVaccinesAfterEffects;
-                            $covidPlusOthersTotalCases+= $covidPlusOtherVaccinesAfterEffects;
-                            for my $substanceName (sort keys %{$stats{'drugsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
-                                my $eventsReported = $stats{'drugsCategorized'}->{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceName} // die;
-                                $substancesFetched{$substanceName} += $eventsReported;
+                        for my $sexName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}}) {
+                            if ($sexGroup ne 'na') {
+                                if ($sexGroup eq 'm') {
+                                    next if $sexName ne 'Male';
+                                } elsif ($sexGroup eq 'f') {
+                                    next if $sexName ne 'Female';
+                                } else {
+                                    die "sexGroup : $sexGroup";
+                                }
                             }
+                            my $covidAfterEffects                  = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19'}       // 0;
+                            my $otherVaccinesAfterEffects          = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'OTHER'}         // 0;
+                            my $covidPlusOtherVaccinesAfterEffects = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19+OTHER'} // 0;
+                            $covidTotalCases           += $covidAfterEffects;
+                            $allOthersTotalCases       += $otherVaccinesAfterEffects;
+                            $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
+                            say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
+                            say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
                         }
                     }
                 }
             }
         }
     }
-    # p%substancesFetched;
-
-    # Preparing substancesFetched for front rendering.
-    my %substancesByNames = ();
-    for my $substanceName (sort keys %substancesFetched) {
-        my $eventsReported = $substancesFetched{$substanceName} // die;
-        my ($substanceCategory, $substanceShortenedName) = substance_synthesis($substanceName, $eventsReported);
-        next unless $substanceCategory;
-        $substancesByNames{$substanceShortenedName}->{'substanceCategory'} = $substanceCategory;
-        $substancesByNames{$substanceShortenedName}->{'eventsReported'} += $eventsReported;
-    }
-    my %substances = ();
-    for my $substanceName (sort keys %substancesByNames) {
-        if ($substanceName =~ /COVID-19/) {
-            $covidTotalDrugs++;
-        } else {
-            $allOthersTotalDrugs++;
-        }
-        my $substanceCategory = $substancesByNames{$substanceName}->{'substanceCategory'} // die;
-        my $reference;
-        if ($substanceCategory eq 'COVID-19') {
-            $reference = $covidTotalCases;
-        } else {
-            $reference = $allOthersTotalCases;
-        }
-        my $eventsReported    = $substancesByNames{$substanceName}->{'eventsReported'}    // die;
-        my $percentOfTotal = nearest(1, $eventsReported * 100 / $reference);
-        $percentOfTotal = 1 if $percentOfTotal < 1;
-        $substances{$substanceCategory}->{$eventsReported}->{'percentOfTotal'} = $percentOfTotal;
-        $substances{$substanceCategory}->{$eventsReported}->{'substances'}->{$substanceName} = 1;
-    }
-    # p%substances;
 
     $self->render(
         covidTotalCases           => $covidTotalCases,
@@ -281,230 +258,8 @@ sub index {
         sexGroups                 => \%sexGroups,
         reporters                 => \%reporters,
         fetchedStats              => \%fetchedStats,
-        languages                 => \%languages,
-        substances                => \%substances
+        languages                 => \%languages
     );
-}
-# Diphtérie, Tétanos, Hépatithe B, Polyomélite
-
-sub substance_synthesis {
-    my ($substanceName, $eventsReported) = @_;
-    return 0 if
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLULAVAL QUADRIVALENT)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - RV1 - ROTAVIRUS (ROTARIX)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - UNK - VACCINE NOT SPECIFIED (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - NOVARTIS VACCINES AND DIAGNOSTICS - MENB - MENINGOCOCCAL B (BEXSERO)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - HIBV - HIB (PEDVAXHIB)' ||
-        $substanceName eq 'CDC - NOVARTIS VACCINES AND DIAGNOSTICS - MNQ - MENINGOCOCCAL CONJUGATE (MENVEO)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - HIBV - HIB (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTOX - DIPHTHERIA TOXOIDS (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - NOVARTIS VACCINES AND DIAGNOSTICS - FLUA3 - INFLUENZA (SEASONAL) (FLUAD)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - RVX - ROTAVIRUS (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - RV5 - ROTAVIRUS (ROTATEQ)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - VARCEL - VARICELLA (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - FLU4 - INFLUENZA (SEASONAL) (FLUZONE HIGH-DOSE QUADRIVALENT)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - PPV - PNEUMO (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - VARCEL - VARICELLA (VARIVAX)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - HEPA - HEP A (VAQTA)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - FLU3 - INFLUENZA (SEASONAL) (FLUZONE HIGH-DOSE)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - PPV - PNEUMO (PNEUMOVAX)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - BCG - BCG (MYCOBAX)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU3 - INFLUENZA (SEASONAL) (FLULAVAL)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (QIV DRESDEN)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU3 - INFLUENZA (SEASONAL) (FLUARIX)' ||
-        $substanceName eq 'CDC - PROTEIN SCIENCES CORPORATION - FLUR4 - INFLUENZA (SEASONAL) (FLUBLOK QUADRIVALENT)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - UNK - VACCINE NOT SPECIFIED (OTHER)' ||
-        $substanceName eq 'CDC - PFIZER\WYETH - MENB - MENINGOCOCCAL B (TRUMENBA)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - MMRV - MEASLES + MUMPS + RUBELLA + VARICELLA (PROQUAD)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - MMR - MEASLES + MUMPS + RUBELLA (MMR II)' ||
-        $substanceName eq 'CDC - SEQIRUS, INC. - FLUC4 - INFLUENZA (SEASONAL) (FLUCELVAX QUADRIVALENT)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - HPV9 - HPV (GARDASIL 9)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - VARZOS - ZOSTER (SHINGRIX)' ||
-        $substanceName eq 'CDC - PAXVAX - CHOL - CHOLERA (VAXCHORA)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - MU - MUMPS (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - VARZOS - ZOSTER (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - HIBV - HIB (ACTHIB)' ||
-        $substanceName eq 'CDC - PFIZER\WYETH - PNC - PNEUMO (PREVNAR)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - TYP - TYPHOID VI POLYSACCHARIDE (TYPHIM VI)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - VARZOS - ZOSTER LIVE (ZOSTAVAX)' ||
-        $substanceName eq 'CDC - PFIZER\WYETH - PNC13 - PNEUMO (PREVNAR13)' ||
-        $substanceName eq 'ECDC - DIPHTHERIA ANTITOXIN' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - FLU3 - INFLUENZA (SEASONAL) (FLUZONE)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - HPV4 - HPV (GARDASIL)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - RUB - RUBELLA (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - MEN - MENINGOCOCCAL (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SEQIRUS, INC. - FLUA4 - INFLUENZA (SEASONAL) (FLUAD QUADRIVALENT)' ||
-        $substanceName eq 'CDC - PFIZER\WYETH - PNC20 - PNEUMO (PREVNAR20)' ||
-        $substanceName eq 'CDC - SMITHKLINE BEECHAM - DTAP - DTAP (INFANRIX)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - SMALL - SMALLPOX (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - JEVX - JAPANESE ENCEPHALITIS (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - YF - YELLOW FEVER (YF-VAX)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - HPVX - HPV (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - TTOX - TETANUS TOXOID, ADSORBED (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - MEDIMMUNE VACCINES, INC. - FLUN4 - INFLUENZA (SEASONAL) (FLUMIST QUADRIVALENT)' ||
-        $substanceName eq 'CDC - NOVARTIS VACCINES AND DIAGNOSTICS - RAB - RABIES (RABAVERT)' ||
-        $substanceName eq 'CDC - NOVARTIS VACCINES AND DIAGNOSTICS - FLUC3 - INFLUENZA (SEASONAL) (FLUCELVAX)' ||
-        $substanceName eq 'CDC - BERNA BIOTECH, LTD. - TYP - TYPHOID LIVE ORAL TY21A (VIVOTIF)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - VARCEL - VARICELLA (VARILRIX)' ||
-        $substanceName eq 'CDC - INTERCELL AG - JEV1 - JAPANESE ENCEPHALITIS (IXIARO)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - FLUX(H1N1) - INFLUENZA (H1N1) (H1N1 (MONOVALENT) (UNKNOWN))' ||
-        $substanceName eq 'CDC - MEDIMMUNE VACCINES, INC. - FLUN3 - INFLUENZA (SEASONAL) (FLUMIST)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - FLUX - INFLUENZA (SEASONAL) (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - HEPA - HEP A (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - HEPA - HEP A (HAVRIX)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - MNQ - MENINGOCOCCAL CONJUGATE (MENACTRA)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - YF - YELLOW FEVER (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - MMR - MEASLES + MUMPS + RUBELLA (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - FLUX - INFLUENZA (SEASONAL) (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - MEN - MENINGOCOCCAL (MENOMUNE)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - MNQ - MENINGOCOCCAL CONJUGATE (MENQUADFI)' ||
-        $substanceName eq 'CDC - SEQIRUS, INC. - FLU4 - INFLUENZA (SEASONAL) (AFLURIA QUADRIVALENT)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - SMALL - SMALLPOX (ACAM2000)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - FLU4 - INFLUENZA (SEASONAL) (FLUZONE QUADRIVALENT)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLUARIX QUADRIVALENT)';
-    my $substanceShortenedName;
-    if (
-        $substanceName eq 'ECDC - HEPATITIS B VACCINE (RDNA)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - HIBV - HIB (HIBERIX)' ||
-        $substanceName eq 'ECDC - HAEMOPHILUS INFLUENZAE TYPE B (NEISSERIA MENINGITIDIS OUTER MEMBRANE PROTEIN COMPLEX CONJUGATE) AND HEPATITIS B (RECOMBI'
-    ) {
-        $substanceShortenedName = 'HEPATITE B VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - SANOFI PASTEUR - DT - DT ADSORBED (NO BRAND NAME)' ||
-        $substanceName eq 'ECDC - DIPHTHERIA VACCINE (ADSORBED)' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - POLIOMYELITIS VACCINE (INACTIVATED)' ||
-        $substanceName eq 'CDC - PASTEUR MERIEUX CONNAUGHT - IPV - POLIO VIRUS, INACT. (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - PFIZER\WYETH - IPV - POLIO VIRUS, INACT. (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - IPV - POLIO VIRUS, INACT. (IPOL)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - IPV - POLIO VIRUS, INACT. (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - IPV - POLIO VIRUS, INACT. (POLIOVAX)'
-    ) {
-        $substanceShortenedName = 'POLIOMYELITIS (IPV) VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - OPV - POLIO VIRUS, ORAL (NO BRAND NAME)' ||
-        $substanceName eq '' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'POLIOMYELITIS (OPV) VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - TETANUS VACCINES' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - TTOX - TETANUS TOXOID (NO BRAND NAME)' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'TETANUS VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - MERCK & CO. INC. - HBHEPB - HIB + HEP B (COMVAX)' ||
-        $substanceName eq '' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'HAEMOPHILIUS B & HEPATITE B VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - HEPAB - HEP A + HEP B (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - DYNAVAX TECHNOLOGIES CORPORATION - HEP - HEP B (HEPLISAV-B)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - HEP - HEP B (ENGERIX-B)' ||
-        $substanceName eq 'CDC - MERCK & CO. INC. - HEP - HEP B (RECOMBIVAX HB)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - HEP - HEP B (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - HEPAB - HEP A + HEP B (TWINRIX)' ||
-        $substanceName eq 'CDC - SMITHKLINE BEECHAM - HEP - HEP B (ENGERIX-B)' ||
-        $substanceName eq 'CDC - SMITHKLINE BEECHAM - HEPAB - HEP A + HEP B (TWINRIX)'
-    ) {
-        $substanceShortenedName = 'HEPATITE A & HEPATITE B VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS AND POLIOMYELITIS (INACTIVATED) VACCINE (ADSORBED, REDUCED ANTIGEN(S) CONTENT)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - DTAPIPV - DTAP + IPV (QUADRACEL)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTAPIPV - DTAP + IPV (UNKNOWN)'
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA, TETANUS & POLIOMYELITIS VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA AND TETANUS VACCINE (ADSORBED)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - TDAP - TDAP (BOOSTRIX)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - TDAP - TDAP (ADACEL)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - TDAP - TDAP (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - TD - TD ADSORBED (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - MASS. PUB HLTH BIOL LAB - TD - TD ADSORBED (TDVAX)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - TD - TD ADSORBED (TENIVAC)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - TD - TD ADSORBED (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - TD - TETANUS DIPHTHERIA (NO BRAND NAME)'
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA & TETANUS VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - SANOFI PASTEUR - DTAP - DTAP (DAPTACEL)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTAP - DTAP (NO BRAND NAME)' ||
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS AND PERTUSSIS (ACELLULAR, COMPONENT) VACCINE (ADSORBED)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - DTAP - DTAP (INFANRIX)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTP - DTP (NO BRAND NAME)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - DTAP - DTAP (TRIPEDIA)'
-    ) {
-        $substanceShortenedName = 'DIPHTERIA, TETANUS & PERTUSSIS VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - SANOFI PASTEUR - DTAPIPVHIB - DTAP + IPV + HIB (PENTACEL)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - DTAPHEPBIP - DTAP + HEPB + IPV (PEDIARIX)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - DTAPIPV - DTAP + IPV (KINRIX)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTAPIPVHIB - DTAP + IPV + HIB (UNKNOWN)' ||
-        $substanceName eq 'CDC - MSP VACCINE COMPANY - DTPPVHBHPB - DTAP+IPV+HIB+HEPB (VAXELIS)' ||
-        $substanceName eq 'CDC - SANOFI PASTEUR - DTAPIPVHIB - DTAP + IPV + HIB (NO BRAND NAME)'
-    ) {
-        $substanceShortenedName = 'DIPHTERIA, TETANUS, WHOOPING COUGH, POLIOMYELITIS & HAEMOPHILIUS INFLUENZA TYPE B VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT) AND POLIOMYELITIS (INACTIVATED) VACCINE (ADSORBED)' ||
-        $substanceName eq '' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA, TETANUS, PERTUSSIS & POLIOMYELITIS VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT), HEPATITIS B (RDNA), POLIOMYELITIS (INACT.) AND HAEMOPHILUS TYPE B' ||
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT), POLIOMYELITIS (INACTIVATED) AND HAEMOPHILUS TYPE B CONJUGATE VACC' ||
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS, HEPATITIS B (RDNA) AND HAEMOPHILUS INFLUENZAE TYPE B CONJUGATE VACCINE (ADSORBED)' ||
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT) AND HAEMOPHILUS TYPE B CONJUGATE VACCINE (ADSORBED)' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA, TETANUS, PERTUSSIS, HEPATITIS B (RDNA), POLIOMYELITIS & HAEMOPHILUS TYPE B VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT), HEPATITIS B (RDNA), POLIOMYELITIS (INACTIVATED) VACCINE (ADSORBED' ||
-        $substanceName eq ''
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA, TETANUS, PERTUSSIS, HEPATITIS B (RDNA) & POLIOMYELITIS VACCINE';
-    } elsif (
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS (ACELLULAR, COMPONENT) AND HEPATITIS B (RDNA) VACCINE (ADSORBED)' ||
-        $substanceName eq 'ECDC - DIPHTHERIA, TETANUS, PERTUSSIS AND HEPATITIS B (RDNA) VACCINE (ADSORBED)' ||
-        $substanceName eq 'CDC - UNKNOWN MANUFACTURER - DTPHEP - DTP + HEP B (NO BRAND NAME)'
-    ) {
-        $substanceShortenedName = 'DIPHTHERIA, TETANUS, PERTUSSIS & HEPATITIS B (RDNA) VACCINE';
-    } elsif (
-        $substanceName eq 'CDC - JANSSEN - COVID19 - COVID19 (COVID19 (JANSSEN))' ||
-        $substanceName eq 'ECDC - COVID-19 VACCINE JANSSEN (AD26.COV2.S)'
-    ) {
-        $substanceShortenedName = 'COVID-19 VACCINE JANSSEN';
-    } elsif (
-        $substanceName eq 'CDC - MODERNA - COVID19 - COVID19 (COVID19 (MODERNA))' ||
-        $substanceName eq 'ECDC - COVID-19 MRNA VACCINE MODERNA (CX-024414)'
-    ) {
-        $substanceShortenedName = 'COVID-19 VACCINE MODERNA';
-    } elsif (
-        $substanceName eq 'CDC - PFIZER\BIONTECH - COVID19 - COVID19 (COVID19 (PFIZER-BIONTECH))' ||
-        $substanceName eq 'ECDC - COVID-19 MRNA VACCINE PFIZER-BIONTECH (TOZINAMERAN)'
-    ) {
-        $substanceShortenedName = 'COVID-19 VACCINE PFIZER-BIONTECH';
-    } elsif ($substanceName eq 'CDC - UNKNOWN MANUFACTURER - COVID19 - COVID19 (COVID19 (UNKNOWN))') {
-        $substanceShortenedName = 'COVID-19 VACCINE UNKNOWN MANUFACTURER';
-    } elsif ($substanceName eq 'ECDC - COVID-19 VACCINE ASTRAZENECA (CHADOX1 NCOV-19)') {
-        $substanceShortenedName = 'COVID-19 VACCINE ASTRAZENECA';
-    } elsif ($substanceName eq 'ECDC - COVID-19 VACCINE NOVAVAX (NVX-COV2373)') {
-        $substanceShortenedName = 'COVID-19 VACCINE NOVAVAX';
-    } else {
-        die "substanceName : $substanceName, eventsReported : $eventsReported";
-    }
-    my $substanceCategory;
-    if ($substanceShortenedName =~ /COVID-19/) {
-        $substanceCategory = 'COVID-19';
-    } else {
-        $substanceCategory = 'Other Substances'
-    }
-    return ($substanceCategory, $substanceShortenedName);
 }
 
 sub contact_email {
@@ -566,6 +321,343 @@ sub contact_email {
 
     $self->render(
         json => \%response
+    );
+}
+
+sub events_by_substances {
+    my $self = shift;
+    my $currentLanguage     = $self->param('currentLanguage')     // 'fr';
+    my $fetchedStat         = $self->param('fetchedStat')         // 'deaths';
+    my $fromYear            = $self->param('fromYear')            // '2020';
+    my $toYear              = $self->param('toYear')              // '2022';
+    my $fromAge             = $self->param('fromAge')             // '0m';
+    my $toAge               = $self->param('toAge')               // '64y';
+    my $reporter            = $self->param('reporter')            // 'na';
+    my $sexGroup            = $self->param('sexGroup')            // 'na';
+    my $covidTotalDrugs     = $self->param('covidTotalDrugs')     // 1;
+    my $allOthersTotalDrugs = $self->param('allOthersTotalDrugs') // 1;
+    my $covidTotalCases     = $self->param('covidTotalCases')     // 1;
+    my $allOthersTotalCases = $self->param('allOthersTotalCases') // 1;
+    say "currentLanguage : [$currentLanguage]";
+    say "fetchedStat     : [$fetchedStat]";
+    say "fromAge         : [$fromAge]";
+    say "toAge           : [$toAge]";
+    say "reporter        : [$reporter]";
+    say "sexGroup        : [$sexGroup]";
+    my $substancesStatsFile       = "stats/substance_stats.json";
+    my %substancesFetched         = ();
+    if (-f $substancesStatsFile) {
+        my $json;
+        open my $in, '<:utf8', $substancesStatsFile;
+        while (<$in>) {
+            $json .= $_;
+        }
+        close $in;
+        my $stats = decode_json($json);
+        my %stats = %$stats;
+        if (exists $stats{$fetchedStat}) {
+            for my $yearName (sort{$a <=> $b} keys %{$stats{$fetchedStat}}) {
+                if ($fromYear ne 'na') {
+                    next if $fromYear > $yearName;
+                }
+                next if $toYear  < $yearName;
+                for my $reporterTypeName (sort keys %{$stats{$fetchedStat}->{$yearName}}) {
+                    if ($reporter ne 'na') {
+                        if ($reporter eq 'md') {
+                            next if $reporterTypeName ne 'Healthcare Professional';
+                        } elsif ($reporter eq 'nmd') {
+                            next if $reporterTypeName eq 'Healthcare Professional';
+                        } else {
+                            die "reporter : $reporter";
+                        }
+                    }
+                    for my $ageGroupName (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}}) {
+                        if ($fromAge ne '0m' || $toAge ne '86y') {
+                            next if $ageGroupName eq 'Not Specified';
+                        }
+                        if ($fromAge ne '0m') {
+                            if ($fromAge eq '2m') {
+                                next if $ageGroupName eq '0-1 Month';
+                            } elsif ($fromAge eq '3y') {
+                                next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years';
+                            } elsif ($fromAge eq '12y') {
+                                next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years' || $ageGroupName eq '3 Years - 11 Years';
+                            } elsif ($fromAge eq '18y') {
+                                next if $ageGroupName ne '18-64 Years' && $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                            } elsif ($fromAge eq '65y') {
+                                next if $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                            } elsif ($fromAge eq '85y') {
+                                next if $ageGroupName ne 'More than 85 Years';
+                            } else {
+                                die "fromAge : $fromAge";
+                            }
+                        }
+                        if ($toAge ne '86y') {
+                            if ($toAge eq '1m') {
+                                next if $ageGroupName ne '0-1 Month';
+                            } elsif ($toAge eq '2y') {
+                                next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years';
+                            } elsif ($toAge eq '11y') {
+                                next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years' && $ageGroupName ne '3 Years - 11 Years';
+                            } elsif ($toAge eq '17y') {
+                                next if $ageGroupName eq '18-64 Years' || $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                            } elsif ($toAge eq '64y') {
+                                next if $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                            } elsif ($toAge eq '85y') {
+                                next if $ageGroupName eq 'More than 85 Years';
+                            } else {
+                                die "toAge : $toAge";
+                            }
+                        }
+                        for my $sexName (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}}) {
+                            if ($sexGroup ne 'na') {
+                                if ($sexGroup eq 'm') {
+                                    next if $sexName ne 'Male';
+                                } elsif ($sexGroup eq 'f') {
+                                    next if $sexName ne 'Female';
+                                } else {
+                                    die "sexGroup : $sexGroup";
+                                }
+                            }
+                            for my $substanceCategory (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
+                                for my $substanceName (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}}) {
+                                    my $eventsReported = $stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceName} // die;
+                                    $substancesFetched{$substanceCategory}->{$substanceName} += $eventsReported;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    # p%substancesFetched;
+
+    # Preparing substancesFetched for front rendering.
+    my %substancesByNames = ();
+    for my $substanceCategory (sort keys %substancesFetched) {
+        for my $substanceName (sort keys %{$substancesFetched{$substanceCategory}}) {
+            my $eventsReported = $substancesFetched{$substanceCategory}->{$substanceName} // die;
+            $substancesByNames{$substanceName}->{'substanceCategory'} = $substanceCategory;
+            $substancesByNames{$substanceName}->{'eventsReported'} += $eventsReported;
+        }
+    }
+    my %substances = ();
+    for my $substanceName (sort keys %substancesByNames) {
+        if ($substanceName =~ /COVID-19/) {
+            $covidTotalDrugs++;
+        } else {
+            $allOthersTotalDrugs++;
+        }
+        my $substanceCategory = $substancesByNames{$substanceName}->{'substanceCategory'} // die;
+        my $reference;
+        if ($substanceCategory eq 'COVID-19') {
+            $reference = $covidTotalCases;
+        } else {
+            $reference = $allOthersTotalCases;
+        }
+        my $eventsReported    = $substancesByNames{$substanceName}->{'eventsReported'}    // die;
+        my $percentOfTotal = nearest(1, $eventsReported * 100 / $reference);
+        $percentOfTotal = 1 if $percentOfTotal < 1;
+        $substances{$substanceCategory}->{$eventsReported}->{'percentOfTotal'} = $percentOfTotal;
+        $substances{$substanceCategory}->{$eventsReported}->{'substances'}->{$substanceName} = 1;
+    }
+
+    $self->render(
+        currentLanguage => $currentLanguage,
+        fetchedStat => $fetchedStat,
+        fromYear => $fromYear,
+        toYear => $toYear,
+        fromAge => $fromAge,
+        toAge => $toAge,
+        reporter => $reporter,
+        sexGroup => $sexGroup,
+        substances => \%substances
+    );
+}
+
+sub events_details {
+    my $self = shift;
+    my $substanceShortName = $self->param('substanceShortName');
+    my $substanceCategory  = $self->param('substanceCategory');
+    my $currentLanguage    = $self->param('currentLanguage');
+    my $pageNumber         = $self->param('pageNumber');
+    my $fetchedStat        = $self->param('fetchedStat');
+    my $reporter           = $self->param('reporter');
+    my $sexGroup           = $self->param('sexGroup');
+    my $fromYear           = $self->param('fromYear');
+    my $toYear             = $self->param('toYear');
+    my $fromAge            = $self->param('fromAge');
+    my $toAge              = $self->param('toAge');
+    say "
+        substanceShortName  : $substanceShortName,
+        substanceCategory   : $substanceCategory,
+        currentLanguage     : $currentLanguage,
+        pageNumber          : $pageNumber,
+        fetchedStat         : $fetchedStat,
+        reporter            : $reporter,
+        sexGroup            : $sexGroup,
+        fromAge             : $fromAge,
+        toAge               : $toAge,
+        fromYear            : $fromYear,
+        toYear              : $toYear
+    ";
+
+    # Fetching corresponding events.
+    my $totalReports = 0;
+    my $toEntry      = $pageNumber * 50;
+    my $fromEntry    = $toEntry - 49;
+    my @reports      = ();
+    say "folder : [stats/*/$substanceCategory/$fetchedStat.json]";
+    for my $yearFile (glob "stats/*/$substanceCategory/$fetchedStat.json") {
+        say "yearFile : $yearFile";
+        my ($yearName) = $yearFile =~ /stats\/(.*)\/$substanceCategory\/$fetchedStat\.json/;
+        if ($fromYear ne 'na') {
+            next if $fromYear > $yearName;
+        }
+        next if $toYear  < $yearName;
+        say "yearName : $yearName";
+        open my $in, '<:utf8', $yearFile;
+        my $json;
+        while (<$in>) {
+            $json = $_;
+        }
+        close $in;
+        $json = decode_json($json);
+        my $stats = shift @$json;
+        my @stats = @$stats;
+        for my $reportData (@stats) {
+            # p$reportData;
+            my $ageGroupName     = %$reportData{'ageGroupName'}     // die;
+            my $reporterTypeName = %$reportData{'reporterTypeName'} // die;
+            my $patientAge       = %$reportData{'patientAge'};
+            my $description      = %$reportData{'description'};
+            my $sexName          = %$reportData{'sexName'}          // die;
+            # say "ageGroupName     : $ageGroupName";
+            # say "patientAge       : $patientAge";
+            # say "sexName          : $sexName";
+            # say "reporterTypeName : $reporterTypeName";
+            # die;
+            if ($fromAge ne '0m' || $toAge ne '86y') {
+                next if $ageGroupName eq 'Not Specified';
+            }
+            if ($fromAge ne '0m') {
+                if ($fromAge eq '2m') {
+                    next if $ageGroupName eq '0-1 Month';
+                } elsif ($fromAge eq '3y') {
+                    next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years';
+                } elsif ($fromAge eq '12y') {
+                    next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years' || $ageGroupName eq '3 Years - 11 Years';
+                } elsif ($fromAge eq '18y') {
+                    next if $ageGroupName ne '18-64 Years' && $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                } elsif ($fromAge eq '65y') {
+                    next if $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                } elsif ($fromAge eq '85y') {
+                    next if $ageGroupName ne 'More than 85 Years';
+                } else {
+                    die "fromAge : $fromAge";
+                }
+            }
+            if ($toAge ne '86y') {
+                if ($toAge eq '1m') {
+                    next if $ageGroupName ne '0-1 Month';
+                } elsif ($toAge eq '2y') {
+                    next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years';
+                } elsif ($toAge eq '11y') {
+                    next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years' && $ageGroupName ne '3 Years - 11 Years';
+                } elsif ($toAge eq '17y') {
+                    next if $ageGroupName eq '18-64 Years' || $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                } elsif ($toAge eq '64y') {
+                    next if $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                } elsif ($toAge eq '85y') {
+                    next if $ageGroupName eq 'More than 85 Years';
+                } else {
+                    die "toAge : $toAge";
+                }
+            }
+            if ($reporter ne 'na') {
+                if ($reporter eq 'md') {
+                    next if $reporterTypeName ne 'Healthcare Professional';
+                } elsif ($reporter eq 'nmd') {
+                    next if $reporterTypeName eq 'Healthcare Professional';
+                } else {
+                    die "reporter : $reporter";
+                }
+            }
+            if ($sexGroup ne 'na') {
+                if ($sexGroup eq 'm') {
+                    next if $sexName ne 'Male';
+                } elsif ($sexGroup eq 'f') {
+                    next if $sexName ne 'Female';
+                } else {
+                    die "sexGroup : $sexGroup";
+                }
+            }
+            # p$reportData;
+            # last;
+            my $hasSearch = 0;
+            for my $substanceData (@{%$reportData{'substances'}}) {
+                if ($substanceShortName) {
+                    next unless %$substanceData{'substanceShortName'};
+                    next unless %$substanceData{'substanceShortName'} eq $substanceShortName;
+                    $hasSearch = 1;
+                } else {
+                    die unless $substanceCategory;
+                    next unless %$substanceData{'substanceCategory'};
+                    next unless %$substanceData{'substanceCategory'} eq $substanceCategory;
+                    $hasSearch = 1;
+                    # say "substanceCategory  : $substanceCategory";
+                    # say "substanceShortName : $substanceShortName";
+                }
+            }
+            next unless $hasSearch == 1;
+            $totalReports++;
+            if ($totalReports >= $fromEntry && $totalReports <= $toEntry) {
+                my $source               = %$reportData{'source'}           // die;
+                my $reference            = %$reportData{'reference'}        // die;
+                my $receiptDate          = %$reportData{'receiptDate'}      // die;
+                my $url                  = %$reportData{'url'};
+                my %obj                  = ();
+                $obj{'url'}              = $url;
+                $obj{'source'}           = $source;
+                $obj{'description'}      = $description;
+                $obj{'reference'}        = $reference;
+                $obj{'receiptDate'}      = $receiptDate;
+                $obj{'ageGroupName'}     = $ageGroupName;
+                $obj{'reporterTypeName'} = $reporterTypeName;
+                $obj{'patientAge'}       = $patientAge;
+                $obj{'sexName'}          = $sexName;
+                for my $substanceData (@{%$reportData{'substances'}}) {
+                    push @{$obj{'substances'}}, \%$substanceData;
+                }
+                for my $substanceData (@{%$reportData{'reactions'}}) {
+                    push @{$obj{'reactions'}}, \%$substanceData;
+                }
+                p%obj;
+                push @reports, \%obj;
+            }
+        }
+    }
+    my ($maxPages, %pages) = data_formatting::paginate($pageNumber, $totalReports, 50);
+    # p%pages;
+
+    $self->render(
+        fetchedStat        => $fetchedStat,
+        substanceCategory  => $substanceCategory,
+        substanceShortName => $substanceShortName,
+        currentLanguage    => $currentLanguage,
+        fetchedStat        => $fetchedStat,
+        fromYear           => $fromYear,
+        toYear             => $toYear,
+        fromAge            => $fromAge,
+        toAge              => $toAge,
+        reporter           => $reporter,
+        sexGroup           => $sexGroup,
+        pageNumber         => $pageNumber,
+        maxPages           => $maxPages,
+        totalReports       => $totalReports,
+        pages              => \%pages,
+        reports            => \@reports
     );
 }
 

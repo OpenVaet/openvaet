@@ -1,0 +1,233 @@
+<style type="text/css">
+
+	div.table-container {
+		width: 97vw;
+		display: block;
+		max-width: 97vw;
+		font-size: 12px;
+		overflow-x: scroll;
+		overflow-y: none;
+	}
+	div.table-sub-container {
+		width: 2740px;
+		position: relative;
+	}
+	div.scrollable-table-header {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		display: block;
+	}
+	div.scrollable-table-container {
+		width: 100%;
+		display: block;
+		height:65vh;
+		min-height: 65vh;
+		max-height: 65vh;
+		overflow-y: scroll;
+	}
+	div.row-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.noselect {
+	  -webkit-touch-callout: none; /* iOS Safari */
+	    -webkit-user-select: none; /* Safari */
+	     -khtml-user-select: none; /* Konqueror HTML */
+	       -moz-user-select: none; /* Old versions of Firefox */
+	        -ms-user-select: none; /* Internet Explorer/Edge */
+	            user-select: none; /* Non-prefixed version, currently
+	                                  supported by Chrome, Edge, Opera and Firefox */
+	}
+	input.text-input {
+		height: 29px !important;
+		width: 98%;
+		text-align: center;
+		color: #444;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	}
+	input.text-input ::placeholder {
+		color: #999;
+	}
+</style>
+% my @reports = @$reports;
+<div style="width: 100%;max-width:100%;padding-top: 7px;font-weight: bold;font-size: 18px;">
+% if ($currentLanguage eq 'en') {
+	% if ($substanceShortName) {
+		% if ($fetchedStat eq 'serious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Serious adverse effects observed for substance [<%=$substanceShortName%>]
+		% } elsif ($fetchedStat eq 'deaths') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Deaths observed for substance [<%=$substanceShortName%>]
+		% } elsif ($fetchedStat eq 'nonSerious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Non-serious adverse effects observed for substance [<%=$substanceShortName%>]
+		% } else {
+			% die "fetchedStat $fetchedStat";
+		% }
+	% } else {
+		% if ($fetchedStat eq 'serious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Serious adverse effects observed for substance category [<%=$substanceCategory%>]
+		% } elsif ($fetchedStat eq 'deaths') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Deaths observed for substance category [<%=$substanceCategory%>]
+		% } elsif ($fetchedStat eq 'nonSerious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Non-serious adverse effects observed for substance category [<%=$substanceCategory%>]
+		% } else {
+			% die "fetchedStat $fetchedStat";
+		% }
+	% }
+% } elsif ($currentLanguage eq 'fr') {
+	% if ($substanceShortName) {
+		% if ($fetchedStat eq 'serious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Serious adverse effects observed for substance [<%=$substanceShortName%>]
+		% } elsif ($fetchedStat eq 'deaths') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Deaths observed for substance [<%=$substanceShortName%>]
+		% } elsif ($fetchedStat eq 'nonSerious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Non-serious adverse effects observed for substance [<%=$substanceShortName%>]
+		% } else {
+			% die "fetchedStat $fetchedStat";
+		% }
+	% } else {
+		% if ($fetchedStat eq 'serious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Serious adverse effects observed for substance category [<%=$substanceCategory%>]
+		% } elsif ($fetchedStat eq 'deaths') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Deaths observed for substance category [<%=$substanceCategory%>]
+		% } elsif ($fetchedStat eq 'nonSerious') {
+			Data <a target="_blank" href="https://www.adrreports.eu/fr/search_subst.html">EudraVigilance</a> & <a target="_blank" href="https://wonder.cdc.gov/vaers.html">VAERS</a> - Non-serious adverse effects observed for substance category [<%=$substanceCategory%>]
+		% } else {
+			% die "fetchedStat $fetchedStat";
+		% }
+	% }
+% } else {
+
+% }
+</div>
+<div class="table-container">
+	<div class="table-sub-container" id="noticesContent" style="text-align: center;">
+		<div  class="scrollable-table-header">
+			<div style="width:100%">
+				<hr>
+			</div>
+			<div class="row-container noselect">
+			    <div style="width: 250px;max-width: 250px;">
+			    	<b>Source</b>
+				</div>
+			    <div style="width: 200px;max-width: 200px;">
+			    	<b>Source's Reference</b>
+			    </div>
+			    <div style="width: 150px;max-width: 150px;">
+			    	<b>Receipt Date</b>
+			    </div>
+			    <div style="width: 250px;max-width: 250px;">
+			    	<b>Reporter Type</b>
+				</div>
+			    <div style="width: 250px;max-width: 250px;">
+			    	<b>Patient's Age Group</b>
+			    </div>
+			    <div style="width: 250px;max-width: 250px;">
+			    	<b>Patient's Age (If CDC & if any)</b>
+				</div>
+			    <div style="width: 250px;max-width: 250px;">
+			    	<b>Patient's Sex</b>
+				</div>
+			    <div style="width: 370px;max-width: 370px;">
+			    	<b>Substances</b>
+				</div>
+			    <div style="width: 370px;max-width: 370px;">
+			    	<b>Reported Reactions (and outcome if any)</b>
+				</div>
+			    <div style="width: 370px;max-width: 370px;">
+			    	<b>Description (if CDC & if any)</b>
+				</div>
+			</div>
+			<div class="text_separator"></div>
+			<div style="width:100%">
+				<hr>
+			</div>
+		</div>
+		<div  class="scrollable-table-container">
+		% my $alt = 0;
+		% for my $reportData (@reports) {
+			% my $source = %$reportData{'source'} // die;
+			% my $receiptDate = %$reportData{'receiptDate'} // die;
+			% my $reference = %$reportData{'reference'} // die;
+			% my $url = %$reportData{'url'};
+			% my $reporterTypeName = %$reportData{'reporterTypeName'} // die;
+			% my $ageGroupName = %$reportData{'ageGroupName'} // die;
+			% my $patientAge = %$reportData{'patientAge'};
+			% my $description = %$reportData{'description'};
+			% my $sexName = %$reportData{'sexName'} // die;
+			% $alt++;
+		    % if ($alt == 2) {
+		    	% $alt = 0;
+		    <div style="width:100%;min-width: 100%;display: flex;flex-wrap: wrap;text-align: center;background-color: #f2f2f2;padding-top: 5px;padding-bottom: 5px;">
+			% } else {
+		    <div style="width:100%;min-width: 100%;display: flex;flex-wrap: wrap;text-align: center;padding-top: 5px;padding-bottom: 5px;">
+			% }
+		        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$source%></div>
+		        % if ($url) {
+		        <div style="width: 200px;min-width: 200px;max-width: 200px;"><a target="_blank" href="<%=$url%>"><%=$reference%></a></div>
+	        	% } else {
+		        <div style="width: 200px;min-width: 200px;max-width: 200px;"><%=$reference%></div>
+        		% }
+		        <div style="width: 150px;min-width: 150px;max-width: 150px;"><%=$receiptDate%></div>
+		        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$reporterTypeName%></div>
+		        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$ageGroupName%></div>
+		        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$patientAge%></div>
+		        <div style="width: 250px;min-width: 250px;max-width: 250px;"><%=$sexName%></div>
+		        <div style="width: 370px;min-width: 370px;max-width: 370px;">
+		        	<ul>
+		        	% for my $substanceData (@{%$reportData{'substances'}}) {
+		        		% my $substanceName = %$substanceData{'substanceName'} // die;
+		        		<li><%=$substanceName%></li>
+	        		% }
+	        		</ul>
+		        </div>
+		        <div style="width: 370px;min-width: 370px;max-width: 370px;">
+		        	<ul>
+		        	% for my $reactionData (@{%$reportData{'reactions'}}) {
+		        		% my $reactionName = %$reactionData{'reactionName'} // die;
+		        		% my $reactionOutcomeName = %$reactionData{'reactionOutcomeName'};
+		        		% if ($reactionOutcomeName) {
+		        		<li><%=$reactionName%> (<%=$reactionOutcomeName%>)</li>
+	        			% } else {
+		        		<li><%=$reactionName%></li>
+        				% }
+	        		% }
+	        		</ul>
+		        </div>
+		        <div style="width: 370px;min-width: 370px;max-width: 370px;"><%=$description%></div>
+		    </div>
+		% }
+		</div>
+	</div>
+</div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div id="noticesPages" style="width: 97vw;display: flex;flex-wrap: wrap;font-size: 12px;"></div>
+<script type="text/javascript"> 
+	$(document).ready(function() {
+		% my $pageHtml;
+		% for my $num (sort{$a <=> $b} keys %$pages) {
+			% my $pageNum = %$pages{$num} // die;
+			% my $block;
+			% if ($pageNum eq $pageNumber) {
+				% $block   = '<div style="width:48px;border: solid 1px;background-color:#3b3b3b;color:white;">' . $pageNum . '</div>';
+			% } elsif ($pageNum eq '..') {
+				% $block   = '<div style="width:50px;">' . $pageNum . '</div>';
+			% } else {
+				% $block   = "<div onclick=\"filterNotices(\\'" . $fetchedStat . "\\', \\'" . $pageNum . "\\', \\'" . $substanceCategory . "\\', \\'" . $substanceShortName . "\\', \\'" . $fromYear . "\\', \\'" . $toYear . "\\', \\'" . $sexGroup . "\\', \\'" . $reporter . "\\', \\'" . $fromAge . "\\', \\'" . $toAge . "\\');return;\" style=\"width:48px;border: solid 1px;cursor:pointer;\">" . $pageNum . "</div>";
+			% }
+			% $pageHtml  .= $block if $pageHtml;
+			% $pageHtml   = $block if !$pageHtml;
+		% }
+		% $pageHtml .= "</div>";
+		let pagination = '<div style="width:100%;display:flex;flex-wrap:wrap;text-align:center;"><div style="width:calc(100% - 750px);"></div>' +
+						 '<div style="width:340px;"><b><%=$totalReports%> notice(s)</b> corresponding to your filters.</div>' +
+						 '<div style="width:60px;">Page : </div>' +
+						 '<div style="width:350px;display:flex;flex-wrap:wrap;">' +
+						 '<%==$pageHtml%>';
+    	$("#noticesPages").html(pagination);
+    	$("#searchButton").prop("disabled", false);
+	});
+</script>

@@ -1,0 +1,69 @@
+% layout 'default';
+% title 'OPENVAET - Changelog';
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to home</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+    % } else {
+
+    % }
+    <h2 style="margin-left: 15px;">v 1.2</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Removed "direct download" for the deaths data (replaced by a direct access to the source from the index page).</li>
+    	<li>Fixed several index issues (age group "Not specified" was confused with "0 Month - 1 Year Old" interval, sex filter wasn't working.)</li>
+    	<li>Added changelog.</li>
+    	<li>Added overview on every after effect concerned directly from the index</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Retrait du lien de téléchargement direct pour les données décès (remplacé par un lien direct pour accéder à la source depuis la page d'accueil).</li>
+    	<li>Correction de plusieurs problèmes (le groupe d'âge "Non Spécifié" était improprement distingué du groupe d'âge "0 mois - 1 an", le filtrage par sexe ne fonctionnait pas).</li>
+    	<li>Ajout du changelog.</li>
+    	<li>Ajout d'une vue générale sur tous les effets secondaires individuels rapportés directement depuis l'accueil.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.1</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Added Github URL.</li>
+    	<li>Added a basic favicon.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Ajout du lien Github.</li>
+    	<li>Ajout d'un favicon sommaire.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.0</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Initial index : Disclaimer, Overview on after-effects categorized by deaths / serious / non-serious & filterable.</li>
+    	<li>Data description & dedicated VAERS & Eudravigilance pages.</li>
+    	<li>French & English versions (default to French).</li>
+    	<li>Contact Us page.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Index initial : Déclaration de principe, Vue générale sur les effets secondaires, catégorisés par décès / effets sérieux / non-sérieux & filtrables.</li>
+    	<li>Pages dédiées à la donnée, au VAERS & à Eudravigilance.</li>
+    	<li>Version française et anglaise (français par défaut)</li>
+    	<li>Page "Nous Contacter"</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+</div>
