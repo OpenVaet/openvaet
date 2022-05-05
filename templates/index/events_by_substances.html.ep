@@ -1,6 +1,6 @@
 % use Data::Printer;
 % my %substances = %$substances;
-% p%substances;
+% # p%substances;
 % for my $substanceCategory (sort keys %substances) {
 	% if ($substanceCategory eq 'OTHER') {
 	<div class="substance-category-container" onclick="filterNotices('<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common Vaccines</div>

@@ -228,8 +228,8 @@ sub index {
                             $covidTotalCases           += $covidAfterEffects;
                             $allOthersTotalCases       += $otherVaccinesAfterEffects;
                             $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
-                            say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
-                            say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
+                            # say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
+                            # say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
                         }
                     }
                 }
@@ -338,12 +338,12 @@ sub events_by_substances {
     my $allOthersTotalDrugs = $self->param('allOthersTotalDrugs') // 1;
     my $covidTotalCases     = $self->param('covidTotalCases')     // 1;
     my $allOthersTotalCases = $self->param('allOthersTotalCases') // 1;
-    say "currentLanguage : [$currentLanguage]";
-    say "fetchedStat     : [$fetchedStat]";
-    say "fromAge         : [$fromAge]";
-    say "toAge           : [$toAge]";
-    say "reporter        : [$reporter]";
-    say "sexGroup        : [$sexGroup]";
+    # say "currentLanguage : [$currentLanguage]";
+    # say "fetchedStat     : [$fetchedStat]";
+    # say "fromAge         : [$fromAge]";
+    # say "toAge           : [$toAge]";
+    # say "reporter        : [$reporter]";
+    # say "sexGroup        : [$sexGroup]";
     my $substancesStatsFile       = "stats/substance_stats.json";
     my %substancesFetched         = ();
     if (-f $substancesStatsFile) {
@@ -489,34 +489,34 @@ sub events_details {
     my $toYear             = $self->param('toYear');
     my $fromAge            = $self->param('fromAge');
     my $toAge              = $self->param('toAge');
-    say "
-        substanceShortName  : $substanceShortName,
-        substanceCategory   : $substanceCategory,
-        currentLanguage     : $currentLanguage,
-        pageNumber          : $pageNumber,
-        fetchedStat         : $fetchedStat,
-        reporter            : $reporter,
-        sexGroup            : $sexGroup,
-        fromAge             : $fromAge,
-        toAge               : $toAge,
-        fromYear            : $fromYear,
-        toYear              : $toYear
-    ";
+    # say "
+    #     substanceShortName  : $substanceShortName,
+    #     substanceCategory   : $substanceCategory,
+    #     currentLanguage     : $currentLanguage,
+    #     pageNumber          : $pageNumber,
+    #     fetchedStat         : $fetchedStat,
+    #     reporter            : $reporter,
+    #     sexGroup            : $sexGroup,
+    #     fromAge             : $fromAge,
+    #     toAge               : $toAge,
+    #     fromYear            : $fromYear,
+    #     toYear              : $toYear
+    # ";
 
     # Fetching corresponding events.
     my $totalReports = 0;
     my $toEntry      = $pageNumber * 50;
     my $fromEntry    = $toEntry - 49;
     my @reports      = ();
-    say "folder : [stats/*/$substanceCategory/$fetchedStat.json]";
+    # say "folder : [stats/*/$substanceCategory/$fetchedStat.json]";
     for my $yearFile (glob "stats/*/$substanceCategory/$fetchedStat.json") {
-        say "yearFile : $yearFile";
+        # say "yearFile : $yearFile";
         my ($yearName) = $yearFile =~ /stats\/(.*)\/$substanceCategory\/$fetchedStat\.json/;
         if ($fromYear ne 'na') {
             next if $fromYear > $yearName;
         }
         next if $toYear  < $yearName;
-        say "yearName : $yearName";
+        # say "yearName : $yearName";
         open my $in, '<:utf8', $yearFile;
         my $json;
         while (<$in>) {
@@ -633,7 +633,7 @@ sub events_details {
                 for my $substanceData (@{%$reportData{'reactions'}}) {
                     push @{$obj{'reactions'}}, \%$substanceData;
                 }
-                p%obj;
+                # p%obj;
                 push @reports, \%obj;
             }
         }

@@ -866,6 +866,8 @@
   function openSubstanceDetails() {
   	let modal = document.getElementById('fullScreenModal');
   	modal.style.display     = 'block';
+    let modalLoader = document.getElementById("modalLoader");
+    modalLoader.style.display  = "inline-block";
   	let currentLanguage     = '<%=$currentLanguage%>';
   	let covidTotalDrugs     = '<%=$covidTotalDrugs%>';
   	let allOthersTotalDrugs = '<%=$allOthersTotalDrugs%>';
@@ -898,6 +900,7 @@
     });
 
     request.done(function(data) {
+    		modalLoader.style.display  = "none";
         $('#fullScreenModalInnerContent').html(data);
     });
 
