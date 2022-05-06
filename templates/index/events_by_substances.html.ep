@@ -3,14 +3,14 @@
 % # p%substances;
 % for my $substanceCategory (sort keys %substances) {
 	% if ($substanceCategory eq 'OTHER') {
-	<div class="substance-category-container" onclick="filterNotices('<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common Vaccines</div>
+	<div class="substance-category-container" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common Vaccines</div>
 	% } else {
-	<div class="substance-category-container" onclick="filterNotices('<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;"><%=$substanceCategory%></div>
+	<div class="substance-category-container" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;"><%=$substanceCategory%></div>
 	% }
 	% for my $totalEvents (sort{$b <=> $a} keys %{$substances{$substanceCategory}}) {
 		% my $percentOfTotal = $substances{$substanceCategory}->{$totalEvents}->{'percentOfTotal'} // 0;
 		% for my $substanceName (sort keys %{$substances{$substanceCategory}->{$totalEvents}->{'substances'}}) {
-		<div class="substance-clickable-container" onclick="filterNotices('<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', '<%=$substanceName%>', '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">
+		<div class="substance-clickable-container" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, '<%=$substanceCategory%>', '<%=$substanceName%>', '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">
 			<div class="substance-label-container">
 				<%=$substanceName%>
 			</div>

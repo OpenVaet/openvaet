@@ -100,7 +100,7 @@
         <li class="url-link" onclick="openLocation('/data/ecdc');return;">Centre Européen de Contrôle et de Prévention des Maladies (ECDC) - Data EudraVigilance</li>
     </ul>
     <div class="text_separator"></div>
-    Le détail des algorithmes et fourni sur chaque page dédiée.
+    Le détail des algorithmes est fourni sur chaque page dédiée.
     <div class="text_separator"></div>
     Les données du VAERS & d'EudraVigilance sont mises à jour par ces organismes chaque vendredi.
     <div class="text_separator"></div>
@@ -111,7 +111,7 @@
     <h2>Exécuter le projet.</h2>
     <div class="text_separator"></div>
     Le code complet du projet peut être téléchargé <a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire GitHub" target="_blank">sur notre dépôt Github</a>. Le code peut être utilisé et/ou modifié librement - pour autant qu'un esprit de neutralité vis-à-vis de la donnée soit respecté. Les Librairies employées sont sujettes à leurs licences spécifiques.
-    <h3>Dépendences Générales.</h3>
+    <h3>Dépendances Générales.</h3>
     Vous aurez besoin d'un serveur SQL compatible (par exemple, MySQL Community Server - <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">téléchargeable ici</a>).
     <div class="text_separator"></div>
     <b>Prenez-garde au fait que vous devez régler l'encryption des mots de passe de MySQL Server en mode "Legacy" pour que le driver DBI de Perl le supporte.</b>

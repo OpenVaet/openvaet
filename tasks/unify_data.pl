@@ -192,6 +192,7 @@ sub ecdc_notices {
 	    $obj{'seriousnessName'}          = $ecdcSeriousnessName;
 	    $obj{'reporterType'}             = $ecdcReporterType;
 	    $obj{'reporterTypeName'}         = $ecdcReporterTypeName;
+        $obj{'sourceId'}                 = 1;
 	    $obj{'source'}                   = "EudraVigilance - $ecdcGeographicalOriginName";
 	    $obj{'url'}                      = $url;
 	    $obj{'age'}                      = undef;
@@ -459,6 +460,7 @@ sub cdc_reports {
         $obj{'isOtherVaccinePlusCovid'}  = $isOtherVaccinePlusCovid;
         $obj{'url'}                      = undef;
         $obj{'description'}              = $aEDescription;
+        $obj{'sourceId'}                 = 2;
         $obj{'source'}                   = $source;
         $obj{'seriousnessName'}          = $seriousnessName;
         $obj{'reference'}                = "$reference-1";
@@ -563,8 +565,10 @@ sub reporter_type_from_reporter {
 
 sub seriousness_from_characteristics {
 	my ($hospitalized, $lifeThreatning, $patientDied, $permanentDisability) = @_;
+	# say "$hospitalized, $lifeThreatning, $patientDied, $permanentDisability";
+	# die;
 	my $seriousnessName;
-	if ($patientDied eq 'Yes' || $lifeThreatning eq 'Yes' || $hospitalized eq 'Yes' || $permanentDisability eq 'Yes') {
+	if ($patientDied eq 1 || $lifeThreatning eq 1 || $hospitalized eq 1 || $permanentDisability eq 1) {
 		$seriousnessName = 'Serious';
 	} else {
 		$seriousnessName = 'Non-Serious';
@@ -1018,7 +1022,6 @@ sub substance_synthesis {
 sub print_reports {
 	say "printing deaths abstract ...";
 	my $dataFolder = 'unified_data';
-	make_path($dataFolder) unless (-d $dataFolder);
 	for my $date (sort{$a <=> $b} keys %reports) {
 		make_path("$dataFolder/$date") unless (-d "$dataFolder/$date");
 		my @obj = \@{$reports{$date}};

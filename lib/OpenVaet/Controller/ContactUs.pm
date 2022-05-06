@@ -27,7 +27,6 @@ sub contact_us {
 
 sub send_contact_us {
     my $self = shift;
-    my %json = ();
     my ($userEmail, $contactText, $currentLanguage);
     my $json = $self->req->json;
     my $ipAddress = $self->remote_addr;
@@ -45,7 +44,7 @@ sub send_contact_us {
         } elsif ($currentLanguage eq 'fr') {
             $response{'status'} = 'Addresse courriel ou message manquant';
         } else {
-
+            $self->render(text => 'error');
         }
     } else {
         # Verify if the mail format is valid.
@@ -55,7 +54,7 @@ sub send_contact_us {
             } elsif ($currentLanguage eq 'fr') {
                 $response{'status'} = 'Veuillez vérifier le format de votre addresse courriel';
             } else {
-
+                $self->render(text => 'error');
             }
         } else {
 
@@ -67,7 +66,7 @@ sub send_contact_us {
                 } elsif ($currentLanguage eq 'fr') {
                     $response{'status'} = 'Veuillez vérifier que vous avez activé Javascript & que votre navigateur est à jour';
                 } else {
-
+                    $self->render(text => 'error');
                 }
             } else {
                 $response{'status'} = 'ok';

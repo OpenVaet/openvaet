@@ -38,7 +38,7 @@ parse_data();
 
 print_reports();
 
-p%vals;
+# p%vals;
 
 sub parse_data {
 	my @files = glob "unified_data/*/data.json";
@@ -46,7 +46,7 @@ sub parse_data {
 	$totalFiles = scalar @files;
 	for my $file (@files) {
 		$currentFile++;
-		STDOUT->printflush("\rParsing data - [$currentFile / $totalFiles]");
+		STDOUT->printflush("\rparsing data - [$currentFile / $totalFiles]");
 		my ($intDate) = $file =~ /unified_data\/(.*)\/data\.json/;
 		open my $in, '<:utf8', $file;
 		my $json;
@@ -59,6 +59,7 @@ sub parse_data {
 			parse_day($intDate, $json);
 		}
 	}
+	say "" if $totalFiles;
 }
 
 sub parse_day {
@@ -66,6 +67,8 @@ sub parse_day {
     my $reports = shift @$json;
     my @reports = @$reports;
     for my $reportData (@reports) {
+    	# p$reportData;
+    	my $sourceId         = %$reportData{'sourceId'}         // die;
     	my $source           = %$reportData{'source'}           // die;
     	my $patientDied      = %$reportData{'patientDied'}      // die;
     	my $yearName         = %$reportData{'yearName'}         // die;
@@ -81,15 +84,15 @@ sub parse_day {
     	# $vals{'yearName'}->{$yearName}->{$source}           = 1;
     	# $vals{'seriousnessName'}->{$seriousnessName}->{$source}   = 1;
     	# $vals{'reporterTypeName'}->{$reporterTypeName}->{$source} = 1;
-    	$vals{'statSection'}->{$statSection}->{$source} = 1;
+    	# $vals{'statSection'}->{$statSection}->{$source} = 1;
     	# $vals{'sexName'}->{$sexName}->{$source} = 1;
     	die unless scalar @{%$reportData{'substances'}};
 	    if ($patientDied == 1) {
-	    	$eventsStats{'deaths'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$statSection}++;
+	    	$eventsStats{'deaths'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		} elsif ($seriousnessName eq 'Serious') {
-	    	$eventsStats{'serious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$statSection}++;
+	    	$eventsStats{'serious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		} else {
-	    	$eventsStats{'nonSerious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$statSection}++;
+	    	$eventsStats{'nonSerious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		}
 		my ($confirmedCovidCategory, $confirmedOthersCategory) = (0, 0);
 	    for my $drugData (@{%$reportData{'substances'}}) {
@@ -109,18 +112,18 @@ sub parse_day {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
 		    		push @{$deaths{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
-		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
-		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
-	    			$substancesStats{'deaths'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}++;
+		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}) {
+		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName} = 1;
+	    			$substancesStats{'deaths'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}++;
 	    		}
 			} elsif ($seriousnessName eq 'Serious') {
 		        unless (exists $eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory}) {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
 	    			push @{$serious{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
-		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
-		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
-	    			$substancesStats{'serious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}++;
+		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}) {
+		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName} = 1;
+	    			$substancesStats{'serious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}++;
 	    		}
 			} else {
 		        # p%obj;
@@ -129,9 +132,9 @@ sub parse_day {
 		        	$eventsAdded{'referenceAndCategory'}->{$reference}->{$substanceCategory} = 1;
 	    			push @{$nonSerious{$yearName}->{$intDate}->{$substanceCategory}}, \%$reportData;
 	    		}
-		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}) {
-		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName} = 1;
-	    			$substancesStats{'nonSerious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceShortName}++;
+		        unless (exists $eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}) {
+		        	$eventsAdded{'globalStats'}->{$reference}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName} = 1;
+	    			$substancesStats{'nonSerious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceShortName}++;
 	    		}
 			}
 	    }

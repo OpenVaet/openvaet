@@ -12,6 +12,7 @@ use session;
 sub index {
     my $self = shift;
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
+    my $targetSource    = $self->param('targetSource')    // 'na';
     my $fetchedStat     = $self->param('fetchedStat')     // 'deaths';
     my $fromYear        = $self->param('fromYear')        // '2020';
     my $toYear          = $self->param('toYear')          // '2022';
@@ -143,6 +144,14 @@ sub index {
 
     }
 
+    my %sources = ();
+    $sources{'1'}->{'value'} = 'na';
+    $sources{'2'}->{'value'} = 1;
+    $sources{'3'}->{'value'} = 2;
+    $sources{'1'}->{'label'} = 'VAERS + EudraVigilance';
+    $sources{'2'}->{'label'} = 'EudraVigilance';
+    $sources{'3'}->{'label'} = 'VAERS';
+
     my $covidTotalCases           = 0;
     my $covidPlusOthersTotalCases = 0;
     my $allOthersTotalCases       = 0;
@@ -222,14 +231,19 @@ sub index {
                                     die "sexGroup : $sexGroup";
                                 }
                             }
-                            my $covidAfterEffects                  = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19'}       // 0;
-                            my $otherVaccinesAfterEffects          = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'OTHER'}         // 0;
-                            my $covidPlusOtherVaccinesAfterEffects = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{'COVID19+OTHER'} // 0;
-                            $covidTotalCases           += $covidAfterEffects;
-                            $allOthersTotalCases       += $otherVaccinesAfterEffects;
-                            $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
-                            # say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
-                            # say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
+                            for my $sourceId (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
+                                if ($targetSource ne 'na') {
+                                    next unless $sourceId == $targetSource;
+                                }
+                                my $covidAfterEffects                  = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19'}       // 0;
+                                my $otherVaccinesAfterEffects          = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'OTHER'}         // 0;
+                                my $covidPlusOtherVaccinesAfterEffects = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19+OTHER'} // 0;
+                                $covidTotalCases           += $covidAfterEffects;
+                                $allOthersTotalCases       += $otherVaccinesAfterEffects;
+                                $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
+                                # say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
+                                # say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
+                            }
                         }
                     }
                 }
@@ -244,6 +258,7 @@ sub index {
         allOthersTotalDrugs       => $allOthersTotalDrugs,
         covidPlusOthersTotalCases => $covidPlusOthersTotalCases,
         fetchedStat               => $fetchedStat,
+        targetSource              => $targetSource,
         currentLanguage           => $currentLanguage,
         fromAge                   => $fromAge,
         toAge                     => $toAge,
@@ -251,6 +266,7 @@ sub index {
         toYear                    => $toYear,
         reporter                  => $reporter,
         sexGroup                  => $sexGroup,
+        sources                   => \%sources,
         fromAges                  => \%fromAges,
         toAges                    => \%toAges,
         fromYears                 => \%fromYears,
@@ -327,6 +343,7 @@ sub contact_email {
 sub events_by_substances {
     my $self = shift;
     my $currentLanguage     = $self->param('currentLanguage')     // 'fr';
+    my $targetSource        = $self->param('targetSource')        // 'na';
     my $fetchedStat         = $self->param('fetchedStat')         // 'deaths';
     my $fromYear            = $self->param('fromYear')            // '2020';
     my $toYear              = $self->param('toYear')              // '2022';
@@ -419,10 +436,15 @@ sub events_by_substances {
                                     die "sexGroup : $sexGroup";
                                 }
                             }
-                            for my $substanceCategory (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
-                                for my $substanceName (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}}) {
-                                    my $eventsReported = $stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$substanceCategory}->{$substanceName} // die;
-                                    $substancesFetched{$substanceCategory}->{$substanceName} += $eventsReported;
+                            for my $sourceId (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
+                                if ($targetSource ne 'na') {
+                                    next unless $sourceId == $targetSource;
+                                }
+                                for my $substanceCategory (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}}) {
+                                    for my $substanceName (sort keys %{$stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}}) {
+                                        my $eventsReported = $stats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$substanceCategory}->{$substanceName} // die;
+                                        $substancesFetched{$substanceCategory}->{$substanceName} += $eventsReported;
+                                    }
                                 }
                             }
                         }
@@ -465,6 +487,7 @@ sub events_by_substances {
 
     $self->render(
         currentLanguage => $currentLanguage,
+        targetSource => $targetSource,
         fetchedStat => $fetchedStat,
         fromYear => $fromYear,
         toYear => $toYear,
@@ -482,6 +505,7 @@ sub events_details {
     my $substanceCategory  = $self->param('substanceCategory');
     my $currentLanguage    = $self->param('currentLanguage');
     my $pageNumber         = $self->param('pageNumber');
+    my $targetSource       = $self->param('targetSource');
     my $fetchedStat        = $self->param('fetchedStat');
     my $reporter           = $self->param('reporter');
     my $sexGroup           = $self->param('sexGroup');
@@ -509,6 +533,8 @@ sub events_details {
     my $fromEntry    = $toEntry - 49;
     my @reports      = ();
     # say "folder : [stats/*/*/$substanceCategory/$fetchedStat.json]";
+    # open my $out, '>:utf8', "$fetchedStat" . "_$fromYear" . "_$toYear" . "_$fromAge" . "_$toAge" . "_$reporter" . "_$sexGroup.csv";
+    # say $out "Source;Reference;Sexe;Groupe Age;Age (Si CDC & Connu);Substance;Symptomes;Description (Si CDC & Connu);";
     for my $yearFile (glob "stats/*/*/$substanceCategory/$fetchedStat.json") {
         # say "yearFile : $yearFile";
         my ($yearName) = $yearFile =~ /stats\/(.*)\/.*\/$substanceCategory\/$fetchedStat\.json/;
@@ -532,6 +558,7 @@ sub events_details {
             my $reporterTypeName = %$reportData{'reporterTypeName'} // die;
             my $patientAge       = %$reportData{'patientAge'};
             my $description      = %$reportData{'description'};
+            my $sourceId         = %$reportData{'sourceId'}         // die;
             my $sexName          = %$reportData{'sexName'}          // die;
             # say "ageGroupName     : $ageGroupName";
             # say "patientAge       : $patientAge";
@@ -593,8 +620,12 @@ sub events_details {
                     die "sexGroup : $sexGroup";
                 }
             }
+            if ($targetSource ne 'na') {
+                next unless $sourceId == $targetSource;
+            }
             # p$reportData;
             # last;
+            # my $substanceString;
             my $hasSearch = 0;
             for my $substanceData (@{%$reportData{'substances'}}) {
                 if ($substanceShortName) {
@@ -609,14 +640,24 @@ sub events_details {
                     # say "substanceCategory  : $substanceCategory";
                     # say "substanceShortName : $substanceShortName";
                 }
+                # $substanceString .= ", " . %$substanceData{'substanceShortName'} if $substanceString;
+                # $substanceString  = %$substanceData{'substanceShortName'} if !$substanceString;
             }
             next unless $hasSearch == 1;
+
+            # my $reactionsString;
+            # for my $reactionData (@{%$reportData{'reactions'}}) {
+            #     $reactionsString .= ", " . %$reactionData{'reactionName'} if $reactionsString;
+            #     $reactionsString  = %$reactionData{'reactionName'} if !$reactionsString;
+            # }
+            my $source            = %$reportData{'source'}           // die;
+            my $reference         = %$reportData{'reference'}        // die;
+            my $receiptDate       = %$reportData{'receiptDate'}      // die;
+            my $url               = %$reportData{'url'};
+            # $description =~ s/;/, /g;
+            # say $out "$source;$reference;$sexName;$ageGroupName;$patientAge;$substanceString;$reactionsString;$description;";
             $totalReports++;
             if ($totalReports >= $fromEntry && $totalReports <= $toEntry) {
-                my $source               = %$reportData{'source'}           // die;
-                my $reference            = %$reportData{'reference'}        // die;
-                my $receiptDate          = %$reportData{'receiptDate'}      // die;
-                my $url                  = %$reportData{'url'};
                 my %obj                  = ();
                 $obj{'url'}              = $url;
                 $obj{'source'}           = $source;
@@ -638,10 +679,12 @@ sub events_details {
             }
         }
     }
+    # close $out;
     my ($maxPages, %pages) = data_formatting::paginate($pageNumber, $totalReports, 50);
     # p%pages;
 
     $self->render(
+        targetSource       => $targetSource,
         fetchedStat        => $fetchedStat,
         substanceCategory  => $substanceCategory,
         substanceShortName => $substanceShortName,

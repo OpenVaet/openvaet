@@ -194,6 +194,7 @@
 % my %fromYears    = %$fromYears;
 % my %toYears      = %$toYears;
 % my %sexGroups    = %$sexGroups;
+% my %sources      = %$sources;
 % my %reporters    = %$reporters;
 <div id="contentContainer" class="content-container">
 
@@ -211,7 +212,14 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	  	<b>Fetching reports corresponding to your query ; this may take a few minutes ...</b></div>
+	    % if ($currentLanguage eq 'en') {
+	  	<b>Fetching reports corresponding to your query ; this may take a few minutes ...</b>
+    	% } elsif ($currentLanguage eq 'fr') {
+	  	<b>Recherche des rapports correspondant à votre requête ; ceci peut prendre quelques minutes ...</b>
+  		% } else {
+
+  		% }
+  		</div>
 
     <!-- Full Screen Modal content -->
     <div class="full-screen-modal-content">
@@ -229,17 +237,17 @@
 		    <div class="text_separator"></div>
 		    This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to <b>compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations</b>.
 		    <div class="text_separator"></div>
-		    Every data or statistic featured here directly inherits from the public sources it's fed on. Everything has been made as easy to verify as possible, <span class="url-link" onclick="openLocation('/data');return;">shall the user wish to cross-check our data</span>.
+		    Every data or statistic featured here directly inherits from the public sources it's fed on. Everything has been made as easy to verify as possible, <a href="/data" target="_blank">shall the user wish to cross-check our data</a>.
 		    <div class="text_separator"></div>
-		    By using this website, you aknowledge that you have read & understood the complete <span class="url-link" onclick="openLocation('/disclaimer');return;">disclaimer here</span>.
+		    By using this website, you aknowledge that you have read & understood the complete <a href="/disclaimer" target="_blank">disclaimer here</a>.
 	    	% } elsif ($currentLanguage eq 'fr') {
 		    <div style="font-weight: bold;font-size: 16px;">Déclaration de principe</div>
 		    <div class="text_separator"></div>
 		    Ce projet Source Ouverte vise à étendre le débat public sur les effets secondaires des vaccins, et à améliorer l'accessibilité aux données pour le public & les professionnels, dans un format aisé à utiliser. Spécifiquement, dans cette première version, notre cible a été de <b>comparer les effets secondaires des vaccins les plus communs (Diphtérie, Tétanos, Hépatithe B, Polyomélite), administrés à l'essentiel des populations des Etats-Unis et d'Europe, et les vaccins COVID, désormais eux-aussi administrés à l'essentiel des populations américaines & européennes.</b>
 		    <div class="text_separator"></div>
-		    Chaque donnée ou statistique affichée sur ce site hérite directement des données publiques depuis lesquelles le projet est nourri. Tout a été fait pour que les vérifications soient le plus faciles possible, <span class="url-link" onclick="openLocation('/data');return;">si l'utilisateur désire vérifier nos données</span>.
+		    Chaque donnée ou statistique affichée sur ce site hérite directement des données publiques depuis lesquelles le projet est nourri. Tout a été fait pour que les vérifications soient le plus faciles possible, <a href="/data" target="_blank">si l'utilisateur désire vérifier nos données</a>.
 		    <div class="text_separator"></div>
-		    En utilisant ce site, vous confirmez que vous avez lu & accepté <span class="url-link" onclick="openLocation('/disclaimer');return;">l'accord d'utilisation</span>.
+		    En utilisant ce site, vous confirmez que vous avez lu & accepté <a href="/disclaimer" target="_blank">l'accord d'utilisation</a>.
     		% } else {
 
     		% }
@@ -259,6 +267,37 @@
 		    <div style="display: flex;flex-wrap: wrap;margin:auto;max-width: 473px;">
 			    <div style="width:100%;display: flex;flex-wrap: wrap;">
 				    <div style="width: 50%;padding-top: 7px;font-weight: bold;text-align: right;">
+						</div>
+				    <div style="display: flex;flex-wrap: wrap;width:50%;">
+					    <div style="width: calc(65px);padding-top: 7px;font-weight: bold;text-align: right;">
+					    % if ($currentLanguage eq 'en') {
+					    	Source&nbsp;
+				    	% } elsif ($currentLanguage eq 'fr') {
+					    	Source&nbsp;
+			    		% } else {
+
+			    		% }
+							</div>
+					    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
+				        <select class="js-example-basic-single" id="targetSource" style="width: 95%;height: 95%;">
+									% for my $valNum (sort{$a <=> $b} keys %sources) {
+										% my $value = $sources{$valNum}->{'value'} // die;
+										% my $label = $sources{$valNum}->{'label'} // die;
+										% if ($targetSource eq $value) {
+			      			<option value="<%=$value%>" selected><%=$label%></option>
+										% } else {
+			      			<option value="<%=$value%>"><%=$label%></option>
+										% }
+									% }
+				        </select>
+							</div>
+						</div>
+			    </div>
+			    <div class="text_separator"></div>
+		    	<div class="text_separator"></div>
+		    <div style="display: flex;flex-wrap: wrap;margin:auto;max-width: 473px;">
+			    <div style="width:100%;display: flex;flex-wrap: wrap;">
+				    <div style="width: 50%;padding-top: 7px;font-weight: bold;text-align: right;">
 		    % if ($currentLanguage eq 'en') {
 				    	Type
 	    	% } elsif ($currentLanguage eq 'fr') {
@@ -266,7 +305,7 @@
     		% } else {
 
     		% }
-					</div>
+						</div>
 				    <div style="display: flex;flex-wrap: wrap;width:50%;">
 					    <div style="width: calc(65px);padding-top: 7px;font-weight: bold;text-align: left;">
 					    % if ($currentLanguage eq 'en') {
@@ -276,21 +315,21 @@
 			    		% } else {
 
 			    		% }
-						</div>
+							</div>
 					    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
-					        <select class="js-example-basic-single" id="fetchedStat" style="width: 95%;height: 95%;">
-								% for my $valNum (sort{$a <=> $b} keys %fetchedStats) {
-									% my $value = $fetchedStats{$valNum}->{'value'} // die;
-									% my $label = $fetchedStats{$valNum}->{'label'} // die;
-									% if ($fetchedStat eq $value) {
-				      			<option value="<%=$value%>" selected><%=$label%></option>
-									% } else {
-				      			<option value="<%=$value%>"><%=$label%></option>
+				        <select class="js-example-basic-single" id="fetchedStat" style="width: 95%;height: 95%;">
+									% for my $valNum (sort{$a <=> $b} keys %fetchedStats) {
+										% my $value = $fetchedStats{$valNum}->{'value'} // die;
+										% my $label = $fetchedStats{$valNum}->{'label'} // die;
+										% if ($fetchedStat eq $value) {
+			      			<option value="<%=$value%>" selected><%=$label%></option>
+										% } else {
+			      			<option value="<%=$value%>"><%=$label%></option>
+										% }
 									% }
-								% }
-					        </select>
+				        </select>
+							</div>
 						</div>
-					</div>
 			    </div>
 			    <div class="text_separator"></div>
 		    	<div class="text_separator"></div>
@@ -585,9 +624,9 @@
 	<div class="text_separator"></div>
     <div style="width:calc(100% - 20px);font-size: 15px;font-weight: bold;text-align: center;padding-left: 10px;">
 	    % if ($currentLanguage eq 'en') {
-    		Reported Adverse Effects - <span class="url-link" onclick="filterNotices('<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">COVID-19 Vaccines</span> / <span class="url-link" onclick="filterNotices('<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common Vaccines</span>
+    		Reported Adverse Effects - <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">COVID-19 Vaccines</span> / <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common Vaccines</span>
     	% } elsif ($currentLanguage eq 'fr') {
-    		Effets Secondaires Rapportés - <span class="url-link" onclick="filterNotices('<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Vaccins COVID-19</span> / <span class="url-link" onclick="filterNotices('<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Vaccins Communs</span>
+    		Effets Secondaires Rapportés - <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Vaccins COVID-19</span> / <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Vaccins Communs</span>
 		% } else {
 
 		% }
@@ -626,7 +665,7 @@
     	<div class="text_separator"></div>
     	<hr>
     	<div class="text_separator"></div>
-    	<b><i>If you wish to report an error, a typo, or to make any constructive feedback, you can <span class="url-link" onclick="openLocation('/contact_us');return;">reach us through this page</span>.</b></i>
+    	<b><i>If you wish to report an error, a typo, or to make any constructive feedback, you can <a href="/contact_us">reach us through this page</a>.</b></i>
     	% } elsif ($currentLanguage eq 'fr') {
     	<b><i>Si vous souhaitez être informé par courriel lorsque nous effectuons une mise à jour, fournissez simplement votre addresse courriel ci-dessous.</b></i>
     	<div class="text_separator"></div>
@@ -641,7 +680,7 @@
     	<div class="text_separator"></div>
     	<hr>
     	<div class="text_separator"></div>
-    	<b><i>Si vous souhaitez signaler une erreur, une typo, ou nous faire part de tout retour constructif, vous pouvez <span class="url-link" onclick="openLocation('/contact_us');return;">nous joindre via cette page</span>.</b></i>
+    	<b><i>Si vous souhaitez signaler une erreur, une typo, ou nous faire part de tout retour constructif, vous pouvez <a href="/contact_us">nous joindre via cette page</a>.</b></i>
 		% } else {
 
 		% }
@@ -653,6 +692,15 @@
 
 <script type="text/javascript">
 	var chartAdvEffects;
+	$('#targetSource').select2({
+		width: 'element',
+		height: 'resolve',
+		dropdownAutoWidth : true
+	});
+    $('#targetSource').on("select2:select select2:unselect", function(e) {
+    	reloadData();
+    });
+	$("#targetSource").select2({ dropdownCssClass: "select-options" });
 	$('#fetchedStat').select2({
 		width: 'element',
 		height: 'resolve',
@@ -776,6 +824,7 @@
     let fetchedStatElem = document.getElementById("fetchedStat");
     fetchedStatElem.style.display  = "none";
   	let currentLanguage  = '<%=$currentLanguage%>';
+  	let targetSource     = $('#targetSource').val();
   	let fetchedStat      = $('#fetchedStat').val();
   	let reporter         = $('#reporter').val();
   	let sexGroup         = $('#sexGroup').val();
@@ -788,7 +837,7 @@
 		console.log('chartWidth : ' + chartWidth);
     let blankContainer = document.getElementById("blankContainer");
     blankContainer.style.display  = "inline-block";
-    window.location.href = '/?currentLanguage=' + currentLanguage + '&fetchedStat=' + fetchedStat + '&fromAge=' + fromAge + '&toAge=' + toAge + '&fromYear=' + fromYear + '&toYear=' + toYear + '&reporter=' + reporter + '&sexGroup=' + sexGroup;
+    window.location.href = '/?currentLanguage=' + currentLanguage + '&targetSource=' + targetSource + '&fetchedStat=' + fetchedStat + '&fromAge=' + fromAge + '&toAge=' + toAge + '&fromYear=' + fromYear + '&toYear=' + toYear + '&reporter=' + reporter + '&sexGroup=' + sexGroup;
 	}
 
 	// function loadDetails(e) {
@@ -893,6 +942,7 @@
   	let allOthersTotalDrugs = '<%=$allOthersTotalDrugs%>';
   	let covidTotalCases     = '<%=$covidTotalCases%>';
   	let allOthersTotalCases = '<%=$allOthersTotalCases%>';
+  	let targetSource        = $('#targetSource').val();
   	let fetchedStat         = $('#fetchedStat').val();
   	let reporter            = $('#reporter').val();
   	let sexGroup            = $('#sexGroup').val();
@@ -909,6 +959,7 @@
             covidTotalCases     : covidTotalCases,
             allOthersTotalCases : allOthersTotalCases,
             currentLanguage     : currentLanguage,
+            targetSource        : targetSource,
             fetchedStat         : fetchedStat,
             reporter            : reporter,
             sexGroup            : sexGroup,
@@ -930,7 +981,7 @@
     });
   }
 
-  function filterNotices(fetchedStat, pageNumber, substanceCategory, substanceShortName, fromYear, toYear, sexGroup, reporter, fromAge, toAge) {
+  function filterNotices(targetSource, fetchedStat, pageNumber, substanceCategory, substanceShortName, fromYear, toYear, sexGroup, reporter, fromAge, toAge) {
   	console.log('fetchedStat        : ' + fetchedStat);
   	console.log('pageNumber         : ' + pageNumber);
   	console.log('substanceCategory  : ' + substanceCategory);
@@ -955,6 +1006,7 @@
             substanceCategory   : substanceCategory,
             currentLanguage     : currentLanguage,
             pageNumber          : pageNumber,
+            targetSource        : targetSource,
             fetchedStat         : fetchedStat,
             reporter            : reporter,
             sexGroup            : sexGroup,

@@ -268,6 +268,23 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        /* Scroll bar */
+        ::-webkit-scrollbar {
+            width: 15px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f2f2f2;
+            border-radius: 15px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 100px;
+            border: 5px solid transparent;
+            background-clip: content-box;
+            background-color: #3c518f;
+        }
     </style>
     <body>
         <!-- Center-screen loader -->
@@ -297,7 +314,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.4&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.5&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

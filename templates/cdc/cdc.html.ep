@@ -40,7 +40,7 @@
     <div class="text_separator"></div>
     <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour aux data</div>
     <h3>Aperçu de la donnée CDC</h3>
-    Le "Center for Disease Control" (CDC) est l'organisme des Etats-Unis en charge - entre autres choses - de collecter et surveyer la séurité des médicaments autorisés ou testés aux Etats-Unis, qui communiquent ceux-ci via leur plateforme VAERS.
+    Le "Center for Disease Control" (CDC) est l'organisme des Etats-Unis en charge - entre autres choses - de collecter et surveiller la séurité des médicaments autorisés ou testés aux Etats-Unis, et communiquent les incidents répertoriés via leur plateforme VAERS.
     <div class="text_separator"></div>
     Des sets de données peuvent être téléchargés <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">directement ici</a>.
     <div class="text_separator"></div>

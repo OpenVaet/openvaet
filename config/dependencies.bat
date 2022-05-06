@@ -1,0 +1,1 @@
+cpanm Mojolicious DateTime Mojolicious::Plugin::Bcrypt JSON Date::Calc DateTime::Format::MySQL Math::Round Data::Printer autovivification Email::Valid Hash::Merge Mojolicious::Plugin::SecureCORS Mojolicious::Plugin::RemoteAddr Mojolicious::Plugin::Config

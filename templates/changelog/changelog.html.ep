@@ -10,6 +10,26 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.5</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Passed index's links to "actual URLs" to allow opening of new tabs.</li>
+    	<li>Added a "Source" filter to allow to distinguish between VAERS & EudraVigilance data</li>
+    	<li>Fixed an issue in Reports unification : CDC cases "Serious" weren't properly included in the Index chart, which was showing only ECDC seriouses cases.</li>
+    	<li>Added missing dependencies files to Git.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Conversion des redirections en accueils en "vrais liens" pour faciliter l'ouverture de nouveaux onglets.</li>
+    	<li>Ajout d'un filtre "Source" pour permettre de distinguer entre donnée VAERS & EudraVigilance</li>
+    	<li>Réparation d'un problème dans l'unification des rapports : les cas "Sérieux" n'étaient pas corretement inclus dans le graphique en accueil, qui ne montraient que les cas sérieux ECDC.</li>
+    	<li>Ajout des installations rapides de dépendances manquantes dans le Git.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.4</h2>
     % if ($currentLanguage eq 'en') {
     <ul>
