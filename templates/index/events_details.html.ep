@@ -216,7 +216,7 @@
 			% } elsif ($pageNum eq '..') {
 				% $block   = '<div style="width:50px;">' . $pageNum . '</div>';
 			% } else {
-				% $block   = "<div onclick=\"filterNotices(\\'" . $fetchedStat . "\\', \\'" . $pageNum . "\\', \\'" . $substanceCategory . "\\', \\'" . $substanceShortName . "\\', \\'" . $fromYear . "\\', \\'" . $toYear . "\\', \\'" . $sexGroup . "\\', \\'" . $reporter . "\\', \\'" . $fromAge . "\\', \\'" . $toAge . "\\');return;\" style=\"width:48px;border: solid 1px;cursor:pointer;\">" . $pageNum . "</div>";
+				% $block   = "<div onclick=\"filterNotices(\\'" . $targetSource . "\\', \\'" . $fetchedStat . "\\', \\'" . $pageNum . "\\', \\'" . $substanceCategory . "\\', \\'" . $substanceShortName . "\\', \\'" . $fromYear . "\\', \\'" . $toYear . "\\', \\'" . $sexGroup . "\\', \\'" . $reporter . "\\', \\'" . $fromAge . "\\', \\'" . $toAge . "\\');return;\" style=\"width:48px;border: solid 1px;cursor:pointer;\">" . $pageNum . "</div>";
 			% }
 			% $pageHtml  .= $block if $pageHtml;
 			% $pageHtml   = $block if !$pageHtml;

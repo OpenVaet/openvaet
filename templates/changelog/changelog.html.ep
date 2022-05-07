@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.6</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+    	<li>Added missing source argument to reports page browsing.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+    	<li>Ajout de l'argument "source" manquant dans le changement de page des détails rapports.</li>
+    </ul>
+    % } else {
+    	% die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.5</h2>
     % if ($currentLanguage eq 'en') {
     <ul>
