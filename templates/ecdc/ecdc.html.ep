@@ -111,7 +111,7 @@
     <div class="text_separator"></div>
     Le scrapper indexe ensuite tous les médicaments listés (page A à Z, page 0-9).
     <div class="text_separator"></div>
-    Le fait que les substances ont été approuvées via le <a target="_blank" href="https://www.ema.europa.eu/en/documents/leaflet/european-regulatory-system-medicines-european-medicines-agency-consistent-approach-medicines_fr.pdf">la procédère d'approbation centralisée européenne</a> est indiqué par un astérix dans le listing de l'ECDC. Le-dit astérix est retiré et converti en un tag ("Ecs Approval" dans le listing des médicaments).
+    Le fait que les substances ont été approuvées via le <a target="_blank" href="https://www.ema.europa.eu/en/documents/leaflet/european-regulatory-system-medicines-european-medicines-agency-consistent-approach-medicines_fr.pdf">la procédure d'approbation centralisée européenne</a> est indiqué par un astérix dans le listing de l'ECDC. Le-dit astérix est retiré et converti en un tag ("Ecs Approval" dans le listing des médicaments).
     <div class="text_separator"></div>
     Mis à part les mises à jour qui auraient pu survenir depuis notre dernière passe (<%=$indexUpdateDatetime%>), <span class="url-link" onclick="openLocation('/data/ecdc/substances');return;"><%=$ecdcTotalSubstances%> médicaments</span> sont listés. Télécharger ou non leurs détails peut être défini via la page suivante si vous exécutez le projet localement (sur votre propre ordinateur). Nous ne mettons par à jour tous les médicaments à cause de l'extrême lenteur et instabilité de la plateforme européenne.
     <div class="text_separator"></div>

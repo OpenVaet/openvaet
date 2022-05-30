@@ -9,7 +9,7 @@ use session;
 
 sub data {
     my $self = shift;
-    my $currentLanguage = $self->param('currentLanguage') // 'en';
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
 
     # Loggin session if unknown.
     session::session_from_self($self);

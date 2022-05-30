@@ -1,0 +1,140 @@
+<style type="text/css">
+	.full-screen-modal_inner_content {
+		background: #3C4451;
+	}
+	.full-screen-modal_inner_content_wrapper {
+		background: #3C4451;
+	}
+	.main-loader {
+		color: #fff;
+	}
+	.main-loader div:after {
+	    background: #fff;
+	}
+</style>
+% my %report  = %$report;
+% my $vaersId = $report{'vaersId'} // die;
+% my $stateName = $report{'stateName'} // die;
+% my $vaersSexName = $report{'vaersSexName'} // die;
+% my $patientAge = $report{'patientAge'} // 'Inconnu';
+% my $vaersVaccineName = $report{'vaersVaccineName'} // die;
+% my $vaccinationDate = $report{'vaccinationDateFixed'} || $report{'vaccinationDate'} || 'Inconnue';
+% my $onsetDate = $report{'onsetDateFixed'} || $report{'onsetDate'} || 'Inconnue';
+% my $aEDescription = $report{'aEDescription'} // die;
+% my $permanentDisability = $report{'permanentDisability'} // die;
+% my $hospitalized = $report{'hospitalized'} // die;
+% my $patientDied = $report{'patientDied'} // die;
+% my $lifeThreatning = $report{'lifeThreatning'} // die;
+% my $childDied = $report{'childDied'} // die;
+% my $childSeriousAE = $report{'childSeriousAE'} // die;
+<div style="width:100%;height: 100%;">
+	<div style="width: 100%;height: 100%;background: #3C4451;font-size: 13px;color:white;">
+		<div style="width:100%;overflow-y: auto;">
+			<div style="width:calc(100% - 30px);text-align: center;padding: 15px 15px;font-weight: bold;display: flex;flex-wrap: wrap;">
+			% my $previousReport = $reportNum - 1;
+			% my $nextReport = $reportNum + 1;
+				<div style="width:50px;">
+			% if ($reportNum != 1) {
+					<img src="/images/arrow_left.png" style="display: block;margin:auto;width: 15px;height: 15px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$previousReport%>);return;">
+			% }
+				</div>
+				<div style="width:calc(100% - 100px);">
+				Rapport <%=$reportNum%> / <%=$totalReports%>
+				</div>
+				<div style="width:50px;">
+			% if ($reportNum != $totalReports) {
+					<img src="/images/arrow_right.png" style="display: block;margin:auto;width: 15px;height: 15px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$nextReport%>);return;">
+			% }
+				</div>
+			</div>
+			<div style="width: calc(100% - 100px);padding: 2px 50px;">
+				<hr>
+			</div>
+			<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+				<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>ID VAERS :</b> <%=$vaersId%></div>
+				<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Age :</b> <%=$patientAge%>, <b>Sexe :</b> <%=$vaersSexName%></div>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Etat</b> : <%=$stateName%>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Vaccin :</b> <%=$vaersVaccineName%>
+			</div>
+			<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+				<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Date Vaccin :</b> <%=$vaccinationDate%></div>
+				<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Date Evènement :</b> <%=$onsetDate%></div>
+			</div>
+			<div style="width: calc(100% - 100px);padding: 2px 50px;">
+				<hr>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Issue(s) rapportée(s) pour la mère :</b>
+			</div>
+			<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+				% if ($patientDied == 1) {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Décès :</b> Oui</div>
+				% } else {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Décès :</b> Non</div>
+				% }
+				% if ($permanentDisability == 1) {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Infirmité Permanente :</b> Oui</div>
+				% } else {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Infirmité Permanente :</b> Non</div>
+				% }
+			</div>
+			<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+				% if ($lifeThreatning == 1) {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Menace Vie :</b> Oui</div>
+				% } else {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Menace Vie :</b> Non</div>
+				% }
+				% if ($hospitalized == 1) {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Hospitalisation :</b> Oui</div>
+				% } else {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Hospitalisation :</b> Non</div>
+				% }
+			</div>
+			<div style="width: calc(100% - 100px);padding: 2px 50px;">
+				<hr>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Issue(s) rapportée(s) pour l'enfant :</b>
+			</div>
+			<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+				% if ($childDied == 1) {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Décès :</b> Oui</div>
+				% } else {
+				<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Décès :</b> Non</div>
+				% }
+				% if ($childSeriousAE == 1) {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Sérieux :</b> Oui</div>
+				% } else {
+				<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Sérieux :</b> Non</div>
+				% }
+			</div>
+			<div style="width: calc(100% - 100px);padding: 2px 50px;">
+				<hr>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Description :</b>
+			</div>
+			<div style="width: calc(100% - 30px);text-align: left;padding: 13px 15px;overflow-y: auto;">
+				<%=$aEDescription%>
+			</div>
+			<div style="width: calc(100% - 100px);padding: 2px 50px;">
+				<hr>
+			</div>
+			<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+				<b>Symptômes :</b>
+			</div>
+			<div style="width: calc(100% - 30px);text-align: left;padding: 13px 15px;overflow-y: auto;">
+			% my $symptoms;
+			% for my $symptomName (sort keys %{$report{'symptoms'}}) {
+				% $symptoms .= ", $symptomName" if $symptoms;
+				% $symptoms .= $symptomName if !$symptoms;
+			% }
+			<%=$symptoms%>
+			</div>
+		</div>
+	</div>
+</div>

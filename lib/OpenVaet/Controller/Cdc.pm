@@ -10,7 +10,7 @@ use data_formatting;
 
 sub cdc {
     my $self = shift;
-    my $currentLanguage = $self->param('currentLanguage') // 'en';
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
     my %config          = %{$self->config()};
     my $environment     = $config{'environment'} // die;
     my $cdcSourceId     = 2;
@@ -36,7 +36,7 @@ sub cdc {
 
 sub state_year_reports {
     my $self = shift;
-    my $currentLanguage = $self->param('currentLanguage') // 'en';
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -124,7 +124,7 @@ sub load_state_years {
 
 sub notices {
     my $self = shift;
-    my $currentLanguage = $self->param('currentLanguage') // 'en';
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
     my %config          = %{$self->config()};
     my $environment     = $config{'environment'} // die;
 

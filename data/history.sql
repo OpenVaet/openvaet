@@ -723,14 +723,6 @@ ADD CONSTRAINT `cdc_report_to_cdc_age`
   ON UPDATE NO ACTION;
 
 # Removed obsolete cdc_report & ecdc_notice details.
-ALTER TABLE `covid_old`.`cdc_report` 
-DROP COLUMN `parsingTimestamp`,
-DROP COLUMN `detailsTimestamp`,
-DROP COLUMN `reportData`;
-ALTER TABLE `covid_old`.`ecdc_notice` 
-DROP COLUMN `formReporterType`,
-DROP COLUMN `formSenderType`,
-DROP COLUMN `formSeriousness`;
 ALTER TABLE `openvaet`.`cdc_report` 
 DROP COLUMN `detailsTimestamp`,
 DROP COLUMN `reportData`;
@@ -794,3 +786,150 @@ CREATE TRIGGER `before_contact_insert`
 BEFORE INSERT ON `contact` 
 FOR EACH ROW  
 SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+######################### V 2 - 2021-05-08 08:30:00
+# Initiated a temporary set of tables to work on the fertility study ; prior merging it with the rest of the infrastructure.
+# Created vaers_fertility_symptom table.
+CREATE TABLE `openvaet`.`vaers_fertility_symptom` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(250) NOT NULL,
+  `creationTimestamp` INT NOT NULL,
+  `discarded` BIT(1) NOT NULL,
+  `discardTimestamp` INT NULL,
+  PRIMARY KEY (`id`));
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_vaers_fertility_symptom_insert` 
+BEFORE INSERT ON `vaers_fertility_symptom` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`vaers_fertility_symptom` 
+CHANGE COLUMN `discarded` `discarded` BIT(1) NOT NULL DEFAULT 0 ;
+ALTER TABLE `openvaet`.`vaers_fertility_symptom` 
+ADD COLUMN `pregnancyRelated` BIT(1) NOT NULL DEFAULT 0 AFTER `discardTimestamp`,
+ADD COLUMN `pregnancyRelatedTimestamp` INT NULL AFTER `pregnancyRelated`;
+ALTER TABLE `openvaet`.`vaers_fertility_symptom` 
+ADD COLUMN `severePregnancyRelated` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyRelatedTimestamp`,
+ADD COLUMN `severePregnancyRelatedTimestamp` INT NULL AFTER `severePregnancyRelated`;
+ALTER TABLE `openvaet`.`vaers_fertility_symptom` 
+ADD COLUMN `menstrualDisorderRelated` BIT(1) NOT NULL DEFAULT 0 AFTER `severePregnancyRelatedTimestamp`,
+ADD COLUMN `menstrualDisorderRelatedTimestamp` INT NULL AFTER `menstrualDisorderRelated`;
+
+# Created vaers_fertility_report table.
+CREATE TABLE `openvaet`.`vaers_fertility_report` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `vaersId` INT NOT NULL,
+  `aEDescription` LONGTEXT NOT NULL,
+  `vaersVaccine` INT NOT NULL,
+  `vaersSex` INT NOT NULL,
+  `patientAge` DOUBLE NULL,
+  `creationTimestamp` INT NOT NULL,
+  `pregnancyConfirmation` BIT(1) NULL,
+  `pregnancyConfirmationTimestamp` INT NULL,
+  `femaleFromPregnancyConfirmation` BIT(1) NULL,
+  `femaleFromPregnancyConfirmationTimestamp` INT NULL,
+  `patientAgeConfirmation` INT NULL,
+  `patientAgeConfirmationTimestamp` INT NULL,
+  PRIMARY KEY (`id`));
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_vaers_fertility_report_insert` 
+BEFORE INSERT ON `vaers_fertility_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `pregnancyConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `vaccinationDate` VARCHAR(45) NULL AFTER `vaersSex`,
+ADD COLUMN `reportDate` VARCHAR(45) NOT NULL AFTER `vaccinationDate`,
+ADD COLUMN `patientAgeCorrected` DOUBLE NULL AFTER `patientAge`,
+ADD COLUMN `vaersSexCorrected` INT NULL AFTER `patientAgeCorrected`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+CHANGE COLUMN `reportDate` `vaersReceptionDate` VARCHAR(45) NOT NULL ;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD UNIQUE INDEX `vaers_fertility_report_unique` (`vaersId` ASC);
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+CHANGE COLUMN `vaersId` `vaersId` VARCHAR(45) NOT NULL ;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `symptomsListed` JSON NOT NULL AFTER `vaersSexCorrected`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `hospitalized` BIT(1) NOT NULL AFTER `patientAgeConfirmationTimestamp`,
+ADD COLUMN `permanentDisability` BIT(1) NOT NULL AFTER `hospitalized`,
+ADD COLUMN `lifeThreatning` BIT(1) NOT NULL AFTER `permanentDisability`,
+ADD COLUMN `patientDied` BIT(1) NOT NULL AFTER `lifeThreatning`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `menstrualCycleDisordersConfirmation` BIT(1) NULL AFTER `patientAgeConfirmationTimestamp`,
+ADD COLUMN `menstrualCycleDisordersConfirmationTimestamp` INT NULL AFTER `menstrualCycleDisordersConfirmation`,
+ADD COLUMN `menstrualCycleDisordersConfirmationRequired` BIT(1) NULL AFTER `menstrualCycleDisordersConfirmationTimestamp`,
+CHANGE COLUMN `hospitalized` `hospitalized` BIT(1) NOT NULL AFTER `symptomsListed`,
+CHANGE COLUMN `permanentDisability` `permanentDisability` BIT(1) NOT NULL AFTER `hospitalized`,
+CHANGE COLUMN `lifeThreatning` `lifeThreatning` BIT(1) NOT NULL AFTER `permanentDisability`,
+CHANGE COLUMN `patientDied` `patientDied` BIT(1) NOT NULL AFTER `lifeThreatning`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `babyExposureConfirmation` BIT(1) NULL AFTER `menstrualCycleDisordersConfirmationRequired`,
+ADD COLUMN `babyExposureConfirmationTimestamp` INT NULL AFTER `babyExposureConfirmation`,
+ADD COLUMN `babyExposureConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `babyExposureConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `seriousnessConfirmation` BIT(1) NULL AFTER `menstrualCycleDisordersConfirmationRequired`,
+ADD COLUMN `seriousnessConfirmationTimestamp` INT NULL AFTER `seriousnessConfirmation`,
+ADD COLUMN `seriousnessConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `seriousnessConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `patientDiedFixed` BIT(1) NULL AFTER `babyExposureConfirmationRequired`,
+ADD COLUMN `lifeThreatningFixed` BIT(1) NULL AFTER `patientDiedFixed`,
+ADD COLUMN `permanentDisabilityFixed` BIT(1) NULL AFTER `lifeThreatningFixed`,
+ADD COLUMN `hospitalizedFixed` BIT(1) NULL AFTER `permanentDisabilityFixed`;
+UPDATE vaers_fertility_report SET patientDiedFixed = patientDied, lifeThreatningFixed = lifeThreatning, permanentDisabilityFixed = permanentDisability, hospitalizedFixed = hospitalized WHERE id > 0;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+CHANGE COLUMN `patientDiedFixed` `patientDiedFixed` BIT(1) NOT NULL ,
+CHANGE COLUMN `lifeThreatningFixed` `lifeThreatningFixed` BIT(1) NOT NULL ,
+CHANGE COLUMN `permanentDisabilityFixed` `permanentDisabilityFixed` BIT(1) NOT NULL ,
+CHANGE COLUMN `hospitalizedFixed` `hospitalizedFixed` BIT(1) NOT NULL ;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `childDied` BIT(1) NOT NULL DEFAULT 0 AFTER `hospitalizedFixed`,
+ADD COLUMN `childLifeThreatned` BIT(1) NOT NULL DEFAULT 0 AFTER `childDied`,
+ADD COLUMN `childSeriousAE` BIT(1) NOT NULL DEFAULT 0 AFTER `childLifeThreatned`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+DROP COLUMN `childLifeThreatned`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `hoursBetweenVaccineAndAE` DOUBLE NULL AFTER `childSeriousAE`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `onsetDate` VARCHAR(45) NULL AFTER `vaersSex`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `vaccinationDateFixed` VARCHAR(45) NULL AFTER `babyExposureConfirmationRequired`,
+ADD COLUMN `onsetDateFixed` VARCHAR(45) NULL AFTER `vaccinationDateFixed`;
+ALTER TABLE `openvaet`.`vaers_fertility_symptom` 
+ADD COLUMN `foetalDeathRelated` BIT(1) NOT NULL DEFAULT 0 AFTER `menstrualDisorderRelatedTimestamp`,
+ADD COLUMN `foetalDeathRelatedTimestamp` INT NULL AFTER `foetalDeathRelated`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `pregnancyDetailsConfirmation` BIT(1) NULL AFTER `hoursBetweenVaccineAndAE`,
+ADD COLUMN `pregnancyDetailsConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyDetailsConfirmation`,
+ADD COLUMN `pregnancyDetailsConfirmationTimestamp` INT NULL AFTER `pregnancyDetailsConfirmationRequired`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `accurateDates` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyDetailsConfirmationTimestamp`,
+ADD COLUMN `motherAgeFixed` DOUBLE NULL AFTER `accurateDates`,
+ADD COLUMN `patientAgeFixed` DOUBLE NULL AFTER `motherAgeFixed`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+CHANGE COLUMN `patientAgeFixed` `childAgeFixed` DOUBLE NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+DROP COLUMN `patientAgeCorrected`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `miscarriageOnWeek` DOUBLE NULL AFTER `childAgeWeekFixed`,
+CHANGE COLUMN `childAgeFixed` `childAgeWeekFixed` DOUBLE NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `lmpDate` VARCHAR(45) NULL AFTER `miscarriageOnWeek`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+DROP COLUMN `accurateDates`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `hasLikelyPregnancySymptom` BIT(1) NOT NULL DEFAULT 0 AFTER `creationTimestamp`,
+ADD COLUMN `hasDirectPregnancySymptom` BIT(1) NOT NULL DEFAULT 0 AFTER `hasLikelyPregnancySymptom`;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD COLUMN `cdcStateId` INT NULL AFTER `vaersSex`,
+ADD INDEX `vaers_fertility_report_to_cdc_state_idx` (`cdcStateId` ASC) VISIBLE;
+ALTER TABLE `openvaet`.`vaers_fertility_report` 
+ADD CONSTRAINT `vaers_fertility_report_to_cdc_state`
+  FOREIGN KEY (`cdcStateId`)
+  REFERENCES `openvaet`.`cdc_state` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+

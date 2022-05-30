@@ -178,6 +178,14 @@ sub insert_server_date
     return %$tb{'serverDateId'};
 }
 
+sub week_number_from_date {
+    my ($date) = @_;
+    my ($year, $month, $day) = split '-', $date;
+    my $epoch = timelocal( 0, 0, 0, $day, $month - 1, $year - 1900 );
+    my $weekNumber  = strftime( "%U", localtime( $epoch ) );
+    return $weekNumber;
+}
+
 sub timestamps_from_date
 {
     my ($date) = @_;

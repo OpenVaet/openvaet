@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="/js/jquery.js"></script>
+        <link rel="stylesheet" href="/css/jquery-ui.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <title><%= title %></title>
@@ -17,6 +16,7 @@
             font-size: 1.6rem;
             display: flex;
             flex-wrap: wrap;
+            line
         }
         .noselect {
             -webkit-user-select: none;
@@ -59,7 +59,7 @@
         div.menu_lang_filler {
             border: 2px solid #647287;
             background: #647287;
-            width: calc(100% - 235px);
+            width: calc(100% - 290px);
         }
         div.text_separator {
             width: 100%;
@@ -285,6 +285,98 @@
             background-clip: content-box;
             background-color: #3c518f;
         }
+
+        /* Dropdown menu (taken from Rane, https://codepen.io/raneio/pen/NbbZEM) */
+        .dropdown a {
+          text-decoration: none;
+          color: #000000;
+        }
+
+        .dropdown a:hover {
+          color: #222222
+        }
+
+        /* Dropdown */
+        .dropdown {
+            display: inline-block;
+            position: relative;
+        }
+
+        .dd-button {
+            display: inline-block;
+            border: 1px solid gray;
+            border-radius: 4px;
+            padding: 12px 30px 12px 20px;
+            background-color: #91a7c9;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .dd-button:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid black;
+        }
+
+        .dd-button:hover {
+            background-color: #b5cff7;
+        }
+
+
+        .dd-input {
+            display: none;
+        }
+
+        .dd-menu {
+            position: absolute;
+            top: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0;
+            margin: 2px 0 0 0;
+            box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+            background-color: #91a7c9;
+            font-weight: bold;
+            list-style-type: none;
+        }
+
+        .dd-input + .dd-menu {
+            display: none;
+        } 
+
+        .dd-input:checked + .dd-menu {
+            display: block;
+        } 
+
+        .dd-menu li {
+            min-width: 80px;
+            padding: 10px 20px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .dd-menu li:hover {
+            background-color: #b5cff7;
+        }
+
+        .dd-menu li a {
+            display: block;
+            margin: -10px -20px;
+            padding: 10px 20px;
+        }
+
+        .dd-menu li.divider{
+            padding: 0;
+            border-bottom: 1px solid #cccccc;
+        }
     </style>
     <body>
         <!-- Center-screen loader -->
@@ -304,8 +396,22 @@
                     <img src="/images/target.png" style="height: 20px;width: 20px;">&nbsp;<b>OPEN-VAET</b>
                 </div>
                 <div class="menu_separator"></div>
-                <div class="menu_item" onclick="openLocation('/data');return;" style="width: 45px;">
-                    <b>Data</b>
+                <div class="menu_item" style="width: 110px;padding-left: 0px;padding-top: 0px;">
+                    <label class="dropdown">
+
+                      <div class="dd-button">
+                        More ...
+                      </div>
+
+                      <input type="checkbox" class="dd-input" id="test">
+
+                      <ul class="dd-menu">
+                        <li onclick="openLocation('/data');return;">Data</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/studies');return;">Studies</li>
+                      </ul>
+                      
+                    </label>
                 </div>
                 <div class="menu_lang_filler"></div>
             </div>
@@ -314,7 +420,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.6&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.7&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

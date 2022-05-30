@@ -1,0 +1,155 @@
+<style type="text/css">
+    .report-confirmation-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        font-weight: bold;
+        height: 22px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#91e398;
+    }
+    .report-confirmation-button:hover {
+        background: #5dc966;
+    }
+    .report-infirmation-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        height: 22px;
+        padding-top: 10px;
+        font-weight: bold;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#fc9a7e;
+    }
+    .report-infirmation-button:hover {
+        background: #f07856;
+    }
+    .report-requalification-1-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        height: 22px;
+        font-weight: bold;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#e0d3c3;
+    }
+    .report-requalification-1-button:hover {
+        background: #f5e8d7;
+    }
+    .report-requalification-2-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        height: 22px;
+        font-weight: bold;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#f5d0f4;
+    }
+    .report-requalification-2-button:hover {
+        background: #d1b2d0;
+    }
+</style>
+
+<div class="text_separator"></div>
+% if ($currentLanguage eq 'en') {
+<div class="url-link noselect" onclick="openLocation('/studies/c_cotton_vaers_study');return;">&#10229; Return to study</div>
+% } elsif ($currentLanguage eq 'fr') {
+    <hr>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+        Données du Rapport (<%=$operationsToPerform%> restants)
+    </div>
+    <div class="text_separator"></div>
+    <hr>
+    <div class="text_separator"></div>
+    <b>ID VAERS :</b> <%=$vaersId%>
+    <div class="text_separator"></div>
+    <b>Vaccin :</b> <%=$vaersVaccineName%>
+    <div class="text_separator"></div>
+    % if ($confirmationTarget eq 'pregnancies' && $vaersSexName ne 'Female') {
+        % die "Sex requalification to code";
+    % }
+    <b>Sexe du patient :</b> <%=$vaersSexName%>
+    <div class="text_separator"></div>
+    <b>Age du patient :</b> <%=$patientAge%>
+    <div class="text_separator"></div>
+    <b>Date vaccination :</b> <%=$vaccinationDate%>
+    <div class="text_separator"></div>
+    <b>Reception VAERS :</b> <%=$vaersReceptionDate%>
+    <div class="text_separator"></div>
+    <b>Symptoms :</b>
+    <%==$symptoms%>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <b>Description :</b> <%==$aEDescription%>
+    <hr>
+    <div class="text_separator"></div>
+    % if (!defined $pregnancyConfirmation && $pregnancyConfirmationRequired) {
+    <div class="report-confirmation-button" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 1)">
+        Confirmer la grossesse de la patiente
+    </div>
+    <div class="text_separator"></div>
+    <div class="report-infirmation-button" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 0)">
+        Infirmer la grossesse de la patiente
+    </div>
+    <div class="text_separator"></div>
+    <hr>
+    <div class="text_separator"></div>
+    <div class="report-requalification-1-button" onclick="setReportAttribute('<%=$reportId%>', 'babyExposureConfirmation', 1)">
+        Signaler l'exposition du bébé à la place
+    </div>
+    <div class="text_separator"></div>
+    <div class="report-requalification-2-button" onclick="setReportAttribute('<%=$reportId%>', 'menstrualCycleDisordersConfirmation', 1)">
+        Signaler un trouble reproductif à la place
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % } else {
+        % die "something else to code";
+    % }
+% } else {
+
+% }
+
+<script type="text/javascript">
+    function setReportAttribute(reportId, sqlValue, value) {
+        console.log('Setting report ' + reportId + ', column : ' + sqlValue + ' to [' + value + ']');
+        let confirmationTarget = '<%=$confirmationTarget%>';
+        let currentLanguage    = '<%=$currentLanguage%>';
+        let request            = $.ajax({
+            url: "/studies/vaers_fertility/set_report_pregnancy_attribute",
+            type: "POST",
+            data: {
+                reportId : reportId,
+                sqlValue : sqlValue,
+                value    : value
+            }
+        });
+
+        request.done(function(data) {
+            let operationsToPerform = <%=$operationsToPerform%>;
+            operationsToPerform = operationsToPerform - 1;
+            loadEventConfirmationDetails(operationsToPerform);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>

@@ -12,7 +12,7 @@ use session;
 
 sub ecdc {
     my $self = shift;
-    my $currentLanguage = $self->param('currentLanguage') // 'en';
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
     my %config          = %{$self->config()};
     my $environment     = $config{'environment'} // die;
 

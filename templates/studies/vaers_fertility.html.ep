@@ -1,0 +1,2406 @@
+% layout 'default';
+% title 'OPENVAET - VAERS Study - Fertility';
+
+<style type="text/css">
+	.ndt_note {
+		display: inline-block;
+		width: calc(100% - 50px);
+		margin: auto;
+		background: #dee0e3;
+		border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+	}
+
+	.tab-button {
+		padding: 10px 20px;
+	}
+
+	.tab-button:hover {
+		background: #262436;
+		cursor: pointer;
+	}
+
+	/* The Full Screen Modal (background) */
+	.full-screen-modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 100; /* Sit on top, unless a priority pops */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow-x: hidden;
+		overflow-y: hidden;
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Full Screen Modal Content/Box */
+	.full-screen-modal-content {
+		background-color: #fefefe;
+		margin: auto;
+		margin-top: 15px;
+		border: 1px solid #888;
+		max-width: 1000px;
+		height: calc(100%  - 35px);
+		overflow-y: hidden;
+	}
+
+	/* The Close Button */
+	.full-screen-modal-close {
+		color: #aaa;
+		font-size: 28px;
+		height: 32px;
+		font-weight: bold;
+	    margin-left: calc(100% - 20px);
+	    top: 15px;
+	}
+
+	.full-screen-modal-close:hover,
+	.full-screen-modal-close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.full-screen-modal_inner_content {
+		height: calc(100% - 50px);
+		width: auto;
+		overflow-y: auto;
+		margin: initial;
+	}
+
+	.full-screen-modal_inner_content_wrapper {
+		width: 100%;
+	    height: 100%;
+		max-height: 100%;
+		margin: initial;
+	}
+</style>
+
+% my %vaersStatistics        = %$vaersStatistics;
+% my $archiveSize            = $vaersStatistics{'archiveSize'}            // 0;
+% my $totalVAERSReports      = $vaersStatistics{'totalVAERSReports'}      // 0;
+% my $vaersReceptionLastDate = $vaersStatistics{'vaersReceptionLastDate'} // '';
+
+<!-- The Full Screen Modal -->
+<div id="fullScreenModal" class="full-screen-modal">
+  <!-- Center-screen loader -->
+    <div id="modalLoader" class="main-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Fetching data corresponding to your query ; this may take a few seconds ...</b></div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Recherche des données correspondant à votre requête ; ceci peut prendre quelques secondes ...</b></div>
+    % } else {
+
+    % }
+    </div>
+
+	<!-- Full Screen Modal content -->
+	<div class="full-screen-modal-content">
+		<div class="full-screen-modal_inner_content_wrapper">
+			<div id="full-screen-modal-close" class="full-screen-modal-close">&times;</div>
+			<div id="fullScreenModalInnerContent" class="full-screen-modal_inner_content">
+			</div>
+		</div>
+	</div>
+</div> 
+
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+		<div class="text_separator"></div>
+		English translation of this study will be released soon (we are currently reviewing & enhancing it in French).
+		% #<div class="ndt_note">
+		% #	"... healthcare providers are required to report the following adverse events after COVID-19 vaccines, in accordance with the emergency use authorization (EUA) for COVID-19 vaccines:
+		% #	<div class="text_separator"></div>
+		% #	<ul>
+		% #		<li>Vaccine administration errors, whether associated with an adverse event or not</li>
+		% #		<div class="text_separator"></div>
+		% #		<li>Serious adverse events (as defined by federal law), regardless of causality, including:</li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">death</span></li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">a life-threatening event</span></li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">inpatient hospitalization or prolongation of existing
+		% #		hospitalization</span></li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">persistent or significant incapacity or substantial disruption of the ability to conduct normal life functions</span></li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #fc9a7e;padding: 1px 7px;">congenital anomaly/birth defect</span></li>
+	    % #		<div class="text_separator"></div>
+		% #		<li style="margin-left: 30px;"><span style="background: #fc9a7e;padding: 1px 7px;">an important medical event that, based on appropriate medical judgement, may jeopardize the individual and may require medical or surgical intervention to prevent one of the outcomes listed above"</span></li>
+		% #	</ul>
+		% # </div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+    	Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA
+	</div>
+	<div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	    Etude version 1.0, dernier rapport VAERS mis à jour le <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:calc(100% + 10px);margin-left: -10px;display: block;overflow-y: auto;overflow-x: hidden;position: relative;">
+    	<div style="width:100%;min-width: 595px;background: #666570;font-weight: bold;font-size: 18px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+    		<div class="tab-button noselect" style="background: #262436;" id="global-analysis-button" onclick="openGlobalTab('global-analysis');return;">
+    			Analyse
+    		</div>
+    		<div class="tab-button noselect" style="background: #4f4d66;" id="global-data-button" onclick="openGlobalTab('global-data');return;">
+    			Données
+    		</div>
+    	</div>
+	</div>
+
+    <div id="global-analysis" style="width:calc(100% - 2px);position: top;">
+	    <div class="text_separator"></div>
+	    <h2>Présentation de l'étude</h2>
+	    Nous avons décidé de mettre à jour les données d'intéressantes études effectuées par Christine Cotton, en août 2021, sur les effets des substances COVID.
+	    <div class="text_separator"></div>
+	    Christine Cotton est une bio-statisticienne expérimentée, <a href="https://christine-cotton.1ere-page.fr" target="_blank">dont le site peut être trouvé ici</a>, et qui nous a semblé défendre une position de raison depuis le début de la crise politique et sanitaire du COVID-19.
+	    <div class="text_separator"></div>
+	    Les deux présentations auxquelles nous nous sommes attelés sont les suivantes :
+	    <ul>
+	    	<li>Une <b>Analyse des données de pharmacovigilance américaine (VAERS)</b> (<a href="https://crowdbunker.com/v/sNGBDEcpDZ" target="_blank">original ici</a>) <a href="https://crowdbunker.com/@CSI" target="_blank">devant le Conseil scientifique indépendant</a> (CSI) qui nous a semblé intéressante et détaillée.</li>
+	    	<div class="text_separator"></div>
+	    	<li>Une présentation de ses travaux similaires auprès de <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a>.</li>
+	    </ul>
+	    <div class="text_separator"></div>
+	    Le "Center for Disease Control" (CDC) et la Food & Drug Administration (FDA) sont les organismes des Etats-Unis en charge - entre autres choses - de collecter et surveiller la sécurité des médicaments autorisés ou testés aux Etats-Unis, et communiquent les incidents répertoriés via leur plateforme VAERS.
+	    <div class="text_separator"></div>
+	    Nous utiliserons ici uniquement la donnée VAERS, et non la donnée européenne EudraVigilance (dont l'absence totale de détails empêche tout traitement approfondi).
+	    <div class="text_separator"></div>
+	    <b>Christine Cotton, l'auteure de l'étude originale ne nous a pas addressé de demande directe, ni n'entretient de liens avec nous</b> ; nous la citons simplement par courtoisie et respect pour son travail.
+	    <div class="text_separator"></div>
+	    <b>La responsabilité de toute erreur dans les algorithmes écrits par nous (<a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire Github" target="_blank">et publiés comme le reste ici</a>), nous reviendrait exclusivement (et comme d'habitude, tout éventuel <a href="/contact_us">bug signalé</a> serait corrigé dans les délais les plus brefs).</b>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Problématique</h2>
+	    <div class="text_separator"></div>
+    	Christine Cotton souligne (vidéo France Soir ci-dessus, 44:53 & suivant) la première problématique complexe que nous avons rencontré alors que nous inventorions les statistiques à établir : <b>aucune authentification claire et non criticable des grossesses n'est disponible dans les rapports VAERS</b>.
+	    <div class="text_separator"></div>
+	    Pour résumer les problèmes que rencontrera l'analyste qui désire cibler les rapports impliquant les femmes enceintes :
+	    <div class="text_separator"></div>
+    	<div style="width:100%;display: flex;flex-wrap: wrap;">
+	    	<ul>
+	    		<li>Il n'y'a pas d'attribut clair lié au rapport indiquant une grossesse de la patiente, qui est considérée comme un symptôme parmi d'autres</li>
+	    		<div class="text_separator"></div>
+	    		<li>Les symptômes qui devraient permettre une identification facile de la grossesse ne sont pas toujours définis et/ou exhaustivement identifiés</li>
+	    		<div class="text_separator"></div>
+	    		<li>On trouve des faux-positifs dans la donnée (rapports qui sont signalés comme liés à une grossesse alors que le texte brut précise explicitement le contraire)</li>
+	    		<div class="text_separator"></div>
+	    		<li>Certaines grossesses ne sont pas identifiées (aucune identification via les symptômes) et seule une lecture attentive du texte brut permet de corriger cette ommission</li>
+	    		<div class="text_separator"></div>
+	    	</ul>
+		</div>
+	    <div class="text_separator"></div>
+    	Il nous est rapidement apparu que nous aurions besoin <b>d'outils dédiés</b> pour traiter efficacement certaines des données mentionnées dans l'étude pré-citée, et pour garantir leurs mises à jour ultérieures. Ces outils sont détaillés dans la section "Données", et accessibles depuis celle-ci - si vous exécutez le projet localement.
+	    <div class="text_separator"></div>
+	    Ayant réglé ces premiers problèmes d'identification précise des grossesses via une revue détaillée manuelle de chaque rapport, nous publions cette première étude (qui sera approfondie davantage), afin de mettre à disposition des utilisateurs les arbitrages effectués. Ceux-ci peuvent être téléchargés <a href="#" onclick="openGlobalTab('global-data');return;">dans la section "Données".</a>
+	    <div class="text_separator"></div>
+	    Les chiffres ici présentés sont dynamiques (ils seront mis à jour peu de temps après chaque nouvelle publication par le VAERS).
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Donnée VAERS utilisée</h2>
+	    Les données que nous utilisons peuvent être téléchargées via le site du CDC, <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">ici</a> ou directement sur <a target="_blank" href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip">ce lien</a>.
+	    <div class="text_separator"></div>
+    	Les processus d'obtention et de traitement de la donnée sont décrits exhaustivements <a class="url-link noselect" onclick="openGlobalTab('global-data');return;">dans la section "Données"</a> de cette étude.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Représentativité des "effets en vie réelle" des données VAERS</h2>
+    	Il est assez délicat de déterminer quel est la représentativité des rapports VAERS, vis-à-vis du "total des effets qui se produisent réellement dans la population".
+	    <div class="text_separator"></div>
+	    Pour diverses raisons (difficulté d'accès aux soins selon la position géographique, en raison du coût, manque d'information du patient, réticence d'un professionnel de santé, etc), on pourra légitimement penser que les effets secondaires sont sous-rapportés.
+	    <div class="text_separator"></div>
+    	L'auteure précitée fourni deux études (en anglais) qui avancent des taux d'incidents rapportés variables, selon les études, <b>entre 12% et 60% des effets réels</b>.
+	    <div class="text_separator"></div>
+    	Par exemple, pour 10 "Rupture prématurée des membranes" rapportés au VAERS, on peut estimer qu'entre 16 et 83 ont eu lieu dans la population, et que 6 à 73 n'ont pas été rapportées).
+	    <div class="text_separator"></div>
+		<div class="ndt_note">
+		    <ul>
+		    	<li><a href="https://pubmed.ncbi.nlm.nih.gov/33039207" target="_blank">Vaccine. 2020 Nov 3;38(47):7458-7463. doi: 10.1016/j.vaccine.2020.09.072. Epub 2020 Oct 7. - The reporting sensitivity of the Vaccine Adverse Event Reporting System (VAERS) for anaphylaxis and for Guillain-Barré syndrome</a></li>
+		    	<div class="text_separator"></div>
+		    	<li><a href="https://pubmed.ncbi.nlm.nih.gov/30739795" target="_blank">Vaccine. 2019 Mar 7;37(11):1516-1520. doi: 10.1016/j.vaccine.2019.01.052. Epub 2019 Feb 7. - Post-licensure surveillance of trivalent adjuvanted influenza vaccine (aIIV3; Fluad), Vaccine Adverse Event Reporting System (VAERS), United States, July 2016-June 2018</a></li>
+		    </ul>
+		</div>
+	    <div class="text_separator"></div>
+		    Nous avions par ailleurs identifié deux autres études - une première évaluant le taux de reporting au VAERS à un plus pessimiste 1%, et une seconde soulignant la faiblesse de la collecte des effets secondaires en France :
+	    <div class="text_separator"></div>
+		<div class="ndt_note">
+		    <ul>
+		    	<li><a href="https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system" target="_blank">Lazarus R. Electronic Support for Public Health - Vaccine Adverse Event Reporting System (ESP:VAERS) - Final Report. (Prepared by Harvard Pilgrim Health Care, Inc. under Grant No. R18 HS017045). Rockville, MD: Agency for Healthcare Research and Quality, 2010.</a>, effectuée pour le VAERS, évalue ce taux de reporting à 1% pré-COVID, en 2010.</li>
+	    		<div class="text_separator"></div>
+		    	<li><a target="_blank" href="https://dumas.ccsd.cnrs.fr/dumas-02473574/document">CNRS - HAL Id: dumas-02473574 - Anaïs Lefort. Les médecins généralistes sous-déclarent les effets indésirables liés aux médicaments : quelles pistes pour améliorer les actions de pharmacovigilance ? Résultats d’une enquête en Aquitaine en 2018. Médecine humaine et pathologie. 2019. ffdumas-02473574f</a>, pour les lecteurs français, souligne la tendance répandue des médecins généralistes à ne pas rapporter les effets secondaires ou encourager leurs patients à le faire (une tendance qui s'explique par le fait, entre autre, que cette obligation légale date de 2011).</li>
+		    </ul>
+		</div>
+	    <div class="text_separator"></div>
+    	Nous n'avons trouvé aucune étude qui contredise, sur une base sérieuse, que les effets secondaires soient <b>sous-rapportés</b>.
+	    <div class="text_separator"></div>
+    	Si vous aviez connaissance d'une telle étude, veuillez <a href="/contact_us">nous contacter</a> afin que nous mettions à jour le présent article en conséquence.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Affinage des données - Isoler les rapports afférents à une grossesse</h2>
+		<div class="text_separator"></div>
+		Si l'on souhaite s'intéresser aux femmes enceintes, on se réfèrera intuitivement, dans les rapports VAERS, aux symptômes "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" et "<b>Maternal exposure during pregnancy</b>", qui sont théoriquement définis par les opérateurs du VAERS lorsqu'une femme enceinte est exposée, pendant sa grossesse, à une vaccination récente.
+		<div class="text_separator"></div>
+		% my $pregnanciesCompletelyMissed   = $vaersStatistics{'arbitrations'}->{'pregnanciesCompletelyMissed'}   // 0;
+		% my $pregnanciesImproperlyTagged   = $vaersStatistics{'arbitrations'}->{'pregnanciesImproperlyTagged'}   // 0;
+		% my $pregnanciesFalseExtrapolation = $vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'} // 0;
+    	<div style="width:100%;display: flex;flex-wrap: wrap;">
+		    Retraiter la donnée (étape décrite en détail dans la section &nbsp;<div class="url-link noselect" onclick="openGlobalTab('global-data');return;"><b>Données - Affinage des données - Isoler les rapports afférents à une grossesse</b></div>)&nbsp;abouti à :
+		</div>
+		<ul>
+			<li><b><%=$pregnanciesCompletelyMissed%></b> grossesses non qualifiées par l'opérateur VAERS (aucun symptôme ne permettant d'identifier l'évènement)</li>
+			<div class="text_separator"></div>
+			<li><b><%=$pregnanciesImproperlyTagged%></b> grossesses mal identifiées (les 3 symptômes clairs pré-cités ne sont pas présents, mais au moins un symptôme indique clairement l'hypothèse d'une grossesse ; par exemple "Mort du foetus", "Hypertension pendant la gestation", ou tout autre <a href="#" onclick="openSymptoms('pregnancyRelated');return;">symptôme identifié par nous comme lié</a>)</li>
+			<div class="text_separator"></div>
+			<li><b><%=$pregnanciesFalseExtrapolation%></b> grossesses qualifiées par erreur</li>
+		</ul>
+	    <div class="text_separator"></div>
+		<div class="text_separator"></div>
+	  	% my $janssenVaersPerfectCases      = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'vaersPerfectCases'}             // 0;
+	  	% my $modernaVaersPerfectCases      = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'vaersPerfectCases'}             // 0;
+	  	% my $pfizerVaersPerfectCases       = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'vaersPerfectCases'}     // 0;
+	  	% my $unknownVaersPerfectCases      = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'vaersPerfectCases'}             // 0;
+	  	% my $totalVaersPerfectCases        = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'vaersPerfectCases'}              // 0;
+	  	% my $janssenVaersApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'vaersApproximateCases'}         // 0;
+	  	% my $modernaVaersApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'vaersApproximateCases'}         // 0;
+	  	% my $pfizerVaersApproximateCases   = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'vaersApproximateCases'} // 0;
+	  	% my $unknownVaersApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'vaersApproximateCases'}         // 0;
+	  	% my $totalVaersApproximateCases    = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'vaersApproximateCases'}          // 0;
+	  	% my $janssenVaersPerfectAndApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'vaersPerfectAndApproximateCases'}         // 0;
+	  	% my $modernaVaersPerfectAndApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'vaersPerfectAndApproximateCases'}         // 0;
+	  	% my $pfizerVaersPerfectAndApproximateCases   = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'vaersPerfectAndApproximateCases'} // 0;
+	  	% my $unknownVaersPerfectAndApproximateCases  = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'vaersPerfectAndApproximateCases'}         // 0;
+	  	% my $totalVaersPerfectAndApproximateCases    = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'vaersPerfectAndApproximateCases'}          // 0;
+	  	% my $janssenFixedCases  = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedCases'}         // 0;
+	  	% my $modernaFixedCases  = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedCases'}         // 0;
+	  	% my $pfizerFixedCases   = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedCases'} // 0;
+	  	% my $unknownFixedCases  = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedCases'}         // 0;
+	  	% my $totalFixedCases    = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedCases'}          // 0;
+	  	% my $totalCasesOffset   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'totalCasesOffset'}    // 0;
+	  	% my $janssenCasesOffset = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'janssenCasesOffset'}  // 0;
+	  	% my $modernaCasesOffset = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'modernaCasesOffset'}  // 0;
+	  	% my $pfizerCasesOffset  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'pfizerCasesOffset'}   // 0;
+	  	% my $unknownCasesOffset = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'unknownCasesOffset'}  // 0;
+	    <h2>Répartition des grossesses par substances</h2>
+	    Les cas par substances COVID-19 (selon le VAERS - et corrigés par nos soins) sont détaillés ci-dessous selon 4 types de classifications :
+	    <ul>
+	    	<li>Les rapports où la grossesse a été parfaitement identifiée par le VAERS (Présence du symptôme "Pregnancy", "Exposure during pregnancy" ou "Maternal exposure during pregnancy")</li>
+			<div class="text_separator"></div>
+	    	<li>Les rapports où la grossesse a été mal identifiée par l'opérateur du VAERS</li>
+			<div class="text_separator"></div>
+	    	<li>La somme des rapports identifiés via le VAERS (Identification parfaite ou Identification via un symptôme lié)</li>
+			<div class="text_separator"></div>
+	    	<li>Les rapports totaux (corrigés, soit via l'ajout des grossesses non-identifiées précédemment, soit via l'élimination des faux positifs)</li>
+	    </ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Effets Secondaires Observés</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>VAERS, identification directe via l'un des 3 symptômes classiques</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersPerfectCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersPerfectCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersPerfectCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersPerfectCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersPerfectCases%>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Rapports VAERS avec au moins un symptôme lié mais aucun des 3 principaux</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersApproximateCases%>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Rapports totaux (VAERS, authentification directe ou au moins un symptôme lié)</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersPerfectAndApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersPerfectAndApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersPerfectAndApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersPerfectAndApproximateCases%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersPerfectAndApproximateCases%>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: 	wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;color:white;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Rapports totaux (Corrigés)</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($totalCasesOffset > 0) {
+		    		<%=$totalFixedCases%> (<span style="color:lightgreen;">+<%=$totalCasesOffset%></span>)
+	    			% } elsif ($totalCasesOffset == 0) {
+		    		<%=$totalFixedCases%>
+					% } else {
+		    		<%=$totalFixedCases%> (<span style="color:#ff3800;"><%=$totalCasesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($modernaCasesOffset > 0) {
+		    		<%=$modernaFixedCases%> (<span style="color:lightgreen;">+<%=$modernaCasesOffset%></span>)
+	    			% } elsif ($modernaCasesOffset == 0) {
+		    		<%=$modernaFixedCases%>
+					% } else {
+		    		<%=$modernaFixedCases%> (<span style="color:#ff3800;"><%=$modernaCasesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($pfizerCasesOffset > 0) {
+		    		<%=$pfizerFixedCases%> (<span style="color:lightgreen;">+<%=$pfizerCasesOffset%></span>)
+	    			% } elsif ($pfizerCasesOffset == 0) {
+		    		<%=$pfizerFixedCases%>
+					% } else {
+		    		<%=$pfizerFixedCases%> (<span style="color:#ff3800;"><%=$pfizerCasesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($janssenCasesOffset > 0) {
+		    		<%=$janssenFixedCases%> (<span style="color:lightgreen;">+<%=$janssenCasesOffset%></span>)
+	    			% } elsif ($janssenCasesOffset == 0) {
+		    		<%=$janssenFixedCases%>
+					% } else {
+		    		<%=$janssenFixedCases%> (<span style="color:#ff3800;"><%=$janssenCasesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;">
+		    		% if ($unknownCasesOffset > 0) {
+		    		<%=$unknownFixedCases%> (<span style="color:lightgreen;">+<%=$unknownCasesOffset%></span>)
+	    			% } elsif ($unknownCasesOffset == 0) {
+		    		<%=$unknownFixedCases%>
+					% } else {
+		    		<%=$unknownFixedCases%> (<span style="color:#ff3800;"><%=$unknownCasesOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Les <b><%=$pregnanciesCompletelyMissed%> rapports</b> qui ne sont pas qualifiés par le VAERS comme impliquant des grossesses, et que nous avons requalifiés, peuvent être consultés directement <a href="#" onclick="openReports('requalifiedAsPregnancies', 1);return;">en cliquant ici</a>. 
+		<div class="text_separator"></div>
+		% my $falsePositivePregnancies = $vaersStatistics{'arbitrations'}->{'falsePositivePregnancies'}   // 0;
+		Les <b><%=$falsePositivePregnancies%> rapports</b> qui sont qualifiés par le VAERS comme impliquant des grossesses, et que nous avons requalifiés car faux-positifs, peuvent être consultés directement <a href="#" onclick="openReports('requalifiedAsNonPregnancies', 1);return;">en cliquant ici</a>. 
+		<div class="text_separator"></div>
+	    Les analyses ultérieures sur cette page portent donc sur ces <b><%=$totalFixedCases%> cas de grossesses confirmés</b>.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Décès et cas sérieux d'après la donnée VAERS</h2>
+	    Les cas sérieux sont définis par le VAERS comme :
+	    <ul>
+	    	<li>les décès</li>
+	    	<li>la mise en danger de la vie du patient</li>
+	    	<li>l'hospitalisation ou la prolongation d'hospitalisation</li>
+	    	<li>l'infirmité permanente</li>
+	    </ul>
+		<div class="text_separator"></div>
+	    Il est intéressant de noter que le VAERS a, dans sa notice à l'usage des professionnels, <a href="https://www.nihb.org/covid-19/wp-content/uploads/2021/07/10-Things-Healthcare-Providers-Need-to-Know-About-VAERS.pdf" target="_blank">10 Things Healthcare Providers Need to Know about the Vaccine Adverse Event Reporting System, Reporting Adverse Events Following COVID-19 Vaccination (2021-07-10)</a>, une définition plus ancienne, et différente des évènements sérieux (<b>en vert ceux qu'on trouve toujours ; en rouge ceux qui ne sont plus considérés comme "sérieux" dans la donnée synthétisée du VAERS</b>) :
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="ndt_note">
+			"... les fournisseurs de soins sont tenus de rapporter les effets secondaires suivants après l'administration de vaccins COVID, en accord avec l'autorisation d'utilisation d'urgence (EUA) pour les vaccins COVID-19 :
+			<div class="text_separator"></div>
+			<ul>
+				<li>Erreurs d'administration ; qu'elles soient liées à un effet secondaire ou pas</li>
+				<div class="text_separator"></div>
+				<li>Les effets secondaires sérieux (tels que définis par la loi fédérale), incluant :</li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">les décès</span></li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">les évènements mettant en danger la vie du patient</span></li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">les hospitalisations ou prolongations d'hospitalisation du patient</span></li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #91e398;padding: 1px 7px;">les incapacités permanentes ou significatives de la capacité à mener le cours normal de son existence pour le patient</span></li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #db8072;padding: 1px 7px;">les anomalies congénitales et les défauts de naissance</span></li>
+	    		<div class="text_separator"></div>
+				<li style="margin-left: 30px;"><span style="background: #db8072;padding: 1px 7px;">les évènements significatifs qui, sur la base d'un diagnostique médical approprié, pourraient mettre en péril l'individu et pourraient nécessiter une intervention médicale ou chirurgicale pour prévenir l'une des issues listées ci-dessus"</span></li>
+			</ul>
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    % # Stats concerning the mother.
+	  	% my $totalVaersDeaths          = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedDeaths'}                 // 0;
+	  	% my $totalVaersDeathsPercent   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedDeathsPercent'}          // 0;
+	  	% my $modernaVaersDeaths        = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedDeaths'}                // 0;
+	  	% my $modernaVaersDeathsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedDeathsPercent'}         // 0;
+	  	% my $pfizerVaersDeaths         = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDeaths'}        // 0;
+	  	% my $pfizerVaersDeathsPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDeathsPercent'} // 0;
+	  	% my $janssenVaersDeaths        = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedDeaths'}                // 0;
+	  	% my $janssenVaersDeathsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedDeathsPercent'}         // 0;
+	  	% my $unknownVaersDeaths        = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDeaths'}                // 0;
+	  	% my $unknownVaersDeathsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDeathsPercent'}         // 0;
+
+	  	% my $totalVaersHospitalized          = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedHospitalized'}                 // 0;
+	  	% my $totalVaersHospitalizedPercent   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedHospitalizedPercent'}          // 0;
+	  	% my $modernaVaersHospitalized        = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedHospitalized'}                // 0;
+	  	% my $modernaVaersHospitalizedPercent = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedHospitalizedPercent'}         // 0;
+	  	% my $pfizerVaersHospitalized         = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedHospitalized'}        // 0;
+	  	% my $pfizerVaersHospitalizedPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedHospitalizedPercent'} // 0;
+	  	% my $janssenVaersHospitalized        = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedHospitalized'}                // 0;
+	  	% my $janssenVaersHospitalizedPercent = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedHospitalizedPercent'}         // 0;
+	  	% my $unknownVaersHospitalized        = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedHospitalized'}                // 0;
+	  	% my $unknownVaersHospitalizedPercent = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedHospitalizedPercent'}         // 0;
+
+	  	% my $totalVaersDisabilities      = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedDisabilities'}               // 0;
+	  	% my $totalVaersDisabilitiesPercent        = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedDisabilitiesPercent'}               // 0;
+	  	% my $modernaVaersDisabilities    = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedDisabilities'}              // 0;
+	  	% my $modernaVaersDisabilitiesPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedDisabilitiesPercent'}              // 0;
+	  	% my $pfizerVaersDisabilities     = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDisabilities'}      // 0;
+	  	% my $pfizerVaersDisabilitiesPercent       = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDisabilitiesPercent'}      // 0;
+	  	% my $janssenVaersDisabilities    = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedDisabilities'}              // 0;
+	  	% my $janssenVaersDisabilitiesPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedDisabilitiesPercent'}              // 0;
+	  	% my $unknownVaersDisabilities    = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDisabilities'}              // 0;
+	  	% my $unknownVaersDisabilitiesPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDisabilitiesPercent'}              // 0;
+
+	  	% my $totalVaersLifeThreats      = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedLifeThreats'}               // 0;
+	  	% my $totalVaersLifeThreatsPercent        = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedLifeThreatsPercent'}               // 0;
+	  	% my $modernaVaersLifeThreats    = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedLifeThreats'}              // 0;
+	  	% my $modernaVaersLifeThreatsPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedLifeThreatsPercent'}              // 0;
+	  	% my $pfizerVaersLifeThreats     = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedLifeThreats'}      // 0;
+	  	% my $pfizerVaersLifeThreatsPercent       = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedLifeThreatsPercent'}      // 0;
+	  	% my $janssenVaersLifeThreats    = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedLifeThreats'}              // 0;
+	  	% my $janssenVaersLifeThreatsPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedLifeThreatsPercent'}              // 0;
+	  	% my $unknownVaersLifeThreats    = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedLifeThreats'}              // 0;
+	  	% my $unknownVaersLifeThreatsPercent      = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedLifeThreatsPercent'}              // 0;
+
+	  	% my $totalVaersSeriouses   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedSeriousesAE'}          // 0;
+	  	% my $totalVaersSeriousesAEPercent   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedSeriousesAEPercent'}          // 0;
+	  	% my $modernaVaersSeriouses = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $modernaVaersSeriousesAEPercent = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedSeriousesAEPercent'}         // 0;
+	  	% my $pfizerVaersSeriouses  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedSeriousesAE'} // 0;
+	  	% my $pfizerVaersSeriousesAEPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedSeriousesAEPercent'} // 0;
+	  	% my $janssenVaersSeriouses = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $janssenVaersSeriousesAEPercent = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedSeriousesAEPercent'}         // 0;
+	  	% my $unknownVaersSeriouses = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $unknownVaersSeriousesAEPercent = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedSeriousesAEPercent'}         // 0;
+	    <h2>Effets secondaires ayant affecté la mère, d'après la donnée VAERS</h2>
+	    La gravité des effets secondaires pour la mère (sujette principale - pour le VAERS - <b>des <%=$totalFixedCases%> rapports identifiés à l'étape précédente</b>), est ici résumée.
+		<div class="text_separator"></div>
+		Nous détaillons ci-dessous, par substance, quels rapports ont eu une issue fatale, ou, si la patiente a survécu, leur degré de gravité (Infirmité Permanente > Mise en danger de la vie > Hospitalisation).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Effets Secondaires Observés</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL
+			    	<div class="text_separator"></div>
+		    		N=<%=$totalFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA
+			    	<div class="text_separator"></div>
+		    		N=<%=$modernaFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH
+			    	<div class="text_separator"></div>
+		    		N=<%=$pfizerFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN
+			    	<div class="text_separator"></div>
+		    		N=<%=$janssenFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU
+			    	<div class="text_separator"></div>
+		    		N=<%=$unknownFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;color:#fff">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<b>Décès</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<%=$totalVaersDeaths%> (<%=$totalVaersDeathsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersDeaths%> (<%=$modernaVaersDeathsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersDeaths%> (<%=$pfizerVaersDeathsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersDeaths%> (<%=$janssenVaersDeathsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;">
+		    		<%=$unknownVaersDeaths%> (<%=$unknownVaersDeathsPercent%> %)
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Infirmité permanente</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersDisabilities%> (<%=$totalVaersDisabilitiesPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersDisabilities%> (<%=$modernaVaersDisabilitiesPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersDisabilities%> (<%=$pfizerVaersDisabilitiesPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersDisabilities%> (<%=$janssenVaersDisabilitiesPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersDisabilities%> (<%=$unknownVaersDisabilitiesPercent%> %)
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Mise en danger de la vie de la patiente</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersLifeThreats%> (<%=$totalVaersLifeThreatsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersLifeThreats%> (<%=$modernaVaersLifeThreatsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersLifeThreats%> (<%=$pfizerVaersLifeThreatsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersLifeThreats%> (<%=$janssenVaersLifeThreatsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersLifeThreats%> (<%=$unknownVaersLifeThreatsPercent%> %)
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Hospitalisation imprévue ou prolongée</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersHospitalized%> (<%=$totalVaersHospitalizedPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersHospitalized%> (<%=$modernaVaersHospitalizedPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersHospitalized%> (<%=$pfizerVaersHospitalizedPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersHospitalized%> (<%=$janssenVaersHospitalizedPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersHospitalized%> (<%=$unknownVaersHospitalizedPercent%> %)
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: 	wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		<b>Effets secondaires sérieux (Somme des rapports incluant au moins l'une des trois conséquences précédentes)</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;color:white;border-right: 1px solid #fff;">
+		    		<%=$totalVaersSeriouses%> (<%=$totalVaersSeriousesAEPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		<%=$modernaVaersSeriouses%> (<%=$modernaVaersSeriousesAEPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		<%=$pfizerVaersSeriouses%> (<%=$pfizerVaersSeriousesAEPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		<%=$janssenVaersSeriouses%> (<%=$janssenVaersSeriousesAEPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;color:white;">
+		    		<%=$unknownVaersSeriouses%> (<%=$unknownVaersSeriousesAEPercent%> %)
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+
+	    % # Stats concerning the child.
+	  	% my $totalVaersChildDeathsSymptoms           = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'}                 // 0;
+	  	% my $totalVaersChildDeathsSymptomsPercent    = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeathsPercent'}          // 0;
+	  	% my $modernaVaersChildDeathsSymptoms         = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedChildDeaths'}                // 0;
+	  	% my $modernaVaersChildDeathsSymptomsPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedChildDeathsPercent'}         // 0;
+	  	% my $pfizerVaersChildDeathsSymptoms          = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildDeaths'}        // 0;
+	  	% my $pfizerVaersChildDeathsSymptomsPercent   = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildDeathsPercent'} // 0;
+	  	% my $janssenVaersChildDeathsSymptoms         = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildDeaths'}                // 0;
+	  	% my $janssenVaersChildDeathsSymptomsPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildDeathsPercent'}         // 0;
+	  	% my $unknownVaersChildDeathsSymptoms         = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildDeaths'}                // 0;
+	  	% my $unknownVaersChildDeathsSymptomsPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildDeathsPercent'}         // 0;
+
+	  	% my $totalVaersChildSeriousesAEs          = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAE'}                 // 0;
+	  	% my $totalVaersChildSeriousesAEsPercent   = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAEPercent'}          // 0;
+	  	% my $modernaVaersChildSeriousesAEs        = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedChildSeriousesAE'}                // 0;
+	  	% my $modernaVaersChildSeriousesAEsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'MODERNA'}->{'fixedChildSeriousesAEPercent'}         // 0;
+	  	% my $pfizerVaersChildSeriousesAEs         = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildSeriousesAE'}        // 0;
+	  	% my $pfizerVaersChildSeriousesAEsPercent  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildSeriousesAEPercent'} // 0;
+	  	% my $janssenVaersChildSeriousesAEs        = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildSeriousesAE'}                // 0;
+	  	% my $janssenVaersChildSeriousesAEsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildSeriousesAEPercent'}         // 0;
+	  	% my $unknownVaersChildSeriousesAEs        = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildSeriousesAE'}                // 0;
+	  	% my $unknownVaersChildSeriousesAEsPercent = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildSeriousesAEPercent'}         // 0;
+		On s'intéressera aussi, par ailleurs, à qualifier les effets secondaires ayant affecté le foetus.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Effets secondaires ayant potentiellement affecté le foetus, d'après la donnée VAERS</h2>
+		Il est délicat d'avoir, dans ces mêmes <b><%=$totalFixedCases%> rapports</b>, une vue précise des effets secondaires ayant affecté le foetus ou le nouveau-né, en conséquence de la vaccination de sa mère.
+		<div class="text_separator"></div>
+		Le VAERS procède, normalement, à un double rapport quand l'enfant a été affecté. Cependant, un examen détaillé des rapports met en lumière que celui-ci est aléatoirement produit (souvent, seul l'effet ayant affecté la mère est rapporté) ; et il est par ailleurs très difficile de faire le lien entre les symptômes subis par la mère et ceux du foetus ou de l'enfant, lorsqu'on se base sur la seule notice de ce dernier.
+		<div class="text_separator"></div>
+		Nous avons donc décidé de nous baser sur les rapports concernant les patientes pour en extrapoler, dans un premier temps, les incidents ayant affecté le foetus ou l'enfant pendant la grossesse.
+		<div class="text_separator"></div>
+		Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que la celle-ci ne soit impactée, ne rentrent pas dans le champ immédiat de nos analyses. L'incident ferait en effet l'objet d'un rapport VAERS pour le nouveau-né seul (par exemple une exposition du bébé via le lait maternel sans que la mère n'ait expérimentée de symptômes).
+		<div class="text_separator"></div>
+		Les rapports d'effets secondaires ayant été mortels pour le foetus ou l'enfant peuvent être identifiés <a href="#" onclick="openSymptoms('foetalDeathRelated');return;">via un set de symptômes pertinents que nous avons sélectionnés</a> (par exemple "Avortement spontané", "Ectopic Pregnancy", etc.).
+		<div class="text_separator"></div>
+		Les rapports d'effets secondaires n'ayant pas entrainé la mort, mais ayant affecté le foetus, peuvent être identifiés <a href="#" onclick="openSymptoms('severePregnancyNoDeathRelated');return;">via un autre set de symptômes pertinents que nous avons sélectionnés</a> (par exemple "Complication de grossesse", "Travail prématuré", etc.).
+		<div class="text_separator"></div>
+		Cette pré-sélection est volontairement très large, afin de ne pas laisser échapper d'effets secondaires sérieux.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Effets Secondaires Observés</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL
+			    	<div class="text_separator"></div>
+		    		N=<%=$totalFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA
+			    	<div class="text_separator"></div>
+		    		N=<%=$modernaFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH
+			    	<div class="text_separator"></div>
+		    		N=<%=$pfizerFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN
+			    	<div class="text_separator"></div>
+		    		N=<%=$janssenFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU
+			    	<div class="text_separator"></div>
+		    		N=<%=$unknownFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;color:#fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Décès de l'enfant identifié via symptôme</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$totalVaersChildDeathsSymptoms%> (<%=$totalVaersChildDeathsSymptomsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersChildDeathsSymptoms%> (<%=$modernaVaersChildDeathsSymptomsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersChildDeathsSymptoms%> (<%=$pfizerVaersChildDeathsSymptomsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersChildDeathsSymptoms%> (<%=$janssenVaersChildDeathsSymptomsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;">
+		    		<%=$unknownVaersChildDeathsSymptoms%> (<%=$unknownVaersChildDeathsSymptomsPercent%> %)
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Autres incidents dont les symptômes impliquent potentiellement l'enfant</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalVaersChildSeriousesAEs%> (<%=$totalVaersChildSeriousesAEsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaVaersChildSeriousesAEs%> (<%=$modernaVaersChildSeriousesAEsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerVaersChildSeriousesAEs%> (<%=$pfizerVaersChildSeriousesAEsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenVaersChildSeriousesAEs%> (<%=$janssenVaersChildSeriousesAEsPercent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownVaersChildSeriousesAEs%> (<%=$unknownVaersChildSeriousesAEsPercent%> %)
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Dans tous les cas, l'analyste qui souhaiterait déterminer si le foetus a souffert de conséquences graves suite à l'exposition de sa mère aux substances COVID <b>devra passer par une revue manuelle de tous les rapports de grossesse identifiés</b>.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Affinage des données - Examen croisé approfondi du caractère sérieux des incidents, rapportés pour la mère et le foetus</h2>
+		<div class="text_separator"></div>
+		Il nous est en effet apparu, lors de nos revues des rapports, de nombreux cas où l'analyste VAERS ne qualifie pas correctement les symptômes décrits par le rapporteur.
+		<div class="text_separator"></div>
+		Par exemple, on trouvera une migraine ou rougeur comme unique symptôme, quand la description clinique de la patiente rapporte une fausse-couche.
+		<div class="text_separator"></div>
+		Nous avons donc effectué la revue des <b><%=$totalFixedCases%> rapports</b>, et, via un assistant conçu à cette fin, systématiquement veillé à identifier le caractère sérieux des effets secondaires subis par la mère et/ou le foetus.
+		<div class="text_separator"></div>
+		Nous nous sommes aussi attachés à identifier précisément les éléments temps clés : date de vaccination, date d'effets secondaires observés, interval de temps entre la vaccination et la survenue des effets.
+		<div class="text_separator"></div>
+		La section <a href="#" onclick="openGlobalTab('global-data');return;"><b>Affinage des données - Confirmation du caractère sérieux ou non des rapports</b></a> expose l'ensemble des opérations réalisées à cette étape du traitement.
+		<div class="text_separator"></div>
+		Malgré les nombreuses précautions que nous avons prises pour garantir un traitement exhaustif des symptômes, nous n'échappons pas nous-mêmes au risque d'erreur humaine, et nous vous encourageons par conséquent à revoir en détail les nombreux arbitrages que nous avons détaillés dans la section ci-dessus et à <a href="/contact_us">nous signaler toute erreur que vous pourriez identifier</a>.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Effets secondaires ayant affecté la mère, d'après la donnée vérifiée</h2>
+	    Les effets secondaires dont ont souffert les patientes enceintes sont, après ces vérifications, synthétisés dans le tableau ci-dessous.
+		<div class="text_separator"></div>
+	    Les écarts représentés entre parenthèse permettent d'apprécier combien de ces évènements n'ont pas été correctement caractérisés par le VAERS (voir les tableaux plus haut). Si aucun écart n'est présent, nos chiffres sont les mêmes.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Effets Secondaires Observés</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL
+			    	<div class="text_separator"></div>
+		    		N=<%=$totalFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA
+			    	<div class="text_separator"></div>
+		    		N=<%=$modernaFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH
+			    	<div class="text_separator"></div>
+		    		N=<%=$pfizerFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN
+			    	<div class="text_separator"></div>
+		    		N=<%=$janssenFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU
+			    	<div class="text_separator"></div>
+		    		N=<%=$unknownFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		% # Fetching post arbitrations statistics.
+	  	% my $totalVaersDeathsArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedDeaths'}               // 0;
+	  	% my $totalVaersDeathsPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedDeathsPercent'}               // 0;
+	  	% my $modernaVaersDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedDeaths'}              // 0;
+	  	% my $modernaVaersDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedDeathsPercent'}              // 0;
+	  	% my $pfizerVaersDeathsArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDeaths'}      // 0;
+	  	% my $pfizerVaersDeathsPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDeathsPercent'}      // 0;
+	  	% my $janssenVaersDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedDeaths'}              // 0;
+	  	% my $janssenVaersDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedDeathsPercent'}              // 0;
+	  	% my $unknownVaersDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDeaths'}              // 0;
+	  	% my $unknownVaersDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDeathsPercent'}              // 0;
+
+	  	% my $totalVaersDisabilitiesArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedDisabilities'}               // 0;
+	  	% my $totalVaersDisabilitiesPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedDisabilitiesPercent'}               // 0;
+	  	% my $modernaVaersDisabilitiesArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedDisabilities'}              // 0;
+	  	% my $modernaVaersDisabilitiesPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedDisabilitiesPercent'}              // 0;
+	  	% my $pfizerVaersDisabilitiesArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDisabilities'}      // 0;
+	  	% my $pfizerVaersDisabilitiesPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedDisabilitiesPercent'}      // 0;
+	  	% my $janssenVaersDisabilitiesArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedDisabilities'}              // 0;
+	  	% my $janssenVaersDisabilitiesPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedDisabilitiesPercent'}              // 0;
+	  	% my $unknownVaersDisabilitiesArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDisabilities'}              // 0;
+	  	% my $unknownVaersDisabilitiesPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedDisabilitiesPercent'}              // 0;
+
+	  	% my $totalVaersLifeThreatsArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedLifeThreats'}               // 0;
+	  	% my $totalVaersLifeThreatsPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedLifeThreatsPercent'}               // 0;
+	  	% my $modernaVaersLifeThreatsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedLifeThreats'}              // 0;
+	  	% my $modernaVaersLifeThreatsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedLifeThreatsPercent'}              // 0;
+	  	% my $pfizerVaersLifeThreatsArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedLifeThreats'}      // 0;
+	  	% my $pfizerVaersLifeThreatsPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedLifeThreatsPercent'}      // 0;
+	  	% my $janssenVaersLifeThreatsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedLifeThreats'}              // 0;
+	  	% my $janssenVaersLifeThreatsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedLifeThreatsPercent'}              // 0;
+	  	% my $unknownVaersLifeThreatsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedLifeThreats'}              // 0;
+	  	% my $unknownVaersLifeThreatsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedLifeThreatsPercent'}              // 0;
+
+	  	% my $totalVaersHospitalizedArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedHospitalized'}               // 0;
+	  	% my $totalVaersHospitalizedPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedHospitalizedPercent'}               // 0;
+	  	% my $modernaVaersHospitalizedArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedHospitalized'}              // 0;
+	  	% my $modernaVaersHospitalizedPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedHospitalizedPercent'}              // 0;
+	  	% my $pfizerVaersHospitalizedArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedHospitalized'}      // 0;
+	  	% my $pfizerVaersHospitalizedPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedHospitalizedPercent'}      // 0;
+	  	% my $janssenVaersHospitalizedArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedHospitalized'}              // 0;
+	  	% my $janssenVaersHospitalizedPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedHospitalizedPercent'}              // 0;
+	  	% my $unknownVaersHospitalizedArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedHospitalized'}              // 0;
+	  	% my $unknownVaersHospitalizedPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedHospitalizedPercent'}              // 0;
+
+	  	% my $totalVaersSeriousesArbitrated   = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedSeriousesAE'}          // 0;
+	  	% my $totalVaersSeriousesAEPercentArbitrated   = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedSeriousesAEPercent'}          // 0;
+	  	% my $modernaVaersSeriousesArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $modernaVaersSeriousesAEPercentArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedSeriousesAEPercent'}         // 0;
+	  	% my $pfizerVaersSeriousesArbitrated  = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedSeriousesAE'} // 0;
+	  	% my $pfizerVaersSeriousesAEPercentArbitrated  = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedSeriousesAEPercent'} // 0;
+	  	% my $janssenVaersSeriousesArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $janssenVaersSeriousesAEPercentArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedSeriousesAEPercent'}         // 0;
+	  	% my $unknownVaersSeriousesArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedSeriousesAE'}         // 0;
+	  	% my $unknownVaersSeriousesAEPercentArbitrated = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedSeriousesAEPercent'}         // 0;
+	  	% my $totalVaersDeathsOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetDeaths'}               // 0;
+	  	% my $modernaVaersDeathsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetDeaths'}              // 0;
+	  	% my $pfizerVaersDeathsOffset     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetDeaths'}      // 0;
+	  	% my $janssenVaersDeathsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetDeaths'}              // 0;
+	  	% my $unknownVaersDeathsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetDeaths'}              // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;color:#fff">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		<b>Décès</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		% if ($totalVaersDeathsOffset > 0) {
+		    		<%=$totalVaersDeathsArbitrated%> (<%=$totalVaersDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$totalVaersDeathsOffset%></span>)
+	    			% } elsif ($totalVaersDeathsOffset == 0) {
+		    		<%=$totalVaersDeathsArbitrated%> (<%=$totalVaersDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersDeathsArbitrated%> (<%=$totalVaersDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$totalVaersDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersDeathsOffset > 0) {
+		    		<%=$modernaVaersDeathsArbitrated%> (<%=$modernaVaersDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$modernaVaersDeathsOffset%></span>)
+	    			% } elsif ($modernaVaersDeathsOffset == 0) {
+		    		<%=$modernaVaersDeathsArbitrated%> (<%=$modernaVaersDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersDeathsArbitrated%> (<%=$modernaVaersDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$modernaVaersDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersDeathsOffset > 0) {
+		    		<%=$pfizerVaersDeathsArbitrated%> (<%=$pfizerVaersDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$pfizerVaersDeathsOffset%></span>)
+	    			% } elsif ($pfizerVaersDeathsOffset == 0) {
+		    		<%=$pfizerVaersDeathsArbitrated%> (<%=$pfizerVaersDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersDeathsArbitrated%> (<%=$pfizerVaersDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$pfizerVaersDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersDeathsOffset > 0) {
+		    		<%=$janssenVaersDeathsArbitrated%> (<%=$janssenVaersDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$janssenVaersDeathsOffset%></span>)
+	    			% } elsif ($janssenVaersDeathsOffset == 0) {
+		    		<%=$janssenVaersDeathsArbitrated%> (<%=$janssenVaersDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersDeathsArbitrated%> (<%=$janssenVaersDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$janssenVaersDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;">
+		    		% if ($unknownVaersDeathsOffset > 0) {
+		    		<%=$unknownVaersDeathsArbitrated%> (<%=$unknownVaersDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$unknownVaersDeathsOffset%></span>)
+	    			% } elsif ($unknownVaersDeathsOffset == 0) {
+		    		<%=$unknownVaersDeathsArbitrated%> (<%=$unknownVaersDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersDeathsArbitrated%> (<%=$unknownVaersDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$unknownVaersDeathsOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+
+	  	% my $totalVaersDisabilitiesOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetDisabilities'}               // 0;
+	  	% my $modernaVaersDisabilitiesOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetDisabilities'}              // 0;
+	  	% my $pfizerVaersDisabilitiesOffset     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetDisabilities'}      // 0;
+	  	% my $janssenVaersDisabilitiesOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetDisabilities'}              // 0;
+	  	% my $unknownVaersDisabilitiesOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetDisabilities'}              // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Infirmité permanente</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($totalVaersDisabilitiesOffset > 0) {
+		    		<%=$totalVaersDisabilitiesArbitrated%> (<%=$totalVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$totalVaersDisabilitiesOffset%></span>)
+	    			% } elsif ($totalVaersDisabilitiesOffset == 0) {
+		    		<%=$totalVaersDisabilitiesArbitrated%> (<%=$totalVaersDisabilitiesPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersDisabilitiesArbitrated%> (<%=$totalVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkred;"><%=$totalVaersDisabilitiesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersDisabilitiesOffset > 0) {
+		    		<%=$modernaVaersDisabilitiesArbitrated%> (<%=$modernaVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$modernaVaersDisabilitiesOffset%></span>)
+	    			% } elsif ($modernaVaersDisabilitiesOffset == 0) {
+		    		<%=$modernaVaersDisabilitiesArbitrated%> (<%=$modernaVaersDisabilitiesPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersDisabilitiesArbitrated%> (<%=$modernaVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkred;"><%=$modernaVaersDisabilitiesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersDisabilitiesOffset > 0) {
+		    		<%=$pfizerVaersDisabilitiesArbitrated%> (<%=$pfizerVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$pfizerVaersDisabilitiesOffset%></span>)
+	    			% } elsif ($pfizerVaersDisabilitiesOffset == 0) {
+		    		<%=$pfizerVaersDisabilitiesArbitrated%> (<%=$pfizerVaersDisabilitiesPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersDisabilitiesArbitrated%> (<%=$pfizerVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkred;"><%=$pfizerVaersDisabilitiesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersDisabilitiesOffset > 0) {
+		    		<%=$janssenVaersDisabilitiesArbitrated%> (<%=$janssenVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$janssenVaersDisabilitiesOffset%></span>)
+	    			% } elsif ($janssenVaersDisabilitiesOffset == 0) {
+		    		<%=$janssenVaersDisabilitiesArbitrated%> (<%=$janssenVaersDisabilitiesPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersDisabilitiesArbitrated%> (<%=$janssenVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkred;"><%=$janssenVaersDisabilitiesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		% if ($unknownVaersDisabilitiesOffset > 0) {
+		    		<%=$unknownVaersDisabilitiesArbitrated%> (<%=$unknownVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$unknownVaersDisabilitiesOffset%></span>)
+	    			% } elsif ($unknownVaersDisabilitiesOffset == 0) {
+		    		<%=$unknownVaersDisabilitiesArbitrated%> (<%=$unknownVaersDisabilitiesPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersDisabilitiesArbitrated%> (<%=$unknownVaersDisabilitiesPercentArbitrated%> %, <span style="color:darkred;"><%=$unknownVaersDisabilitiesOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+
+	  	% my $totalVaersLifeThreatsOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetLifeThreats'}               // 0;
+	  	% my $modernaVaersLifeThreatsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetLifeThreats'}              // 0;
+	  	% my $pfizerVaersLifeThreatsOffset     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetLifeThreats'}      // 0;
+	  	% my $janssenVaersLifeThreatsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetLifeThreats'}              // 0;
+	  	% my $unknownVaersLifeThreatsOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetLifeThreats'}              // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Mise en danger de la vie de la patiente</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($totalVaersLifeThreatsOffset > 0) {
+		    		<%=$totalVaersLifeThreatsArbitrated%> (<%=$totalVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$totalVaersLifeThreatsOffset%></span>)
+	    			% } elsif ($totalVaersLifeThreatsOffset == 0) {
+		    		<%=$totalVaersLifeThreatsArbitrated%> (<%=$totalVaersLifeThreatsPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersLifeThreatsArbitrated%> (<%=$totalVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkred;"><%=$totalVaersLifeThreatsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersLifeThreatsOffset > 0) {
+		    		<%=$modernaVaersLifeThreatsArbitrated%> (<%=$modernaVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$modernaVaersLifeThreatsOffset%></span>)
+	    			% } elsif ($modernaVaersLifeThreatsOffset == 0) {
+		    		<%=$modernaVaersLifeThreatsArbitrated%> (<%=$modernaVaersLifeThreatsPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersLifeThreatsArbitrated%> (<%=$modernaVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkred;"><%=$modernaVaersLifeThreatsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersLifeThreatsOffset > 0) {
+		    		<%=$pfizerVaersLifeThreatsArbitrated%> (<%=$pfizerVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$pfizerVaersLifeThreatsOffset%></span>)
+	    			% } elsif ($pfizerVaersLifeThreatsOffset == 0) {
+		    		<%=$pfizerVaersLifeThreatsArbitrated%> (<%=$pfizerVaersLifeThreatsPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersLifeThreatsArbitrated%> (<%=$pfizerVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkred;"><%=$pfizerVaersLifeThreatsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersLifeThreatsOffset > 0) {
+		    		<%=$janssenVaersLifeThreatsArbitrated%> (<%=$janssenVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$janssenVaersLifeThreatsOffset%></span>)
+	    			% } elsif ($janssenVaersLifeThreatsOffset == 0) {
+		    		<%=$janssenVaersLifeThreatsArbitrated%> (<%=$janssenVaersLifeThreatsPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersLifeThreatsArbitrated%> (<%=$janssenVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkred;"><%=$janssenVaersLifeThreatsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		% if ($unknownVaersLifeThreatsOffset > 0) {
+		    		<%=$unknownVaersLifeThreatsArbitrated%> (<%=$unknownVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$unknownVaersLifeThreatsOffset%></span>)
+	    			% } elsif ($unknownVaersLifeThreatsOffset == 0) {
+		    		<%=$unknownVaersLifeThreatsArbitrated%> (<%=$unknownVaersLifeThreatsPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersLifeThreatsArbitrated%> (<%=$unknownVaersLifeThreatsPercentArbitrated%> %, <span style="color:darkred;"><%=$unknownVaersLifeThreatsOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+
+	  	% my $totalVaersHospitalizedOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetHospitalized'}               // 0;
+	  	% my $modernaVaersHospitalizedOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetHospitalized'}              // 0;
+	  	% my $pfizerVaersHospitalizedOffset     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetHospitalized'}      // 0;
+	  	% my $janssenVaersHospitalizedOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetHospitalized'}              // 0;
+	  	% my $unknownVaersHospitalizedOffset    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetHospitalized'}              // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Hospitalisation imprévue ou prolongée</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($totalVaersHospitalizedOffset > 0) {
+		    		<%=$totalVaersHospitalizedArbitrated%> (<%=$totalVaersHospitalizedPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$totalVaersHospitalizedOffset%></span>)
+	    			% } elsif ($totalVaersHospitalizedOffset == 0) {
+		    		<%=$totalVaersHospitalizedArbitrated%> (<%=$totalVaersHospitalizedPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersHospitalizedArbitrated%> (<%=$totalVaersHospitalizedPercentArbitrated%> %, <span style="color:darkred;"><%=$totalVaersHospitalizedOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersHospitalizedOffset > 0) {
+		    		<%=$modernaVaersHospitalizedArbitrated%> (<%=$modernaVaersHospitalizedPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$modernaVaersHospitalizedOffset%></span>)
+	    			% } elsif ($modernaVaersHospitalizedOffset == 0) {
+		    		<%=$modernaVaersHospitalizedArbitrated%> (<%=$modernaVaersHospitalizedPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersHospitalizedArbitrated%> (<%=$modernaVaersHospitalizedPercentArbitrated%> %, <span style="color:darkred;"><%=$modernaVaersHospitalizedOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersHospitalizedOffset > 0) {
+		    		<%=$pfizerVaersHospitalizedArbitrated%> (<%=$pfizerVaersHospitalizedPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$pfizerVaersHospitalizedOffset%></span>)
+	    			% } elsif ($pfizerVaersHospitalizedOffset == 0) {
+		    		<%=$pfizerVaersHospitalizedArbitrated%> (<%=$pfizerVaersHospitalizedPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersHospitalizedArbitrated%> (<%=$pfizerVaersHospitalizedPercentArbitrated%> %, <span style="color:darkred;"><%=$pfizerVaersHospitalizedOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersHospitalizedOffset > 0) {
+		    		<%=$janssenVaersHospitalizedArbitrated%> (<%=$janssenVaersHospitalizedPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$janssenVaersHospitalizedOffset%></span>)
+	    			% } elsif ($janssenVaersHospitalizedOffset == 0) {
+		    		<%=$janssenVaersHospitalizedArbitrated%> (<%=$janssenVaersHospitalizedPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersHospitalizedArbitrated%> (<%=$janssenVaersHospitalizedPercentArbitrated%> %, <span style="color:darkred;"><%=$janssenVaersHospitalizedOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		% if ($unknownVaersHospitalizedOffset > 0) {
+		    		<%=$unknownVaersHospitalizedArbitrated%> (<%=$unknownVaersHospitalizedPercentArbitrated%> %, <span style="color:darkgreen;">+<%=$unknownVaersHospitalizedOffset%></span>)
+	    			% } elsif ($unknownVaersHospitalizedOffset == 0) {
+		    		<%=$unknownVaersHospitalizedArbitrated%> (<%=$unknownVaersHospitalizedPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersHospitalizedArbitrated%> (<%=$unknownVaersHospitalizedPercentArbitrated%> %, <span style="color:darkred;"><%=$unknownVaersHospitalizedOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+
+	  	% my $totalVaersSeriousesOffset   = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetSeriousesAE'}          // 0;
+	  	% my $modernaVaersSeriousesOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetSeriousesAE'}         // 0;
+	  	% my $pfizerVaersSeriousesOffset  = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetSeriousesAE'} // 0;
+	  	% my $janssenVaersSeriousesOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetSeriousesAE'}         // 0;
+	  	% my $unknownVaersSeriousesOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetSeriousesAE'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: 	wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		<b>Effets secondaires sérieux (Somme des rapports incluant au moins l'une des trois conséquences précédentes)</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;color:white;border-right: 1px solid #fff;">
+		    		% if ($totalVaersSeriousesOffset > 0) {
+		    		<%=$totalVaersSeriousesArbitrated%> (<%=$totalVaersSeriousesAEPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$totalVaersSeriousesOffset%></span>)
+	    			% } elsif ($totalVaersSeriousesOffset == 0) {
+		    		<%=$totalVaersSeriousesArbitrated%> (<%=$totalVaersSeriousesAEPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersSeriousesArbitrated%> (<%=$totalVaersSeriousesAEPercentArbitrated%> %, <span style="color:#ff3800;"><%=$totalVaersSeriousesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		% if ($modernaVaersSeriousesOffset > 0) {
+		    		<%=$modernaVaersSeriousesArbitrated%> (<%=$modernaVaersSeriousesAEPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$modernaVaersSeriousesOffset%></span>)
+	    			% } elsif ($modernaVaersSeriousesOffset == 0) {
+		    		<%=$modernaVaersSeriousesArbitrated%> (<%=$modernaVaersSeriousesAEPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersSeriousesArbitrated%> (<%=$modernaVaersSeriousesAEPercentArbitrated%> %, <span style="color:#ff3800;"><%=$modernaVaersSeriousesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		% if ($pfizerVaersSeriousesOffset > 0) {
+		    		<%=$pfizerVaersSeriousesArbitrated%> (<%=$pfizerVaersSeriousesAEPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$pfizerVaersSeriousesOffset%></span>)
+	    			% } elsif ($pfizerVaersSeriousesOffset == 0) {
+		    		<%=$pfizerVaersSeriousesArbitrated%> (<%=$pfizerVaersSeriousesAEPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersSeriousesArbitrated%> (<%=$pfizerVaersSeriousesAEPercentArbitrated%> %, <span style="color:#ff3800;"><%=$pfizerVaersSeriousesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:white;">
+		    		% if ($janssenVaersSeriousesOffset > 0) {
+		    		<%=$janssenVaersSeriousesArbitrated%> (<%=$janssenVaersSeriousesAEPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$janssenVaersSeriousesOffset%></span>)
+	    			% } elsif ($janssenVaersSeriousesOffset == 0) {
+		    		<%=$janssenVaersSeriousesArbitrated%> (<%=$janssenVaersSeriousesAEPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersSeriousesArbitrated%> (<%=$janssenVaersSeriousesAEPercentArbitrated%> %, <span style="color:#ff3800;"><%=$janssenVaersSeriousesOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;color:white;">
+		    		% if ($unknownVaersSeriousesOffset > 0) {
+		    		<%=$unknownVaersSeriousesArbitrated%> (<%=$unknownVaersSeriousesAEPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$unknownVaersSeriousesOffset%></span>)
+	    			% } elsif ($unknownVaersSeriousesOffset == 0) {
+		    		<%=$unknownVaersSeriousesArbitrated%> (<%=$unknownVaersSeriousesAEPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersSeriousesArbitrated%> (<%=$unknownVaersSeriousesAEPercentArbitrated%> %, <span style="color:#ff3800;"><%=$unknownVaersSeriousesOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		On observe que :
+		<ul>
+			<li>Quelques cas de décès de la mère sont de faux-positifs (le décès de l'enfant est confondu avec le décès de la mère)</li>
+    		<div class="text_separator"></div>
+			<li>Une quantité significative d'infirmités permanentes ne sont pas qualifiées</li>
+    		<div class="text_separator"></div>
+			<li>De nombreuses prolongations d'hospitalisation ne sont pas caractérisées</li>
+		</ul>
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+	    <h2>Effets secondaires ayant affecté le foetus, d'après la donnée vérifiée</h2>
+	    Les rapports ayant été confirmés comme ayant impacté le foetus ou le nouveau-né sont synthétisés ci-dessous.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Effets Secondaires Observés</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL
+			    	<div class="text_separator"></div>
+		    		N=<%=$totalFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA
+			    	<div class="text_separator"></div>
+		    		N=<%=$modernaFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH
+			    	<div class="text_separator"></div>
+		    		N=<%=$pfizerFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN
+			    	<div class="text_separator"></div>
+		    		N=<%=$janssenFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU
+			    	<div class="text_separator"></div>
+		    		N=<%=$unknownFixedCases%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+
+	    % # Stats concerning the child.
+	  	% my $totalVaersChildDeathsArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'}               // 0;
+	  	% my $totalVaersChildDeathsPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeathsPercent'}               // 0;
+	  	% my $modernaVaersChildDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedChildDeaths'}              // 0;
+	  	% my $modernaVaersChildDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedChildDeathsPercent'}              // 0;
+	  	% my $pfizerVaersChildDeathsArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildDeaths'}      // 0;
+	  	% my $pfizerVaersChildDeathsPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildDeathsPercent'}      // 0;
+	  	% my $janssenVaersChildDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildDeaths'}              // 0;
+	  	% my $janssenVaersChildDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildDeathsPercent'}              // 0;
+	  	% my $unknownVaersChildDeathsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildDeaths'}              // 0;
+	  	% my $unknownVaersChildDeathsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildDeathsPercent'}              // 0;
+
+	  	% my $totalVaersChildDeathsOffset        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetChildDeaths'}          // 0;
+	  	% my $totalVaersChildDeathsOffsetPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetChildDeathsPercent'}   // 0;
+	  	% my $modernaVaersChildDeathsOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetChildDeaths'}         // 0;
+	  	% my $pfizerVaersChildDeathsOffset       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetChildDeaths'} // 0;
+	  	% my $janssenVaersChildDeathsOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetChildDeaths'}         // 0;
+	  	% my $unknownVaersChildDeathsOffset      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetChildDeaths'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;color:#fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Décès de l'enfant</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($totalVaersChildDeathsOffset > 0) {
+		    		<%=$totalVaersChildDeathsArbitrated%> (<%=$totalVaersChildDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$totalVaersChildDeathsOffset%></span>)
+	    			% } elsif ($totalVaersChildDeathsOffset == 0) {
+		    		<%=$totalVaersChildDeathsArbitrated%> (<%=$totalVaersChildDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersChildDeathsArbitrated%> (<%=$totalVaersChildDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$totalVaersChildDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersChildDeathsOffset > 0) {
+		    		<%=$modernaVaersChildDeathsArbitrated%> (<%=$modernaVaersChildDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$modernaVaersChildDeathsOffset%></span>)
+	    			% } elsif ($modernaVaersChildDeathsOffset == 0) {
+		    		<%=$modernaVaersChildDeathsArbitrated%> (<%=$modernaVaersChildDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersChildDeathsArbitrated%> (<%=$modernaVaersChildDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$modernaVaersChildDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersChildDeathsOffset > 0) {
+		    		<%=$pfizerVaersChildDeathsArbitrated%> (<%=$pfizerVaersChildDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$pfizerVaersChildDeathsOffset%></span>)
+	    			% } elsif ($pfizerVaersChildDeathsOffset == 0) {
+		    		<%=$pfizerVaersChildDeathsArbitrated%> (<%=$pfizerVaersChildDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersChildDeathsArbitrated%> (<%=$pfizerVaersChildDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$pfizerVaersChildDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersChildDeathsOffset > 0) {
+		    		<%=$janssenVaersChildDeathsArbitrated%> (<%=$janssenVaersChildDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$janssenVaersChildDeathsOffset%></span>)
+	    			% } elsif ($janssenVaersChildDeathsOffset == 0) {
+		    		<%=$janssenVaersChildDeathsArbitrated%> (<%=$janssenVaersChildDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersChildDeathsArbitrated%> (<%=$janssenVaersChildDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$janssenVaersChildDeathsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;">
+		    		% if ($unknownVaersChildDeathsOffset > 0) {
+		    		<%=$unknownVaersChildDeathsArbitrated%> (<%=$unknownVaersChildDeathsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$unknownVaersChildDeathsOffset%></span>)
+	    			% } elsif ($unknownVaersChildDeathsOffset == 0) {
+		    		<%=$unknownVaersChildDeathsArbitrated%> (<%=$unknownVaersChildDeathsPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersChildDeathsArbitrated%> (<%=$unknownVaersChildDeathsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$unknownVaersChildDeathsOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+
+	  	% my $totalVaersChildSeriousesAEsArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAE'}               // 0;
+	  	% my $totalVaersChildSeriousesAEsPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAEPercent'}               // 0;
+	  	% my $modernaVaersChildSeriousesAEsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedChildSeriousesAE'}              // 0;
+	  	% my $modernaVaersChildSeriousesAEsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'fixedChildSeriousesAEPercent'}              // 0;
+	  	% my $pfizerVaersChildSeriousesAEsArbitrated     = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildSeriousesAE'}      // 0;
+	  	% my $pfizerVaersChildSeriousesAEsPercentArbitrated       = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'fixedChildSeriousesAEPercent'}      // 0;
+	  	% my $janssenVaersChildSeriousesAEsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildSeriousesAE'}              // 0;
+	  	% my $janssenVaersChildSeriousesAEsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'fixedChildSeriousesAEPercent'}              // 0;
+	  	% my $unknownVaersChildSeriousesAEsArbitrated    = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildSeriousesAE'}              // 0;
+	  	% my $unknownVaersChildSeriousesAEsPercentArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'fixedChildSeriousesAEPercent'}              // 0;
+	  	
+	  	% my $totalVaersChildSeriousesAEsOffset   = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'offsetChildSeriousesAE'}          // 0;
+	  	% my $modernaVaersChildSeriousesAEsOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'MODERNA'}->{'offsetChildSeriousesAE'}         // 0;
+	  	% my $pfizerVaersChildSeriousesAEsOffset  = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'offsetChildSeriousesAE'} // 0;
+	  	% my $janssenVaersChildSeriousesAEsOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'JANSSEN'}->{'offsetChildSeriousesAE'}         // 0;
+	  	% my $unknownVaersChildSeriousesAEsOffset = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'UNKNOWN'}->{'offsetChildSeriousesAE'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Autres incidents dont les symptômes mettent gravement en cause l'enfant</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($totalVaersChildSeriousesAEsOffset > 0) {
+		    		<%=$totalVaersChildSeriousesAEsArbitrated%> (<%=$totalVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$totalVaersChildSeriousesAEsOffset%></span>)
+	    			% } elsif ($totalVaersChildSeriousesAEsOffset == 0) {
+		    		<%=$totalVaersChildSeriousesAEsArbitrated%> (<%=$totalVaersChildSeriousesAEsPercentArbitrated%> %)
+					% } else {
+		    		<%=$totalVaersChildSeriousesAEsArbitrated%> (<%=$totalVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$totalVaersChildSeriousesAEsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($modernaVaersChildSeriousesAEsOffset > 0) {
+		    		<%=$modernaVaersChildSeriousesAEsArbitrated%> (<%=$modernaVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$modernaVaersChildSeriousesAEsOffset%></span>)
+	    			% } elsif ($modernaVaersChildSeriousesAEsOffset == 0) {
+		    		<%=$modernaVaersChildSeriousesAEsArbitrated%> (<%=$modernaVaersChildSeriousesAEsPercentArbitrated%> %)
+					% } else {
+		    		<%=$modernaVaersChildSeriousesAEsArbitrated%> (<%=$modernaVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$modernaVaersChildSeriousesAEsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($pfizerVaersChildSeriousesAEsOffset > 0) {
+		    		<%=$pfizerVaersChildSeriousesAEsArbitrated%> (<%=$pfizerVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$pfizerVaersChildSeriousesAEsOffset%></span>)
+	    			% } elsif ($pfizerVaersChildSeriousesAEsOffset == 0) {
+		    		<%=$pfizerVaersChildSeriousesAEsArbitrated%> (<%=$pfizerVaersChildSeriousesAEsPercentArbitrated%> %)
+					% } else {
+		    		<%=$pfizerVaersChildSeriousesAEsArbitrated%> (<%=$pfizerVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$pfizerVaersChildSeriousesAEsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		% if ($janssenVaersChildSeriousesAEsOffset > 0) {
+		    		<%=$janssenVaersChildSeriousesAEsArbitrated%> (<%=$janssenVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$janssenVaersChildSeriousesAEsOffset%></span>)
+	    			% } elsif ($janssenVaersChildSeriousesAEsOffset == 0) {
+		    		<%=$janssenVaersChildSeriousesAEsArbitrated%> (<%=$janssenVaersChildSeriousesAEsPercentArbitrated%> %)
+					% } else {
+		    		<%=$janssenVaersChildSeriousesAEsArbitrated%> (<%=$janssenVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$janssenVaersChildSeriousesAEsOffset%></span>)
+					% }
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		% if ($unknownVaersChildSeriousesAEsOffset > 0) {
+		    		<%=$unknownVaersChildSeriousesAEsArbitrated%> (<%=$unknownVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:lightgreen;">+<%=$unknownVaersChildSeriousesAEsOffset%></span>)
+	    			% } elsif ($unknownVaersChildSeriousesAEsOffset == 0) {
+		    		<%=$unknownVaersChildSeriousesAEsArbitrated%> (<%=$unknownVaersChildSeriousesAEsPercentArbitrated%> %)
+					% } else {
+		    		<%=$unknownVaersChildSeriousesAEsArbitrated%> (<%=$unknownVaersChildSeriousesAEsPercentArbitrated%> %, <span style="color:#ff3800;"><%=$unknownVaersChildSeriousesAEsOffset%></span>)
+					% }
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		A nouveau, de nombreux évènements graves n'ont pas été correctement qualifiés par le VAERS, dont <b><%=$totalVaersChildDeathsOffset%> (<%=$totalVaersChildDeathsOffsetPercent%> %) des <%=$totalVaersChildDeathsArbitrated%></b> cas où l'enfant n'a pas survécu.
+		<div class="text_separator"></div>
+		Nous nous sommes consacrés, pour la première version de cette étude, sur les grossesses dont l'issue fatale pour l'enfant et/ou pour la mère avait été confirmée.
+		<div class="text_separator"></div>
+	    <h2>Profils d'âges des mères dont la grossesse s'est achevée par la mort du foetus ou de l'enfant</h2>
+		% my $fixedAges          = $vaersStatistics{'pregnantMothersAges'}->{'fixedAges'}          // 0;
+		% my $mothersAgesMissing = $vaersStatistics{'pregnantMothersAges'}->{'mothersAgesMissing'} // 0;
+		% my $missingAges        = $mothersAgesMissing - $fixedAges;
+    	% my $pregnanciesSeriousnessConfirmationsPerformed        = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsPerformed'}        // 0;
+    	% my $pregnanciesSeriousnessConfirmationsRequired         = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsRequired'}         // 0;
+    	% my $pregnanciesSeriousnessConfirmationsPerformedPercent = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsPerformedPercent'} // 0;
+	    % my $fixedChildDeaths        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'} // 0;
+		% my $fixedChildDeathsPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeathsPercent'} // 0;
+	    <b><%=$fixedChildDeaths%> (<%=$fixedChildDeathsPercent%> %) des <%=$pregnanciesSeriousnessConfirmationsPerformed%></b> grossesses examinées se sont soldées par des fausses couches ou la mort de l'enfant.
+		<div class="text_separator"></div>
+	    Parmi ces <b><%=$totalVaersChildDeathsArbitrated%></b> grossesses, l'âge de la mère est inconnu pour <b><%=$missingAges%> rapports.</b>
+		<div class="text_separator"></div>
+		Les statistiques d'âge de la mère, lorsqu'il est connu, sont synthétisées ci-dessous :
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		% my $totalMiscarriagesWithAges   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesWithAges'}          // 0;
+		% my $modernaMiscarriagesWithAges = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesWithAges'}         // 0;
+		% my $pfizerMiscarriagesWithAges  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesWithAges'} // 0;
+		% my $janssenMiscarriagesWithAges = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesWithAges'}         // 0;
+		% my $unknownMiscarriagesWithAges = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesWithAges'}         // 0;
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:40%;min-width: 325px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(60% - 1px);min-width: 500px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>SUBSTANCES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:25%;min-width: 200px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Critère d'âge</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>TOTAL
+			    	<div class="text_separator"></div>
+		    		N=<%=$totalMiscarriagesWithAges%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>MODERNA
+			    	<div class="text_separator"></div>
+		    		N=<%=$modernaMiscarriagesWithAges%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>PFIZER-BIONTECH
+			    	<div class="text_separator"></div>
+		    		N=<%=$pfizerMiscarriagesWithAges%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    		<b>JANSSEN
+			    	<div class="text_separator"></div>
+		    		N=<%=$janssenMiscarriagesWithAges%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;color:white;">
+		    		<b>INCONNU
+			    	<div class="text_separator"></div>
+		    		N=<%=$unknownMiscarriagesWithAges%></b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+			% my $totalMiscarriagesMean   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageMean'}          // 0;
+			% my $modernaMiscarriagesMean = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageMean'}         // 0;
+			% my $pfizerMiscarriagesMean  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageMean'} // 0;
+			% my $janssenMiscarriagesMean = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageMean'}         // 0;
+			% my $unknownMiscarriagesMean = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageMean'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: #0B5C97;color:#fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Age moyen</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriagesMean%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriagesMean%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriagesMean%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriagesMean%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;">
+		    		<%=$unknownMiscarriagesMean%>
+		    	</div>
+		    </div>
+			% my $totalMiscarriagesMedian   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageMedian'}          // 0;
+			% my $modernaMiscarriagesMedian = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageMedian'}         // 0;
+			% my $pfizerMiscarriagesMedian  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageMedian'} // 0;
+			% my $janssenMiscarriagesMedian = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageMedian'}         // 0;
+			% my $unknownMiscarriagesMedian = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageMedian'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Age Médian</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriagesMedian%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriagesMedian%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriagesMedian%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriagesMedian%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriagesMedian%>
+		    	</div>
+		    </div>
+			% my $totalMiscarriagesQ1   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageQ1'}          // 0;
+			% my $totalMiscarriagesQ3   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageQ3'}          // 0;
+			% my $modernaMiscarriagesQ1 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageQ1'}         // 0;
+			% my $modernaMiscarriagesQ3 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageQ3'}         // 0;
+			% my $pfizerMiscarriagesQ1  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageQ1'} // 0;
+			% my $pfizerMiscarriagesQ3  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageQ3'} // 0;
+			% my $janssenMiscarriagesQ1 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageQ1'}         // 0;
+			% my $janssenMiscarriagesQ3 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageQ3'}         // 0;
+			% my $unknownMiscarriagesQ1 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageQ1'}         // 0;
+			% my $unknownMiscarriagesQ3 = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageQ3'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Q1 - Q3</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriagesQ1%> - <%=$totalMiscarriagesQ3%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriagesQ1%> - <%=$modernaMiscarriagesQ3%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriagesQ1%> - <%=$pfizerMiscarriagesQ3%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriagesQ1%> - <%=$janssenMiscarriagesQ3%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriagesQ1%> - <%=$unknownMiscarriagesQ3%>
+		    	</div>
+		    </div>
+			% my $totalMiscarriagesMin   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageMin'}          // 0;
+			% my $totalMiscarriagesMax   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'ageMax'}          // 0;
+			% my $modernaMiscarriagesMin = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageMin'}         // 0;
+			% my $modernaMiscarriagesMax = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'ageMax'}         // 0;
+			% my $pfizerMiscarriagesMin  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageMin'} // 0;
+			% my $pfizerMiscarriagesMax  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'ageMax'} // 0;
+			% my $janssenMiscarriagesMin = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageMin'}         // 0;
+			% my $janssenMiscarriagesMax = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'ageMax'}         // 0;
+			% my $unknownMiscarriagesMin = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageMin'}         // 0;
+			% my $unknownMiscarriagesMax = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'ageMax'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>Min - Max</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriagesMin%> - <%=$totalMiscarriagesMax%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriagesMin%> - <%=$modernaMiscarriagesMax%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriagesMin%> - <%=$pfizerMiscarriagesMax%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriagesMin%> - <%=$janssenMiscarriagesMax%>
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriagesMin%> - <%=$unknownMiscarriagesMax%>
+		    	</div>
+		    </div>
+			% my $totalMiscarriages1020          = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'1'}->{'fixedChildDeaths'}            // 0;
+			% my $totalMiscarriages1020Percent   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'1'}->{'childDeathsPercent'}          // 0;
+			% my $modernaMiscarriages1020        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'1'}->{'fixedChildDeaths'}           // 0;
+			% my $modernaMiscarriages1020Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'1'}->{'childDeathsPercent'}         // 0;
+			% my $pfizerMiscarriages1020         = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'1'}->{'fixedChildDeaths'}   // 0;
+			% my $pfizerMiscarriages1020Percent  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'1'}->{'childDeathsPercent'} // 0;
+			% my $janssenMiscarriages1020        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'1'}->{'fixedChildDeaths'}           // 0;
+			% my $janssenMiscarriages1020Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'1'}->{'childDeathsPercent'}         // 0;
+			% my $unknownMiscarriages1020        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'1'}->{'fixedChildDeaths'}           // 0;
+			% my $unknownMiscarriages1020Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'1'}->{'childDeathsPercent'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>10 - 20 ans</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriages1020%> (<%=$totalMiscarriages1020Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriages1020%> (<%=$modernaMiscarriages1020Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriages1020%> (<%=$pfizerMiscarriages1020Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriages1020%> (<%=$janssenMiscarriages1020Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriages1020%> (<%=$unknownMiscarriages1020Percent%> %)
+		    	</div>
+		    </div>
+			% my $totalMiscarriages2030          = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'2'}->{'fixedChildDeaths'}            // 0;
+			% my $totalMiscarriages2030Percent   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'2'}->{'childDeathsPercent'}          // 0;
+			% my $modernaMiscarriages2030        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'2'}->{'fixedChildDeaths'}           // 0;
+			% my $modernaMiscarriages2030Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'2'}->{'childDeathsPercent'}         // 0;
+			% my $pfizerMiscarriages2030         = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'2'}->{'fixedChildDeaths'}   // 0;
+			% my $pfizerMiscarriages2030Percent  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'2'}->{'childDeathsPercent'} // 0;
+			% my $janssenMiscarriages2030        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'2'}->{'fixedChildDeaths'}           // 0;
+			% my $janssenMiscarriages2030Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'2'}->{'childDeathsPercent'}         // 0;
+			% my $unknownMiscarriages2030        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'2'}->{'fixedChildDeaths'}           // 0;
+			% my $unknownMiscarriages2030Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'2'}->{'childDeathsPercent'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>20 - 30 ans</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriages2030%> (<%=$totalMiscarriages2030Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriages2030%> (<%=$modernaMiscarriages2030Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriages2030%> (<%=$pfizerMiscarriages2030Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriages2030%> (<%=$janssenMiscarriages2030Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriages2030%> (<%=$unknownMiscarriages2030Percent%> %)
+		    	</div>
+		    </div>
+			% my $totalMiscarriages3040          = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'3'}->{'fixedChildDeaths'}            // 0;
+			% my $totalMiscarriages3040Percent   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'3'}->{'childDeathsPercent'}          // 0;
+			% my $modernaMiscarriages3040        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'3'}->{'fixedChildDeaths'}           // 0;
+			% my $modernaMiscarriages3040Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'3'}->{'childDeathsPercent'}         // 0;
+			% my $pfizerMiscarriages3040         = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'3'}->{'fixedChildDeaths'}   // 0;
+			% my $pfizerMiscarriages3040Percent  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'3'}->{'childDeathsPercent'} // 0;
+			% my $janssenMiscarriages3040        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'3'}->{'fixedChildDeaths'}           // 0;
+			% my $janssenMiscarriages3040Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'3'}->{'childDeathsPercent'}         // 0;
+			% my $unknownMiscarriages3040        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'3'}->{'fixedChildDeaths'}           // 0;
+			% my $unknownMiscarriages3040Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'3'}->{'childDeathsPercent'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>30 - 40 ans</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriages3040%> (<%=$totalMiscarriages3040Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriages3040%> (<%=$modernaMiscarriages3040Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriages3040%> (<%=$pfizerMiscarriages3040Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriages3040%> (<%=$janssenMiscarriages3040Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriages3040%> (<%=$unknownMiscarriages3040Percent%> %)
+		    	</div>
+		    </div>
+			% my $totalMiscarriages4050          = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'4'}->{'fixedChildDeaths'}            // 0;
+			% my $totalMiscarriages4050Percent   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'4'}->{'childDeathsPercent'}          // 0;
+			% my $modernaMiscarriages4050        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'4'}->{'fixedChildDeaths'}           // 0;
+			% my $modernaMiscarriages4050Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'4'}->{'childDeathsPercent'}         // 0;
+			% my $pfizerMiscarriages4050         = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'4'}->{'fixedChildDeaths'}   // 0;
+			% my $pfizerMiscarriages4050Percent  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'4'}->{'childDeathsPercent'} // 0;
+			% my $janssenMiscarriages4050        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'4'}->{'fixedChildDeaths'}           // 0;
+			% my $janssenMiscarriages4050Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'4'}->{'childDeathsPercent'}         // 0;
+			% my $unknownMiscarriages4050        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'4'}->{'fixedChildDeaths'}           // 0;
+			% my $unknownMiscarriages4050Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'4'}->{'childDeathsPercent'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>40 - 50 ans</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriages4050%> (<%=$totalMiscarriages4050Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriages4050%> (<%=$modernaMiscarriages4050Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriages4050%> (<%=$pfizerMiscarriages4050Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriages4050%> (<%=$janssenMiscarriages4050Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriages4050%> (<%=$unknownMiscarriages4050Percent%> %)
+		    	</div>
+		    </div>
+			% my $totalMiscarriages5060          = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'5'}->{'fixedChildDeaths'}            // 0;
+			% my $totalMiscarriages5060Percent   = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'TOTALS'}->{'miscarriagesByAges'}->{'5'}->{'childDeathsPercent'}          // 0;
+			% my $modernaMiscarriages5060        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'5'}->{'fixedChildDeaths'}           // 0;
+			% my $modernaMiscarriages5060Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'MODERNA'}->{'miscarriagesByAges'}->{'5'}->{'childDeathsPercent'}         // 0;
+			% my $pfizerMiscarriages5060         = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'5'}->{'fixedChildDeaths'}   // 0;
+			% my $pfizerMiscarriages5060Percent  = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'PFIZER-BIONTECH'}->{'miscarriagesByAges'}->{'5'}->{'childDeathsPercent'} // 0;
+			% my $janssenMiscarriages5060        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'5'}->{'fixedChildDeaths'}           // 0;
+			% my $janssenMiscarriages5060Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'JANSSEN'}->{'miscarriagesByAges'}->{'5'}->{'childDeathsPercent'}         // 0;
+			% my $unknownMiscarriages5060        = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'5'}->{'fixedChildDeaths'}           // 0;
+			% my $unknownMiscarriages5060Percent = $vaersStatistics{'pregnantMothersAgesStatistics'}->{'UNKNOWN'}->{'miscarriagesByAges'}->{'5'}->{'childDeathsPercent'}         // 0;
+		    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<b>50 - 60 ans</b>
+		    	</div>
+		    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$totalMiscarriages5060%> (<%=$totalMiscarriages5060Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$modernaMiscarriages5060%> (<%=$modernaMiscarriages5060Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$pfizerMiscarriages5060%> (<%=$pfizerMiscarriages5060Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+		    		<%=$janssenMiscarriages5060%> (<%=$janssenMiscarriages5060Percent%> %)
+		    	</div>
+		    	<div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$unknownMiscarriages5060%> (<%=$unknownMiscarriages5060Percent%> %)
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		A ce stade, nous disposons par ailleurs de la donnée nécessaire pour évaluer le délai entre la vaccination et la survenue des évènements mortels pour le foetus ou l'enfant.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Occurences des morts du foetus ou de l'enfant par délai post-vaccination</h2>
+		Les différents délais d'occurence de la fausse-couche vis à vis de la dernière dose reçue par la patiente sont représentés ci-dessous :
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		% my @labels = ('TOTALS', 'MODERNA', 'PFIZER-BIONTECH', 'JANSSEN');
+		% my $lNum = 0;
+		<div style="width:95%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
+	    	<div style="width:100%;min-width: 595px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+				% for my $label (@labels) {
+					% $lNum++;
+		    		% if ($lNum != 1) {
+	    		<div class="tab-button noselect" style="background: #4f4d66;" id="<%=$label%>-button" onclick="openDelayTab('<%=$label%>');return;">
+	    			<%=$label%>
+	    		</div>
+	    			% } else {
+	    		<div class="tab-button noselect" style="background: #262436;" id="<%=$label%>-button" onclick="openDelayTab('<%=$label%>');return;">
+	    			<%=$label%>
+	    		</div>
+					% }
+				% }
+	    	</div>
+		</div>
+		<div style="width:95%;margin:auto;display: block;overflow-y: hidden;overflow-x: hidden;position: relative;">
+		% $lNum = 0;
+		% for my $label (@labels) {
+			% $lNum++;
+		    % my $fixedChildDeaths        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'fixedChildDeaths'} // 0;
+		    % my $fixedChildDeathsPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'fixedChildDeathsPercent'} // 0;
+		    % if ($lNum != 1) {
+		    <div id="<%=$label%>" style="width:calc(100% - 2px);border:1px solid black;position: top;display:none;">
+	    	% } else {
+		    <div id="<%=$label%>" style="width:calc(100% - 2px);border:1px solid black;position: top;font-size: 13px;">
+			% }
+				<div class="text_separator"></div>
+				<div style="width:100%;display: block;position: relative;">
+			    	% my $red = 11;
+			    	% my ($percentAtAWeek, $percentAtAMonth, $percentAtTwoMonthes) = (0, 0, 0);
+			    	<div style="width:100%;display: flex;flex-wrap: wrap;text-align: center;position: relative;font-weight: bold;font-size: 12px;color: white;min-height: 25px;">
+			    		<span style="z-index: 99;margin: auto;">Total des fausses-couches - <%=$fixedChildDeaths%> (100 %)</span>
+			    		<div style="width:100%;padding-top: 5px;padding-bottom: 5px;background: rgb(<%=$red%>, 92, 151);position: absolute;height: calc(100% - 10px);">
+			    			
+			    		</div>
+			    	</div>
+			    	<div class="text_separator"></div>
+					% for my $vaersTimeGroup (sort{$a <=> $b} keys %{$vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'byTimeGroup'}}) {
+						% $red += 20;
+						% my $vaersTimeGroupName = $vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'byTimeGroup'}->{$vaersTimeGroup}->{'vaersTimeGroupName'} // die;
+						% my $fixedChildDeaths = $vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'byTimeGroup'}->{$vaersTimeGroup}->{'fixedChildDeaths'} // 0;
+						% my $fixedChildDeathsPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{$label}->{'byTimeGroup'}->{$vaersTimeGroup}->{'fixedChildDeathsPercent'} // 0;
+						% if ($vaersTimeGroup <= 3) {
+							% $percentAtAWeek += $fixedChildDeathsPercent;
+							% $percentAtAMonth += $fixedChildDeathsPercent;
+							% $percentAtTwoMonthes += $fixedChildDeathsPercent;
+						% } elsif ($vaersTimeGroup <= 5) {
+							% $percentAtAMonth += $fixedChildDeathsPercent;
+							% $percentAtTwoMonthes += $fixedChildDeathsPercent;
+						% } elsif ($vaersTimeGroup <= 7) {
+							% $percentAtTwoMonthes += $fixedChildDeathsPercent;
+						% }
+			    	<div style="width:100%;background: #504e52;display: flex;flex-wrap: wrap;text-align: center;position: relative;font-weight: bold;font-size: 12px;color: white;min-height: 25px;">
+			    		% if ($vaersTimeGroupName eq 'Within 24 hours post vaccine') {
+			    			% $vaersTimeGroupName = 'Dans les 24 h suivant l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Between one & two days post vaccine') {
+			    			% $vaersTimeGroupName = 'Entre un et deux jours après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Between two & seven days post vaccine') {
+			    			% $vaersTimeGroupName = 'Entre deux et sept jours après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Between one & two weeks post vaccine') {
+			    			% $vaersTimeGroupName = 'Entre une et deux semaines après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Between two weeks & a month post vaccine') {
+			    			% $vaersTimeGroupName = 'Entre deux semaines et un mois après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Between one month & two monthes post vaccine') {
+			    			% $vaersTimeGroupName = 'Entre un et deux mois après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Over two monthes post vaccine') {
+			    			% $vaersTimeGroupName = 'Plus de deux mois après l\'injection';
+		    			% } elsif ($vaersTimeGroupName eq 'Undetermined Interval') {
+			    			% $vaersTimeGroupName = 'Pas d\'information';
+		    			% } else {
+		    				% die;
+	    				% }
+			    		<span style="z-index: 99;margin: auto;"><%=$vaersTimeGroupName%> - <%=$fixedChildDeaths%> (<%=$fixedChildDeathsPercent%> %)</span>
+			    		<div style="width:<%=$fixedChildDeathsPercent%>%;padding-top: 5px;padding-bottom: 5px;background: rgb(<%=$red%>, 92, 151);position: absolute;height: calc(100% - 10px);">
+			    			
+			    		</div>
+			    	</div>
+			    	<div class="text_separator"></div>
+				    	% if ($vaersTimeGroup == 3) {
+			    		<div style="width:100%;text-align:center;">
+				    		<b><%=$percentAtAWeek%></b> % des fausses-couches signalées ont lieu dans la semaine qui suit l'injection.
+				    	</div>
+						<div class="text_separator"></div>
+			    		% } elsif ($vaersTimeGroup == 5) {
+			    		<div style="width:100%;text-align:center;">
+							<b><%=$percentAtAMonth%></b> % dans le mois qui suit l'injection.
+				    	</div>
+						<div class="text_separator"></div>
+						% } elsif ($vaersTimeGroup == 7) {
+			    		<div style="width:100%;text-align:center;">
+							<b><%=$percentAtTwoMonthes%></b> % dans les deux mois qui suivent l'injection.
+				    	</div>
+						<div class="text_separator"></div>
+						% }
+					% }
+				</div>
+			</div>
+		% }
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Occurences des morts du foetus ou de l'enfant par Etat</h2>
+		Les différents totaux d'occurences de fausse-couches par état sont représentés ci-dessous :
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		% $lNum = 0;
+		<div style="width:95%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
+	    	<div style="width:100%;min-width: 595px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+				% for my $label (@labels) {
+					% $lNum++;
+		    		% if ($lNum != 1) {
+	    		<div class="tab-button noselect" style="background: #4f4d66;" id="state-<%=$label%>-button" onclick="openStateTab('state-<%=$label%>');return;">
+	    			<%=$label%>
+	    		</div>
+	    			% } else {
+	    		<div class="tab-button noselect" style="background: #262436;" id="state-<%=$label%>-button" onclick="openStateTab('state-<%=$label%>');return;">
+	    			<%=$label%>
+	    		</div>
+					% }
+				% }
+	    	</div>
+		</div>
+		<div style="width:95%;margin:auto;display: block;overflow-y: auto;overflow-x: hidden;position: relative;max-height: 350px;">
+		% $lNum = 0;
+		% for my $label (@labels) {
+			% $lNum++;
+		    % my $vaccineChildrenDeaths   = $vaersStatistics{'statesChildrenDeaths'}->{$label}->{'vaccineChildrenDeaths'} // 0;
+		    % my $fixedChildDeathsPercent = 100;
+		    % if ($lNum != 1) {
+		    <div id="state-<%=$label%>" style="width:calc(100% - 2px);border:1px solid black;position: top;display:none;">
+	    	% } else {
+		    <div id="state-<%=$label%>" style="width:calc(100% - 2px);border:1px solid black;position: top;font-size: 13px;">
+			% }
+				<div class="text_separator"></div>
+				<div style="width:100%;display: block;position: relative;">
+			    	% my $red = 11;
+			    	<div style="width:100%;display: flex;flex-wrap: wrap;text-align: center;position: relative;font-weight: bold;font-size: 12px;color: white;min-height: 25px;">
+			    		<span style="z-index: 99;margin: auto;">Total des fausses-couches - <%=$vaccineChildrenDeaths%> (100 %)</span>
+			    		<div style="width:100%;padding-top: 5px;padding-bottom: 5px;background: rgb(<%=$red%>, 92, 151);position: absolute;height: calc(100% - 10px);">
+			    			
+			    		</div>
+			    	</div>
+			    	<div class="text_separator"></div>
+					% for my $childrenDeaths (sort{$b <=> $a} keys %{$vaersStatistics{'statesChildrenDeaths'}->{$label}->{'byDeaths'}}) {
+						% $red += 15;
+						% my $stateChildrenDeathsPercent = $vaersStatistics{'statesChildrenDeaths'}->{$label}->{'byDeaths'}->{$childrenDeaths}->{'stateChildrenDeathsPercent'} // die;
+						% for my $stateName (sort keys %{$vaersStatistics{'statesChildrenDeaths'}->{$label}->{'byDeaths'}->{$childrenDeaths}->{'states'}}) {
+				    	<div style="width:100%;background: #504e52;display: flex;flex-wrap: wrap;text-align: center;position: relative;font-weight: bold;font-size: 12px;color: white;min-height: 25px;">
+				    		<span style="z-index: 99;margin: auto;"><%=$stateName%> - <%=$childrenDeaths%> (<%=$stateChildrenDeathsPercent%> %)</span>
+				    		<div style="width:<%=$stateChildrenDeathsPercent%>%;padding-top: 5px;padding-bottom: 5px;background: rgb(<%=$red%>, 92, 151);position: absolute;height: calc(100% - 10px);">
+				    			
+				    		</div>
+				    	</div>
+				    	<div class="text_separator"></div>
+						% }
+					% }
+				</div>
+			</div>
+		% }
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Limites actuelles de l'étude et approfondissements ultérieurs</h2>
+	    Un bref inventaire des points que nous allons approfondir dans un futur proche :
+	    <ul>
+	    	<li>Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que la celle-ci ne soit impactée, ne rentrent pas dans le champ immédiat de nos analyses, comme mentionné plus avant. Nous comptons régler ce problème pour arriver à une vue claire sur les incidents rapportés en lien avec la mortalité infantile.</li>
+			<div class="text_separator"></div>
+	    	<li>Ces données doivent être mises en perspective avec les données historiques globales de natalité, avant/après vaccin.</li>
+			<div class="text_separator"></div>
+	    	<li>L'identification des données liées aux doses (1, 2, "booster", etc.) et aux lots doit être approfondie.</li>
+			<div class="text_separator"></div>
+	    	<li>L'identification des données liées aux grossesses (plus d'une grossesse dans le rapport, âge du foetus, etc) doit être approfondie.</li>
+			<div class="text_separator"></div>
+	    	<li>Les très nombreux problèmes liés à la fertilité feminine que nous avons observé lors de l'étape de confirmation des grossesses n'ont pas encore été traités - et doivent l'être avec le même degré de sérieux.</li>
+	    </ul>
+		<div class="text_separator"></div>
+		Si un point important sur les sujets liés à la fertilité ou la mortalité infantile vous apparaît manquant, <a target="_blank" href="/contact_us">n'hésitez pas à nous contacter</a>.
+		<div class="text_separator"></div>
+	    % } else {
+
+	    % }
+	</div>
+    <div id="global-data" style="width:calc(100% - 2px);border:position: top;display:none;">
+		<div class="text_separator"></div>
+	    <h2>Télécharger nos arbitrages</h2>
+	    Les arbitrages de données requis pour reproduire ou vérifier cette étude peuvent être téléchargés <a target="_blank" href="/doc/vaers_fertility/arbitration_data.csv">ici (.csv, 374 Ko)</a>.
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Donnée VAERS utilisée</h2>
+	    Le "Center for Disease Control" (CDC) et la Food & Drug Administration (FDA) sont les organismes des Etats-Unis en charge - entre autres choses - de collecter et surveiller la sécurité des médicaments autorisés ou testés aux Etats-Unis, et communiquent les incidents répertoriés via leur plateforme VAERS.
+	    <div class="text_separator"></div>
+	    Les données brûtes que nous utilisons peuvent être téléchargées via le site du CDC, <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">ici</a> ou directement sur <a target="_blank" href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip">ce lien</a>.
+	    <div class="text_separator"></div>
+		<div class="ndt_note">
+		    <ul>
+		    	Nous utilisons le fichier <b>All Years Data*</b>.
+		    	<div class="text_separator"></div>
+		    	Les fichiers antérieurs à 2020 sont évités par le programme qui est en charge de la lecture et de l'analyse des données lorsque celui-ci parcourt l'archive intégral.
+		    	<div class="text_separator"></div>
+	    		Note : chaque fichier .zip annuel inclut 3 fichiers .CSV : VAERSDATA, VAERSVAX et VAERSSYMPTOM, le contenu de chaque fichier est clairement documenté dans le document du CDC (en anglais) : <a href="https://vaers.hhs.gov/docs/VAERSDataUseGuide_November2020.pdf" target="_blank">"VAERS DATA USE GUIDE"</a>. Le fichier "All Years Data" est simplement la concaténation de toutes les années présentes.
+		    </ul>
+		</div>
+ 	    <div class="text_separator"></div>
+		<h2>Volume de données des années d'étude</h2>
+		<div class="text_separator"></div>
+		% for my $yearName (sort{$b <=> $a} keys %{$vaersStatistics{'yearlyStats'}}) {
+			% my $covid        = $vaersStatistics{'yearlyStats'}->{$yearName}->{'covid'}        // die;
+			% my $totalReports = $vaersStatistics{'yearlyStats'}->{$yearName}->{'totalReports'} // die;
+			% my $covidPercent = $vaersStatistics{'yearlyStats'}->{$yearName}->{'covidPercent'} // die;
+	    	<div style="margin-left:10px;">En <%=$yearName%>, sur <%=$totalReports%> lignes d'effets secondaires rapportés pour tous les vaccins &#10230; <%=$covid%> (<%=$covidPercent%> %) sont liées aux injections COVID.
+	    	</div>
+	    	<div class="text_separator"></div>
+		% }
+		<div style="margin-left: 10px;">La base de donnée pour ces années listées représente <b><%=$archiveSize%></b> de données textuelles à la dernière mise à jour</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<h2>Vérifier nos données</h2>
+	    <a target="_blank" href="https://wonder.cdc.gov/vaers.html">La recherche directe de rapport</a> permet de vérifier la donnée de n'importe quel rapport que nous affichons, en copiant simplement sa référence VAERS affichée dans la zone de recherche.
+	    <div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/cdc/report_search.png');return;" style="width:300px;display:block;margin:auto;cursor: pointer;"><img src="/doc/cdc/report_search.png" style="width:300px;display:block;margin:auto;"></div>
+	    <div class="text_separator"></div>
+	    La donnée VAERS est d'accès libre, et mise à jour chaque vendredi.
+		<div class="text_separator"></div>
+	    <h2>Processus de nettoyage de la donnée</h2>
+	    L'observation attentive des rapports VAERS nous a rapidement amené à constater que ceux-ci devaient être affinés.
+		<div class="text_separator"></div>
+		Lorsqu'un rapport est reçu par les agents entretenant la base VAERS (qu'il soit transmis par un particulier, un professionnel de santé, un laboratoire réalisant le vaccin, un sous-traitant spécialisé, etc), celui-ci est requalifié par le récipiendaire, afin de catégoriser les symptômes depuis la description textuelle.
+		<div class="text_separator"></div>
+		Le problème est que, comme tout processus impliquant une intervention humaine sans procédure lourde de vérifications croisées, de nombreux faux-positifs sont définis par les dits agents dans les symptômes. Les opérations effectuées sur la donnée sont détaillées ci-dessous.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Elimination des données préliminaires</h2>
+		<div class="ndt_note">
+			Nous nous sommes librement inspirés des remarques de Christine Cotton pour concentrer notre analyse sur les troubles de la grossesse. <b>Vous pouvez librement reproduire, analyser et vérifier le comportement du script détaillé ci-dessous</b> en téléchargeant le code source du Projet <a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire GitHub" target="_blank">sur notre dépôt Github</a>, et en plaçant l'archive VAERS décompressé à l'emplacement prévu. Pour les explications détaillées sur les étapes préliminaires au lancement des scripts du projet, <a href="/data">voir ici</a>.
+		    <ul>
+		    	<li><b>Concaténation des bases de données 2020 et ultérieures</b> &#10230; Il en résulte <b><%=$totalVAERSReports%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	<li><b>Existence de rapports d'effets secondaires (RES) à exclure (hors champ d'analyse, ou nombreuses données manquantes ou inconsistantes) :</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $noSymptomsVAERSReports = $vaersStatistics{'exclusions'}->{'noSymptomsVAERSReports'} // 0;
+		    	% my $totalLeft = $totalVAERSReports - $noSymptomsVAERSReports;
+		    	<li style="margin-left: 30px;">Les rapports sans symptômes liés sont écartés (<b><%=$noSymptomsVAERSReports%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $noVaccineVAERSReports = $vaersStatistics{'exclusions'}->{'noVaccineVAERSReports'} // 0;
+		    	% $totalLeft = $totalLeft - $noVaccineVAERSReports;
+		    	<li style="margin-left: 30px;">Les rapports sans substances liées sont écartés (<b><%=$noVaccineVAERSReports%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $noAEDescriptionVAERSReports = $vaersStatistics{'exclusions'}->{'noAEDescriptionVAERSReports'} // 0;
+		    	% $totalLeft = $totalLeft - $noAEDescriptionVAERSReports;
+		    	<li style="margin-left: 30px;">Les rapports sans description textuelle sont écartés (<b><%=$noAEDescriptionVAERSReports%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $noCovidVaccineVAERSReports = $vaersStatistics{'exclusions'}->{'noCovidVaccineVAERSReports'} // 0;
+		    	% $totalLeft = $totalLeft - $noCovidVaccineVAERSReports;
+		    	<li style="margin-left: 30px;">Les rapports sans lien avec les substances COVID sont écartés (<b><%=$noCovidVaccineVAERSReports%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $moreThanOneVaccineVAERSReports = $vaersStatistics{'exclusions'}->{'moreThanOneVaccineVAERSReports'} // 0;
+		    	% $totalLeft = $totalLeft - $moreThanOneVaccineVAERSReports;
+		    	<li style="margin-left: 30px;">Les rapports concernant l'administration de plus d'une substance COVID (par exemple Moderna Dose 1 - Pfizer Dose 2) sont écartés (<b><%=$moreThanOneVaccineVAERSReports%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    	<div class="text_separator"></div>
+		    	% my $excludedSymptomVAERSReport = $vaersStatistics{'exclusions'}->{'excludedSymptomVAERSReport'} // 0;
+		    	% $totalLeft = $totalLeft - $excludedSymptomVAERSReport;
+		    	<li style="margin-left: 30px;">Les rapports concernant les erreurs d'administration ou de technique (problèmes d'aiguilles, mauvais site d'administration, etc.) - identifiés <a href="#" onclick="openSymptoms('excluded');return;">via leurs symptômes</a> - sont écartés (<b><%=$excludedSymptomVAERSReport%></b>) &#10230; Il en résulte <b><%=$totalLeft%> lignes de rapports</b></li>
+		    </ul>
+	  	</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Affinage des données - Isoler les rapports afférents à une grossesse</h2>
+		<div class="text_separator"></div>
+		Si l'on souhaite s'intéresser aux femmes enceintes, on se réfèrera intuitivement aux symptômes "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" et "<b>Maternal exposure during pregnancy</b>", qui sont théoriquement définis par les opérateurs du VAERS lorsqu'une femme enceinte est exposée à une vaccination récente.
+		<div class="text_separator"></div>
+		Les rapports concernant des grossesses potentielles sont sélectionnés en utilisant deux méthodes.
+	    <ul>
+	    	% my $pregnanciesConfirmationsPerformed = $vaersStatistics{'arbitrations'}->{'pregnanciesConfirmationsPerformed'}   // 0;
+	    	% my $pregnanciesConfirmationsRequired  = $vaersStatistics{'arbitrations'}->{'pregnanciesConfirmationsRequired'} // 0;
+	    	% my $pregnanciesConfirmationsPerformedPercent = $vaersStatistics{'arbitrations'}->{'pregnanciesConfirmationsPerformedPercent'}   // 0;
+	    	<div class="text_separator"></div>
+	    	<li style="margin-left: 30px;">Nous recherchons "pregnan" (qui correspondra à "pregnant" (enceinte) ou "pregnancy" (grossesse)) dans la description inclue dans le rapport.</li>
+	    	<div class="text_separator"></div>
+	    	<li style="margin-left: 30px;">Nous recherchons les <a href="#" onclick="openSymptoms('pregnancyRelated');return;">symptômes caractéristiques</a> d'une grossesse attachés aux rapports.</li>
+	    </ul>
+		<div class="text_separator"></div>
+		% if ($environment eq 'local') {
+		Ces rapports concernant potentiellement une grossesse peuvent (et doivent) être confirmés manuellement <a href="/studies/vaers_fertility/pregnancies_confirmation?confirmationTarget=pregancies" target="_blank">via cet assistant</a>.
+		% } else {
+		Ces rapports concernant potentiellement une grossesse peuvent (et doivent) être confirmés manuellement via l'assistant disponible à cet emplacement, lorsque le projet est exécuté localement pour que l'analyse soit correctement mise à jour.
+		% }
+		<div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/vaers_fertility/pregnancy_report_sample.png');return;" style="width:300px;display:block;margin:auto;cursor: pointer;"><img src="/doc/vaers_fertility/pregnancy_report_sample.png" style="width:300px;display:block;margin:auto;"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="ndt_note">
+		    <ul>
+		    	<li>Cet assistant est assez clair : nous n'affichons que la donnée VAERS pertinente pour évaluer si la patiente était enceinte ou non concomitamment à la vaccination, et surlignons en jaune les indices clairs d'une grossesse potentielle. En violet pâle, nous surlignons les symptômes d'un trouble de la reproduction. Nous opérons quatre types d'opérations : </li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;"><b>1)</b> Infirmation de faux positifs (par exemple, une patiente mentionne des symptômes similaires à ceux d'une grossesse précédente)</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;"><b>2)</b> Confirmation de grossesses immédiatemment concomitantes à la vaccination</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;"><b>3)</b> Requalification en troubles menstruels (une vaste rapports qui concernent des troubles du système mentionnent "enceinte" - ne serait-ce que lorsque le médecin précise que la patiente ne l'est pas).</li>
+			    <div class="text_separator"></div>
+		    	<li style="margin-left: 30px;"><b>4)</b> Requalification en exposition du bébé (de nombreux cas concernent des contaminations du bébé via le lait maternel ou dans le placenta).</li>
+			    <div class="text_separator"></div>
+				<div class="text_separator"></div>
+				<div class="text_separator"></div>
+		    	<b>A cette date, les rapports suivants ont été traités.</b>
+		    	<div class="text_separator"></div>
+		    	<div style="width:100%;background: lightgrey;display: flex;flex-wrap: wrap;height:25px;text-align: center;position: relative;font-weight: bold;font-size: 12px;border-radius: 15px;">
+		    		<span style="z-index: 99;margin: auto;"><%=$pregnanciesConfirmationsPerformed%> / <%=$pregnanciesConfirmationsRequired%> (<%=$pregnanciesConfirmationsPerformedPercent%> %)</span>
+		    		<div style="width:<%=$pregnanciesConfirmationsPerformedPercent%>%;height:25px;background: lightgreen;position: absolute;border-radius: 15px;">
+		    			
+		    		</div>
+		    	</div>
+		    	<div class="text_separator"></div>
+		    	% my $pregnanciesConfirmed = $vaersStatistics{'arbitrations'}->{'pregnanciesConfirmed'} // 0;
+		    	<li style="margin-left: 30px;"><b><%=$pregnanciesConfirmed%></b> sont confirmés comme des vaccinations immédiatemment concomitantes à des grossesses (juste avant la grossesse, ou pendant).</li>
+		    	<div class="text_separator"></div>
+		    	% my $reproductiveIssuesConfirmed = $vaersStatistics{'arbitrations'}->{'reproductiveIssuesConfirmed'} // 0;
+		    	<li style="margin-left: 30px;"><b><%=$reproductiveIssuesConfirmed%></b> sont requalifiés comme des troubles de la reproduction.</li>
+		    	<div class="text_separator"></div>
+		    	% my $babiesExposureConfirmed = $vaersStatistics{'arbitrations'}->{'babiesExposureConfirmed'} // 0;
+		    	<li style="margin-left: 30px;"><b><%=$babiesExposureConfirmed%></b> sont requalifiés comme des expositions du bébé après la naissance (par exemple si la mère est vaccinée un mois après l'accouchement, et l'enfant exposé via le lait maternel).</li>
+		    	<div class="text_separator"></div>
+		    	% my $pregnancyConfirmationFalsePositives = $vaersStatistics{'arbitrations'}->{'pregnancyConfirmationFalsePositives'} // 0;
+		    	<li style="margin-left: 30px;"><b><%=$pregnancyConfirmationFalsePositives%></b> sont requalifiés comme faux positifs générés par l'analyse.</li>
+				<div class="text_separator"></div>
+				Si vous constatez une erreur dans les arbitrages mis à votre disposition, <a target="_blank" href="/contact_us">veuillez nous signaler la référence VAERS concernée afin que nous la rectifiions</a>.
+		    </ul>
+	  	</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		% my $pregnanciesCompletelyMissed   = $vaersStatistics{'arbitrations'}->{'pregnanciesCompletelyMissed'}   // 0;
+		% my $pregnanciesImproperlyTagged   = $vaersStatistics{'arbitrations'}->{'pregnanciesImproperlyTagged'}   // 0;
+		% my $pregnanciesFalseExtrapolation = $vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'} // 0;
+    	<div style="width:100%;display: flex;flex-wrap: wrap;">
+		    Retraiter la donnée abouti à :
+		</div>
+		<ul>
+			<li><b><%=$pregnanciesCompletelyMissed%></b> grossesses qui n'ont pas du tout été qualifiées par le VAERS</li>
+			<div class="text_separator"></div>
+			<li><b><%=$pregnanciesImproperlyTagged%></b> grossesses mal identifiées (les 3 symptômes clairs pré-cités ne sont pas présents, mais au moins un symptôme indique clairement l'hypothèse d'une grossesse ; par exemple "Mort du foetus", "Hypertension pendant la gestation", ou tout autre <a href="#" onclick="openSymptoms('pregnancyRelated');return;">symptôme identifié par nous comme lié</a>)</li>
+			<div class="text_separator"></div>
+			<li><b><%=$pregnanciesFalseExtrapolation%></b> grossesses qualifiées par erreur</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	  	% my $totalFixedCases    = $vaersStatistics{'pregnanciesStatistics'}->{'TOTALS'}->{'fixedCases'}          // 0;
+	    Les affinages ultérieurs des données, sur cette page, portent donc sur ces <b><%=$totalFixedCases%> cas de grossesses confirmés</b>.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h2>Affinage des données - Confirmation du caractère sérieux ou non des rapports</h2>
+		% if ($environment eq 'local') {
+		Ces rapports concernant une grossesse confirmée peuvent (et doivent) être évalués manuellement <a href="/studies/vaers_fertility/pregnancies_seriousness" target="_blank">via cet assistant</a>.
+		% } else {
+		Ces rapports concernant une grossesse confirmée peuvent (et doivent) être évalués manuellement via l'assistant disponible à cet emplacement, lorsque le projet est exécuté localement pour que l'analyse soit correctement mise à jour.
+		% }
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/vaers_fertility/pregnancy_seriousness_sample.png');return;" style="width:300px;display:block;margin:auto;cursor: pointer;"><img src="/doc/vaers_fertility/pregnancy_seriousness_sample.png" style="width:300px;display:block;margin:auto;"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="ndt_note">
+		    <ul>
+		    	<li>L'assistant permet (sans altérer la donnée d'origine afin de pouvoir comparer les résultats) de requalifier les critères de sérieux du cas lui-même (Hospitalisation, Mise en danger de la vie du patient, etc) si ceux-ci ont été visiblement mal post-traités par les agents du VAERS.</li>
+		    	<div class="text_separator"></div>
+		    	<li>Les symptômes et éléments de la description clinique relatifs à un trouble de la grossesse sont mis en évidence par surlignage.</li>
+		    	<div class="text_separator"></div>
+		    	<li>Nous considérons - en accord avec une large majorité des rapports VAERS - que les attributs principaux du rapport sont réservés à la mère (qui est "le sujet principal" du rapport) : </li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">Mort de la patiente</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">Mise en danger de la vie de la patiente</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">La patiente a souffert d'une affection permanente</li>
+			    <div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">La patiente a été hospitalisée pour une durée plus longue qu'un "accouchement normal"</li>
+			    <div class="text_separator"></div>
+		    	<li>Nous avons ajouté deux attributs supplémentaires pour distinguer plus clairement la gravité des effets secondaires quant à leurs éventuels impact sur l'enfant (né ou à naitre).</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">Mort du foetus ou de l'enfant</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">Effet secondaire sérieux souffert par l'enfant (naissance très prématurée, handicap, etc.)</li>
+		    	<div class="text_separator"></div>
+		    	<li>Dès lors qu'il pouvait être clairement identifié, nous nous sommes attachés à déterminer le nombre d'heures, ou, à défaut, de jours, entre la vaccination et les premiers signes cliniques menant aux effets sérieux constatés.
+			    <div class="text_separator"></div>
+		    	Par exemple nous requalifions cet écart si la mère a souffert d'une migraine le lendemain, et d'une fausse-couche deux semaines plus tard, et que le VAERS a retenu la date de la migraine comme celle des premiers effets cliniques.</li>
+			    <div class="text_separator"></div>
+		    	<li>Enfin, les dates de survenue des évènements ont été éventuellement requalifiées pour corriger :</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">les dates de dernière vaccination inexactes (par exemple date de la 1ere dose indiquée au lieu de celle de la 2ème dose)</li>
+		    	<div class="text_separator"></div>
+		    	<li style="margin-left: 30px;">les dates de survenue d'effets secondaires sans rapport avec la grossesse.</li>
+		    	<div class="text_separator"></div>
+				<div class="text_separator"></div>
+				<div class="text_separator"></div>
+		    	<b>A cette date, les rapports suivants ont été traités.</b>
+		    	<div class="text_separator"></div>
+		    	% my $pregnanciesSeriousnessConfirmationsPerformed        = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsPerformed'}        // 0;
+		    	% my $pregnanciesSeriousnessConfirmationsRequired         = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsRequired'}         // 0;
+		    	% my $pregnanciesSeriousnessConfirmationsPerformedPercent = $vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsPerformedPercent'} // 0;
+		    	<div style="width:100%;background:lightgrey;display:flex;flex-wrap:wrap;height:25px;text-align:center;position:relative;font-weight:bold;font-size:12px;border-radius:15px;">
+		    		<span style="z-index:99;margin:auto;"><%=$pregnanciesSeriousnessConfirmationsPerformed%> / <%=$pregnanciesSeriousnessConfirmationsRequired%> (<%=$pregnanciesSeriousnessConfirmationsPerformedPercent%> %)</span>
+		    		<div style="width:<%=$pregnanciesSeriousnessConfirmationsPerformedPercent%>%;height:25px;background:lightgreen;position:absolute;border-radius:15px;">
+		    			
+		    		</div>
+		    	</div>
+				<div class="text_separator"></div>
+				Si vous constatez une erreur dans les arbitrages mis à votre disposition, <a target="_blank" href="/contact_us">veuillez nous signaler la référence VAERS concernée afin que nous la rectifiions</a>.
+		    </ul>
+	  	</div>
+		<div class="text_separator"></div>
+	    % my $fixedChildDeaths        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'} // 0;
+		% my $fixedChildDeathsPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeathsPercent'} // 0;
+	    % my $totalSeriousFoetalAE        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'totalSeriousFoetalAE'} // 0;
+		% my $totalSeriousFoetalAEPercent = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'totalSeriousFoetalAEPercent'} // 0;
+	  	% my $totalVaersChildSeriousesAEsArbitrated      = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAE'}               // 0;
+	  	% my $totalVaersChildSeriousesAEsPercentArbitrated        = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAEPercent'}               // 0;
+	    <b><%=$fixedChildDeaths%></b> (<%=$fixedChildDeathsPercent%> %) des <%=$pregnanciesSeriousnessConfirmationsPerformed%> grossesses examinées se sont soldées par des fausses-couches ou la mort du nouveau né.
+		<div class="text_separator"></div>
+		<b><%=$totalVaersChildSeriousesAEsArbitrated%></b> (<%=$totalVaersChildSeriousesAEsPercentArbitrated%> %) des <%=$pregnanciesSeriousnessConfirmationsPerformed%> grossesses examinées ont été affectées par des incidents sérieux mettant en cause nouveau né.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		% my $seriousChildIncidents = $fixedChildDeaths + $totalVaersChildSeriousesAEsArbitrated;
+		% my $fixedAges          = $vaersStatistics{'pregnantMothersAges'}->{'fixedAges'}          // 0;
+		% my $mothersAgesMissing = $vaersStatistics{'pregnantMothersAges'}->{'mothersAgesMissing'} // 0;
+	    <h2>Affinage des données - Complétion des âges manquants pour la mère</h2>
+	    L'âge de la mère n'est pas présent dans les données "structurées" pour <b><%=$mothersAgesMissing%></b> de ces <b><%=$seriousChildIncidents%></b> rapports. Nous avons cependant observé que celui-ci pouvait être récupéré dans la description clinique de l'incident de certains rapports.
+		<div class="text_separator"></div>
+		% if ($environment eq 'local') {
+		Le cas échéant, ces données peuvent être complétées <a href="/studies/vaers_fertility/pregnancies_details" target="_blank">via cet assistant</a>.
+		% } else {
+		Le cas échéant, ces données peuvent être complétées manuellement via l'assistant disponible à cet emplacement, lorsque le projet est exécuté localement.
+		% }
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/vaers_fertility/pregnancy_details_sample.png');return;" style="width:300px;display:block;margin:auto;cursor: pointer;"><img src="/doc/vaers_fertility/pregnancy_details_sample.png" style="width:300px;display:block;margin:auto;"></div>
+		<div class="text_separator"></div>
+		L'âge de la mère a été restauré pour <b><%=$fixedAges%></b> de ces <b><%=$mothersAgesMissing%></b> rapports. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	let currentGlobalTab;
+	let currentStateTab;
+	let currentTab;
+	let tabs       = ['TOTALS', 'MODERNA', 'PFIZER-BIONTECH', 'JANSSEN'];
+	let globalTabs = ['global-analysis', 'global-data'];
+	let stateTabs  = ['state-TOTALS', 'state-MODERNA', 'state-PFIZER-BIONTECH', 'state-JANSSEN'];
+	function openDelayTab(tabLabel) {
+		currentTab = tabLabel;
+		tabs.forEach(setTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function openStateTab(tabLabel) {
+		currentStateTab = tabLabel;
+		stateTabs.forEach(setStateTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function setStateTabButton(tabLabel) {
+		if (tabLabel != currentTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function setTabButton(tabLabel) {
+		if (tabLabel != currentTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function openGlobalTab(tabLabel) {
+		currentGlobalTab = tabLabel;
+		globalTabs.forEach(setGlobalTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function setGlobalTabButton(tabLabel) {
+		if (tabLabel != currentGlobalTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function openSymptoms(vaersSymptomType) {
+		let modal = document.getElementById('fullScreenModal');
+		modal.style.display     = 'block';
+		let modalLoader = document.getElementById("modalLoader");
+		modalLoader.style.display  = "inline-block";
+		let currentLanguage     = '<%=$currentLanguage%>';
+		let request = $.ajax({
+		url: "/studies/vaers_fertility/symptoms",
+		type: "POST",
+		data: {
+			vaersSymptomType : vaersSymptomType,
+			currentLanguage  : currentLanguage
+			}
+		});
+
+		request.done(function(data) {
+			modalLoader.style.display  = "none";
+			$('#fullScreenModalInnerContent').html(data);
+		});
+
+		// Printing error message if case of failure
+		request.fail(function(jqXHR, textStatus) {
+			alert("Something went wrong : " + textStatus)
+		});
+	}
+
+	function openReports(reportType, reportNum) {
+		$('#fullScreenModalInnerContent').html('');
+		let modal = document.getElementById('fullScreenModal');
+		modal.style.display     = 'block';
+		let currentLanguage     = '<%=$currentLanguage%>';
+		let request = $.ajax({
+		url: "/studies/vaers_fertility/display_reports",
+		type: "POST",
+		data: {
+			reportType      : reportType,
+			reportNum       : reportNum,
+			currentLanguage : currentLanguage
+			}
+		});
+
+		request.done(function(data) {
+			$('#fullScreenModalInnerContent').html(data);
+		});
+
+		// Printing error message if case of failure
+		request.fail(function(jqXHR, textStatus) {
+			alert("Something went wrong : " + textStatus)
+		});
+	}
+
+	var modal = document.getElementById("fullScreenModal");
+	var mainLoader = document.getElementById("mainLoader");
+
+	$( document ).ready(function() {
+
+		// Attending to the loader.
+		mainLoader.style.display  = "none";
+
+		// Get the main modal
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+
+		// Get the <span> element that closes the main modal
+		var span = document.getElementsByClassName("full-screen-modal-close")[0];
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+			modal.style.display = "none";
+		}
+	});
+</script>

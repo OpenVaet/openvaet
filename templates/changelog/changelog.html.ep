@@ -10,17 +10,43 @@
     % } else {
 
     % }
-    <h2 style="margin-left: 15px;">v 1.6</h2>
+    <h2 style="margin-left: 15px;">v 1.7</h2>
     % if ($currentLanguage eq 'en') {
     <ul>
-    	<li>Added missing source argument to reports page browsing.</li>
+        <li><b>Database v2</b></li>
+        <li>New temporary enums : vaersVaccine, vaersSex. They will be unified with the rest of the VAERS data once the development of the current study is completed.</li>
+        <li>New website section : Studies ; aiming at hosting treatments & data optimizations offering high added value in the study of some dedicated issues.</li>
+        <li>Fixed a few translations issues.</li>
+        <li>Added a script aiming at quickly generating statistics on the EudraVigilance data by country.</li>
+        <li>Added a script dedicated to in depth analaysis of the VAERS data.</li>
+        <li>Improved EudraVigilance scrapper stability</li>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
     <ul>
-    	<li>Ajout de l'argument "source" manquant dans le changement de page des détails rapports.</li>
+        <li><b>Base de données v2</b></li>
+        <li>Nouvelles enums temporaires : vaersVaccine, vaersSex. Elles seront unifiées avec la données CDC un fois le développement de la première étude entièrement achevé.</li>
+        <li>Nouvelle section "Etudes" - destinée à accueillir des traitements et données optimisées à haute valeur ajoutée dans l'étude de certains problèmes.</li>
+        <li>Réparation d'erreurs de traduction.</li>
+        <li>Ajout d'un script destiné à générer une version synthétique des statistiques EudraVigilance par pays.</li>
+        <li>Ajout d'un script dédié à l'analyse détaillée de la donnée VAERS.</li>
+        <li>Amélioration de la stabilité du scrapper EudraVigilance</li>
     </ul>
     % } else {
-    	% die;
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.6</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added missing source argument to reports page browsing.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout de l'argument "source" manquant dans le changement de page des détails rapports.</li>
+    </ul>
+    % } else {
+        % die;
     % }
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -29,14 +55,14 @@
     <ul>
     	<li>Passed index's links to "actual URLs" to allow opening of new tabs.</li>
     	<li>Added a "Source" filter to allow to distinguish between VAERS & EudraVigilance data</li>
-    	<li>Fixed an issue in Reports unification : CDC cases "Serious" weren't properly included in the Index chart, which was showing only ECDC seriouses cases.</li>
+    	<li>Fixed an issue in Reports unification : CDC cases "Serious" weren't properly included in the Index chart, which was showing only EudraVigilance seriouses cases.</li>
     	<li>Added missing dependencies files to Git.</li>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
     <ul>
     	<li>Conversion des redirections en accueils en "vrais liens" pour faciliter l'ouverture de nouveaux onglets.</li>
     	<li>Ajout d'un filtre "Source" pour permettre de distinguer entre donnée VAERS & EudraVigilance</li>
-    	<li>Réparation d'un problème dans l'unification des rapports : les cas "Sérieux" n'étaient pas corretement inclus dans le graphique en accueil, qui ne montraient que les cas sérieux ECDC.</li>
+    	<li>Réparation d'un problème dans l'unification des rapports : les cas "Sérieux" n'étaient pas corretement inclus dans le graphique en accueil, qui ne montraient que les cas sérieux EudraVigilance.</li>
     	<li>Ajout des installations rapides de dépendances manquantes dans le Git.</li>
     </ul>
     % } else {

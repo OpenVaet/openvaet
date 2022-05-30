@@ -102,6 +102,22 @@ sub startup {
 	$r->get('/data/data_gouv_fr')->to('data_gouv_fr#data_gouv_fr');
 	$r->get('/data/oms')->to('oms#oms');
 	$r->get('/changelog')->to('changelog#changelog');
+	$r->get('/studies')->to('studies#studies');
+    $r->get('/studies/vaers_fertility')->to('studies#vaers_fertility');
+	$r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
+	$r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
+    $r->post('/studies/vaers_fertility/set_report_pregnancy_attribute')->to('studies#set_report_pregnancy_attribute');
+    $r->get('/studies/vaers_fertility/pregnancies_arbitrations')->to('studies#pregnancies_arbitrations');
+    $r->post('/studies/vaers_fertility/load_pregnancies_arbitrations_filters')->to('studies#load_pregnancies_arbitrations_filters');
+    $r->post('/studies/vaers_fertility/load_pregnancies_arbitrations_reports')->to('studies#load_pregnancies_arbitrations_reports');
+    $r->get('/studies/vaers_fertility/pregnancies_seriousness')->to('studies#pregnancies_seriousness');
+    $r->post('/studies/vaers_fertility/load_pregnancy_seriousness_confirmation')->to('studies#load_pregnancy_seriousness_confirmation');
+    $r->post('/studies/vaers_fertility/set_pregnancy_seriousness_attributes')->to('studies#set_pregnancy_seriousness_attributes');
+    $r->post('/studies/vaers_fertility/symptoms')->to('studies#vaers_fertility_symptoms');
+    $r->get('/studies/vaers_fertility/pregnancies_details')->to('studies#pregnancies_details');
+    $r->post('/studies/vaers_fertility/load_pregnancies_details')->to('studies#load_pregnancies_details');
+    $r->post('/studies/vaers_fertility/set_pregnancy_details_attributes')->to('studies#set_pregnancy_details_attributes');
+    $r->post('/studies/vaers_fertility/display_reports')->to('studies#display_reports');
 }
 
 sub connect_dbi

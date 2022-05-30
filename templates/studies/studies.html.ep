@@ -1,0 +1,25 @@
+% layout 'default';
+% title 'OPENVAET - Studies';
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
+    <h3>Our Studies</h3>
+    This section will gather the various analytics on the data which will be realized.
+    <div class="text_separator"></div>
+    % # <ul>
+    % #         <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">VAERS Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch</li>
+    % # </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
+    <h3>Nos études</h3>
+    Cette page rassemblera les différentes analyses sur la donnée qui seront réalisées.
+    % # <div class="text_separator"></div>
+    % # <ul>
+        % # <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA</li>
+    % # </ul>
+    % } else {
+
+    % }
+</div>

@@ -84,5 +84,16 @@
         "1" : "Female",
         "2" : "Male",
         "3" : "Unknown"
+    },
+    "vaersVaccine" : {
+        "1" : "MODERNA",
+        "2" : "PFIZER-BIONTECH",
+        "3" : "JANSSEN",
+        "4" : "UNKNOWN"
+    },
+    "vaersSex" : {
+        "1" : "Female",
+        "2" : "Male",
+        "3" : "Unknown"
     }
 }

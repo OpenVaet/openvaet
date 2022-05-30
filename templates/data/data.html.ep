@@ -138,7 +138,7 @@
     <h3>Revoir le code.</h3>
     Tous les scripts utilisés par le projet sont des scripts Perl (non compilés, ce qui signifie que vous pouvez librement revoir le code exécuté).
     <div class="text_separator"></div>
-    Malgré nos meilleurs efforts pour fournir un code clair, lisible & libres de bugs (et comme considération générale pour votre sécurité), nous vous encourageons fortement à revoir le code.
+    Malgré nos meilleurs efforts pour fournir un code clair, lisible & libre de bugs (et comme considération générale pour votre sécurité), nous vous encourageons fortement à revoir le code.
     <h3>Indexer ou mettre à jour la donnée CDC.</h3>
     Téléchargez les données à jour du VAERS ("All Years Data*") (<a href="https://vaers.hhs.gov/data/datasets.html" target="_blank">disponibles à cette addresse</a>).
     <div class="text_separator"></div>

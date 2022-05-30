@@ -458,6 +458,10 @@ sub get_ecdc_adverse_cases_statistics {
 				if ($covidOnly eq 'true') {
 					next if $ecdcDrugName !~ /COVID-19/;
 				}
+				my $isIndexed = $ecdcDrugs{$internalId}->{'isIndexed'} // die;
+				if ($isIndexedOnly eq 'true') {
+					next unless $isIndexed;
+				}
 				if (exists $ecdcDrugUpdates{$ecdcDrugId}->{'ecdcDrugUpdateId'}) {
 					$currentCase++;
 				}
@@ -1147,6 +1151,7 @@ sub get_ecdc_notices {
 }
 
 sub browse_years_seriousness {
+	say "browse_years_seriousness";
 	my ($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs) = @_;
 	my $aeFromEcdcYear  = $ecdcYearsFromIds{$aeFromEcdcYearId}->{'name'} // die;
 	# say "ecdcDrugId       : $ecdcDrugId";
@@ -1252,6 +1257,7 @@ sub browse_years_seriousness {
 }
 
 sub browse_year_seriousness_by_age_groups {
+	say "browse_year_seriousness_by_age_groups";
 	my ($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel) = @_;
 	my $aeFromEcdcYear  = $ecdcYearsFromIds{$aeFromEcdcYearId}->{'name'} // die;
 	# say "ecdcDrugId       : $ecdcDrugId";
@@ -1292,15 +1298,18 @@ sub browse_year_seriousness_by_age_groups {
 		select_serious_dropdown();
 		select_dropdown_option($ecdcSeriousnessLabel);
 		select_serious_dropdown();
+		sleep 2;
 
 		# Going through each incident age group.
-		list_age_groups();
+
+		# Selecting age group.
 		my $ecdcAgeGroup = age_group_to_enum($ageGroup);
-		# say "selecting age group [$ageGroup]";
+		list_age_groups();
+		sleep 2;
 		select_dropdown_option($ageGroup);
-		sleep 1;
-		# say "closing age group";
+		sleep 2;
 		click_age_group();
+		sleep 2;
 		# say "running report";
 		run_line_report();
 		my $totalCases = parse_line_report($ecdcDrugId, $ecdcYearId, $ecdcSeriousness, $currentDrugs, $totalDrugs, $ecdcAgeGroup);
@@ -1740,6 +1749,7 @@ sub ecdc_geo_origin_to_enum {
 }
 
 sub browse_year_seriousness_age_group_by_sexes {
+	say "browse_year_seriousness_age_group_by_sexes";
 	my ($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel, $ageGroup, $ecdcAgeGroup) = @_;
 	my $aeFromEcdcYear  = $ecdcYearsFromIds{$aeFromEcdcYearId}->{'name'} // die;
 
@@ -1780,6 +1790,7 @@ sub browse_year_seriousness_age_group_by_sexes {
 		select_dropdown_option($ecdcSeriousnessLabel);
 		sleep 2;
 		select_serious_dropdown();
+		sleep 2;
 
 		# Selecting age group.
 		list_age_groups();
@@ -1880,6 +1891,7 @@ sub sex_group_to_enum {
 }
 
 sub browse_year_seriousness_age_group_sex_by_geographical_origin {
+	say "browse_year_seriousness_age_group_sex_by_geographical_origin";
 	my (
 		$url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear,
 		$currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness,
@@ -2034,6 +2046,7 @@ sub geo_origin_group_to_enum {
 }
 
 sub browse_year_seriousness_age_group_sex_geographical_origin_by_reporter_type {
+	say "browse_year_seriousness_age_group_sex_geographical_origin_by_reporter_type";
 	my (
 		$url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear,
 		$currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness,

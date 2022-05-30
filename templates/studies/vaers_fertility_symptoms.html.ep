@@ -1,0 +1,17 @@
+
+
+<div style="width:100%;font-size: 16px;overflow-y: auto;">
+	<div style="width: 100%;">
+		<div style="width:calc(100% - 15px);margin-left: 15px;">
+			<b><%=$symptomsTitle%></b>
+		</div>
+		% my %symptoms = %$symptoms;
+
+		<ul style="font-size: 14px;">
+		% for my $symptomName (sort keys %symptoms) {
+			<li><%=$symptomName%></li>
+			<div class="text_separator"></div>
+		% }
+		</ul>
+	</div>
+</div>

@@ -1,0 +1,284 @@
+<style type="text/css">
+
+	div.scrollable-table-header {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		display: block;
+	}
+	div.scrollable-table-container {
+		width: 100%;
+		display: block;
+		height:65vh;
+		min-height: 65vh;
+		max-height: 65vh;
+		overflow-y: scroll;
+	}
+	div.row-container {
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.noselect {
+	  -webkit-touch-callout: none; /* iOS Safari */
+	    -webkit-user-select: none; /* Safari */
+	     -khtml-user-select: none; /* Konqueror HTML */
+	       -moz-user-select: none; /* Old versions of Firefox */
+	        -ms-user-select: none; /* Internet Explorer/Edge */
+	            user-select: none; /* Non-prefixed version, currently
+	                                  supported by Chrome, Edge, Opera and Firefox */
+	}
+	input.text-input {
+		height: 29px !important;
+		width: 98%;
+		text-align: center;
+		color: #444;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	}
+	input.text-input ::placeholder {
+		color: #999;
+	}
+</style>
+% my %forms = %$forms;
+<div  class="scrollable-table-header">
+	<div style="width:100%">
+		<hr>
+	</div>
+	<div class="row-container noselect">
+	    <div style="width: 195px;max-width: 195px;">
+	        <select class="js-example-basic-single" id="cdcStateId" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $cdcStateName (sort keys %{$forms{'cdcState'}}) {
+						% my $cdcStateId = $forms{'cdcState'}->{$cdcStateName}->{'cdcStateId'} // die;
+      			<option value="<%=$cdcStateId%>"><%=$cdcStateName%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 250px;max-width: 250px;">
+	    	<input class="text-input" type="text" id="noticeSearch" placeholder="Search notice reference" style="width: 95%;max-width: 95%;"></input>
+	    </div>
+	    <div style="width: 250px;max-width: 250px;">
+	        <select class="js-example-basic-single" id="cdcSex" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $id (sort{$a <=> $b} keys %{$forms{'cdcSex'}}) {
+						% my $cdcSex = $forms{'cdcSex'}->{$id} // die;
+      			<option value="<%=$id%>"><%=$cdcSex%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 250px;max-width: 250px;">
+	        <select class="js-example-basic-single" id="cdcManufacturerId" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $cdcManufacturerName (sort keys %{$forms{'cdcManufacturer'}}) {
+						% my $cdcManufacturerId = $forms{'cdcManufacturer'}->{$cdcManufacturerName}->{'cdcManufacturerId'} // die;
+      			<option value="<%=$cdcManufacturerId%>"><%=$cdcManufacturerName%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 420px;max-width: 420px;">
+	        <select class="js-example-basic-single" id="cdcVaccineTypeId" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $cdcVaccineTypeName (sort keys %{$forms{'cdcVaccineType'}}) {
+						% my $cdcVaccineTypeId = $forms{'cdcVaccineType'}->{$cdcVaccineTypeName}->{'cdcVaccineTypeId'} // die;
+      			<option value="<%=$cdcVaccineTypeId%>"><%=$cdcVaccineTypeName%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important">
+	    </div>
+	    <div style="width: 370px;max-width: 370px;">
+	        <select class="js-example-basic-single" id="cdcVaccineId" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $cdcVaccineName (sort keys %{$forms{'cdcVaccine'}}) {
+						% my $cdcVaccineId = $forms{'cdcVaccine'}->{$cdcVaccineName}->{'cdcVaccineId'} // die;
+      			<option value="<%=$cdcVaccineId%>"><%=$cdcVaccineName%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 250px;max-width: 250px;">
+	        <select class="js-example-basic-single" id="cdcSymptomId" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0"></option>
+					% for my $cdcSymptomName (sort keys %{$forms{'cdcSymptom'}}) {
+						% my $cdcSymptomId = $forms{'cdcSymptom'}->{$cdcSymptomName}->{'cdcSymptomId'} // die;
+      			<option value="<%=$cdcSymptomId%>"><%=$cdcSymptomName%></option>
+					% }
+	        </select>
+		</div>
+	    <div style="width: 250px;max-width: 250px;">
+	    	<input class="text-input" type="text" id="fromAge" placeholder="From Age" style="width: 45%;max-width: 45%;"></input>
+	    	<input class="text-input" type="text" id="toAge" placeholder="To Age" style="width: 45%;max-width: 45%;"></input>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="hospitalized" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0">Indifferent</option>
+      			<option value="1">Yes</option>
+      			<option value="2">No</option>
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="lifeThreatning" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0">Indifferent</option>
+      			<option value="1">Yes</option>
+      			<option value="2">No</option>
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="permanentDisability" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0">Indifferent</option>
+      			<option value="1">Yes</option>
+      			<option value="2">No</option>
+	        </select>
+		</div>
+	    <div style="width: 200px;max-width: 200px;">
+	        <select class="js-example-basic-single" id="patientDied" style="width: 95%;height: 95%;">
+  				<option value=""></option>
+  				<option value="0">Indifferent</option>
+      			<option value="1">Yes</option>
+      			<option value="2">No</option>
+	        </select>
+		</div>
+	    <div style="width: 370px;max-width: 370px;">
+		</div>
+	</div>
+	<div class="text_separator"></div>
+	<div class="row-container noselect">
+	    <div style="width: 195px;max-width: 195px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 200px;max-width: 200px;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 420px;max-width: 420px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;">
+	    	<input type="checkbox" id="covidVaccinesOnly">
+			<label for="covidVaccinesOnly"><b>COVID Vaccines Only</b></label>
+		</div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"></div>
+	</div>
+	<div style="width:100%">
+		<hr>
+	</div>
+	<div class="row-container noselect">
+	    <div style="width: 195px;max-width: 195px;background-color: #fff !important;text-align: center;"><b>State</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Vaccination Date</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Receipt Date</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>CDC's Reference</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Patient Sex</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Manufacturer</b></div>
+	    <div style="width: 420px;max-width: 420px;background-color: #fff !important;text-align: center;"><b>Vaccine Type</b></div>
+	    <div style="width: 125px;max-width: 125px;background-color: #fff !important;text-align: center;"><b>Dose</b></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"><b>Related Vaccine(s)</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Symptom(s)</b></div>
+	    <div style="width: 250px;max-width: 250px;background-color: #fff !important;text-align: center;"><b>Patient Age</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Patient Hospitalized</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Patient Life Threaned</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Patient Permanent Disability</b></div>
+	    <div style="width: 200px;max-width: 200px;background-color: #fff !important;text-align: center;"><b>Patient Died</b></div>
+	    <div style="width: 370px;max-width: 370px;background-color: #fff !important;text-align: center;"><b>Event Description</b></div>
+	</div>
+	<div style="width:100%;">
+		<hr>
+	</div>
+</div>
+<div id="noticesList"  class="scrollable-table-container"></div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		initDropdowns();
+	});
+
+	function initDropdowns() {
+		console.log('Initiating dropdowns ...');
+		$('#cdcStateId').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By State'
+		});
+		$('#cdcSex').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By CDC Patient Sex'
+		});
+		$('#cdcManufacturerId').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By CDC Manufacturer'
+		});
+		$('#cdcVaccineTypeId').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By CDC Vaccine Type'
+		});
+		$('#cdcVaccineId').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By CDC Vaccine'
+		});
+		$('#cdcSymptomId').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Related Symptom'
+		});
+		$('#cdcSeriousness').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Seriousness'
+		});
+		$('#formSeriousness').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Form Seriousness'
+		});
+		$('#hospitalized').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Select Option'
+		});
+		$('#lifeThreatning').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Select Option'
+		});
+		$('#permanentDisability').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Select Option'
+		});
+		$('#patientDied').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Select Option'
+		});
+		console.log('Finished dropdowns ...');
+		loadNotices();
+	}
+</script>

@@ -1,0 +1,50 @@
+% layout 'default';
+% title 'OPENVAET - Studies - C. Cotton VAERS - Events Confirmation';
+
+% if ($environment eq 'local' && $operationsToPerform) {
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies/vaers_fertility');return;">&#10229; Return to study</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/studies/vaers_fertility');return;">&#10229; Retour à l'étude</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        Chargement des rapports dont les détails sont à confirmer
+    </div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 14px;" id="reportLoaded">
+    </div>
+    % } else {
+
+    % }
+</div>
+<script type="text/javascript"> 
+
+    $(document).ready(function() {
+        loadEventConfirmationDetails('<%=$operationsToPerform%>');
+    });
+
+    function loadEventConfirmationDetails(operationsToPerform) {
+        let currentLanguage    = '<%=$currentLanguage%>';
+        let request            = $.ajax({
+            url: "/studies/vaers_fertility/load_pregnancies_details",
+            type: "POST",
+            data: {
+                operationsToPerform : operationsToPerform,
+                currentLanguage     : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            $("#reportLoaded").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
+% }
