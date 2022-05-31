@@ -373,34 +373,10 @@ sub cdc_reports {
         $permanentDisability             = unpack("N", pack("B32", substr("0" x 32 . $permanentDisability, -32)));
 	    next if exists $eventsAdded{'parsed'}->{$reference};
 	    $eventsAdded{'parsed'}->{$reference} = 1;
-        if ($patientDied == 1) {
-            $patientDied = 1;
-        } elsif ($patientDied == 0) {
-            $patientDied = 0;
-        } else {
-            die "patientDied : $patientDied";
-        }
-        if ($lifeThreatning == 1) {
-            $lifeThreatning = 1;
-        } elsif ($lifeThreatning == 0) {
-            $lifeThreatning = 0;
-        } else {
-            die "lifeThreatning : $lifeThreatning";
-        }
-        if ($hospitalized == 1) {
-            $hospitalized = 1;
-        } elsif ($hospitalized == 0) {
-            $hospitalized = 0;
-        } else {
-            die "hospitalized : $hospitalized";
-        }
-        if ($permanentDisability == 1) {
-            $permanentDisability = 1;
-        } elsif ($permanentDisability == 0) {
-            $permanentDisability = 0;
-        } else {
-            die "permanentDisability : $permanentDisability";
-        }
+	    die unless $patientDied         == 0 || $patientDied         == 1;
+	    die unless $lifeThreatning      == 0 || $lifeThreatning      == 1;
+	    die unless $hospitalized        == 0 || $hospitalized        == 1;
+	    die unless $permanentDisability == 0 || $permanentDisability == 1;
         my ($ageGroup, $ageGroupName) = age_group_from_age($patientAge);
 
         # Integrating vaccines details.

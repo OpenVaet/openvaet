@@ -10,6 +10,22 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.8</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Misc improvements on study pre-publish version.</li>
+        <li>New diagnose script to check EudraVigilance update compliance.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Diverses améliorations sur la version pré-publish d'une étude.</li>
+        <li>Nouveau script de diagnostique pour vérifier la conformité des mises à jour EudraVigilance.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.7</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

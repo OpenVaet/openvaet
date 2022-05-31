@@ -173,9 +173,9 @@
     <div id="global-analysis" style="width:calc(100% - 2px);position: top;">
 	    <div class="text_separator"></div>
 	    <h2>Présentation de l'étude</h2>
-	    Nous avons décidé de mettre à jour les données d'intéressantes études effectuées par Christine Cotton, en août 2021, sur les effets des substances COVID.
+	    Nous avons décidé de mettre à jour les données d'intéressantes études, effectuées par Christine Cotton, en août 2021, sur les effets des substances COVID.
 	    <div class="text_separator"></div>
-	    Christine Cotton est une bio-statisticienne expérimentée, <a href="https://christine-cotton.1ere-page.fr" target="_blank">dont le site peut être trouvé ici</a>, et qui nous a semblé défendre une position de raison depuis le début de la crise politique et sanitaire du COVID-19.
+	    Christine Cotton est une bio-statisticienne expérimentée, <a href="https://christine-cotton.1ere-page.fr" target="_blank">dont le site peut être trouvé ici</a>, et qui nous a semblé défendre une position de raison, depuis le début de la crise politique et sanitaire du COVID-19.
 	    <div class="text_separator"></div>
 	    Les deux présentations auxquelles nous nous sommes attelés sont les suivantes :
 	    <ul>
@@ -184,37 +184,37 @@
 	    	<li>Une présentation de ses travaux similaires auprès de <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a>.</li>
 	    </ul>
 	    <div class="text_separator"></div>
-	    Le "Center for Disease Control" (CDC) et la Food & Drug Administration (FDA) sont les organismes des Etats-Unis en charge - entre autres choses - de collecter et surveiller la sécurité des médicaments autorisés ou testés aux Etats-Unis, et communiquent les incidents répertoriés via leur plateforme VAERS.
+	    Le "Center for Disease Control" (CDC) et la Food & Drug Administration (FDA) sont les organismes des Etats-Unis en charge - entre autres choses - de collecter et surveiller les données relatives à la sécurité des médicaments autorisés ou testés aux Etats-Unis. Ils communiquent les incidents répertoriés via leur plateforme VAERS.
 	    <div class="text_separator"></div>
-	    Nous utiliserons ici uniquement la donnée VAERS, et non la donnée européenne EudraVigilance (dont l'absence totale de détails empêche tout traitement approfondi).
+	    Nous utiliserons ici uniquement la donnée VAERS, et non la donnée européenne EudraVigilance (dont l'absence totale de détails empêche tout traitement sérieux).
 	    <div class="text_separator"></div>
-	    <b>Christine Cotton, l'auteure de l'étude originale ne nous a pas addressé de demande directe, ni n'entretient de liens avec nous</b> ; nous la citons simplement par courtoisie et respect pour son travail.
+	    <b>Christine Cotton, l'autrice de l'étude originale, ne nous a pas adressé de demande directe, ni n'entretient de liens avec nous</b> ; nous la citons simplement par courtoisie et respect pour son travail.
 	    <div class="text_separator"></div>
-	    <b>La responsabilité de toute erreur dans les algorithmes écrits par nous (<a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire Github" target="_blank">et publiés comme le reste ici</a>), nous reviendrait exclusivement (et comme d'habitude, tout éventuel <a href="/contact_us">bug signalé</a> serait corrigé dans les délais les plus brefs).</b>
+	    <b>La responsabilité de toute erreur dans les algorithmes écrits par nous (<a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire Github" target="_blank">dont les codes sources sont disponibles ici</a>), nous reviendrait exclusivement (et comme d'habitude, tout éventuel <a href="/contact_us">bug signalé</a> serait corrigé dans les délais les plus brefs).</b>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <h2>Problématique</h2>
 	    <div class="text_separator"></div>
-    	Christine Cotton souligne (vidéo France Soir ci-dessus, 44:53 & suivant) la première problématique complexe que nous avons rencontré alors que nous inventorions les statistiques à établir : <b>aucune authentification claire et non criticable des grossesses n'est disponible dans les rapports VAERS</b>.
+    	Christine Cotton souligne (vidéo France Soir ci-dessus, 44:53 & suivantes) la première problématique complexe que nous avons rencontrée alors que nous inventoriions les statistiques à établir : <b>aucune authentification claire et non criticable des cas de grossesse n'est disponible dans les rapports VAERS</b>.
 	    <div class="text_separator"></div>
-	    Pour résumer les problèmes que rencontrera l'analyste qui désire cibler les rapports impliquant les femmes enceintes :
+	    Les problèmes que rencontre l'analyste qui désire cibler les rapports impliquant les femmes enceintes sont les suivants :
 	    <div class="text_separator"></div>
     	<div style="width:100%;display: flex;flex-wrap: wrap;">
 	    	<ul>
-	    		<li>Il n'y'a pas d'attribut clair lié au rapport indiquant une grossesse de la patiente, qui est considérée comme un symptôme parmi d'autres</li>
+	    		<li>Il n'y'a pas d'attribut clair lié au rapport indiquant une grossesse de la patiente, qui est considérée par le VAERS comme un "symptôme" parmi d'autres</li>
 	    		<div class="text_separator"></div>
 	    		<li>Les symptômes qui devraient permettre une identification facile de la grossesse ne sont pas toujours définis et/ou exhaustivement identifiés</li>
 	    		<div class="text_separator"></div>
 	    		<li>On trouve des faux-positifs dans la donnée (rapports qui sont signalés comme liés à une grossesse alors que le texte brut précise explicitement le contraire)</li>
 	    		<div class="text_separator"></div>
-	    		<li>Certaines grossesses ne sont pas identifiées (aucune identification via les symptômes) et seule une lecture attentive du texte brut permet de corriger cette ommission</li>
+	    		<li>Certaines grossesses ne sont pas identifiées (aucune identification via les symptômes) et seule une lecture attentive du texte brut permet de corriger cette omission</li>
 	    		<div class="text_separator"></div>
 	    	</ul>
 		</div>
 	    <div class="text_separator"></div>
-    	Il nous est rapidement apparu que nous aurions besoin <b>d'outils dédiés</b> pour traiter efficacement certaines des données mentionnées dans l'étude pré-citée, et pour garantir leurs mises à jour ultérieures. Ces outils sont détaillés dans la section "Données", et accessibles depuis celle-ci - si vous exécutez le projet localement.
+    	Il nous est rapidement apparu que <b>des outils dédiés</b> étaient nécessaires pour traiter efficacement certaines des données mentionnées dans l'étude pré-citée, et pour garantir leurs mises à jour ultérieures. Ces outils sont détaillés dans la section "Données", et accessibles depuis celle-ci - si l'on exécute le projet localement.
 	    <div class="text_separator"></div>
-	    Ayant réglé ces premiers problèmes d'identification précise des grossesses via une revue détaillée manuelle de chaque rapport, nous publions cette première étude (qui sera approfondie davantage), afin de mettre à disposition des utilisateurs les arbitrages effectués. Ceux-ci peuvent être téléchargés <a href="#" onclick="openGlobalTab('global-data');return;">dans la section "Données".</a>
+	    Les premiers problèmes d'identification précise des grossesses ayant été résolus en procédant à une revue détaillée manuelle de chaque rapport, nous publions cette première étude (qui sera approfondie davantage), afin de mettre à disposition des utilisateurs les arbitrages effectués. Ceux-ci peuvent être téléchargés <a href="#" onclick="openGlobalTab('global-data');return;">dans la section "Données".</a>
 	    <div class="text_separator"></div>
 	    Les chiffres ici présentés sont dynamiques (ils seront mis à jour peu de temps après chaque nouvelle publication par le VAERS).
 	    <div class="text_separator"></div>
@@ -222,7 +222,7 @@
 	    <h2>Donnée VAERS utilisée</h2>
 	    Les données que nous utilisons peuvent être téléchargées via le site du CDC, <a target="_blank" href="https://vaers.hhs.gov/data/datasets.html">ici</a> ou directement sur <a target="_blank" href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip">ce lien</a>.
 	    <div class="text_separator"></div>
-    	Les processus d'obtention et de traitement de la donnée sont décrits exhaustivements <a class="url-link noselect" onclick="openGlobalTab('global-data');return;">dans la section "Données"</a> de cette étude.
+    	Les processus d'obtention et de traitement de la donnée sont décrits exhaustivement <a class="url-link noselect" onclick="openGlobalTab('global-data');return;">dans la section "Données"</a> de cette étude.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <h2>Représentativité des "effets en vie réelle" des données VAERS</h2>
@@ -230,9 +230,9 @@
 	    <div class="text_separator"></div>
 	    Pour diverses raisons (difficulté d'accès aux soins selon la position géographique, en raison du coût, manque d'information du patient, réticence d'un professionnel de santé, etc), on pourra légitimement penser que les effets secondaires sont sous-rapportés.
 	    <div class="text_separator"></div>
-    	L'auteure précitée fourni deux études (en anglais) qui avancent des taux d'incidents rapportés variables, selon les études, <b>entre 12% et 60% des effets réels</b>.
+    	L'autrice précitée fournit deux études (en anglais) qui avancent des taux variables d'incidents rapportés, selon les études, <b>entre 12% et 60% des effets réels</b>.
 	    <div class="text_separator"></div>
-    	Par exemple, pour 10 "Rupture prématurée des membranes" rapportés au VAERS, on peut estimer qu'entre 16 et 83 ont eu lieu dans la population, et que 6 à 73 n'ont pas été rapportées).
+    	Par exemple, pour 10 "Ruptures prématurées des membranes" rapportées au VAERS, on peut estimer qu'entre 16 et 83 ont eu lieu dans la population, et que 6 à 73 n'ont pas été rapportées).
 	    <div class="text_separator"></div>
 		<div class="ndt_note">
 		    <ul>
@@ -242,13 +242,13 @@
 		    </ul>
 		</div>
 	    <div class="text_separator"></div>
-		    Nous avions par ailleurs identifié deux autres études - une première évaluant le taux de reporting au VAERS à un plus pessimiste 1%, et une seconde soulignant la faiblesse de la collecte des effets secondaires en France :
+	    Nous avions par ailleurs identifié deux autres études - une première évaluant le taux de reporting au VAERS à un plus pessimiste 1%, et une seconde soulignant la faiblesse de la collecte des effets secondaires en France :
 	    <div class="text_separator"></div>
 		<div class="ndt_note">
 		    <ul>
 		    	<li><a href="https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system" target="_blank">Lazarus R. Electronic Support for Public Health - Vaccine Adverse Event Reporting System (ESP:VAERS) - Final Report. (Prepared by Harvard Pilgrim Health Care, Inc. under Grant No. R18 HS017045). Rockville, MD: Agency for Healthcare Research and Quality, 2010.</a>, effectuée pour le VAERS, évalue ce taux de reporting à 1% pré-COVID, en 2010.</li>
 	    		<div class="text_separator"></div>
-		    	<li><a target="_blank" href="https://dumas.ccsd.cnrs.fr/dumas-02473574/document">CNRS - HAL Id: dumas-02473574 - Anaïs Lefort. Les médecins généralistes sous-déclarent les effets indésirables liés aux médicaments : quelles pistes pour améliorer les actions de pharmacovigilance ? Résultats d’une enquête en Aquitaine en 2018. Médecine humaine et pathologie. 2019. ffdumas-02473574f</a>, pour les lecteurs français, souligne la tendance répandue des médecins généralistes à ne pas rapporter les effets secondaires ou encourager leurs patients à le faire (une tendance qui s'explique par le fait, entre autre, que cette obligation légale date de 2011).</li>
+		    	<li><a target="_blank" href="https://dumas.ccsd.cnrs.fr/dumas-02473574/document">CNRS - HAL Id: dumas-02473574 - Anaïs Lefort. Les médecins généralistes sous-déclarent les effets indésirables liés aux médicaments : quelles pistes pour améliorer les actions de pharmacovigilance ? Résultats d’une enquête en Aquitaine en 2018. Médecine humaine et pathologie. 2019. ffdumas-02473574f</a>, pour les lecteurs français, souligne la tendance répandue des médecins généralistes à ne pas rapporter les effets secondaires ou ne pas encourager leurs patients à le faire (une tendance qui s'explique par le fait, entre autre, que cette obligation légale date de 2011).</li>
 		    </ul>
 		</div>
 	    <div class="text_separator"></div>
@@ -302,7 +302,7 @@
 	  	% my $pfizerCasesOffset  = $vaersStatistics{'pregnanciesStatistics'}->{'PFIZER-BIONTECH'}->{'pfizerCasesOffset'}   // 0;
 	  	% my $unknownCasesOffset = $vaersStatistics{'pregnanciesStatistics'}->{'UNKNOWN'}->{'unknownCasesOffset'}  // 0;
 	    <h2>Répartition des grossesses par substances</h2>
-	    Les cas par substances COVID-19 (selon le VAERS - et corrigés par nos soins) sont détaillés ci-dessous selon 4 types de classifications :
+	    Les cas (selon le VAERS - et corrigés par nos soins), par substances COVID-19, sont détaillés dans le tableau ci-dessous selon 4 types de classifications :
 	    <ul>
 	    	<li>Les rapports où la grossesse a été parfaitement identifiée par le VAERS (Présence du symptôme "Pregnancy", "Exposure during pregnancy" ou "Maternal exposure during pregnancy")</li>
 			<div class="text_separator"></div>
@@ -484,7 +484,7 @@
 	    	<li>l'infirmité permanente</li>
 	    </ul>
 		<div class="text_separator"></div>
-	    Il est intéressant de noter que le VAERS a, dans sa notice à l'usage des professionnels, <a href="https://www.nihb.org/covid-19/wp-content/uploads/2021/07/10-Things-Healthcare-Providers-Need-to-Know-About-VAERS.pdf" target="_blank">10 Things Healthcare Providers Need to Know about the Vaccine Adverse Event Reporting System, Reporting Adverse Events Following COVID-19 Vaccination (2021-07-10)</a>, une définition plus ancienne, et différente des évènements sérieux (<b>en vert ceux qu'on trouve toujours ; en rouge ceux qui ne sont plus considérés comme "sérieux" dans la donnée synthétisée du VAERS</b>) :
+	    Il est intéressant de noter que, dans sa notice à l'usage des professionnels de santé, <a href="https://www.nihb.org/covid-19/wp-content/uploads/2021/07/10-Things-Healthcare-Providers-Need-to-Know-About-VAERS.pdf" target="_blank">10 Things Healthcare Providers Need to Know about the Vaccine Adverse Event Reporting System, Reporting Adverse Events Following COVID-19 Vaccination (2021-07-10)</a>, le VAERS utilise une définition des évènements sérieux plus ancienne, et différente des 4 critères précédemment évoqués (<b>en vert ceux qu'on trouve toujours ; en rouge ceux qui ne sont plus considérés comme "sérieux" dans la donnée synthétisée du VAERS</b>) :
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="ndt_note">
@@ -751,13 +751,13 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <h2>Effets secondaires ayant potentiellement affecté le foetus, d'après la donnée VAERS</h2>
-		Il est délicat d'avoir, dans ces mêmes <b><%=$totalFixedCases%> rapports</b>, une vue précise des effets secondaires ayant affecté le foetus ou le nouveau-né, en conséquence de la vaccination de sa mère.
+		Il est délicat d'avoir, dans ces mêmes <b><%=$totalFixedCases%> rapports</b>, une vue précise des effets secondaires ayant affecté le foetus ou le nouveau-né, en conséquence possible de la vaccination de sa mère.
 		<div class="text_separator"></div>
-		Le VAERS procède, normalement, à un double rapport quand l'enfant a été affecté. Cependant, un examen détaillé des rapports met en lumière que celui-ci est aléatoirement produit (souvent, seul l'effet ayant affecté la mère est rapporté) ; et il est par ailleurs très difficile de faire le lien entre les symptômes subis par la mère et ceux du foetus ou de l'enfant, lorsqu'on se base sur la seule notice de ce dernier.
+		Le VAERS procède, normalement, à un double rapport quand l'enfant a été affecté. Cependant, un examen détaillé des rapports met en lumière que ce double rapport est aléatoirement produit (souvent, seul l'effet ayant affecté la mère est rapporté). Il est par ailleurs très difficile de faire le lien entre les symptômes éprouvés par la mère et ceux du foetus ou de l'enfant, lorsqu'on se base sur la seule notice concernant l'enfant.
 		<div class="text_separator"></div>
-		Nous avons donc décidé de nous baser sur les rapports concernant les patientes pour en extrapoler, dans un premier temps, les incidents ayant affecté le foetus ou l'enfant pendant la grossesse.
+		Nous avons donc décidé de nous baser sur les rapports concernant les patientes pour en extrapoler, dans un premier temps, les incidents ayant pu affecter le foetus ou l'enfant pendant la grossesse.
 		<div class="text_separator"></div>
-		Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que la celle-ci ne soit impactée, ne rentrent pas dans le champ immédiat de nos analyses. L'incident ferait en effet l'objet d'un rapport VAERS pour le nouveau-né seul (par exemple une exposition du bébé via le lait maternel sans que la mère n'ait expérimentée de symptômes).
+		Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que celle-ci ne soit impactée, ne rentrent pas dans le champ immédiat de nos analyses. L'incident ferait en effet l'objet d'un rapport VAERS pour le nouveau-né seul (par exemple une exposition du bébé via le lait maternel sans que la mère n'ait expérimentée de symptômes).
 		<div class="text_separator"></div>
 		Les rapports d'effets secondaires ayant été mortels pour le foetus ou l'enfant peuvent être identifiés <a href="#" onclick="openSymptoms('foetalDeathRelated');return;">via un set de symptômes pertinents que nous avons sélectionnés</a> (par exemple "Avortement spontané", "Ectopic Pregnancy", etc.).
 		<div class="text_separator"></div>
@@ -870,17 +870,17 @@
 		<div class="text_separator"></div>
 		Nous avons donc effectué la revue des <b><%=$totalFixedCases%> rapports</b>, et, via un assistant conçu à cette fin, systématiquement veillé à identifier le caractère sérieux des effets secondaires subis par la mère et/ou le foetus.
 		<div class="text_separator"></div>
-		Nous nous sommes aussi attachés à identifier précisément les éléments temps clés : date de vaccination, date d'effets secondaires observés, interval de temps entre la vaccination et la survenue des effets.
+		Nous nous sommes aussi attachés à identifier précisément les éléments temps clés : date de vaccination, date d'effets secondaires observés, intervalle de temps entre la vaccination et la survenue des effets.
 		<div class="text_separator"></div>
 		La section <a href="#" onclick="openGlobalTab('global-data');return;"><b>Affinage des données - Confirmation du caractère sérieux ou non des rapports</b></a> expose l'ensemble des opérations réalisées à cette étape du traitement.
 		<div class="text_separator"></div>
-		Malgré les nombreuses précautions que nous avons prises pour garantir un traitement exhaustif des symptômes, nous n'échappons pas nous-mêmes au risque d'erreur humaine, et nous vous encourageons par conséquent à revoir en détail les nombreux arbitrages que nous avons détaillés dans la section ci-dessus et à <a href="/contact_us">nous signaler toute erreur que vous pourriez identifier</a>.
+		Malgré les nombreuses précautions que nous avons prises pour garantir un traitement exhaustif des symptômes, nous n'échappons pas nous-mêmes au risque d'erreur humaine, et nous encourageons par conséquent le lecteur à revoir en détail les nombreux arbitrages que nous avons détaillés dans la section ci-dessus et à <a href="/contact_us">nous signaler toute erreur que vous pourriez identifier</a>.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <h2>Effets secondaires ayant affecté la mère, d'après la donnée vérifiée</h2>
 	    Les effets secondaires dont ont souffert les patientes enceintes sont, après ces vérifications, synthétisés dans le tableau ci-dessous.
 		<div class="text_separator"></div>
-	    Les écarts représentés entre parenthèse permettent d'apprécier combien de ces évènements n'ont pas été correctement caractérisés par le VAERS (voir les tableaux plus haut). Si aucun écart n'est présent, nos chiffres sont les mêmes.
+	    Les écarts représentés entre parenthèses permettent d'apprécier combien de ces évènements n'ont pas été correctement caractérisés par le VAERS (voir les tableaux plus haut). Si aucun écart n'est présent, nos chiffres sont les mêmes.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1476,9 +1476,9 @@
 		<div class="text_separator"></div>
 		A nouveau, de nombreux évènements graves n'ont pas été correctement qualifiés par le VAERS, dont <b><%=$totalVaersChildDeathsOffset%> (<%=$totalVaersChildDeathsOffsetPercent%> %) des <%=$totalVaersChildDeathsArbitrated%></b> cas où l'enfant n'a pas survécu.
 		<div class="text_separator"></div>
-		Nous nous sommes consacrés, pour la première version de cette étude, sur les grossesses dont l'issue fatale pour l'enfant et/ou pour la mère avait été confirmée.
+		Nous nous sommes focalisés, pour la première version de cette étude, sur les grossesses dont l'issue fatale pour l'enfant et/ou pour la mère avait été confirmée.
 		<div class="text_separator"></div>
-	    <h2>Profils d'âges des mères dont la grossesse s'est achevée par la mort du foetus ou de l'enfant</h2>
+	    <h2>Profils d'âge des mères dont la grossesse s'est achevée par la mort du foetus ou de l'enfant</h2>
 		% my $fixedAges          = $vaersStatistics{'pregnantMothersAges'}->{'fixedAges'}          // 0;
 		% my $mothersAgesMissing = $vaersStatistics{'pregnantMothersAges'}->{'mothersAgesMissing'} // 0;
 		% my $missingAges        = $mothersAgesMissing - $fixedAges;
@@ -1870,7 +1870,7 @@
 						% } elsif ($vaersTimeGroup <= 5) {
 							% $percentAtAMonth += $fixedChildDeathsPercent;
 							% $percentAtTwoMonthes += $fixedChildDeathsPercent;
-						% } elsif ($vaersTimeGroup <= 7) {
+						% } elsif ($vaersTimeGroup <= 6) {
 							% $percentAtTwoMonthes += $fixedChildDeathsPercent;
 						% }
 			    	<div style="width:100%;background: #504e52;display: flex;flex-wrap: wrap;text-align: center;position: relative;font-weight: bold;font-size: 12px;color: white;min-height: 25px;">
@@ -1909,7 +1909,7 @@
 							<b><%=$percentAtAMonth%></b> % dans le mois qui suit l'injection.
 				    	</div>
 						<div class="text_separator"></div>
-						% } elsif ($vaersTimeGroup == 7) {
+						% } elsif ($vaersTimeGroup == 6) {
 			    		<div style="width:100%;text-align:center;">
 							<b><%=$percentAtTwoMonthes%></b> % dans les deux mois qui suivent l'injection.
 				    	</div>
@@ -1986,15 +1986,15 @@
 	    <h2>Limites actuelles de l'étude et approfondissements ultérieurs</h2>
 	    Un bref inventaire des points que nous allons approfondir dans un futur proche :
 	    <ul>
-	    	<li>Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que la celle-ci ne soit impactée, ne rentrent pas dans le champ immédiat de nos analyses, comme mentionné plus avant. Nous comptons régler ce problème pour arriver à une vue claire sur les incidents rapportés en lien avec la mortalité infantile.</li>
+	    	<li>Les effets secondaires observés sur le nouveau-né, qui pourraient résulter de la vaccination de la mère, sans que celle-ci soit impactée, ne rentrent pas dans le champ immédiat de nos analyses, comme mentionné plus haut. Nous comptons régler ce problème pour arriver à une vue claire sur les incidents rapportés en lien avec la mortalité infantile.</li>
 			<div class="text_separator"></div>
 	    	<li>Ces données doivent être mises en perspective avec les données historiques globales de natalité, avant/après vaccin.</li>
 			<div class="text_separator"></div>
 	    	<li>L'identification des données liées aux doses (1, 2, "booster", etc.) et aux lots doit être approfondie.</li>
 			<div class="text_separator"></div>
-	    	<li>L'identification des données liées aux grossesses (plus d'une grossesse dans le rapport, âge du foetus, etc) doit être approfondie.</li>
+	    	<li>L'identification des données liées aux grossesses (plus d'une grossesse mentionnée dans le rapport, âge du foetus, etc) doit être approfondie.</li>
 			<div class="text_separator"></div>
-	    	<li>Les très nombreux problèmes liés à la fertilité feminine que nous avons observé lors de l'étape de confirmation des grossesses n'ont pas encore été traités - et doivent l'être avec le même degré de sérieux.</li>
+	    	<li>Les très nombreux problèmes liés à la fertilité feminine que nous avons observés lors de l'étape de confirmation des grossesses n'ont pas encore été traités - et doivent l'être avec le même degré de sérieux.</li>
 	    </ul>
 		<div class="text_separator"></div>
 		Si un point important sur les sujets liés à la fertilité ou la mortalité infantile vous apparaît manquant, <a target="_blank" href="/contact_us">n'hésitez pas à nous contacter</a>.
@@ -2155,7 +2155,7 @@
 		% my $pregnanciesImproperlyTagged   = $vaersStatistics{'arbitrations'}->{'pregnanciesImproperlyTagged'}   // 0;
 		% my $pregnanciesFalseExtrapolation = $vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'} // 0;
     	<div style="width:100%;display: flex;flex-wrap: wrap;">
-		    Retraiter la donnée abouti à :
+		    Retraiter la donnée aboutit à :
 		</div>
 		<ul>
 			<li><b><%=$pregnanciesCompletelyMissed%></b> grossesses qui n'ont pas du tout été qualifiées par le VAERS</li>
