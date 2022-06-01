@@ -1365,6 +1365,9 @@ sub display_reports {
             %report = %$json;
         }
     }
+    unless (keys %report) {
+        $self->render(text => 'No report to render');
+    }
 
     $self->render(
         reportType   => $reportType,

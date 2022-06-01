@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.9</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Misc improvements on study pre-publish version.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Diverses améliorations sur la version pré-publish d'une étude.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.8</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

@@ -211,7 +211,6 @@
 	    		<div class="text_separator"></div>
 	    	</ul>
 		</div>
-	    <div class="text_separator"></div>
     	Il nous est rapidement apparu que <b>des outils dédiés</b> étaient nécessaires pour traiter efficacement certaines des données mentionnées dans l'étude pré-citée, et pour garantir leurs mises à jour ultérieures. Ces outils sont détaillés dans la section "Données", et accessibles depuis celle-ci - si l'on exécute le projet localement.
 	    <div class="text_separator"></div>
 	    Les premiers problèmes d'identification précise des grossesses ayant été résolus en procédant à une revue détaillée manuelle de chaque rapport, nous publions cette première étude (qui sera approfondie davantage), afin de mettre à disposition des utilisateurs les arbitrages effectués. Ceux-ci peuvent être téléchargés <a href="#" onclick="openGlobalTab('global-data');return;">dans la section "Données".</a>
@@ -225,7 +224,7 @@
     	Les processus d'obtention et de traitement de la donnée sont décrits exhaustivement <a class="url-link noselect" onclick="openGlobalTab('global-data');return;">dans la section "Données"</a> de cette étude.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    <h2>Représentativité des "effets en vie réelle" des données VAERS</h2>
+	    <h2>Appréciation à priori de la représentativité des "effets en vie réelle" des données VAERS</h2>
     	Il est assez délicat de déterminer quel est la représentativité des rapports VAERS, vis-à-vis du "total des effets qui se produisent réellement dans la population".
 	    <div class="text_separator"></div>
 	    Pour diverses raisons (difficulté d'accès aux soins selon la position géographique, en raison du coût, manque d'information du patient, réticence d'un professionnel de santé, etc), on pourra légitimement penser que les effets secondaires sont sous-rapportés.
@@ -469,10 +468,15 @@
 		<div class="text_separator"></div>
 		Les <b><%=$pregnanciesCompletelyMissed%> rapports</b> qui ne sont pas qualifiés par le VAERS comme impliquant des grossesses, et que nous avons requalifiés, peuvent être consultés directement <a href="#" onclick="openReports('requalifiedAsPregnancies', 1);return;">en cliquant ici</a>. 
 		<div class="text_separator"></div>
-		% my $falsePositivePregnancies = $vaersStatistics{'arbitrations'}->{'falsePositivePregnancies'}   // 0;
-		Les <b><%=$falsePositivePregnancies%> rapports</b> qui sont qualifiés par le VAERS comme impliquant des grossesses, et que nous avons requalifiés car faux-positifs, peuvent être consultés directement <a href="#" onclick="openReports('requalifiedAsNonPregnancies', 1);return;">en cliquant ici</a>. 
+		Les <b><%=$pregnanciesImproperlyTagged%> rapports</b> qui concernent des grossesses mal identifiées par le VAERS peuvent être consultés directement <a href="#" onclick="openReports('improperlyTaggedAsPregnancy', 1);return;">en cliquant ici</a>. 
 		<div class="text_separator"></div>
-	    Les analyses ultérieures sur cette page portent donc sur ces <b><%=$totalFixedCases%> cas de grossesses confirmés</b>.
+		% my $falsePositivePregnancies = $vaersStatistics{'arbitrations'}->{'falsePositivePregnancies'}   // 0;
+		Les <b><%=$falsePositivePregnancies%> rapports</b> qui sont qualifiés par le VAERS comme impliquant des grossesses, et que nous avons requalifiés car faux-positifs, peuvent être consultés directement <a href="#" onclick="openReports('requalifiedAsNonPregnancies', 1);return;">en cliquant ici</a>.
+		<div class="text_separator"></div>
+		% my $qualificationErrors = $vaersStatistics{'arbitrations'}->{'qualificationErrors'} // 0;
+	    Ces erreurs de qualification plus ou moins graves concernent un total de <b><%=$qualificationErrors%> rapports</b>.
+		<div class="text_separator"></div>
+	    Les analyses ultérieures sur cette page portent donc sur ces <b><%=$totalFixedCases%> cas de grossesses confirmés</b>. Si vous souhaitez vérifier toute la liste, nous vous renvoyons au fichier .csv téléchargeable dans la section <a href="#" onclick="openGlobalTab('global-data');return;">Données - Télécharger nos arbitrages.</a>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <h2>Décès et cas sérieux d'après la donnée VAERS</h2>
@@ -868,7 +872,7 @@
 		<div class="text_separator"></div>
 		Par exemple, on trouvera une migraine ou rougeur comme unique symptôme, quand la description clinique de la patiente rapporte une fausse-couche.
 		<div class="text_separator"></div>
-		Nous avons donc effectué la revue des <b><%=$totalFixedCases%> rapports</b>, et, via un assistant conçu à cette fin, systématiquement veillé à identifier le caractère sérieux des effets secondaires subis par la mère et/ou le foetus.
+		Nous avons donc effectué la revue des <b><%=$totalFixedCases%> rapports</b> que nous avions retenus, et, via un assistant conçu à cette fin, systématiquement veillé à identifier le caractère sérieux des effets secondaires subis par la mère et/ou le foetus.
 		<div class="text_separator"></div>
 		Nous nous sommes aussi attachés à identifier précisément les éléments temps clés : date de vaccination, date d'effets secondaires observés, intervalle de temps entre la vaccination et la survenue des effets.
 		<div class="text_separator"></div>
@@ -1273,12 +1277,17 @@
 		<div class="text_separator"></div>
 		On observe que :
 		<ul>
-			<li>Quelques cas de décès de la mère sont de faux-positifs (le décès de l'enfant est confondu avec le décès de la mère)</li>
+			<li>Quelques cas de décès de la mère sont de faux-positifs (le décès de l'enfant est confondu avec le décès de la mère et l'on ne trouve qu'un rapport pour la mère & l'enfant dans la base VAERS)</li>
     		<div class="text_separator"></div>
 			<li>Une quantité significative d'infirmités permanentes ne sont pas qualifiées</li>
     		<div class="text_separator"></div>
 			<li>De nombreuses prolongations d'hospitalisation ne sont pas caractérisées</li>
 		</ul>
+		Les <b><%=$totalVaersDeathsArbitrated%> rapports</b> d'évènements ayant mené au décès de la mère peuvent être consultés directement <a href="#" onclick="openReports('motherDiedInPregnancy', 1);return;">en cliquant ici</a>.
+		<div class="text_separator"></div>
+		Ce chiffre n'est naturellement pas exhaustif : ainsi que souligné par cette étude, <a href="https://tcf.org/content/commentary/worsening-u-s-maternal-health-crisis-three-graphs" target="_blank">The Worsening U.S. Maternal Health Crisis in Three Graphs - The Century Foundation, Ecomony & Jobs - Healthcare, March 02, 2022</a> la mortalité des femmes enceintes est en augmentation continue aux USA ; il nous permet cependant d'apprécier la représentativité effective en vie réelle des incidents rapportés.
+		<div class="text_separator"></div>
+		Les <b><%=$totalVaersSeriousesArbitrated%> rapports</b> qui concernent des évènements sérieux pour la mère peuvent être consultés directement <a href="#" onclick="openReports('motherSeriousAEInPregnancy', 1);return;">en cliquant ici</a>. 
     	<div class="text_separator"></div>
     	<div class="text_separator"></div>
 	    <h2>Effets secondaires ayant affecté le foetus, d'après la donnée vérifiée</h2>
@@ -1473,8 +1482,13 @@
 		    </div>
 	    </div>
 		<div class="text_separator"></div>
+		% my $nonFlaggedChildDeaths = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'nonFlaggedChildDeaths'} // die;
 		<div class="text_separator"></div>
-		A nouveau, de nombreux évènements graves n'ont pas été correctement qualifiés par le VAERS, dont <b><%=$totalVaersChildDeathsOffset%> (<%=$totalVaersChildDeathsOffsetPercent%> %) des <%=$totalVaersChildDeathsArbitrated%></b> cas où l'enfant n'a pas survécu.
+		A nouveau, de nombreux évènements graves n'ont pas été correctement qualifiés par le VAERS, dont <b><%=$nonFlaggedChildDeaths%> des <%=$totalVaersChildDeathsArbitrated%></b> cas où l'enfant n'a pas survécu.
+		<div class="text_separator"></div>
+		Les <b><%=$nonFlaggedChildDeaths%> rapports</b> pour lesquels le décès du foetus ou de l'enfant n'a pas été correctement identifié via <a href="#" onclick="openSymptoms('foetalDeathRelated');return;">l'un des symptômes attendus</a> peuvent être consultés directement <a href="#" onclick="openReports('childDiedButIsntFlagged', 1);return;">en cliquant ici</a> (le chiffre diffère de l'offset à cause de faux-positifs que nous avons là aussi requalifiés).
+		<div class="text_separator"></div>
+		Les <b><%=$totalVaersChildDeathsArbitrated%> rapports</b> concernant un décès du foetus ou de l'enfant peuvent être consultés directement <a href="#" onclick="openReports('childDied', 1);return;">en cliquant ici</a>.
 		<div class="text_separator"></div>
 		Nous nous sommes focalisés, pour la première version de cette étude, sur les grossesses dont l'issue fatale pour l'enfant et/ou pour la mère avait été confirmée.
 		<div class="text_separator"></div>

@@ -24,49 +24,30 @@ use config;
 use global;
 use time;
 
-my $vaersFolder                    = "raw_data/AllVAERSDataCSVS"; # Where we expect to find VAERS's data folder in the project's root folder.
-my $statesFile                     = "tasks/cdc/states.csv";      # File containing VAERS's states.
-my $fromYear                       = 2020;                        # We start integrating data from this year (reportingYear >= fromYear).
-
-my $latestSymptomId                = 0;
-my %allSymptoms                    = ();
-my %excludedSymptoms               = ();
-my %likelyPregnanciesSymptoms      = ();
-my %severePregnanciesSymptoms      = ();
-my %miscarriagePregnanciesSymptoms = ();
-my %cdcStates                      = ();
-my $reportsFolder1                 = 'stats/requalifiedAsPregnancies';
+my $vaersFolder                    = "raw_data/AllVAERSDataCSVS";          # Where we expect to find VAERS's data folder in the project's root folder.
+my $statesFile                     = "tasks/cdc/states.csv";               # File containing VAERS's states.
+my $fromYear                       = 2020;                                 # We start integrating data from this year (reportingYear >= fromYear).
+my $reportsFolder1                 = 'stats/requalifiedAsPregnancies';     # Various sub-folders which will contain the current JSON extracts when the analysis is ready.
 my $reportsFolder2                 = 'stats/requalifiedAsNonPregnancies';
-my %reportsExports                 = ();  # Stores the references of the exported reports.
+my $reportsFolder3                 = 'stats/improperlyTaggedAsPregnancy';
+my $reportsFolder4                 = 'stats/motherDiedInPregnancy';
+my $reportsFolder5                 = 'stats/motherSeriousAEInPregnancy';
+my $reportsFolder6                 = 'stats/childDiedButIsntFlagged';
+my $reportsFolder7                 = 'stats/childDied';
+my $reportsFolder8                 = 'stats/falsePositiveChildrenDeaths';
+my %reportsExports                 = ();                                   # Stores the references of the exported reports.
 
-# Deleting stats storage.
-if (-d $reportsFolder1) {
-	rmtree($reportsFolder1) or die "couldn't rmtree $reportsFolder1: $!";
-}
-make_path($reportsFolder1) or die "couldn't create $reportsFolder1: $!";
-if (-d $reportsFolder2) {
-	rmtree($reportsFolder2) or die "couldn't rmtree $reportsFolder2: $!";
-}
-make_path($reportsFolder2) or die "couldn't create $reportsFolder2: $!";
+my $latestSymptomId                = 0;                                    # Stores the various interpretations of the symptoms we will use
+my %allSymptoms                    = ();                                   # All the symptoms as we known them from the VAERS parsing
+my %excludedSymptoms               = ();                                   # Symptoms which have been flagged as cause for exclusion
+my %likelyPregnanciesSymptoms      = ();                                   # Symptoms indicating that the patient is probably a pregnant woman
+my %severePregnanciesSymptoms      = ();                                   # Symptoms indicating a severe pregnancy complication
+my %miscarriagePregnanciesSymptoms = ();                                   # Symptoms indicating a miscarriage
+my %cdcStates                      = ();                                   # Stores the states as we known them from our task/cdc/parse_cdc_archive.pl parsing.
+my %statesCodes                    = ();                                   # CSV file (which should be updated if a new USA state appears) storing the matching between the state code2 & its full name.
 
-cdc_states();
-
-sub cdc_states {
-	my $tb = $dbh->selectall_hashref("SELECT id as cdcStateId, name as stateName FROM cdc_state", 'cdcStateId');
-	for my $cdcStateId (sort{$a <=> $b} keys %$tb) {
-		my $stateName = %$tb{$cdcStateId}->{'stateName'} // die;
-		$cdcStates{$stateName}->{'cdcStateId'} = $cdcStateId;
-	}
-}
-
-vaers_fertility_symptom(); # Fetching VAERS known symptoms & their defined characteristics.
-
-my $latestReportId                 = 0;
-my %reports                        = ();
-vaers_fertility_report();  # This will need to be improved before to be put to production to ensure that every data is checked for potential CDC update.
-
-my %statesCodes                    = ();
-parse_states();            # This will load the matchings between Code2 & State names.
+# Deleting & setting stats storage.
+delete_and_set_storage();
 
 # Verifies we have the expected data folder.
 unless (-d $vaersFolder) {
@@ -77,6 +58,17 @@ unless (-f $statesFile) {
 	say "Missing state dictionary [$statesFile]. Exiting";
 	exit;
 }
+
+# Gets the CDC state from the DB. We expect all of them to be known ; therefore that the full VAERS data has already been parsed with task/cdc/parse_cdc_archive.pl
+cdc_states();
+parse_states();            # This will load the matchings between Code2 & State names.
+
+vaers_fertility_symptom(); # Fetching VAERS known symptoms & their defined characteristics.
+
+my $latestReportId                 = 0;
+my %reports                        = ();
+vaers_fertility_report();  # This will need to be improved before to be put to production to ensure that every data is checked for potential CDC update.
+
 
 # Parsing each year of VAERS's data.
 my %years = ();
@@ -93,6 +85,49 @@ parse_yearly_data();
 generate_end_user_stats();
 p%vaersStatistics;
 # p%unknownSubstances;
+
+sub delete_and_set_storage {
+	if (-d $reportsFolder1) {
+		rmtree($reportsFolder1) or die "couldn't rmtree $reportsFolder1: $!";
+	}
+	make_path($reportsFolder1) or die "couldn't create $reportsFolder1: $!";
+	if (-d $reportsFolder2) {
+		rmtree($reportsFolder2) or die "couldn't rmtree $reportsFolder2: $!";
+	}
+	make_path($reportsFolder2) or die "couldn't create $reportsFolder2: $!";
+	if (-d $reportsFolder3) {
+		rmtree($reportsFolder3) or die "couldn't rmtree $reportsFolder3: $!";
+	}
+	make_path($reportsFolder3) or die "couldn't create $reportsFolder3: $!";
+	if (-d $reportsFolder4) {
+		rmtree($reportsFolder4) or die "couldn't rmtree $reportsFolder4: $!";
+	}
+	make_path($reportsFolder4) or die "couldn't create $reportsFolder4: $!";
+	if (-d $reportsFolder5) {
+		rmtree($reportsFolder5) or die "couldn't rmtree $reportsFolder5: $!";
+	}
+	make_path($reportsFolder5) or die "couldn't create $reportsFolder5: $!";
+	if (-d $reportsFolder6) {
+		rmtree($reportsFolder6) or die "couldn't rmtree $reportsFolder6: $!";
+	}
+	make_path($reportsFolder6) or die "couldn't create $reportsFolder6: $!";
+	if (-d $reportsFolder7) {
+		rmtree($reportsFolder7) or die "couldn't rmtree $reportsFolder7: $!";
+	}
+	make_path($reportsFolder7) or die "couldn't create $reportsFolder7: $!";
+	if (-d $reportsFolder8) {
+		rmtree($reportsFolder8) or die "couldn't rmtree $reportsFolder8: $!";
+	}
+	make_path($reportsFolder8) or die "couldn't create $reportsFolder8: $!";
+}
+
+sub cdc_states {
+	my $tb = $dbh->selectall_hashref("SELECT id as cdcStateId, name as stateName FROM cdc_state", 'cdcStateId');
+	for my $cdcStateId (sort{$a <=> $b} keys %$tb) {
+		my $stateName = %$tb{$cdcStateId}->{'stateName'} // die;
+		$cdcStates{$stateName}->{'cdcStateId'} = $cdcStateId;
+	}
+}
 
 sub vaers_fertility_symptom {
 	my $tb = $dbh->selectall_hashref("
@@ -254,6 +289,7 @@ sub parse_states {
 		chomp $_;
 		my ($sNum, $sCode2, $sName) = split ';', $_;
 		die if exists $statesCodes{$sCode2};
+		die "missing state in the database : [$sName]. make sure you have run [task/cdc/parse_cdc_archive.pl] first." unless exists $cdcStates{$sName}->{'cdcStateId'};
 		$statesCodes{$sCode2}->{'stateName'}  = $sName;
 		$statesCodes{$sCode2}->{'internalId'} = $sNum;
 	}
@@ -918,6 +954,66 @@ sub scan_report_data {
 						# 	say "vaersSexName                    : $vaersSexName";
 						# 	say "sexWasFixed                     : $sexWasFixed";
 						# }
+						if (!$likelyMiscarriageSymptoms) {
+							my %report = ();
+				            $report{'vaersId'}                  = $vaersId;
+				            $report{'patientAge'}               = $patientAge;
+				            $report{'patientDied'}              = $patientDied;
+				            $report{'hospitalized'}             = $hospitalized;
+				            $report{'lifeThreatning'}           = $lifeThreatning;
+				            $report{'vaccinationDate'}          = $vaccinationDate;
+				            $report{'onsetDate'}                = $onsetDate;
+				            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+				            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+				            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+				            $report{'permanentDisability'}      = $permanentDisability;
+				            $report{'stateName'}                = $stateName;
+				            $report{'vaersSexName'}             = $vaersSexName;
+				            $report{'aEDescription'}            = $aEDescription;
+				            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+				            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+				            $report{'vaersVaccineName'}         = $vaccineShortName;
+							for my $symptomData (@reportsSymptoms) {
+								my $symptomName = %$symptomData{'symptomName'} // die;
+				            	$report{'symptoms'}->{$symptomName} = 1;
+							}
+							$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'nonFlaggedChildDeaths'}++;
+							$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'nonFlaggedChildDeaths'}++;
+							$reportsExports{$reportsFolder6}++;
+							my $fileNum = $reportsExports{$reportsFolder6} // die;
+							open my $out, '>:utf8', "$reportsFolder6/$fileNum.json";
+							my $json = encode_json\%report;
+							print $out $json;
+							close $out;
+						}
+						my %report = ();
+			            $report{'vaersId'}                  = $vaersId;
+			            $report{'patientAge'}               = $patientAge;
+			            $report{'patientDied'}              = $patientDied;
+			            $report{'hospitalized'}             = $hospitalized;
+			            $report{'lifeThreatning'}           = $lifeThreatning;
+			            $report{'vaccinationDate'}          = $vaccinationDate;
+			            $report{'onsetDate'}                = $onsetDate;
+			            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+			            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+			            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+			            $report{'permanentDisability'}      = $permanentDisability;
+			            $report{'stateName'}                = $stateName;
+			            $report{'vaersSexName'}             = $vaersSexName;
+			            $report{'aEDescription'}            = $aEDescription;
+			            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+			            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+			            $report{'vaersVaccineName'}         = $vaccineShortName;
+						for my $symptomData (@reportsSymptoms) {
+							my $symptomName = %$symptomData{'symptomName'} // die;
+			            	$report{'symptoms'}->{$symptomName} = 1;
+						}
+						$reportsExports{$reportsFolder7}++;
+						my $fileNum = $reportsExports{$reportsFolder7} // die;
+						open my $out, '>:utf8', "$reportsFolder7/$fileNum.json";
+						my $json = encode_json\%report;
+						print $out $json;
+						close $out;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'fixedChildDeaths'}++;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'}++;
 						my $hoursBetweenVaccineAndAE = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
@@ -939,6 +1035,38 @@ sub scan_report_data {
 							$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'byTimeGroup'}->{'8'}->{'fixedChildDeaths'}++;
 						}
 					} else {
+						if ($likelyMiscarriageSymptoms) {
+							my %report = ();
+				            $report{'vaersId'}                  = $vaersId;
+				            $report{'patientAge'}               = $patientAge;
+				            $report{'patientDied'}              = $patientDied;
+				            $report{'hospitalized'}             = $hospitalized;
+				            $report{'lifeThreatning'}           = $lifeThreatning;
+				            $report{'vaccinationDate'}          = $vaccinationDate;
+				            $report{'onsetDate'}                = $onsetDate;
+				            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+				            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+				            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+				            $report{'permanentDisability'}      = $permanentDisability;
+				            $report{'stateName'}                = $stateName;
+				            $report{'vaersSexName'}             = $vaersSexName;
+				            $report{'aEDescription'}            = $aEDescription;
+				            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+				            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+				            $report{'vaersVaccineName'}         = $vaccineShortName;
+							for my $symptomData (@reportsSymptoms) {
+								my $symptomName = %$symptomData{'symptomName'} // die;
+				            	$report{'symptoms'}->{$symptomName} = 1;
+							}
+							$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'falsePositiveChildDeaths'}++;
+							$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'falsePositiveChildDeaths'}++;
+							$reportsExports{$reportsFolder8}++;
+							my $fileNum = $reportsExports{$reportsFolder8} // die;
+							open my $out, '>:utf8', "$reportsFolder8/$fileNum.json";
+							my $json = encode_json\%report;
+							print $out $json;
+							close $out;
+						}
 						if ($reports{$vaersId}->{'childSeriousAE'}) {
 							$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'fixedChildSeriousesAE'}++;
 							$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildSeriousesAE'}++;
@@ -972,9 +1100,65 @@ sub scan_report_data {
 					$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'fixedCases'}++;
 					$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedCases'}++;
 					if ($reports{$vaersId}->{'patientDiedFixed'} == 1) {
+						my %report = ();
+			            $report{'vaersId'}                  = $vaersId;
+			            $report{'patientAge'}               = $patientAge;
+			            $report{'patientDied'}              = $patientDied;
+			            $report{'hospitalized'}             = $hospitalized;
+			            $report{'lifeThreatning'}           = $lifeThreatning;
+			            $report{'vaccinationDate'}          = $vaccinationDate;
+			            $report{'onsetDate'}                = $onsetDate;
+			            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+			            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+			            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+			            $report{'permanentDisability'}      = $permanentDisability;
+			            $report{'stateName'}                = $stateName;
+			            $report{'vaersSexName'}             = $vaersSexName;
+			            $report{'aEDescription'}            = $aEDescription;
+			            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+			            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+			            $report{'vaersVaccineName'}         = $vaccineShortName;
+						for my $symptomData (@reportsSymptoms) {
+							my $symptomName = %$symptomData{'symptomName'} // die;
+			            	$report{'symptoms'}->{$symptomName} = 1;
+						}
+						$reportsExports{$reportsFolder4}++;
+						my $fileNum = $reportsExports{$reportsFolder4} // die;
+						open my $out, '>:utf8', "$reportsFolder4/$fileNum.json";
+						my $json = encode_json\%report;
+						print $out $json;
+						close $out;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedDeaths'}++;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'fixedDeaths'}++;
 					} elsif ($reports{$vaersId}->{'hospitalizedFixed'} || $reports{$vaersId}->{'permanentDisabilityFixed'} || $reports{$vaersId}->{'lifeThreatningFixed'}) {
+						my %report = ();
+			            $report{'vaersId'}                  = $vaersId;
+			            $report{'patientAge'}               = $patientAge;
+			            $report{'patientDied'}              = $patientDied;
+			            $report{'hospitalized'}             = $hospitalized;
+			            $report{'lifeThreatning'}           = $lifeThreatning;
+			            $report{'vaccinationDate'}          = $vaccinationDate;
+			            $report{'onsetDate'}                = $onsetDate;
+			            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+			            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+			            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+			            $report{'permanentDisability'}      = $permanentDisability;
+			            $report{'stateName'}                = $stateName;
+			            $report{'vaersSexName'}             = $vaersSexName;
+			            $report{'aEDescription'}            = $aEDescription;
+			            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+			            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+			            $report{'vaersVaccineName'}         = $vaccineShortName;
+						for my $symptomData (@reportsSymptoms) {
+							my $symptomName = %$symptomData{'symptomName'} // die;
+			            	$report{'symptoms'}->{$symptomName} = 1;
+						}
+						$reportsExports{$reportsFolder5}++;
+						my $fileNum = $reportsExports{$reportsFolder5} // die;
+						open my $out, '>:utf8', "$reportsFolder5/$fileNum.json";
+						my $json = encode_json\%report;
+						print $out $json;
+						close $out;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedSeriousesAE'}++;
 						$vaersStatistics{'seriousesPregnanciesStatistics'}->{$vaccineShortName}->{'fixedSeriousesAE'}++;
 						if ($reports{$vaersId}->{'permanentDisabilityFixed'}) {
@@ -1100,18 +1284,18 @@ sub scan_report_data {
 				# 	$cpt++;
 				# 	die; # Verification only, should now be fixed.
 				# }
+				if ($hasDirectPregnancySymptom || $hasLikelyPregnancySymptom) {
+					$vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'}++;
+					# say "hasDirectPregnancySymptom : $hasDirectPregnancySymptom";
+					# say "hasLikelyPregnancySymptom : $hasLikelyPregnancySymptom";
+					# die;
+				}
 				if (exists $reports{$vaersId}->{'menstrualCycleDisordersConfirmation'} && $reports{$vaersId}->{'menstrualCycleDisordersConfirmation'} == 1) {
 					$vaersStatistics{'arbitrations'}->{'reproductiveIssuesConfirmed'}++;
 				} elsif (exists $reports{$vaersId}->{'babyExposureConfirmation'} && $reports{$vaersId}->{'babyExposureConfirmation'} == 1) {
 					$vaersStatistics{'arbitrations'}->{'babiesExposureConfirmed'}++;
 				} else {
 					$vaersStatistics{'arbitrations'}->{'pregnancyConfirmationFalsePositives'}++;
-					if ($hasDirectPregnancySymptom || $hasLikelyPregnancySymptom) {
-						$vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'}++;
-						# say "hasDirectPregnancySymptom : $hasDirectPregnancySymptom";
-						# say "hasLikelyPregnancySymptom : $hasLikelyPregnancySymptom";
-						# die;
-					}
 				}
 			}
 		}
@@ -1210,6 +1394,38 @@ sub scan_report_data {
 		print $out $json;
 		close $out;
 	}
+	# Incorrect tags.
+	if (($hasLikelyPregnancySymptom == 1 && $hasDirectPregnancySymptom == 0) && (exists $reports{$vaersId}->{'pregnancyConfirmation'} && $reports{$vaersId}->{'pregnancyConfirmation'} == 1)) {
+		my %report = ();
+        $report{'vaersId'}                  = $vaersId;
+        $report{'patientAge'}               = $patientAge;
+        $report{'patientDied'}              = $patientDied;
+        $report{'hospitalized'}             = $hospitalized;
+        $report{'lifeThreatning'}           = $lifeThreatning;
+        $report{'vaccinationDate'}          = $vaccinationDate;
+        $report{'onsetDate'}                = $onsetDate;
+        $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+        $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+        $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+        $report{'permanentDisability'}      = $permanentDisability;
+        $report{'stateName'}                = $stateName;
+        $report{'vaersSexName'}             = $vaersSexName;
+        $report{'aEDescription'}            = $aEDescription;
+        $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+        $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+        $report{'vaersVaccineName'}         = $vaccineShortName;
+		for my $symptomData (@reportsSymptoms) {
+			my $symptomName = %$symptomData{'symptomName'} // die;
+        	$report{'symptoms'}->{$symptomName} = 1;
+		}
+		$reportsExports{$reportsFolder3}++;
+		my $fileNum = $reportsExports{$reportsFolder3} // die;
+		open my $out, '>:utf8', "$reportsFolder3/$fileNum.json";
+		my $json = encode_json\%report;
+		print $out $json;
+		close $out;
+	}
+
 }
 
 sub analyse_pregnancy_characteristics {
@@ -1502,6 +1718,13 @@ sub generate_end_user_stats {
 		my $pregnanciesSeriousnessConfirmationsPerformedPercent = nearest(0.01, $pregnanciesSeriousnessConfirmationsPerformed * 100 / $pregnanciesSeriousnessConfirmationsRequired);
 		$vaersStatistics{'arbitrations'}->{'pregnanciesSeriousnessConfirmationsPerformedPercent'} = $pregnanciesSeriousnessConfirmationsPerformedPercent;
 	}
+
+	# Fetching percentage of qualification errors.
+	my $pregnanciesCompletelyMissed   = $vaersStatistics{'arbitrations'}->{'pregnanciesCompletelyMissed'}   // 0;
+	my $pregnanciesImproperlyTagged   = $vaersStatistics{'arbitrations'}->{'pregnanciesImproperlyTagged'}   // 0;
+	my $pregnanciesFalseExtrapolation = $vaersStatistics{'arbitrations'}->{'pregnanciesFalseExtrapolation'} // 0;
+	my $qualificationErrors           = $pregnanciesCompletelyMissed + $pregnanciesImproperlyTagged + $pregnanciesFalseExtrapolation;
+	$vaersStatistics{'arbitrations'}->{'qualificationErrors'} = $qualificationErrors;
 
 	# Fetching percentages of child deaths & serious AES.
 	if ($vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'fixedChildDeaths'}) {
