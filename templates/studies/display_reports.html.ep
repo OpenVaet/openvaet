@@ -35,7 +35,7 @@
 			% my $nextReport = $reportNum + 1;
 				<div style="width:50px;">
 			% if ($reportNum != 1) {
-					<img src="/images/arrow_left.png" style="display: block;margin:auto;width: 15px;height: 15px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$previousReport%>);return;">
+					<img src="/images/arrow_left.png" style="display: block;margin:auto;width: 25px;height: 25px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$previousReport%>);return;">
 			% }
 				</div>
 				<div style="width:calc(100% - 100px);">
@@ -43,7 +43,7 @@
 				</div>
 				<div style="width:50px;">
 			% if ($reportNum != $totalReports) {
-					<img src="/images/arrow_right.png" style="display: block;margin:auto;width: 15px;height: 15px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$nextReport%>);return;">
+					<img src="/images/arrow_right.png" style="display: block;margin:auto;width: 25px;height: 25px;cursor:pointer;" onclick="openReports('<%=$reportType%>', <%=$nextReport%>);return;">
 			% }
 				</div>
 			</div>

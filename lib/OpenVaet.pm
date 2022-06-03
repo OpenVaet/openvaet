@@ -118,6 +118,7 @@ sub startup {
     $r->post('/studies/vaers_fertility/load_pregnancies_details')->to('studies#load_pregnancies_details');
     $r->post('/studies/vaers_fertility/set_pregnancy_details_attributes')->to('studies#set_pregnancy_details_attributes');
     $r->post('/studies/vaers_fertility/display_reports')->to('studies#display_reports');
+    $r->get('/studies/cdc_mortality')->to('cdc_mortality#cdc_mortality');
 }
 
 sub connect_dbi
