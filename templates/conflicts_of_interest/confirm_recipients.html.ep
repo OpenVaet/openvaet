@@ -1,0 +1,103 @@
+% my %statistics = %$statistics;
+% my $latestTransmissionDate = $statistics{'latestTransmissionDate'}          // die;
+% my $totalSum               = $statistics{'totalSum'}->{'amount'}            // die;
+% my $totalTransactions      = $statistics{'totalSum'}->{'totalTransactions'} // die;
+<div class="text_separator"></div>
+Dernier conflit d'intérêt rapporté : <b><%=$latestTransmissionDate%></b>
+<div class="text_separator"></div>
+Total des confltis d'intérêts : <b><%=$totalSum%> €</b> (<%=$totalTransactions%> transactions)
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div style="width:  100%;font-size: 16px;">
+<b><%=$topDonators%> donateurs principaux (par montants)</b>
+</div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+% my $loadedDonators    = 0;
+% for my $amount (sort{$b <=> $a} keys %{$statistics{'byDonatorAmount'}}) {
+    % for my $donatorFullName (sort keys %{$statistics{'byDonatorAmount'}->{$amount}}) {
+        % $loadedDonators++;
+        % $topDonatorsAmount += $amount;
+        % my $amountFormatted = $statistics{'byDonatorAmount'}->{$amount}->{$donatorFullName}->{'amountFormatted'} // die;
+		<div style="width:100%;height: 25px;display: flex;flex-wrap: wrap;font-weight: bold;font-size: 12px;">
+			<div style="width:calc(100% - 90px);"><%=$donatorFullName%></div>
+			<div style="width:50px"><%=$amountFormatted%> €</div>
+			<div style="width:40px"></div>
+		</div>
+		<div class="text_separator"></div>
+        % last if $loadedDonators == $topDonators;
+    % }
+    % last if $loadedDonators == $topDonators;
+% }
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div style="width:  100%;font-size: 16px;">
+<b>Montants annuels rapportés</b>
+</div>
+<div class="text_separator"></div>
+<div style="width: 100%;height: 200px;overflow-x: auto;overflow-y: hidden;position: relative;">
+	<div style="width:<%=$yearlyLineLength%>px;margin: auto;display: block;">
+		<div style="width:<%=$yearlyLineLength%>px;height: 25px;display: flex;flex-wrap: wrap;font-weight: bold;font-size: 10px;">
+			<div style="width: 20px;height: 25px;">
+			</div>
+			% for my $transactionYear (sort{$a <=> $b} keys %{$statistics{'byYear'}}) {
+				% my $amount           = $statistics{'byYear'}->{$transactionYear}->{'amount'}           // die;
+				<div style="width: 50px;height: 25px;padding-top: 10px;">
+					<%=$amount%> €
+				</div>
+				<div style="width: 20px;height: 125px;">
+				</div>
+			% }
+		</div>
+		<div style="width:<%=$yearlyLineLength%>px;height: 125px;display: flex;flex-wrap: wrap;">
+			<div style="width: 20px;height: 125px;">
+			</div>
+			% for my $transactionYear (sort{$a <=> $b} keys %{$statistics{'byYear'}}) {
+				% my $percentOfHighest = $statistics{'byYear'}->{$transactionYear}->{'percentOfHighest'} // die;
+				% my $fromHighest      = 100 - $percentOfHighest;
+				<div style="width: 50px;height: 125px;">
+					<div style="width: 50px;height: <%=$fromHighest%>%;">
+					</div>
+					<div style="width: 50px;height: <%=$percentOfHighest%>%;background: #91a7c9;">
+					</div>
+				</div>
+				<div style="width: 20px;height: 125px;">
+				</div>
+			% }
+		</div>
+		<div style="width:<%=$yearlyLineLength%>px;height: 25px;display: flex;flex-wrap: wrap;font-weight: bold;font-size: 11px;">
+			<div style="width: 20px;height: 25px;">
+			</div>
+			% for my $transactionYear (sort{$a <=> $b} keys %{$statistics{'byYear'}}) {
+				<div style="width: 50px;height: 25px;padding-top: 5px;">
+					<%=$transactionYear%>
+				</div>
+				<div style="width: 20px;height: 125px;">
+				</div>
+			% }
+		</div>
+	</div>
+</div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div style="width:  100%;font-size: 16px;">
+<b>Transactions rapportées (plus récente d'abord)</b>
+</div>
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+% for my $transactionCompdate (sort{$b <=> $a} keys %{$statistics{'transactions'}}) {
+	% for my $transactionId (sort keys %{$statistics{'transactions'}->{$transactionCompdate}}) {
+		% my $amount           = $statistics{'transactions'}->{$transactionCompdate}->{$transactionId}->{'amount'}           // die;
+		% my $donatorFullName  = $statistics{'transactions'}->{$transactionCompdate}->{$transactionId}->{'donatorFullName'}  // die;
+		% my $transmissionDate = $statistics{'transactions'}->{$transactionCompdate}->{$transactionId}->{'transmissionDate'} // die;
+		<div style="width:100%;height: 25px;display: flex;flex-wrap: wrap;font-weight: bold;font-size: 12px;">
+			<div style="width:70px"><%=$transmissionDate%></div>
+			<div style="width:calc(100% - 170px);"><%=$donatorFullName%></div>
+			<div style="width:60px"><%=$amount%> €</div>
+			<div style="width:40px"></div>
+		</div>
+	% }
+% }

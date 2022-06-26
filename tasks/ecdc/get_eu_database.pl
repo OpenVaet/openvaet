@@ -1639,6 +1639,7 @@ sub parse_line_report {
 		} else {
 			my $ecdcNoticeId = $ecdcNotices{$noticeInternalId}->{'ecdcNoticeId'} // die;
 			if ($ecdcNotices{$noticeInternalId}->{'ecdcSeriousness'} ne $ecdcSeriousness) {
+				die "abnormal";
 				my $sth = $dbh->prepare("UPDATE ecdc_notice SET ecdcSeriousness = $ecdcSeriousness WHERE id = $ecdcNoticeId");
 				$sth->execute() or die $sth->err();
 				# die "update to perform : " . $ecdcNotices{$noticeInternalId}->{'ecdcSeriousness'} . " ne $ecdcSeriousness";

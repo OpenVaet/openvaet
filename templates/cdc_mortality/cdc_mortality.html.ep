@@ -1,0 +1,2072 @@
+% layout 'default';
+% title 'OPENVAET - CDC Study - US Mortality From 2015 to 2021';
+
+<style type="text/css">
+	.ndt_note {
+		display: inline-block;
+		width: calc(100% - 50px);
+		margin: auto;
+		background: #dee0e3;
+		border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+	}
+
+	.tab-button {
+		padding: 10px 20px;
+	}
+
+	.tab-button:hover {
+		background: #262436;
+		cursor: pointer;
+	}
+
+	/* The Full Screen Modal (background) */
+	.full-screen-modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 100; /* Sit on top, unless a priority pops */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow-x: hidden;
+		overflow-y: hidden;
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Full Screen Modal Content/Box */
+	.full-screen-modal-content {
+		background-color: #fefefe;
+		margin: auto;
+		margin-top: 15px;
+		border: 1px solid #888;
+		max-width: 1000px;
+		height: calc(100%  - 35px);
+		overflow-y: hidden;
+	}
+
+	/* The Close Button */
+	.full-screen-modal-close {
+		color: #aaa;
+		font-size: 28px;
+		height: 32px;
+		font-weight: bold;
+	    margin-left: calc(100% - 20px);
+	    top: 15px;
+	}
+
+	.full-screen-modal-close:hover,
+	.full-screen-modal-close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.full-screen-modal_inner_content {
+		height: calc(100% - 50px);
+		width: auto;
+		overflow-y: auto;
+		margin: initial;
+	}
+
+	.full-screen-modal_inner_content_wrapper {
+		width: 100%;
+	    height: 100%;
+		max-height: 100%;
+		margin: initial;
+	}
+</style>
+
+% my %statistics = %$statistics;
+
+<!-- The Full Screen Modal -->
+<div id="fullScreenModal" class="full-screen-modal">
+  <!-- Center-screen loader -->
+    <div id="modalLoader" class="main-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Fetching data corresponding to your query ; this may take a few seconds ...</b></div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Recherche des données correspondant à votre requête ; ceci peut prendre quelques secondes ...</b></div>
+    % } else {
+
+    % }
+    </div>
+
+	<!-- Full Screen Modal content -->
+	<div class="full-screen-modal-content">
+		<div class="full-screen-modal_inner_content_wrapper">
+			<div id="full-screen-modal-close" class="full-screen-modal-close">&times;</div>
+			<div id="fullScreenModalInnerContent" class="full-screen-modal_inner_content">
+			</div>
+		</div>
+	</div>
+</div> 
+
+% if ($currentLanguage eq 'en') {
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+    	Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC
+	</div>
+	<div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	    Etude version 1.0</span>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:calc(100% + 10px);margin-left: -10px;display: block;overflow-y: auto;overflow-x: hidden;position: relative;">
+    	<div style="width:100%;min-width: 595px;background: #666570;font-weight: bold;font-size: 18px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+    		<div class="tab-button noselect" style="background: #262436;" id="global-analysis-button" onclick="openGlobalTab('global-analysis');return;">
+    			Analyse
+    		</div>
+    		<div class="tab-button noselect" style="background: #4f4d66;" id="global-data-button" onclick="openGlobalTab('global-data');return;">
+    			Données
+    		</div>
+    	</div>
+	</div>
+
+    <div id="global-analysis" style="width:calc(100% - 2px);position: top;display:none;">
+	    <div class="text_separator"></div>
+	    <h2>Présentation de l'étude</h2>
+	    Le "Center for Disease Control" (CDC) publique chaque année sur son site une étude de la mortalité aux Etats-Unis basée sur les certificats de décès ; d'abord en version provisionnelle, puis en version finale, sur la base des données du National Vital Statistics System.
+	    <div class="text_separator"></div>
+	    Le National Vital Statistics System compile les certificats de décès pour les 50 états et le district de Colombia.
+	    <div class="text_separator"></div>
+	    Ces synthèses présentent l'avantage de fournir une vue claire et synthétique sur les principales causes de mortalité infantile et adulte aux Etats-Unis.
+	    <div class="text_separator"></div>
+	    Ces données ont, en revanche, l'inconvénient d'être basée sur les certificats de décès. Une large portion des cas n'ont pas été soumis a des autopsies permettant de déterminer avec précision la cause de la mort.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	</div>
+    <div id="global-data" style="width:calc(100% - 2px);border:position: top;">
+		<div class="text_separator"></div>
+	    <h2>Donnée CDC utilisée</h2>
+	    Les études que nous avons employées pour établir cette analyse sont les suivantes :
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Titre</b>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<b>Status</b>
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<b>PDF</b>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 500px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+		    		<a href="https://pubmed.ncbi.nlm.nih.gov/27930283/" target="_blank">Mortality in the United States, 2015, NCHS Data Brief. 2016 Dec;(267):1-8.</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;color:darkgreen;">
+		    		Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/nchs/data/databriefs/db267.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<a href="https://pubmed.ncbi.nlm.nih.gov/29319473/" target="_blank">Mortality in the United States, 2016, NCHS Data Brief. 2017 Dec;(293):1-8.</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:darkgreen;">
+		    		Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/nchs/data/databriefs/db293.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+		    		<a href="https://pubmed.ncbi.nlm.nih.gov/30500322/" target="_blank">Mortality in the United States, 2017, NCHS Data Brief. 2018 Nov;(328):1-8.</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;color:darkgreen;">
+		    		Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/nchs/data/databriefs/db328-h.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<a href="https://pubmed.ncbi.nlm.nih.gov/32487294/" target="_blank">Mortality in the United States, 2018, NCHS Data Brief. 2020 Jan;(355):1-8.</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:darkgreen;">
+		    		Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/nchs/data/databriefs/db355-h.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+		    		<a href="https://pubmed.ncbi.nlm.nih.gov/33395387/" target="_blank">Mortality in the United States, 2019, NCHS Data Brief. 2020 Dec;(395):1-8.</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;color:darkgreen;">
+		    		Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/nchs/data/databriefs/db395-H.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+		    		<a href="https://www.cdc.gov/mmwr/volumes/70/wr/mm7014e1.htm" target="_blank">Provisional Mortality Data — United States, 2020, Weekly / April 9, 2021 / 70(14);519–522</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;color:#db8072;">
+		    		Non Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/mmwr/volumes/70/wr/pdfs/mm7014e1-H.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+		    		<a href="https://www.cdc.gov/mmwr/volumes/71/wr/mm7117e1.htm" target="_blank">Provisional Mortality Data — United States, 2021, Weekly / April 29, 2022 / 71(17);597-600</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;color:#db8072;">
+		    		Non Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://www.cdc.gov/mmwr/volumes/71/wr/pdfs/mm7117e1-H.pdf" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 980px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+		    	<div style="width:calc(70% - 4px);min-width: 600px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+		    		<a href="https://jamanetwork.com/journals/jama/fullarticle/2778234" target="_blank">The Leading Causes of Death in the US for 2020. JAMA. 2021;325(18):1829–1830. doi:10.1001/jama.2021.5469</a>
+		    	</div>
+		    	<div style="width:20%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;color:#db8072;">
+		    		Non Définitif
+		    	</div>
+		    	<div style="width:10%;min-width: 100px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+		    		<a href="https://jamanetwork.com/journals/jama/fullarticle/2778234" target="_blank">PDF</a>
+		    	</div>
+		    </div>
+	    </div>
+    <div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <h2>Donnée présente dans les rapports définitifs</h2>
+    <div class="text_separator"></div>
+    Nous avons extrait pour chaque année finalisée (disposant d'un rapport définitif) la donnée qui nous intéressait dans l'immédiat, soit :
+    <ul>
+    	<li>Mortalité globale enregistrée (global deaths registered)</li>
+    	<div class="text_separator"></div>
+    	<li>Ratios de mortalité par cause, ajustés par âges (age-adjusted death rates (AADR))</li>
+    	<div class="text_separator"></div>
+    	<li>Causes de mortalité les plus répandues (leading causes of death)</li>
+    	<div class="text_separator"></div>
+    	<li>Ratios de mortalité par cause (AADR) par race, sexe & groupe ethnique</li>
+    	<div class="text_separator"></div>
+    	<li>Causes de mortalité les plus répandues chez les nouveaux-nés - par ratio pour 100.000 naissances</li>
+    </ul>
+    Pour des explications détaillées sur l'indice AADR, voir <a href="https://www-doh.state.nj.us/doh-shad/view/sharedstatic/AgeAdjustedDeathRate.pdf" target="_blank">ce lien</a> et <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3406211/" target="_blank">cet autre lien</a>.
+		<div class="text_separator"></div>
+    Long story short, un poid est attribué par le CDC à chaque groupe d'âge selon sa représentativité dans la population globale). Ces ratios sont calculés sur la base du recensement de mi-juillet de l'année concernée (voir <a href="https://www.census.gov/programs-surveys/popest/technical-documentation/research/evaluation-estimates/2020-evaluation-estimates/2010s-national-detail.html" target="_blank">ce lien</a>).
+		<div class="text_separator"></div>
+    Les données extraites sont résumées dans les tableaux ci-dessous.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <h3>Donnés globales de mortalité et causes les plus répandues - Cas totaux enregistrés</h3>
+	    Pour chaque année ciblée, nous disposons dans ces documents du nombre total de cas global (les décès totaux sont présents pour l'année en cours et l'an précédent dans chaque rapport finalisé annuel ; et les chiffres brutes des principales causes de mortalité sont résumées dans le <a href="https://jamanetwork.com/journals/jama/fullarticle/2778234">document PDF</a> cité plus haut).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+		    	<div style="width:calc(28% - 1px);min-width: 248px;">
+		    		
+		    	</div>
+		    	<div style="width:calc(72% - 1px);min-width: 647px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    		<b>ANNEES</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;">
+		    	<div style="width:calc(28% - 1px);min-width: 248px;display: flex;flex-wrap: wrap;">
+		    		<div style="width:100%;height:30px">
+		    		</div>
+			    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+			    		<b>Donnée relevée (Total des cas enregistrés)</b>
+				    	<div class="text_separator"></div>
+			    	</div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+			    	<div class="text_separator"></div>
+		    		<b>2014
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+			    	<div class="text_separator"></div>
+		    		<b>2015
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+			    	<div class="text_separator"></div>
+		    		<b>2016
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+			    	<div class="text_separator"></div>
+		    		<b>2017
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+			    	<div class="text_separator"></div>
+		    		<b>2018
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 107px;padding-top: 20px;background: #002D63;color:white;">
+			    	<div class="text_separator"></div>
+		    		<b>2019
+			    	<div class="text_separator"></div>
+		    		</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+		    </div>
+		    % my $globalDeaths2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globalDeaths'} // 0;
+		    % my $globalDeaths2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globalDeaths'} // 0;
+		    % my $globalDeaths2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globalDeaths'} // 0;
+		    % my $globalDeaths2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globalDeaths'} // 0;
+		    % my $globalDeaths2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globalDeaths'} // 0;
+		    % my $globalDeaths2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globalDeaths'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;color:#fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Status de la donnée annuelle</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #0B5C97;">
+		    		<b>Définitif</b>
+		    	</div>
+		    </div>
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Décès</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globalDeaths2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globalDeaths2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globalDeaths2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globalDeaths2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globalDeaths2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globalDeaths2019%>
+		    	</div>
+		    </div>
+		    % my $globDeathsHeartDiseaseCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Maladies cardiaques</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2019%>
+		    	</div>
+		    </div>
+		    % my $globDeathsCancerCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Cancers</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2019%>
+		    	</div>
+		    </div>
+		    % my $globUnintentionalInjuriesCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Blessures non-intentionnelles</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2019%>
+		    	</div>
+		    </div>
+		    % my $globDeathsChronicRespiratoryDiseaseCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Maladies respiratoires chroniques</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2019%>
+		    	</div>
+		    </div>
+		    % my $globStrokesCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globStrokesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Accidents vasculaires cérébraux</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #fff;">
+		    		<%=$globStrokesCases2019%>
+		    	</div>
+		    </div>
+		    % my $globAlzheimerCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Alzheimer</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2019%>
+		    	</div>
+		    </div>
+		    % my $globDiabetesCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDiabetesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Diabetes</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #fff;">
+		    		<%=$globDiabetesCases2019%>
+		    	</div>
+		    </div>
+		    % my $globInfluenzaAndPneumoniaCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Grippes & Pneumonies</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2019%>
+		    	</div>
+		    </div>
+		    % my $globKidneyDiseaseCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Maladies des reins</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2019%>
+		    	</div>
+		    </div>
+		    % my $globSuicideCases2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globSuicideCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Suicides</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2014%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2015%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2016%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2017%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2018%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+		    		<%=$globSuicideCases2019%>
+		    	</div>
+		    </div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <h3>Donnés globales de mortalité et causes les plus répandues - AADR</h3>
+    Pour chaque année ciblée, nous disposons par ailleurs dans ces documents des indices AADR "décès globaux", et par causes.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;">
+	    		
+	    	</div>
+	    	<div style="width:calc(72% - 1px);min-width: 647px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+	    		<b>ANNEES</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;display: flex;flex-wrap: wrap;">
+	    		<div style="width:100%;height:30px">
+	    		</div>
+		    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+		    		<b>Donnée relevée (AADR)</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    	<div class="text_separator"></div>
+	    		<b>2014
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2015
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2016
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2017
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2018
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 107px;padding-top: 20px;background: #002D63;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2019
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGTotal2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>AADR Total</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGTotal2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGTotal2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGTotal2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGTotal2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGTotal2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$ageAdjDRRESGTotal2019%>
+	    	</div>
+	    </div>
+	    % my $globDeathsHeartDisease2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    % my $globDeathsHeartDisease2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    % my $globDeathsHeartDisease2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    % my $globDeathsHeartDisease2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    % my $globDeathsHeartDisease2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    % my $globDeathsHeartDisease2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsHeartDisease'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Maladies cardiaques</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$globDeathsHeartDisease2019%>
+	    	</div>
+	    </div>
+	    % my $globDeathsCancer2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsCancer'} // 0;
+	    % my $globDeathsCancer2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsCancer'} // 0;
+	    % my $globDeathsCancer2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsCancer'} // 0;
+	    % my $globDeathsCancer2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsCancer'} // 0;
+	    % my $globDeathsCancer2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsCancer'} // 0;
+	    % my $globDeathsCancer2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsCancer'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Cancers</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsCancer2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsCancer2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsCancer2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsCancer2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsCancer2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$globDeathsCancer2019%>
+	    	</div>
+	    </div>
+	    % my $globUnintentionalInjuries2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    % my $globUnintentionalInjuries2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    % my $globUnintentionalInjuries2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    % my $globUnintentionalInjuries2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    % my $globUnintentionalInjuries2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    % my $globUnintentionalInjuries2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globUnintentionalInjuries'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Blessures non-intentionnelles</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$globUnintentionalInjuries2019%>
+	    	</div>
+	    </div>
+	    % my $globDeathsChronicRespiratoryDisease2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    % my $globDeathsChronicRespiratoryDisease2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    % my $globDeathsChronicRespiratoryDisease2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    % my $globDeathsChronicRespiratoryDisease2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    % my $globDeathsChronicRespiratoryDisease2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    % my $globDeathsChronicRespiratoryDisease2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDeathsChronicRespiratoryDisease'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Maladies respiratoires chroniques</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsChronicRespiratoryDisease2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsChronicRespiratoryDisease2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsChronicRespiratoryDisease2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsChronicRespiratoryDisease2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globDeathsChronicRespiratoryDisease2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$globDeathsChronicRespiratoryDisease2019%>
+	    	</div>
+	    </div>
+	    % my $globStrokes2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globStrokes'} // 0;
+	    % my $globStrokes2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globStrokes'} // 0;
+	    % my $globStrokes2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globStrokes'} // 0;
+	    % my $globStrokes2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globStrokes'} // 0;
+	    % my $globStrokes2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globStrokes'} // 0;
+	    % my $globStrokes2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globStrokes'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Accidents vasculaires cérébraux</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globStrokes2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globStrokes2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globStrokes2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globStrokes2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globStrokes2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$globStrokes2019%>
+	    	</div>
+	    </div>
+	    % my $globAlzheimer2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globAlzheimer'} // 0;
+	    % my $globAlzheimer2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globAlzheimer'} // 0;
+	    % my $globAlzheimer2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globAlzheimer'} // 0;
+	    % my $globAlzheimer2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globAlzheimer'} // 0;
+	    % my $globAlzheimer2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globAlzheimer'} // 0;
+	    % my $globAlzheimer2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globAlzheimer'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Alzheimer</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globAlzheimer2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globAlzheimer2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globAlzheimer2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globAlzheimer2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globAlzheimer2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$globAlzheimer2019%>
+	    	</div>
+	    </div>
+	    % my $globDiabetes2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globDiabetes'} // 0;
+	    % my $globDiabetes2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globDiabetes'} // 0;
+	    % my $globDiabetes2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globDiabetes'} // 0;
+	    % my $globDiabetes2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globDiabetes'} // 0;
+	    % my $globDiabetes2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globDiabetes'} // 0;
+	    % my $globDiabetes2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globDiabetes'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Diabetes</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDiabetes2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDiabetes2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDiabetes2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDiabetes2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globDiabetes2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$globDiabetes2019%>
+	    	</div>
+	    </div>
+	    % my $globInfluenzaAndPneumonia2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    % my $globInfluenzaAndPneumonia2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    % my $globInfluenzaAndPneumonia2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    % my $globInfluenzaAndPneumonia2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    % my $globInfluenzaAndPneumonia2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    % my $globInfluenzaAndPneumonia2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globInfluenzaAndPneumonia'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Grippes & Pneumonies</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globInfluenzaAndPneumonia2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globInfluenzaAndPneumonia2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globInfluenzaAndPneumonia2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globInfluenzaAndPneumonia2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globInfluenzaAndPneumonia2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$globInfluenzaAndPneumonia2019%>
+	    	</div>
+	    </div>
+	    % my $globKidneyDisease2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globKidneyDisease'} // 0;
+	    % my $globKidneyDisease2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globKidneyDisease'} // 0;
+	    % my $globKidneyDisease2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globKidneyDisease'} // 0;
+	    % my $globKidneyDisease2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globKidneyDisease'} // 0;
+	    % my $globKidneyDisease2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globKidneyDisease'} // 0;
+	    % my $globKidneyDisease2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globKidneyDisease'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Maladies des reins</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$globKidneyDisease2019%>
+	    	</div>
+	    </div>
+	    % my $globSuicide2014 = $statistics{'final'}->{'2014'}->{'global'}->{'globSuicide'} // 0;
+	    % my $globSuicide2015 = $statistics{'final'}->{'2015'}->{'global'}->{'globSuicide'} // 0;
+	    % my $globSuicide2016 = $statistics{'final'}->{'2016'}->{'global'}->{'globSuicide'} // 0;
+	    % my $globSuicide2017 = $statistics{'final'}->{'2017'}->{'global'}->{'globSuicide'} // 0;
+	    % my $globSuicide2018 = $statistics{'final'}->{'2018'}->{'global'}->{'globSuicide'} // 0;
+	    % my $globSuicide2019 = $statistics{'final'}->{'2019'}->{'global'}->{'globSuicide'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Suicides</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globSuicide2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globSuicide2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globSuicide2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globSuicide2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globSuicide2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$globSuicide2019%>
+	    	</div>
+	    </div>
+    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <h3>Donnés globales de mortalité et causes les plus répandues - AADR - Race - Sexe - Groupe Ethnique</h3>
+    Les chiffres extraits par âge, groupe ethnique et race sont illustrés ci-dessous.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;">
+	    		
+	    	</div>
+	    	<div style="width:calc(72% - 1px);min-width: 647px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+	    		<b>ANNEES</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;display: flex;flex-wrap: wrap;">
+	    		<div style="width:100%;height:30px">
+	    		</div>
+		    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+		    		<b>Donnée relevée (AADR)</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    	<div class="text_separator"></div>
+	    		<b>2014
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2015
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2016
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2017
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2018
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 107px;padding-top: 20px;background: #002D63;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2019
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGBlackFemale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    % my $ageAdjDRRESGBlackFemale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    % my $ageAdjDRRESGBlackFemale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    % my $ageAdjDRRESGBlackFemale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    % my $ageAdjDRRESGBlackFemale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    % my $ageAdjDRRESGBlackFemale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGBlackFemale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Femmes, noires</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGBlackFemale2019%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGHispanicFemale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    % my $ageAdjDRRESGHispanicFemale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    % my $ageAdjDRRESGHispanicFemale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    % my $ageAdjDRRESGHispanicFemale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    % my $ageAdjDRRESGHispanicFemale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    % my $ageAdjDRRESGHispanicFemale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGHispanicFemale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Femmes, blanches, hispaniques</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGHispanicFemale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGHispanicFemale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGHispanicFemale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGHispanicFemale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGHispanicFemale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$ageAdjDRRESGHispanicFemale2019%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGWhiteFemale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    % my $ageAdjDRRESGWhiteFemale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    % my $ageAdjDRRESGWhiteFemale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    % my $ageAdjDRRESGWhiteFemale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    % my $ageAdjDRRESGWhiteFemale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    % my $ageAdjDRRESGWhiteFemale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGWhiteFemale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Femmes, blanches, caucasiennes</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGWhiteFemale2019%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGBlackMale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    % my $ageAdjDRRESGBlackMale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    % my $ageAdjDRRESGBlackMale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    % my $ageAdjDRRESGBlackMale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    % my $ageAdjDRRESGBlackMale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    % my $ageAdjDRRESGBlackMale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGBlackMale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Hommes, noirs</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGBlackMale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGBlackMale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGBlackMale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGBlackMale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGBlackMale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$ageAdjDRRESGBlackMale2019%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGHispanicMale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    % my $ageAdjDRRESGHispanicMale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    % my $ageAdjDRRESGHispanicMale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    % my $ageAdjDRRESGHispanicMale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    % my $ageAdjDRRESGHispanicMale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    % my $ageAdjDRRESGHispanicMale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGHispanicMale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Hommes, blancs, hispaniques</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGHispanicMale2019%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGWhiteMale2014 = $statistics{'final'}->{'2014'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    % my $ageAdjDRRESGWhiteMale2015 = $statistics{'final'}->{'2015'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    % my $ageAdjDRRESGWhiteMale2016 = $statistics{'final'}->{'2016'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    % my $ageAdjDRRESGWhiteMale2017 = $statistics{'final'}->{'2017'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    % my $ageAdjDRRESGWhiteMale2018 = $statistics{'final'}->{'2018'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    % my $ageAdjDRRESGWhiteMale2019 = $statistics{'final'}->{'2019'}->{'aADR'}->{'ageAdjDRRESGWhiteMale'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Hommes, blancs, caucasiens</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGWhiteMale2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGWhiteMale2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGWhiteMale2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGWhiteMale2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$ageAdjDRRESGWhiteMale2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$ageAdjDRRESGWhiteMale2019%>
+	    	</div>
+	    </div>
+    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <h3>Donnés globales de mortalité infantile et causes les plus répandues - AADR</h3>
+    Enfin, les données de mortalité infantile sont disponibles en AADR pour 100.000 naissances et pour les 10 causes de mortalité les plus répandues.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;">
+	    		
+	    	</div>
+	    	<div style="width:calc(72% - 1px);min-width: 647px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+	    		<b>ANNEES</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;">
+	    	<div style="width:calc(28% - 1px);min-width: 248px;display: flex;flex-wrap: wrap;">
+	    		<div style="width:100%;height:30px">
+	    		</div>
+		    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+		    		<b>Donnée relevée (AADR)</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    	<div class="text_separator"></div>
+	    		<b>2014
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2015
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2016
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2017
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);;min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2018
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 107px;padding-top: 20px;background: #002D63;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2019
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    % my $infantDeathsPer100000Births2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    % my $infantDeathsPer100000Births2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    % my $infantDeathsPer100000Births2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    % my $infantDeathsPer100000Births2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    % my $infantDeathsPer100000Births2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    % my $infantDeathsPer100000Births2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsPer100000Births'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>AADR Total</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantDeathsPer100000Births2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsCongenitalMalformations2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    % my $infantDeathsCongenitalMalformations2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    % my $infantDeathsCongenitalMalformations2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    % my $infantDeathsCongenitalMalformations2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    % my $infantDeathsCongenitalMalformations2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    % my $infantDeathsCongenitalMalformations2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsCongenitalMalformations'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Malformations congénitales</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsCongenitalMalformations2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsCongenitalMalformations2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsCongenitalMalformations2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsCongenitalMalformations2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsCongenitalMalformations2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$infantDeathsCongenitalMalformations2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsLowBirthWeight2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    % my $infantDeathsLowBirthWeight2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    % my $infantDeathsLowBirthWeight2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    % my $infantDeathsLowBirthWeight2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    % my $infantDeathsLowBirthWeight2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    % my $infantDeathsLowBirthWeight2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsLowBirthWeight'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Poids trop léger à la naissance</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantDeathsLowBirthWeight2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsSuddenDeathSyndrom2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    % my $infantDeathsSuddenDeathSyndrom2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    % my $infantDeathsSuddenDeathSyndrom2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    % my $infantDeathsSuddenDeathSyndrom2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    % my $infantDeathsSuddenDeathSyndrom2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    % my $infantDeathsSuddenDeathSyndrom2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsSuddenDeathSyndrom'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Mort subite du nourrisson</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$infantDeathsSuddenDeathSyndrom2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsMaternalComplication2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    % my $infantDeathsMaternalComplication2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    % my $infantDeathsMaternalComplication2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    % my $infantDeathsMaternalComplication2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    % my $infantDeathsMaternalComplication2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    % my $infantDeathsMaternalComplication2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsMaternalComplication'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Complications de la maternité</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantDeathsMaternalComplication2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsUnintentionalInjuries2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    % my $infantDeathsUnintentionalInjuries2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    % my $infantDeathsUnintentionalInjuries2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    % my $infantDeathsUnintentionalInjuries2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    % my $infantDeathsUnintentionalInjuries2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    % my $infantDeathsUnintentionalInjuries2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsUnintentionalInjuries'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Blessures non-intentionnelles</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsUnintentionalInjuries2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsUnintentionalInjuries2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsUnintentionalInjuries2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsUnintentionalInjuries2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsUnintentionalInjuries2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$infantDeathsUnintentionalInjuries2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsCordComplication2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    % my $infantDeathsCordComplication2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    % my $infantDeathsCordComplication2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    % my $infantDeathsCordComplication2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    % my $infantDeathsCordComplication2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    % my $infantDeathsCordComplication2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsCordComplication'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Complications liées au cordon hombilical</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantDeathsCordComplication2019%>
+	    	</div>
+	    </div>
+	    % my $infantDeathsBacterialSepsis2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    % my $infantDeathsBacterialSepsis2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    % my $infantDeathsBacterialSepsis2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    % my $infantDeathsBacterialSepsis2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    % my $infantDeathsBacterialSepsis2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    % my $infantDeathsBacterialSepsis2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDeathsBacterialSepsis'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Septisémie Bactérique</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsBacterialSepsis2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsBacterialSepsis2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsBacterialSepsis2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsBacterialSepsis2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDeathsBacterialSepsis2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$infantDeathsBacterialSepsis2019%>
+	    	</div>
+	    </div>
+	    % my $infantRespiratoryDistress2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    % my $infantRespiratoryDistress2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    % my $infantRespiratoryDistress2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    % my $infantRespiratoryDistress2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    % my $infantRespiratoryDistress2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    % my $infantRespiratoryDistress2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantRespiratoryDistress'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Détresses respiratoires</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantRespiratoryDistress2019%>
+	    	</div>
+	    </div>
+	    % my $infantDiseasesOfCirculatorySystem2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    % my $infantDiseasesOfCirculatorySystem2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    % my $infantDiseasesOfCirculatorySystem2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    % my $infantDiseasesOfCirculatorySystem2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    % my $infantDiseasesOfCirculatorySystem2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    % my $infantDiseasesOfCirculatorySystem2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantDiseasesOfCirculatorySystem'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Maladies du système circulatoire</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDiseasesOfCirculatorySystem2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDiseasesOfCirculatorySystem2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDiseasesOfCirculatorySystem2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDiseasesOfCirculatorySystem2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$infantDiseasesOfCirculatorySystem2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;">
+	    		<%=$infantDiseasesOfCirculatorySystem2019%>
+	    	</div>
+	    </div>
+	    % my $infantNeonatalHemorrhage2014 = $statistics{'final'}->{'2014'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    % my $infantNeonatalHemorrhage2015 = $statistics{'final'}->{'2015'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    % my $infantNeonatalHemorrhage2016 = $statistics{'final'}->{'2016'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    % my $infantNeonatalHemorrhage2017 = $statistics{'final'}->{'2017'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    % my $infantNeonatalHemorrhage2018 = $statistics{'final'}->{'2018'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    % my $infantNeonatalHemorrhage2019 = $statistics{'final'}->{'2019'}->{'infants'}->{'infantNeonatalHemorrhage'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(28% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>Hémorragie néonatale</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2014%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2015%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2016%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2017%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2018%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;">
+	    		<%=$infantNeonatalHemorrhage2019%>
+	    	</div>
+	    </div>
+    </div>
+    <div class="text_separator"></div>
+		<div class="text_separator"></div>
+    <h2>Donnée présente dans les rapports temporaires</h2>
+    Pour les années disposant d'une donnée plus limitée (2020 & 2021), nous avons extrait les valeurs approximatives disponibles. Dès lors que des valeurs étaient présentées pour 2020 dans les mises à jour de 2021, nous avons employé les valeurs 2020 les plus récentes.
+    <div class="text_separator"></div>
+    <ul>
+    	<li>Mortalité globale enregistrée (global deaths registered)</li>
+    	<div class="text_separator"></div>
+    	<li>Causes de mortalité les plus répandues (leading causes of death) pour quelques uns d'entre eux</li>
+    	<div class="text_separator"></div>
+    	<li>Mortalité globale chez les nouveaux-nés - par ratio pour 100.000 naissances et total de cas</li>
+    </ul>
+		<div class="text_separator"></div>
+    <h3>Mortalité globale enregistrée</h3>
+    La donnée relative aux chiffres brutes est présentée ci-dessous :
+		<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;">
+	    	<div style="width:calc(76% - 1px);min-width: 248px;">
+	    		
+	    	</div>
+	    	<div style="width:calc(24% - 1px);min-width: 212px;padding-top: 5px;background: #002D63;color:white;border-right: 1px solid #fff;">
+	    		<b>ANNEES</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;">
+	    	<div style="width:calc(76% - 1px);min-width: 248px;display: flex;flex-wrap: wrap;">
+	    		<div style="width:100%;height:30px">
+	    		</div>
+		    	<div style="width:100%;padding-top: 5px;background: #1c4a6b;color:white;border-right: 1px solid #fff;">
+		    		<b>Donnée relevée (AADR)</b>
+			    	<div class="text_separator"></div>
+		    	</div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;">
+		    	<div class="text_separator"></div>
+	    		<b>2020
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;">
+		    	<div class="text_separator"></div>
+	    		<b>2021
+		    	<div class="text_separator"></div>
+	    		</b>
+		    	<div class="text_separator"></div>
+	    	</div>
+	    </div>
+	    % my $globalDeaths2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globalDeaths'} // 0;
+	    % my $globalDeaths2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globalDeaths'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<b>Décès</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globalDeaths2020%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;">
+	    		<%=$globalDeaths2021%>
+	    	</div>
+	    </div>
+	    % my $ageAdjDRRESGTotal2020 = $statistics{'provisional'}->{'2020'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    % my $ageAdjDRRESGTotal2021 = $statistics{'provisional'}->{'2021'}->{'aADR'}->{'ageAdjDRRESGTotal'} // 0;
+	    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+	    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<b>AADR Total</b>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGTotal2020%>
+	    	</div>
+	    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+	    		<%=$ageAdjDRRESGTotal2021%>
+	    	</div>
+	    </div>
+		    % my $globDeathsHeartDiseaseCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    % my $globDeathsHeartDiseaseCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globDeathsHeartDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Maladies cardiaques</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDeathsHeartDiseaseCases2021%>
+		    	</div>
+		    </div>
+		    % my $globDeathsCancerCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    % my $globDeathsCancerCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globDeathsCancerCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Cancers</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsCancerCases2021%>
+		    	</div>
+		    </div>
+		    % my $globUnintentionalInjuriesCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    % my $globUnintentionalInjuriesCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globUnintentionalInjuriesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Blessures non-intentionnelles</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globUnintentionalInjuriesCases2021%>
+		    	</div>
+		    </div>
+		    % my $globDeathsChronicRespiratoryDiseaseCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    % my $globDeathsChronicRespiratoryDiseaseCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globDeathsChronicRespiratoryDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Maladies respiratoires chroniques</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globDeathsChronicRespiratoryDiseaseCases2021%>
+		    	</div>
+		    </div>
+		    % my $globStrokesCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globStrokesCases'} // 0;
+		    % my $globStrokesCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globStrokesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Accidents vasculaires cérébraux</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globStrokesCases2021%>
+		    	</div>
+		    </div>
+		    % my $globAlzheimerCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    % my $globAlzheimerCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globAlzheimerCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Alzheimer</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globAlzheimerCases2021%>
+		    	</div>
+		    </div>
+		    % my $globDiabetesCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globDiabetesCases'} // 0;
+		    % my $globDiabetesCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globDiabetesCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Diabetes</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globDiabetesCases2021%>
+		    	</div>
+		    </div>
+		    % my $globInfluenzaAndPneumoniaCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    % my $globInfluenzaAndPneumoniaCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globInfluenzaAndPneumoniaCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Grippes & Pneumonies</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globInfluenzaAndPneumoniaCases2021%>
+		    	</div>
+		    </div>
+		    % my $globKidneyDiseaseCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    % my $globKidneyDiseaseCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globKidneyDiseaseCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid darkgrey;border-top: 1px solid darkgrey;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<b>Maladies des reins</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid darkgrey;background: #fff;">
+		    		<%=$globKidneyDiseaseCases2021%>
+		    	</div>
+		    </div>
+		    % my $globSuicideCases2020 = $statistics{'provisional'}->{'2020'}->{'global'}->{'globSuicideCases'} // 0;
+		    % my $globSuicideCases2021 = $statistics{'provisional'}->{'2021'}->{'global'}->{'globSuicideCases'} // 0;
+		    <div style="width: 100%;min-width: 900px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+		    	<div style="width:calc(76% - 2px);min-width: 248px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<b>Suicides</b>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2020%>
+		    	</div>
+		    	<div style="width:calc(12% - 1px);min-width: 106px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;background: #E7E6E9;">
+		    		<%=$globSuicideCases2021%>
+		    	</div>
+		    </div>
+    </div>
+  	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+  	On trouve la mortalité par groupes d'âge - tranches de 10 ans.
+		<div class="text_separator"></div>
+		Donnée détaillée ici : https://wonder.cdc.gov/controller/datarequest/D77;jsessionid=CFE77BF9F1E469757476F0AC51F8
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	</div>
+</div>
+% }
+
+
+<script type="text/javascript">
+	let currentGlobalTab;
+	let currentStateTab;
+	let currentTab;
+	let tabs       = ['TOTALS', 'MODERNA', 'PFIZER-BIONTECH', 'JANSSEN'];
+	let globalTabs = ['global-analysis', 'global-data'];
+	let stateTabs  = ['state-TOTALS', 'state-MODERNA', 'state-PFIZER-BIONTECH', 'state-JANSSEN'];
+	function openDelayTab(tabLabel) {
+		currentTab = tabLabel;
+		tabs.forEach(setTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function openStateTab(tabLabel) {
+		currentStateTab = tabLabel;
+		stateTabs.forEach(setStateTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function setStateTabButton(tabLabel) {
+		if (tabLabel != currentTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function setTabButton(tabLabel) {
+		if (tabLabel != currentTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function openGlobalTab(tabLabel) {
+		currentGlobalTab = tabLabel;
+		globalTabs.forEach(setGlobalTabButton);
+		let tab = document.getElementById(tabLabel);
+		let tabButton = document.getElementById(tabLabel + '-button');
+		tab.style.display = 'block';
+		tabButton.style.background = '#262436';
+	}
+
+	function setGlobalTabButton(tabLabel) {
+		if (tabLabel != currentGlobalTab) {
+			let tab = document.getElementById(tabLabel);
+			let tabButton = document.getElementById(tabLabel + '-button');
+			tab.style.display = 'none';
+			tabButton.style.background = '#4f4d66';
+		}
+	}
+
+	function openSymptoms(vaersSymptomType) {
+		let modal = document.getElementById('fullScreenModal');
+		modal.style.display     = 'block';
+		let modalLoader = document.getElementById("modalLoader");
+		modalLoader.style.display  = "inline-block";
+		let currentLanguage     = '<%=$currentLanguage%>';
+		let request = $.ajax({
+		url: "/studies/vaers_fertility/symptoms",
+		type: "POST",
+		data: {
+			vaersSymptomType : vaersSymptomType,
+			currentLanguage  : currentLanguage
+			}
+		});
+
+		request.done(function(data) {
+			modalLoader.style.display  = "none";
+			$('#fullScreenModalInnerContent').html(data);
+		});
+
+		// Printing error message if case of failure
+		request.fail(function(jqXHR, textStatus) {
+			alert("Something went wrong : " + textStatus)
+		});
+	}
+
+	function openReports(reportType, reportNum) {
+		$('#fullScreenModalInnerContent').html('');
+		let modal = document.getElementById('fullScreenModal');
+		modal.style.display     = 'block';
+		let currentLanguage     = '<%=$currentLanguage%>';
+		let request = $.ajax({
+		url: "/studies/vaers_fertility/display_reports",
+		type: "POST",
+		data: {
+			reportType      : reportType,
+			reportNum       : reportNum,
+			currentLanguage : currentLanguage
+			}
+		});
+
+		request.done(function(data) {
+			$('#fullScreenModalInnerContent').html(data);
+		});
+
+		// Printing error message if case of failure
+		request.fail(function(jqXHR, textStatus) {
+			alert("Something went wrong : " + textStatus)
+		});
+	}
+
+	var modal = document.getElementById("fullScreenModal");
+	var mainLoader = document.getElementById("mainLoader");
+
+	$( document ).ready(function() {
+
+		// Attending to the loader.
+		mainLoader.style.display  = "none";
+
+		// Get the main modal
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+
+		// Get the <span> element that closes the main modal
+		var span = document.getElementsByClassName("full-screen-modal-close")[0];
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+			modal.style.display = "none";
+		}
+	});
+</script>

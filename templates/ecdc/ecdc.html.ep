@@ -168,13 +168,13 @@
     <div class="text_separator"></div>
     Le scrapper indexe ensuite année par année, "caractère sérieux ou non" (tel qu'évalué par l'ECDC), chaque rapport.
     <div class="text_separator"></div>
-    A cause du fait que les exports sont listés (sans que ça soit précisé nulle part) à 249900 entrés, certains médicaments doivent être filtrés en utilisant des critères additionnels.
+    A cause du fait que les exports <b>sont limités (sans que ça soit précisé nulle part) à 249900 entrés</b>, certains médicaments doivent être filtrés en utilisant des critères additionnels.
     <div class="text_separator"></div>
     Les critères suivants sont appliqués jusqu'à restriction suffisante de l'échantillon exporté : <b>Groupe d'âge, Sexe, Origine Géographique, Type de rapporteur</b>.
     <div class="text_separator"></div>
     <div onclick="openInNewTab('/doc/ecdc/line_listing_export.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;"><img src="/doc/ecdc/line_listing_export.png" style="width:400px;display:block;margin:auto;"></div>
     <div class="text_separator"></div>
-    Des exports .CSV sont générés en utilisant le lien en bas de page, téléchargés, et intégrés dans la base de données.
+    Des exports .CSV sont générés en utilisant le lien en bas de page, téléchargés, et intégrés dans la base de données en utilisant leur référence unique pour garantir l'absence de doublons.
     <div class="text_separator"></div>
     % if ($environment eq 'local') {
     Il en résulte <a href="/data/ecdc/notices"><%=$totalReports%> rapports, qui peuvent être parcourus via cette page</a>.

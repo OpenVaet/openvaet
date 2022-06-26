@@ -1,0 +1,89 @@
+% my %recipients = %$recipients;
+<div class="text_separator"></div>
+% if ($errorMessage) {
+	<span style="color:darkred;"><%=$errorMessage%></span>	
+% } else {
+	% if ($totalRecipients) {
+    <div class="search_area_label">
+        [<%=$totalRecipients%>] résultats trouvés sur transparence.sante.gouv.fr. Déselectionnez les résultats que vous voudriez exclure.
+    </div>
+	<div class="search_result_container">
+	% for my $recipientId (sort{$a <=> $b} keys %recipients) {
+		% my $firstName = $recipients{$recipientId}->{'firstName'} // die;
+		% my $lastName  = $recipients{$recipientId}->{'lastName'}  // die;
+		% my $city      = $recipients{$recipientId}->{'city'}      // die;
+		<div class="search_result">
+			<label for="result-<%=$recipientId%>">
+				<input class="input_check" type="checkbox" id="<%=$recipientId%>" checked>
+				<%=$firstName%> <%=$lastName%> | <%=$city%>
+			</label>
+		</div>
+        <div class="text_separator"></div>
+	% }
+	</div>
+	<div class="text_separator"></div>
+	<div class="url-link" onclick="continueWithSelection()" style="width:100%;max-width: 400px;margin: auto;text-align:right;cursor: pointer;">
+		Visualiser les conflits d'intérêts &#10230;
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="search_area_label" id="selectionError">
+    </div>
+	% } else {
+
+	<span style="color:darkred;">
+		Pas de résultat trouvé sur transparence.sante.gouv.fr.
+		<div class="text_separator"></div>
+		Vérifiez l'orthographe de votre recherche.
+	</span>
+	% }
+% }
+
+<script type="text/javascript">
+	function continueWithSelection() {
+		var inputs  = document.getElementsByClassName("input_check");
+		let results = [];
+		for(var i = 0; i < inputs.length; i++)
+		{
+			let id = inputs.item(i).id;
+			let checked = inputs.item(i).checked;
+			console.log(inputs.item(i));
+			console.log('id      : ' + id);
+			console.log('checked : ' + checked);
+			if (checked == true) {
+				results.push(id);
+			}
+		}
+		if (results.length < 1) {
+			$('#selectionError').html('<span style="color:darkred;">Au moins une entrée doit être sélectionnée pour poursuivre.</span>');
+		} else {
+			let searchInput = "<%=$searchInput%>";
+			$('#selectionError').html('');
+			console.log(results);
+			console.log('results : ' + results.length);
+			let resultsJson = JSON.stringify(results);
+			console.log(resultsJson);
+	        let request = $.ajax({
+	            url: "/conflicts_of_interest/confirm_recipients",
+	            type: "POST",
+	            data: {
+	                currentLanguage : currentLanguage,
+	                searchInput     : searchInput,
+	                resultsJson     : resultsJson
+	            }
+	        });
+
+	        request.done(function(data) {
+	            blankContainer.style.display  = "none";
+	            mainLoader.style.display  = "none";
+	            console.log(data);
+	            $('#searchResults').html(data);
+	        });
+
+	        // Printing error message if case of failure
+	        request.fail(function(jqXHR, textStatus) {
+	            alert("Something went wrong : " + textStatus)
+	        });
+		}
+	}
+</script>

@@ -1,0 +1,1059 @@
+% layout 'default';
+% title 'OPENVAET - Studies - Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l\'ANSM et le Ministère de la Santé';
+
+% my %statistics = %$statistics;
+
+<style type="text/css">
+	.ndt_note {
+		display: inline-block;
+		width: calc(100% - 50px);
+		margin: auto;
+		background: #dee0e3;
+		border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+	}
+
+	.tab-button {
+		padding: 10px 20px;
+	}
+
+	.tab-button:hover {
+		background: #262436;
+		cursor: pointer;
+	}
+
+	/* The Full Screen Modal (background) */
+	.full-screen-modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 100; /* Sit on top, unless a priority pops */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow-x: hidden;
+		overflow-y: hidden;
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	/* Full Screen Modal Content/Box */
+	.full-screen-modal-content {
+		background-color: #fefefe;
+		margin: auto;
+		margin-top: 15px;
+		border: 1px solid #888;
+		max-width: 1000px;
+		height: calc(100%  - 35px);
+		overflow-y: hidden;
+	}
+
+	/* The Close Button */
+	.full-screen-modal-close {
+		color: #aaa;
+		font-size: 28px;
+		height: 32px;
+		font-weight: bold;
+	    margin-left: calc(100% - 20px);
+	    top: 15px;
+	}
+
+	.full-screen-modal-close:hover,
+	.full-screen-modal-close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.full-screen-modal_inner_content {
+		height: calc(100% - 50px);
+		width: auto;
+		overflow-y: auto;
+		margin: initial;
+	}
+
+	.full-screen-modal_inner_content_wrapper {
+		width: 100%;
+	    height: 100%;
+		max-height: 100%;
+		margin: initial;
+	}
+</style>
+
+<!-- The Full Screen Modal -->
+<div id="fullScreenModal" class="full-screen-modal">
+  <!-- Center-screen loader -->
+    <div id="modalLoader" class="main-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Fetching data corresponding to your query ; this may take a few seconds ...</b></div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div style="width:300px;height:auto;margin-left: -95px;text-align: center;"><b>Recherche des données correspondant à votre requête ; ceci peut prendre quelques secondes ...</b></div>
+    % } else {
+
+    % }
+    </div>
+
+	<!-- Full Screen Modal content -->
+	<div class="full-screen-modal-content">
+		<div class="full-screen-modal_inner_content_wrapper">
+			<div id="full-screen-modal-close" class="full-screen-modal-close">&times;</div>
+			<div id="fullScreenModalInnerContent" class="full-screen-modal_inner_content">
+			</div>
+		</div>
+	</div>
+</div> 
+
+% if ($currentLanguage eq 'en') {
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);font-size: 13px;">
+  <div class="text_separator"></div>
+  <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+  	Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France
+	</div>
+	<div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	    Etude statique (cette étude présente des informations en l'état, valides au 17 juin 2022, et ne sera pas mise à jour)</span>
+	</div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+  <h2>Introduction</h2>
+  Nous avons été distraits de notre étude actuelle de la mortalité américaine par une excellente question de <a href="https://mobile.twitter.com/THEVENONPierri1/status/1536463957871013894" target="_blank">Pierrick Thevenon sur Twitter</a>, qui a attiré notre attention sur des inconsistances dans les données relatives aux personnes vaccinées contre la Covid-19, <a href="https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/" target="_blank">communiquées par data.gouv.fr</a>.
+  <div class="text_separator"></div>
+  Nous avions depuis quelque temps le souhait de nous pencher sur cette donnée ; dans la mesure où, depuis quelques mois, les données présentées par CovidTracker.fr sur leur outil <a href="" target="_blank">VaxImpact</a>
+  <div class="text_separator"></div>
+  Après avoir passé une heure à constater qu'il y'avait en effet un problème, et avons cherché à obtenir une vue claire sur les problèmes, en comparant les données officiellement communiquées par l'ANSM et celles de data.gouv.fr. Nous présentons ici l'état de nos travaux pour tenter d'y voir clair.
+  <div class="text_separator"></div>
+  Précisons d'abord que les données disponibles en France sont résumées sur la page <a href="https://www.data.gouv.fr/fr/pages/donnees-coronavirus/" target="_blank">Les données relatives au COVID-19</a> de Data.gouv.fr.
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+  <h2>Données ANSM utilisées</h2>
+  L'ANSM publie "régulièrement" (à l'origine toutes les semaines, maintenant sans rythme clairement défini) un état des lieux de la vaccination, sous diverses formes :
+  <ul>
+  	<li>Des "Points de situation" généraux</li>
+  	<li>Des "Focus" sur les différents vaccins spécifiques</li>
+  </ul>
+  Nous avons extrait les chiffres globaux et les chiffres spécifiques par sexes & substances des derniers rapports où ils étaient présentés.
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <h3>Derniers chiffres globaux à jour</h3>
+	La <a href="https://ansm.sante.fr/actualites/" target="_blank">section "Actualités"</a> permet au lecteur l'accès aux dernières publications de l'ANSM. 
+  <div class="text_separator"></div>
+	Dans son dernier rapport en date sur le sujet des effets secondaires, <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-06-05-2022-au-23-05-2022" target="_blank">"Point de situation sur la surveillance des vaccins contre la Covid 19", publié le 31 mai 2022</a>, l'ANSM n'établit pas un état des lieux des progrès de la vaccination détaillé par dose et par substance. On y trouve cependant un apperçu du nombre total de doses administrées par substances (sans distinction entre 1ère, 2ème, 3ème, etc. dose) jusqu'au 23 mai 2022 inclus.
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  % my $totalPfizerDoses      = $statistics{'ansm_stats_by_substances'}->{'Pfizer'}->{'totalDoses'}      // die;
+  % my $totalModernaDoses     = $statistics{'ansm_stats_by_substances'}->{'Moderna'}->{'totalDoses'}     // die;
+  % my $totalAstrazenecaDoses = $statistics{'ansm_stats_by_substances'}->{'Astrazeneca'}->{'totalDoses'} // die;
+  % my $totalJanssenDoses     = $statistics{'ansm_stats_by_substances'}->{'Janssen'}->{'totalDoses'}     // die;
+  % my $totalNovavaxDoses     = $statistics{'ansm_stats_by_substances'}->{'Novavax'}->{'totalDoses'}     // die;
+  % my $totalTotalDoses       = $statistics{'ansm_stats_by_substances'}->{'Total'}->{'totalDoses'}       // die;
+  % my $currentTotalPfizerModerna = $totalPfizerDoses + $totalModernaDoses;
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+    	<div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Vaccin</b>
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Doses Totales</b>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Pfizer (Comirnaty)
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<%=$totalPfizerDoses%>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Moderna (Spikevax)
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<%=$totalModernaDoses%>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Astrazeneca (Vaxzevria)
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<%=$totalAstrazenecaDoses%>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Janssen (Jcovden)
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<%=$totalJanssenDoses%>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Nuvaxovid (Novavax)
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<%=$totalNovavaxDoses%>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Total Tous Vaccins</b>
+    	</div>
+    	<div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<b><%=$totalTotalDoses%></b>
+    	</div>
+    </div>
+  </div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <h3>Derniers Focus Moderna & Pfizer</h3>
+	Pour trouver ces distinctions par doses, nous devons remonter au rapport du 13 mai 2022 (Page 2 au moment de la rédaction de cet article) dans un <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-22-04-2022-au-05-05-2022" target="_blank">Point de situation sur la surveillance des vaccins contre la Covid-19 - Période du 22/04/2022 au 05/05/2022</a> qui présente deux rapports spécifiques, l'un dédié à Pfizer, l'autre à Moderna - comme illustré dans l'impression d'écran ci-dessous.
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div onclick="openPictureInTab('/doc/french_vaccines_watch/ansm_study_access.png');return;" style="width:350px;display:block;margin:auto;cursor: pointer;"><img src="/doc/french_vaccines_watch/ansm_study_access.png" style="width:350px;display:block;margin:auto;"></div>
+	<div class="text_separator"></div>
+	Les chiffres relatifs au nombre de doses administrées par substances & par sexes, présentés dans ces deux rapports, sont les suivants au 28 avril 2022 :
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Vaccin</b>
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Sexe</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>1ere Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>2eme Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>3eme Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>4eme Dose</b>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b>Total</b>
+    	</div>
+    </div>
+    % my $totalPfizerWomen1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Femme'}->{'total1stDoses'} // die;
+    % my $totalPfizerWomen2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Femme'}->{'total2ndDoses'} // die;
+    % my $totalPfizerWomen3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Femme'}->{'total3rdDoses'} // die;
+    % my $totalPfizerWomen4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Femme'}->{'total4thDoses'} // die;
+    % my $totalPfizerWomenDoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Femme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Pfizer (Comirnaty)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Femmes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerWomen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerWomen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerWomen3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerWomen4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalPfizerWomenDoses%></b>
+    	</div>
+    </div>
+    % my $totalPfizerMen1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Homme'}->{'total1stDoses'} // die;
+    % my $totalPfizerMen2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Homme'}->{'total2ndDoses'} // die;
+    % my $totalPfizerMen3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Homme'}->{'total3rdDoses'} // die;
+    % my $totalPfizerMen4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Homme'}->{'total4thDoses'} // die;
+    % my $totalPfizerMenDoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Homme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Pfizer (Comirnaty)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Hommes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalPfizerMen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalPfizerMen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalPfizerMen3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalPfizerMen4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalPfizerMenDoses%></b>
+    	</div>
+    </div>
+    % my $totalPfizerNA1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Non Renseigne'}->{'total1stDoses'} // die;
+    % my $totalPfizerNA2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Non Renseigne'}->{'total2ndDoses'} // die;
+    % my $totalPfizerNA3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Non Renseigne'}->{'total3rdDoses'} // die;
+    % my $totalPfizerNA4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Non Renseigne'}->{'total4thDoses'} // die;
+    % my $totalPfizerNADoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Pfizer'}->{'Non Renseigne'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Pfizer (Comirnaty)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Non Renseigné
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerNA1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerNA2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerNA3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalPfizerNA4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalPfizerNADoses%></b>
+    	</div>
+    </div>
+    % my $totalModernaWomen1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Femme'}->{'total1stDoses'} // die;
+    % my $totalModernaWomen2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Femme'}->{'total2ndDoses'} // die;
+    % my $totalModernaWomen3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Femme'}->{'total3rdDoses'} // die;
+    % my $totalModernaWomen4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Femme'}->{'total4thDoses'} // die;
+    % my $totalModernaWomenDoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Femme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Moderna (Spikevax)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Hommes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaWomen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaWomen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaWomen3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaWomen4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalModernaWomenDoses%></b>
+    	</div>
+    </div>
+    % my $totalModernaMen1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Homme'}->{'total1stDoses'} // die;
+    % my $totalModernaMen2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Homme'}->{'total2ndDoses'} // die;
+    % my $totalModernaMen3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Homme'}->{'total3rdDoses'} // die;
+    % my $totalModernaMen4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Homme'}->{'total4thDoses'} // die;
+    % my $totalModernaMenDoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Homme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Moderna (Spikevax)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Femmes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalModernaMen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalModernaMen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalModernaMen3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalModernaMen4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalModernaMenDoses%></b>
+    	</div>
+    </div>
+    % my $totalModernaNA1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Non Renseigne'}->{'total1stDoses'} // die;
+    % my $totalModernaNA2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Non Renseigne'}->{'total2ndDoses'} // die;
+    % my $totalModernaNA3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Non Renseigne'}->{'total3rdDoses'} // die;
+    % my $totalModernaNA4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Non Renseigne'}->{'total4thDoses'} // die;
+    % my $totalModernaNADoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Moderna'}->{'Non Renseigne'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Moderna (Spikevax)
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Non Renseigné
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaNA1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaNA2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaNA3rdDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalModernaNA4thDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalModernaNADoses%></b>
+    	</div>
+    </div>
+    % my $total1stDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Total'}->{'Tous'}->{'total1stDoses'} // die;
+    % my $total2ndDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Total'}->{'Tous'}->{'total2ndDoses'} // die;
+    % my $total3rdDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Total'}->{'Tous'}->{'total3rdDoses'} // die;
+    % my $total4thDoses = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Total'}->{'Tous'}->{'total4thDoses'} // die;
+    % my $totalDoses    = $statistics{'ansm_stats_by_substances_and_sexes'}->{'Total'}->{'Tous'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(12.5% - 2px);min-width: 124px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b>Total Pfizer + Moderna</b>
+    	</div>
+    	<div style="width:calc(12.5% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b>Tous</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b><%=$total1stDoses%></b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b><%=$total2ndDoses%></b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b><%=$total3rdDoses%></b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b><%=$total4thDoses%></b>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalDoses%></b>
+    	</div>
+    </div>
+  </div>
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% my $offsetBetweenDoses = $currentTotalPfizerModerna - $totalDoses;
+	On a donc pour Pfizer et Moderna :
+	<ul>
+		<li><b><%=$totalDoses%></b> doses le 13 mai 2022</li>
+		<div class="text_separator"></div>
+		<li><b><%=$currentTotalPfizerModerna%></b> (<%=$totalPfizerDoses%> + <%=$totalModernaDoses%>) doses le 23 mai 2022</li>
+		<div class="text_separator"></div>
+		<li>Soit <b><%=$offsetBetweenDoses%></b> doses administrées entre le 13 mai 2022 et le 23 mai 2022</li>
+		<div class="text_separator"></div>
+	</ul>
+	<div class="text_separator"></div>
+  <h3>Dernier Focus AstraZeneca</h3>
+  Quant au vaccin Vaxzevria d'AstraZeneca, que l'ANSM recommande de restreindre au 55 ans+ depuis le 19 mars 2021, l'ANSM signale dans le rapport <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-14-01-2022-au-27-01-2022" target="_blank">Point de situation sur la surveillance des vaccins contre la Covid-19 - Période du 14/01/2022 au 27/01/2022</a> prémentionné, une légère augmentation du risque d'infarctus du myocarde ; alors que 7 851 200 doses ont été administrées. Le dernier focus sur Vaxveria <a href="https://ansm.sante.fr/uploads/2022/02/04/20220204-covid-19-vaccins-rapport-pv-vaxzevria-17.pdf" target="_blank">est disponible à cette date</a>.
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Les chiffres relatifs au nombre de doses administrées par substances & par sexes, présentés dans ce rapport, sont les suivants, arrêtés au 30 décembre 2021 :
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+    	<div style="width:calc(20% - 2px);min-width: 180px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Vaccin</b>
+    	</div>
+    	<div style="width:calc(20% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Sexe</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>1ere Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>2eme Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>3eme Dose</b>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b>Total</b>
+    	</div>
+    </div>
+    % my $totalAstraZenecaWomen1stDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Femme'}->{'total1stDoses'} // die;
+    % my $totalAstraZenecaWomen2ndDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Femme'}->{'total2ndDoses'} // die;
+    % my $totalAstraZenecaWomen3rdDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Femme'}->{'total3rdDoses'} // die;
+    % my $totalAstraZenecaWomenDoses    = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Femme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(20% - 2px);min-width: 180px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		AstraZeneca (Vaxzevria)
+    	</div>
+    	<div style="width:calc(20% - 2px);min-width: 172px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Femmes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaWomen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaWomen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaWomen3rdDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalAstraZenecaWomenDoses%></b>
+    	</div>
+    </div>
+    % my $totalAstraZenecaMen1stDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Homme'}->{'total1stDoses'} // die;
+    % my $totalAstraZenecaMen2ndDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Homme'}->{'total2ndDoses'} // die;
+    % my $totalAstraZenecaMen3rdDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Homme'}->{'total3rdDoses'} // die;
+    % my $totalAstraZenecaMenDoses    = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Homme'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(20% - 2px);min-width: 180px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		AstraZeneca (Vaxzevria)
+    	</div>
+    	<div style="width:calc(20% - 2px);min-width: 172px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Hommes
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalAstraZenecaMen1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalAstraZenecaMen2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<%=$totalAstraZenecaMen3rdDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalAstraZenecaMenDoses%></b>
+    	</div>
+    </div>
+    % my $totalAstraZenecaNA1stDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Non Renseigne'}->{'total1stDoses'} // die;
+    % my $totalAstraZenecaNA2ndDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Non Renseigne'}->{'total2ndDoses'} // die;
+    % my $totalAstraZenecaNA3rdDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Non Renseigne'}->{'total3rdDoses'} // die;
+    % my $totalAstraZenecaNADoses    = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Non Renseigne'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(20% - 2px);min-width: 180px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		AstraZeneca (Vaxzevria)
+    	</div>
+    	<div style="width:calc(20% - 2px);min-width: 172px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Non Renseigné
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaNA1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaNA2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totalAstraZenecaNA3rdDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalAstraZenecaNADoses%></b>
+    	</div>
+    </div>
+    % my $totalAstraZeneca1stDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Tous'}->{'total1stDoses'} // die;
+    % my $totalAstraZeneca2ndDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Tous'}->{'total2ndDoses'} // die;
+    % my $totalAstraZeneca3rdDoses = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Tous'}->{'total3rdDoses'} // die;
+    % my $totalAstraZenecaDoses    = $statistics{'ansm_stats_astra_by_sexes'}->{'AstraZeneca'}->{'Tous'}->{'totalDoses'}    // die;
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(20% - 2px);min-width: 180px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Total AstraZeneca</b>
+    	</div>
+    	<div style="width:calc(20% - 2px);min-width: 172px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Tous</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b><%=$totalAstraZeneca1stDoses%></b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b><%=$totalAstraZeneca2ndDoses%></b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b><%=$totalAstraZeneca3rdDoses%></b>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b><%=$totalAstraZenecaDoses%></b>
+    	</div>
+    </div>
+  </div>
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Les doses pour Vaxveria ont peu évolué entre <b>le 27 janvier 2022 et le 23 mai 2022</b>, avec 7 859 200 - 7 851 200 = <b>8 000 doses administrées</b> depuis les chiffres ci-dessus.
+	<div class="text_separator"></div>
+	Comme pour Janssen ci-dessous, Vaxveria d'AstraZeneca avait quasiment disparu en France, sans qu'il soit trop communiqué sur les circonstances de cette disparition, lors de la campagne dédiée à la 3e dose ; ainsi que le rappelle un article de Ouest France, <a href="https://www.ouest-france.fr/sante/vaccin/vaccin-contre-le-covid-19-ou-est-passe-astrazeneca-0515363a-7526-11ec-9c0f-7017d87d73ec" target="_blank">Vaccin contre le Covid-19. Où est passé AstraZeneca ?</a>.
+	<div class="text_separator"></div>
+	L'article évoque que le gros des stocks ont été donnés au programme Covax ; et que des risques potentiellement accrus de tromboses ont été relevés par la Haute Autorité de Santé (HAS).
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+  <h3>Dernier Focus Janssen</h3>
+  On rapporte pour Janssen (vaccin vendu comme unidose) :
+  <ul>
+  	<li><b>1 084 000 injections</b> au <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-11-02-2022-au-24-02-2022" target="_blank">Point de situation sur la surveillance des vaccins contre la Covid-19 - Période du 11/02/2022 au 24/02/2022</a>, publié le 4 mars 2022.</li>
+  	<li><b>1 084 000 injections</b> au <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-11-03-2022-au-24-03-2022" target="_blank">Point de situation sur la surveillance des vaccins contre la Covid-19 - Période du 11/03/2022 au 24/03/2022</a>, publié le 1 avril 2022.</li>
+  </ul>
+	<div class="text_separator"></div>
+  Le dernier "focus" sur Janssen est présent dans un <a href="https://ansm.sante.fr/actualites/point-de-situation-sur-la-surveillance-des-vaccins-contre-la-covid-19-periode-du-14-01-2022-au-27-01-2022" target="_blank">Point de situation sur la surveillance des vaccins contre la Covid-19 - Période du 14/01/2022 au 27/01/2022</a>, et peut être accédé <a href="https://ansm.sante.fr/uploads/2022/02/04/20220204-covid-19-vaccins-rapport-pv-janssen-6.pdf" target="_blank">directement via ce lien</a>. Il présente les chiffres, arrêtés à la date du 30 décembre 2021.
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+    <div style="width: 100%;min-width: 580px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+    	<div style="width:calc(60% - 6px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Vaccin</b>
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Sexe</b>
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<b>Total Doses</b>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 580px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(60% - 6px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Janssen (Jcovden)
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		Femme
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		517115
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 580px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(60% - 6px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Janssen (Jcovden)
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		Homme
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		550992
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 580px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(60% - 6px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		Janssen (Jcovden)
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		Non Renseigné
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		2064
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 580px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+    	<div style="width:calc(60% - 6px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Total Janssen</b>
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Tous</b>
+    	</div>
+    	<div style="width:20%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+    		<b>1070171</b>
+    	</div>
+    </div>
+  </div>
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Les doses pour Janssen ont évolué entre <b>le  30 décembre 2021 et le 23 mai 2022</b>, avec 1 087 300 - 1 070 171 = <b>17 129 doses administrées</b> depuis les chiffres ci-dessus.
+	<div class="text_separator"></div>
+	<b>3 300 doses de ces 17 129 doses sont apparues sans explication entre les Points de situation des 1 avril et 23 mai</b>.
+	<div class="text_separator"></div>
+	Comme le rappelle un article du Monde <a href="https://www.lemonde.fr/planete/article/2021/09/09/janssen-l-espoir-decu-du-vaccin-unidose_6093972_3244.html" target="_blank">Janssen, l'espoir déçu du vaccin unidose", du 9 septembre 2021</a>, le milion de personnes concernées par ce vaccin unidose ont dû recevoir une dose supplémentaire de l'un des autres produits (Pfizer, Moderna ou Astra Zeneca).
+	<div class="text_separator"></div>
+	Un article du 10 mai, par Ouest France, <a href="https://www.ouest-france.fr/sante/vaccin/covid-19-ou-trouver-le-janssen-ce-vaccin-sans-arn-messager-6965acc8-d05c-11ec-87e1-8d9db460936d" target="_blank">Covid-19. Où trouver le Janssen, ce vaccin sans ARN messager ?</a>, évoque la difficulté à trouver le vaccin Janssen en France, et renvoie les patients vers la médecine de ville, seule à même d'éventuellement le leur administrer.
+	<div class="text_separator"></div>
+	Janssen est officiellement "suspendu temporairement" par une décision de la HAS, du 21 février 2022, sauf exception, selon un autre article du Monde, <a href="https://www.lemonde.fr/planete/article/2022/02/21/covid-19-la-has-recommande-de-reserver-le-vaccin-janssen-aux-personnes-presentant-une-contre-indication-aux-vaccins-a-arn-messager_6114631_3244.html">Covid-19 : la HAS recommande de réserver le vaccin Janssen aux personnes présentant une contre-indication aux vaccins à ARN messager</a> ; une décision similaire étant prise par la FDA américaine le 5 mai 2022 : <a href="https://www.fda.gov/news-events/press-announcements/coronavirus-covid-19-update-fda-limits-use-janssen-covid-19-vaccine-certain-individuals" target="_blank">Coronavirus (COVID-19) Update: FDA Limits Use of Janssen COVID-19 Vaccine to Certain Individuals</a>.
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+  <h2>Données Data.gouv.fr utilisées</h2>
+  Comme l'énonce <a href="https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#resources" target="_blank">la page dédiée au Covid-19, sur data.gouv.fr</a>, "dès le lancement de la campagne de vaccination, les autorités sanitaires ont disposé d’informations permettant un suivi quotidien de l’avancée et du déploiement de la campagne sur le territoire. Celles-ci, recueillies auprès des établissements pour personnes âgées et des centres de vaccination, étaient transmises par les Agences régionales de santé.
+	<div class="text_separator"></div>
+	Parallèlement, l’Assurance maladie a élaboré le système d’information Vaccin Covid (VAC-SI), qui est aujourd’hui pleinement opérationnel après un travail d’analyse de l’exhaustivité et de la complétude des données.
+	<div class="text_separator"></div>
+	Le système d’information Vaccin Covid est alimenté par les professionnels de santé réalisant les vaccinations.
+	<div class="text_separator"></div>
+	Sur la base de l’exploitation de ces données, Santé Publique France publie en open data les indicateurs de couverture vaccinale.
+	<div class="text_separator"></div>
+	Les données issues du système d’information Vaccin Covid permettent de dénombrer en temps quasi réel (J-1), le nombre de personnes ayant reçu une injection de vaccin anti-covid en tenant compte du nombre de doses reçues, du vaccin, de l’âge, du sexe ainsi que du niveau géographique (national, régional et départemental). Les données sont disponibles par lieu de vaccination."
+	<div class="text_separator"></div>
+	On relève en section <b>"Description"</b> une note importante, à savoir que <b>"du fait d’actions de suppression de dossiers dans la base Vaccin COVID menées par la Caisse nationale d’assurance maladie, des diminutions des couvertures vaccinales au niveau national, régional et départemental sont observées entre les 10/02/2022 et 11/02/2022, 17/02/2022 et 18/02/2022, 21/02/2022 et le 22/02/2022. Puis de nouveau le 22/03/2022."</b>
+	<div class="text_separator"></div>
+	4 fichiers sont utilisés dans la présente analyse :
+	<ul>
+		<li>vacsi-tot-fra-YYYY-MM-DD-HHmm.csv (échelle nationale) : Fichiers avec le nombre de personnes ayant reçu au moins une dose ou complètement vaccinées, arrêté à la dernière date disponible</li>
+		<li>vacsi-tot-v-fra-YYYY-MM-DD-HHmm.csv (échelle nationale) : Fichiers avec le nombre de personnes ayant reçu au moins une dose, ou deux doses, ou trois doses par vaccin, arrêté à la dernière date disponible</li>
+		<li>vacsi-v-fra-YYYY-MM-DD-HHmm.csv (échelle nationale)     : Fichiers avec le nombre quotidien de personnes ayant reçu au moins une dose, deux doses ou trois doses par vaccin, et par date d’injection</li>
+		<li>vacsi-fra-YYYY-MM-DD-HHmm.csv (échelle nationale)       : Fichiers avec le nombre quotidien de personnes ayant reçu au moins une dose, par date d’injection</li>
+	</ul>
+	<div class="text_separator"></div>
+	% my $totFraStopDay  = $statistics{'vacsi-tot-fra'}->{'day'}        // die;
+	% my $totFraFileDate = $statistics{'vacsi-tot-fra'}->{'updateDate'} // die;
+  <h3>Fichier global des doses injectées (vacsi-tot-fra-<%=$totFraFileDate%>.csv)</h3>
+  Ce fichier permet d'appréhender l'état de la couverture nationale en terme de doses injectées (tous vaccins confondus), arrêtés à la date du <%=$totFraStopDay%>.
+	<div class="text_separator"></div>
+	Aucun dictionnaire des "conventions de nommage" ("bonne pratique" de base, voir <a href="https://fr.wikipedia.org/wiki/Convention_de_nommage" target="_blank">Wikipedia</a>, pour les profanes) n'est disponible. Ce malgré les nombreuses demandes de pallier au problème des utilisateurs, souvent anciennes. Ces utilisateurs, laissés en déshérence dans la section "Discussions", s'échangent heureusement parfois des informations, comme illustré ci-dessous.
+  <div class="text_separator"></div>
+  <div onclick="openPictureInTab('/doc/french_vaccines_watch/data_gouv_comments.png');return;" style="width:350px;display:block;margin:auto;cursor: pointer;"><img src="/doc/french_vaccines_watch/data_gouv_comments.png" style="width:350px;display:block;margin:auto;"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Les valeurs scalaires affichées en en-tête du fichier sont les suivantes (en gras) - pour celles qui nous intéressent (les autres sont des pourcentages calculés), ainsi que la compréhension que nous en avons (malheureusement aucune des interprétations dans les commentaires utilisateurs n'était pleinement satisfaisante) :
+	<ul>
+		<li><b>fra</b> : n'a pas particulièrement d'intérêt dans ce fichier</li>
+		<li><b>jour</b> : jour d'arrêt des statistiques présentées</li>
+		<li><b>n_tot_dose1</b> : total de premières doses administrées</li>
+		<li><b>n_tot_complet</b> : total de secondes doses à l'époque ou l'on communiquait que c'était "complet"</li>
+		<li><b>n_tot_rappel</b> : total de "doses de rappel" ; autrement appelées 3e dose, qui impliquaient ensuite un "schéma vaccinal complet"</li>
+		<li><b>n_tot_2_rappel</b> : total de "second rappels" ; autrement appelés 4e dose, suite à l'injection d'un vaccin mono-dose et 3 doses d'un vaccin multi-dose, ou quatrième dose d'un vaccin multi-doses sur les primos vaccinés</li>
+		<li><b>pop</b> : population totale</li>
+	</ul>
+	On trouve dans le fichier une ligne de données, résumée ci-dessous quant aux informations utiles.
+	% my $totFraTotal1stDoses = $statistics{'vacsi-tot-fra'}->{'total1stDoses'} // die;
+	% my $totFraTotal2ndDoses = $statistics{'vacsi-tot-fra'}->{'total2ndDoses'} // die;
+	% my $totFraTotal3rdDoses = $statistics{'vacsi-tot-fra'}->{'total3rdDoses'} // die;
+	% my $totFraTotal4thDoses = $statistics{'vacsi-tot-fra'}->{'total4thDoses'} // die;
+	% my $totFraPopulation    = $statistics{'vacsi-tot-fra'}->{'population'}    // die;
+	% my $totFraTotalDoses    = $statistics{'vacsi-tot-fra'}->{'totalDoses'}    // die;
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Total Doses
+  				<div class="text_separator"></div>
+  				(1 + 2 + 3 + 4)
+  			</b>
+    	</div>
+    	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Population</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>1ere Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>2eme Dose</b>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>3eme Dose</b>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<b>4eme Dose</b>
+    	</div>
+    </div>
+    <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<b><%=$totFraTotalDoses%></b>
+    	</div>
+    	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totFraPopulation%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totFraTotal1stDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totFraTotal2ndDoses%>
+    	</div>
+    	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+    		<%=$totFraTotal3rdDoses%>
+    	</div>
+    	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+    		<%=$totFraTotal4thDoses%>
+    	</div>
+    </div>
+  </div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  Si l'on compare ces données globales à celles communiquées par l'ANSM :
+  <ul>
+  	<li>Le 23 mai 2022, on avait, ainsi que relevé plus haut, <b>143 869 100</b> de doses injectées <b>selon l'ANSM</b></li>
+  	<li>Le 15 juin 2022, à date d'arrêt des chiffres d'après Santé Publique France, sur <b>Data.gouv.fr</b>, nous avons ici 150 463 883 doses injectées</li>
+  </ul>
+  Il y'aurait donc eu, sans campagne de vaccination ni nouvelle contrainte récente particulière, <b>6 594 783</b> doses injectées entre le 23 mai (dernier rapport ANSM) et le 15 juin (<b>soit une période de 23 jours ; soit 286 729 doses par jour</b>).
+	<div class="text_separator"></div>
+	Admettons, et passons au fichier suivant.
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% my $totFraVaxStopDay  = $statistics{'vacsi-tot-v-fra'}->{'day'}        // die;
+	% my $totFraVaxFileDate = $statistics{'vacsi-tot-v-fra'}->{'updateDate'} // die;
+  <h3>Fichier global des doses injectées par vaccins (vacsi-tot-v-fra-<%=$totFraFileDate%>.csv)</h3>
+  Ce fichier permet d'appréhender l'état de la couverture nationale en terme de doses injectées, détaillés par vaccins, arrêtés à la date du <%=$totFraVaxStopDay%>.
+	<div class="text_separator"></div>
+	Les références sont les suivantes, comme précisé en section "Description" du fichier. 
+  <ul>
+  	<li>0 : Tous Vaccins</li>
+  	<li>1 : Pfizer (Comirnaty) - Adulte</li>
+  	<li>2 : Moderna</li>
+  	<li>3 : AstraZeneka</li>
+  	<li>4 : Janssen</li>
+  	<li>5 : COMIRNATRY-10-enfant (Pfizer/BioNTech)</li>
+  	<li>6 : NUVAXOVID (Novavax)</li>
+  </ul>
+  Les valeurs scalaires affichées en en-tête du fichier ne correspondent pas au premier fichier, et sont les suivantes :
+  <ul>
+		<li><b>fra</b> : n'a pas particulièrement d'intérêt dans ce fichier</li>
+		<li><b>vaccin</b> : vaccin correspondant (ou synthèse du total)</li>
+		<li><b>jour</b> : jour d'arrêt des statistiques présentées</li>
+		<li><b>n_tot_dose1</b> : total de premières doses administrées</li>
+		<li><b>n_tot_dose2</b> : total de secondes doses administrées</li>
+		<li><b>n_tot_dose3</b> : total de troisièmes doses administrées</li>
+		<li><b>n_tot_dose4</b> : total de troisièmes doses administrées suite à l'injection d'un vaccin mono-dose, ou quatrième dose d'un vaccin multi-doses</li>
+		<li><b>n_tot_rappel</b> : population totale</li>
+  </ul>
+	On trouve dans le fichier une ligne de données, résumée ci-dessous quant aux informations utiles.
+	<div class="text_separator"></div>
+  Les résultats pour chaque vaccins sont représentés ci-dessous :
+	% my $totFraVaxPfizerAdultTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Adulte'}->{'total1stDoses'} // die;
+	% my $totFraVaxPfizerAdultTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Adulte'}->{'total2ndDoses'} // die;
+	% my $totFraVaxPfizerAdultTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Adulte'}->{'total3rdDoses'} // die;
+	% my $totFraVaxPfizerAdultTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Adulte'}->{'total4thDoses'} // die;
+	% my $totFraVaxPfizerAdultTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Adulte'}->{'totalDoses'}    // die;
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+  <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+  <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);color:white;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+  		<b>Vaccin</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+    		<b>Total Doses
+  				<div class="text_separator"></div>
+  				(1 + 2 + 3 + 4)
+  			</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+  		<b>1ere Dose</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+  		<b>2eme Dose</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+  		<b>3eme Dose</b>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<b>4eme Dose</b>
+  	</div>
+  </div>
+  <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Pfizer (Comirnaty) - Adulte</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxPfizerAdultTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerAdultTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerAdultTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerAdultTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxPfizerAdultTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxModernaTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Moderna (Spikevax)'}->{'total1stDoses'} // die;
+	% my $totFraVaxModernaTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Moderna (Spikevax)'}->{'total2ndDoses'} // die;
+	% my $totFraVaxModernaTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Moderna (Spikevax)'}->{'total3rdDoses'} // die;
+	% my $totFraVaxModernaTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Moderna (Spikevax)'}->{'total4thDoses'} // die;
+	% my $totFraVaxModernaTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Moderna (Spikevax)'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Moderna (Spikevax)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxModernaTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxModernaTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxModernaTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxModernaTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxModernaTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxAstrazenecaTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Astrazeneca (Vaxzevria)'}->{'total1stDoses'} // die;
+	% my $totFraVaxAstrazenecaTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Astrazeneca (Vaxzevria)'}->{'total2ndDoses'} // die;
+	% my $totFraVaxAstrazenecaTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Astrazeneca (Vaxzevria)'}->{'total3rdDoses'} // die;
+	% my $totFraVaxAstrazenecaTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Astrazeneca (Vaxzevria)'}->{'total4thDoses'} // die;
+	% my $totFraVaxAstrazenecaTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Astrazeneca (Vaxzevria)'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Astrazeneca (Vaxzevria)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxAstrazenecaTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAstrazenecaTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAstrazenecaTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAstrazenecaTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxAstrazenecaTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxJanssenTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Janssen (Jcovden)'}->{'total1stDoses'} // die;
+	% my $totFraVaxJanssenTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Janssen (Jcovden)'}->{'total2ndDoses'} // die;
+	% my $totFraVaxJanssenTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Janssen (Jcovden)'}->{'total3rdDoses'} // die;
+	% my $totFraVaxJanssenTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Janssen (Jcovden)'}->{'total4thDoses'} // die;
+	% my $totFraVaxJanssenTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Janssen (Jcovden)'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Janssen (Jcovden)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxJanssenTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxJanssenTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxJanssenTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxJanssenTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxJanssenTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxNovavaxTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Nuvaxovid (Novavax)'}->{'total1stDoses'} // die;
+	% my $totFraVaxNovavaxTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Nuvaxovid (Novavax)'}->{'total2ndDoses'} // die;
+	% my $totFraVaxNovavaxTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Nuvaxovid (Novavax)'}->{'total3rdDoses'} // die;
+	% my $totFraVaxNovavaxTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Nuvaxovid (Novavax)'}->{'total4thDoses'} // die;
+	% my $totFraVaxNovavaxTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Nuvaxovid (Novavax)'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Nuvaxovid (Novavax)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxNovavaxTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxNovavaxTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxNovavaxTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxNovavaxTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxNovavaxTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxPfizerChildTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Enfant'}->{'total1stDoses'} // die;
+	% my $totFraVaxPfizerChildTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Enfant'}->{'total2ndDoses'} // die;
+	% my $totFraVaxPfizerChildTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Enfant'}->{'total3rdDoses'} // die;
+	% my $totFraVaxPfizerChildTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Enfant'}->{'total4thDoses'} // die;
+	% my $totFraVaxPfizerChildTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Pfizer (Comirnaty) - Enfant'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Pfizer (Comirnaty) - Enfant</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxPfizerChildTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerChildTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerChildTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxPfizerChildTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxPfizerChildTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxAllTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins'}->{'total1stDoses'} // die;
+	% my $totFraVaxAllTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins'}->{'total2ndDoses'} // die;
+	% my $totFraVaxAllTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins'}->{'total3rdDoses'} // die;
+	% my $totFraVaxAllTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins'}->{'total4thDoses'} // die;
+	% my $totFraVaxAllTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 960px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Tous vaccins (Fichier)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxAllTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxAllTotal4thDoses%>
+  	</div>
+  </div>
+	% my $totFraVaxAllVerifTotal1stDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins verified'}->{'total1stDoses'} // die;
+	% my $totFraVaxAllVerifTotal2ndDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins verified'}->{'total2ndDoses'} // die;
+	% my $totFraVaxAllVerifTotal3rdDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins verified'}->{'total3rdDoses'} // die;
+	% my $totFraVaxAllVerifTotal4thDoses = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins verified'}->{'total4thDoses'} // die;
+	% my $totFraVaxAllVerifTotalDoses    = $statistics{'vacsi-tot-v-fra'}->{'Tous vaccins verified'}->{'totalDoses'}    // die;
+  <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;">
+  	<div style="width:calc(25% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b>Tous vaccins (Vérifié)</b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<b><%=$totFraVaxAllVerifTotalDoses%></b>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllVerifTotal1stDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllVerifTotal2ndDoses%>
+  	</div>
+  	<div style="width:calc(15% - 2px);min-width: 112px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+  		<%=$totFraVaxAllVerifTotal3rdDoses%>
+  	</div>
+  	<div style="width:15%;min-width: 112px;padding-top: 5px;padding-bottom: 5px;">
+  		<%=$totFraVaxAllVerifTotal4thDoses%>
+  	</div>
+  </div>
+  <div class="text_separator"></div>
+  <div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% }
+
+
+<script type="text/javascript">
+
+	function openPictureInTab(picture) {
+
+	}
+</script>

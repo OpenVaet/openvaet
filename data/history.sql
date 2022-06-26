@@ -932,4 +932,30 @@ ADD CONSTRAINT `vaers_fertility_report_to_cdc_state`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
+######################### V 3 - 2021-06-20 11:50:00
+# Added detailsTimestamp & immProjectNumber to cdc_report.
+ALTER TABLE `openvaet`.`cdc_report` 
+ADD COLUMN `detailsTimestamp` INT NULL AFTER `parsingTimestamp`;
+ALTER TABLE `openvaet`.`cdc_report` 
+ADD COLUMN `immProjectNumber` VARCHAR(10) NULL AFTER `internalId`;
+ALTER TABLE `openvaet`.`cdc_report` 
+CHANGE COLUMN `immProjectNumber` `immProjectNumber` VARCHAR(50) NULL DEFAULT NULL ;
 
+# Added internal id to cdc_manufacturer.
+ALTER TABLE `openvaet`.`cdc_manufacturer` 
+ADD COLUMN `internalId` VARCHAR(45) NOT NULL AFTER `id`;
+
+# Created cdc_dose table.
+CREATE TABLE `openvaet`.`cdc_dose` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `internalId` varchar(45) NOT NULL,
+  `name` varchar(250) NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_cdc_dose_insert` 
+BEFORE INSERT ON `cdc_dose` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();

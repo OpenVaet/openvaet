@@ -10,6 +10,22 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.11</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a tool allowing for quicker conflicts of interest checks in France.</li>
+        <li>Added several studies pre-publish versions.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'un outil de vérification rapide des conflits d'intérêts</li>
+        <li>Ajout de plusieurs études en version pré-publication</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.10</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

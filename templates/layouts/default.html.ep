@@ -399,17 +399,33 @@
                 <div class="menu_item" style="width: 110px;padding-left: 0px;padding-top: 0px;">
                     <label class="dropdown">
 
+                      % if ($currentLanguage eq 'en') {
+
                       <div class="dd-button">
                         More ...
                       </div>
-
                       <input type="checkbox" class="dd-input" id="test">
-
                       <ul class="dd-menu">
                         <li onclick="openLocation('/data');return;">Data</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Studies</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
                       </ul>
+                      % } else {
+
+                      <div class="dd-button">
+                        Plus ...
+                      </div>
+                      <input type="checkbox" class="dd-input" id="test">
+                      <ul class="dd-menu">
+                        <li onclick="openLocation('/data');return;">Data</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/studies');return;">Etudes</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
+                      </ul>
+                      % }
                       
                     </label>
                 </div>
@@ -420,7 +436,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.10&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.11&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

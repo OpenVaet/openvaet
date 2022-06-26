@@ -30,8 +30,8 @@ sub verify_disclaimer {
     my $content = $driver->get_page_source;
     my $tree    = HTML::Tree->new();
     $tree->parse($content);
-    if ($tree->look_down("value" => "I Agree")) {
-        my $acceptDisclaimerButton = $driver->find_element("(//input[\@value='I Agree'])[1]");
+    if ($tree->look_down(name=>"action-I Agree")) {
+        my $acceptDisclaimerButton = $driver->find_element("(//input[\@name='action-I Agree'])[1]");
         $acceptDisclaimerButton->click();
         sleep 2;
     }
