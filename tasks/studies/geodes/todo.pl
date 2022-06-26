@@ -1,0 +1,1 @@
+https://geodes.santepubliquefrance.fr/#c=indicator&f=09&i=covid_hospit_clage10.dc&s=2022-06-17&t=a01&view=map1

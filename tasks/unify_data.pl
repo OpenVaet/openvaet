@@ -763,7 +763,8 @@ sub substance_synthesis {
         $substanceName eq 'CDC - CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (NILGRIP)' ||
         $substanceName eq 'CDC - CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (FOREIGN)' ||
         $substanceName eq 'CDC - SANOFI PASTEUR - FLU4 - INFLUENZA (SEASONAL) (FLUZONE QUADRIVALENT)' ||
-        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLUARIX QUADRIVALENT)';
+        $substanceName eq 'CDC - GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLUARIX QUADRIVALENT)' ||
+        $substanceName eq 'CDC - BAVARIAN NORDIC - SMALLMNK - SMALLPOX + MONKEYPOX (JYNNEOS)';
     my $substanceShortenedName;
     if (
         $substanceName eq 'ECDC - HEPATITIS B VACCINE (RDNA)' ||
