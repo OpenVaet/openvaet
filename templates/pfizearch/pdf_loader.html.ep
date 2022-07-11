@@ -1,0 +1,4 @@
+
+    <div style="width:100%;">
+        <iframe id="pdf-js-viewer" src="/web/viewer.html?file=<%=$pdf%>" title="webviewer" frameborder="0" width="<%=$contentContainerWidth%>" height="<%=$contentContainerHeight%>"></iframe>
+    </div>

@@ -1,0 +1,262 @@
+% layout 'default';
+% title 'OPENVAET - French INSEE Deaths Data';
+
+<style type="text/css">
+    .full-screen-content-container {
+        width: 100%;
+        font-size: 14px;
+        padding: 0px 20px;
+        background: #fff;
+    }
+    h1 {
+        font-size: 20px;
+    }
+    .timeline_container {
+        width: 95%;
+        margin: auto;
+        display: block;
+        border: 1px solid black;
+        border-radius: 15px;
+        height: 400px;
+    }
+    .timeline_filters {
+        text-underline-offset: 2px;
+        padding: 10px 20px;
+        width: calc(100% - 40px);
+        border-bottom: 1px solid black;
+    }
+    .sex_filter {
+        margin-top: 5px;
+        cursor: pointer;
+        width: 205px;
+        border: 1px solid #aecaf5;
+        background: #aecaf5;
+        border-radius: 15px;
+        padding: 5px 15px;
+    }
+    .age_filter {
+        margin-top: 5px;
+        cursor: pointer;
+        width: 180px;
+        border: 1px solid #aecaf5;
+        background: #aecaf5;
+        border-radius: 15px;
+        padding: 5px 15px;
+    }
+    .year_filter {
+        margin-top: 5px;
+        cursor: pointer;
+        width: 90px;
+        border: 1px solid #aecaf5;
+        background: #aecaf5;
+        border-radius: 15px;
+        padding: 5px 15px;
+    }
+
+    /* Dropdown menu (taken from Rane, https://codepen.io/raneio/pen/NbbZEM) */
+    .filter_dropdown a {
+      text-decoration: none;
+      color: #000000;
+    }
+
+    .filter_dropdown a:hover {
+      color: #222222
+    }
+
+    /* Dropdown */
+    .filter_dropdown {
+        display: inline-block;
+        position: relative;
+    }
+
+    .filter_dd_button {
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .filter_dd_button:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        width: 0; 
+        height: 0; 
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid black;
+    }
+
+    .filter_dd_button:hover {
+        background-color: #b5cff7;
+    }
+
+
+    .filter_dd_input {
+        display: none;
+    }
+
+    .filter_dd_menu {
+        position: absolute;
+        top: 100%;
+        z-index: 99;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0;
+        margin: 1px 0 0 0;
+        box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+        background-color: #aecaf5;
+        list-style-type: none;
+    }
+
+    .filter_dd_input + .filter_dd_menu {
+        display: none;
+    } 
+
+    .filter_dd_input:checked + .filter_dd_menu {
+        display: block;
+    } 
+
+    .filter_dd_menu li {
+        padding: 10px 20px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .filter_dd_menu li:hover {
+        background-color: #b5cff7;
+    }
+
+    .filter_dd_menu li a {
+        display: block;
+        margin: -10px 0px;
+        padding: 10px 20px;
+    }
+
+    .filter_dd_menu li.divider{
+        padding: 0;
+        border-bottom: 1px solid #cccccc;
+    }
+</style>
+
+<div class="full-screen-content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to Studies</div>
+    <h1>Introduction</h1>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <h1>Introduction</h1>
+    Les fichiers employés, quant aux décès, sont téléchargés depuis <a href="https://www.insee.fr/fr/information/4190491" target="_blank">la page dédiée de l'INSEE - Fichiers des personnes décédées depuis 1970</a>, pour les données les plus récentes (2020 et suivants).
+    <div class="text_separator"></div>
+    Le fichier décennal 2010 à 2019 est par ailleurs téléchargé <a href="https://www.insee.fr/fr/information/4769950" target="_blank">depuis cette sous-page</a> du fichier ci-dessus.
+    <div class="text_separator"></div>
+    Les fichiers employés quant aux naissances sont téléchargés depuis la page <a href="https://www.insee.fr/fr/statistiques/serie/001641601#Telechargement" target="_blank">INSEE - Démographie - Nombre de naissances vivantes - France (inclus Mayotte à partir de 2014) - Identifiant 001641601</a>, pour les années 2010 au dernier mois courant de 2022.
+    <div class="text_separator"></div>
+    Enfin, les données d'estimation de la population sont récupérées depuis la page <a href="https://www.insee.fr/fr/statistiques/1893198" target="_blank">INSEE - Estimation de la population au 1ᵉʳ janvier 2022, Séries par région, département, sexe et âge de 1975 à 2022</a>, via le fichier "Estimation de population par région, sexe et âge quinquennal - Années 1975 à 2022".
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h1>Evolution de la population de 2010 à 2022</h1>
+    Les statistiques synthétisées quant à l'évolution de la population sont disponibles ci-dessous. Vous pouvez filtrer la courbe restituée, si vous le souhaitez, par sexe et par groupe d'âge.
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="timeline_container">
+        <div class="timeline_filters">
+            <label class="filter_dropdown sex_filter noselect" id="sexFilter">
+              <div class="filter_dd_button">
+                <b><u>Sexe</u></b>&nbsp;&nbsp;&nbsp;Femmes & Hommes
+              </div>
+              <input type="checkbox" class="filter_dd_input" id="test">
+              <ul class="filter_dd_menu">
+                <li onclick="filterBy('sex', 'any');return;">Femmes & Hommes</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('sex', 'female');return;">Femmes</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('sex', 'male');return;">Hommes</li>
+              </ul>
+            </label>
+            <label class="filter_dropdown age_filter noselect" id="ageFilter">
+              <div class="filter_dd_button">
+                <b><u>Groupes d'âges</u></b>&nbsp;&nbsp;&nbsp;Tous
+              </div>
+              <input type="checkbox" class="filter_dd_input" id="test">
+              <ul class="filter_dd_menu">
+                <li onclick="filterBy('age', 'any');return;">Tous</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '0-9');return;">0 à 9 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '10-19');return;">10 à 19 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '20-29');return;">20 à 29 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '30-39');return;">30 à 39 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '40-49');return;">40 à 49 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '50-59');return;">50 à 59 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '60-69');return;">60 à 69 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '70-79');return;">70 à 79 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '80-89');return;">80 à 89 ans</li>
+                <li class="divider"></li>
+                <li onclick="filterBy('age', '90+');return;">90 et plus</li>
+              </ul>
+            </label>
+            <label class="filter_dropdown year_filter noselect" id="fromYearFilter">
+              <div class="filter_dd_button">
+                <b><u>De</u></b>&nbsp;&nbsp;&nbsp;2010
+              </div>
+              <input type="checkbox" class="filter_dd_input" id="test">
+              <ul class="filter_dd_menu">
+                <li onclick="filterBy('fromYear', '2010');return;">2010</li>
+                % for my $y (2011 .. 2022) {
+                <li class="divider"></li>
+                <li onclick="filterBy('fromYear', '<%=$y%>');return;"><%=$y%></li>
+                % }
+              </ul>
+            </label>
+            <label class="filter_dropdown year_filter noselect" id="toYearFilter">
+              <div class="filter_dd_button">
+                <b><u>A</u></b>&nbsp;&nbsp;&nbsp;2022
+              </div>
+              <input type="checkbox" class="filter_dd_input" id="test">
+              <ul class="filter_dd_menu">
+                <li onclick="filterBy('toYear', '2010');return;">2010</li>
+                % for my $y (2011 .. 2022) {
+                <li class="divider"></li>
+                <li onclick="filterBy('toYear', '<%=$y%>');return;"><%=$y%></li>
+                % }
+              </ul>
+            </label>
+        </div>
+        <div class="timeline_content" id="timelineContent">
+        </div>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % } else {
+
+    % }
+</div>
+
+<script type="text/javascript">
+    var inseeSex             = 'any';
+    var inseeAgeGroup0_9     = 'any';
+    var inseeAgeGroup10_19   = 'any';
+    var inseeAgeGroup20_29   = 'any';
+    var inseeAgeGroup30_39   = 'any';
+    var inseeAgeGroup40_49   = 'any';
+    var inseeAgeGroup50_59   = 'any';
+    var inseeAgeGroup60_69   = 'any';
+    var inseeAgeGroup70_79   = 'any';
+    var inseeAgeGroup80_89   = 'any';
+    var inseeAgeGroup90_more = 'any';
+    var fromYear = 'any';
+    var toYear = 'any';
+    function filterBy(filter, criterion) {
+        console.log('Opening filter ' + filter + ', criterion ' + criterion);
+    }
+
+</script>

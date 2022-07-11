@@ -66,6 +66,7 @@ sub search_recipient {
         );
         my $res     = $ua->get($url);
         my $content = $res->decoded_content;
+        # say "content : $content";
         my $json    = decode_json($content);
         my %data = %$json;
         if (exists $data{'records'}) {
@@ -85,7 +86,7 @@ sub search_recipient {
         # say $content;
         # p$json;
     }
-    p%recipients;
+    # p%recipients;
 
     $self->render(
         errorMessage    => $errorMessage,
@@ -105,9 +106,9 @@ sub confirm_recipients {
     my $results = decode_json($resultsJson);
     my @results = @$results;
 
-    say "searchInput : $searchInput";
-    say "resultsJson : $resultsJson";
-    p$results;
+    # say "searchInput : $searchInput";
+    # say "resultsJson : $resultsJson";
+    # p$results;
 
     my $currentDate = time::current_datetime();
     ($currentDate)  = split ' ', $currentDate;
@@ -125,8 +126,8 @@ sub confirm_recipients {
                 die "getstore of <$url> failed with $rc";
             }
         }
-        say "url      : $url";
-        say "filename : $filename";
+        # say "url      : $url";
+        # say "filename : $filename";
 
         # Loading data from file.
         open my $in, '<:utf8', $filename;
@@ -265,7 +266,7 @@ sub confirm_recipients {
     delete $statistics{'byDonator'};
 
     # p%statistics;
-    say "highestAmountRounded : $highestAmountRounded";
+    # say "highestAmountRounded : $highestAmountRounded";
 
     $self->render(
         topDonators          => $topDonators,

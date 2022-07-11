@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.12</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Pre-publish version of a tool simplifying the search in the Pfizer Documents</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Version pré-publication d'un outil simplifiant la recherche dans les documents Pfizer</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.11</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

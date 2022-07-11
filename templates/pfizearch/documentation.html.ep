@@ -1,0 +1,24 @@
+% layout 'default';
+% title 'OPENVAET - Pfizearch - Documentation';
+
+<head>
+    <meta name="description" content="Search the pfizer documents for keywords - Documentation.">
+    <meta name="keywords" content="search engine, pfizer documents">
+    <meta name="author" content="Charles Vidal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/pfizearch.css">
+</head>
+<div class="content-container">
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/pfizearch');return;">&#10229; Return to search</div>
+    <div class="text_separator"></div>
+    This search engine aims at speeding the researches performed on the Pfizer Documents released thanks to the work of the Public Health and Medical Professionals for Transparency association.
+    <div class="text_separator"></div>
+    Most of the credit for this engine are to <a href="https://twitter.com/zebulon75018" target="_blank">@Zebulon75018</a>, who contacted us to publish it, and whom you can find on Github, <a href="https://github.com/zebulon75018/pfizearch" target="_blank">@Zebulon75018</a>.
+    <div class="text_separator"></div>
+    The operations executed on the files are performed by the script <b>tasks/pfizearch/get_documents.pl</b>.
+    <div class="text_separator"></div>
+    As usual, you need to setup your environment as described on the <a href="/data?currentLanguage=<%=$currentLanguage%>">Data section - General Dependencies</a> ; overwise the behavior is described below :
+    <div class="text_separator"></div>
+    We are first fetching all the archives.
+</div>

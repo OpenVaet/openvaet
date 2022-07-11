@@ -1,0 +1,78 @@
+% layout 'default';
+% title 'OPENVAET - Pfizearch Search';
+
+<head>
+    <meta name="description" content="Search the pfizer documents for keywords.">
+    <meta name="keywords" content="search engine, pfizer documents">
+    <meta name="author" content="Charles Vidal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/fancybox/3.3.5/jquery.fancybox.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pfizearch.css">
+    <script src="/js/jquery.js"></script>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<div class="content-container">
+    <div class="wrapper">
+        <div class="headerWrapper">
+            <div class="headerContent">
+
+                <div class="logoContainer">
+                    <a href="/pfizearch?currentLanguage=<%=$currentLanguage%>">
+                        <img src="/images/pfizearch_logo.png">
+                    </a>
+                </div>
+
+                <div class="searchContainer">
+                    <form action="search" method="GET">
+                        <div class="searchBarContainer">
+                            <input class="searchBox" type="text" name="terms" value="<%=$terms%>" autocomplete="off">
+                            <button class="searchButton">
+                                    <img src="/images/search.png">
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+           <div class="tabsContainer">
+                <ul class="tabList">
+                    <li class="active">
+                        <a href='/pfizearch/search?terms=<%=$terms%>&'>
+                            Sites
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mainResultsSection">
+            <p class='resultsCount'><%=$filesFound%> results found</p>
+            <ul>
+                % if ($results) {
+                    % for my $fileObj (@$results) {
+                        % my $totalPages     = %$fileObj{'totalPages'}     // die;
+                        % my $fileShort      = %$fileObj{'fileShort'}      // die;
+                        % my $fileLocal      = %$fileObj{'fileLocal'}      // die;
+                        % my $fileSize       = %$fileObj{'fileSize'}       // die;
+                        % my $wordOccurences = %$fileObj{'wordOccurences'} // die;
+                <li>
+                    <div>
+                        <h4>
+                            <a href="/pfizearch/viewer?pdf=<%=$fileLocal%>" target="_blank"><%=$fileShort%></a>
+                        </h4>
+                        <i><%=$totalPages%> pages (<%=$fileSize%>), occurences : <%=$wordOccurences%> </i>
+                    </div>
+                </li>
+                    % }
+                % }
+            </ul>
+        </div>
+    </div>
+    <script src="/js/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+    <script src="/js/masonry/4.2.2/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="/js/pfizearch.js"></script>
+</div>

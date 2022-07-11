@@ -123,6 +123,12 @@ sub startup {
     $r->get('/conflicts_of_interest')->to('conflicts_of_interest#conflicts_of_interest');
     $r->post('/conflicts_of_interest/search_recipient')->to('conflicts_of_interest#search_recipient');
     $r->post('/conflicts_of_interest/confirm_recipients')->to('conflicts_of_interest#confirm_recipients');
+    $r->get('/studies/french_insee_deathes_data')->to('french_insee_deathes_data#french_insee_deathes_data');
+    $r->get('/pfizearch')->to('pfizearch#index');
+    $r->get('/pfizearch/search')->to('pfizearch#search');
+    $r->get('/pfizearch/documentation')->to('pfizearch#documentation');
+    $r->get('/pfizearch/viewer')->to('pfizearch#viewer');
+    $r->post('/pfizearch/pdf_loader')->to('pfizearch#pdf_loader');
 }
 
 sub connect_dbi
@@ -135,5 +141,3 @@ sub connect_dbi
 }
 
 1;
-
-

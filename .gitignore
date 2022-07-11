@@ -5,4 +5,14 @@ raw_data
 
 unified_data
 
+pdftohtml.exe
+
 chromedriver.exe
+
+public/build
+
+public/web
+
+public/pfizer_documents
+
+tasks/studies/insee/deaths_data

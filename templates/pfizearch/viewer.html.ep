@@ -1,0 +1,47 @@
+% layout 'default';
+% title 'OPENVAET - Pfizearch File Viewer';
+
+<head>
+    <meta name="description" content="PDF Viewer">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="google" content="notranslate">
+</head>
+<div class="content-container" id="contentContainer" style="width:100%;max-width: 100%;">
+</div>
+
+<script type="text/javascript">
+
+    $( document ).ready(function() {
+        loadPdf();
+    });
+    function loadPdf() {
+        let pdf                    = '<%=$pdf%>';
+        let currentLanguage        = '<%=$currentLanguage%>';
+        let contentContainerWidth  = document.getElementById('contentContainer').offsetWidth;
+        let contentContainerHeight = document.getElementById('contentContainer').offsetHeight;
+        console.log('pdf                    : ' + pdf);
+        console.log('currentLanguage        : ' + currentLanguage);
+        console.log('contentContainerWidth  : ' + contentContainerWidth);
+        console.log('contentContainerHeight : ' + contentContainerHeight);
+        let request = $.ajax({
+            url: "/pfizearch/pdf_loader",
+            type: "POST",
+            data: {
+                pdf                    : pdf,
+                currentLanguage        : currentLanguage,
+                contentContainerWidth  : contentContainerWidth,
+                contentContainerHeight : contentContainerHeight
+            }
+        });
+
+        request.done(function(data) {
+            $("#contentContainer").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
