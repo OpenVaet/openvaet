@@ -8,17 +8,257 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/pfizearch.css">
 </head>
-<div class="content-container">
+% my %docData = %$docData;
+<div class="content-container" style="line-height:18px;">
     <div class="text_separator"></div>
-    <div class="url-link noselect" onclick="openLocation('/pfizearch');return;">&#10229; Return to search</div>
+    % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/pfizearch');return;">&#10229; Return to search</div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Introduction</h2>
+        This search engine aims at speeding the researches performed on the Pfizer Documents released to the public domain thanks to the work of the <b>Public Health and Medical Professionals for Transparency Association</b> (PHMPT). These documents, which <b>Pfizer & the FDA had originally colluded to conceal for 75 years</b>, were released after PHMPT obtained in court satisfaction on its Freedom of Information Act request. You can find the decision <a href="https://phmpt.org/court-documents/" target="_blank">on their website</a>.
+        <div class="text_separator"></div>
+        <b>A good part of the credit for this engine goes to <a href="https://twitter.com/zebulon75018" target="_blank">@Zebulon75018</a></b> (Twitter), who contacted us to publish its original version, and <a href="https://github.com/zebulon75018/pfizearch" target="_blank">whom you can find on Github</a>.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Running the project on your computer</h2>
+        As usual, you need to have Perl 5 and the project's dependencies, as described on the <a href="/data?currentLanguage=<%=$currentLanguage%>">Data section - General Dependencies</a>.
+        <div class="text_separator"></div>
+        You'll also need to download the <a href="https://mozilla.github.io/pdf.js/getting_started/#download" target="_blank">Pdj.js library</a>, and to place the unzipped content in the "public" folder located in your project repository.
+        <div class="text_separator"></div>
+        Last but not least, you'll need the <a href="https://www.xpdfreader.com/download.html" target="_blank">XPDF version corresponding to your OS</a>. Place the file (either pdftohtml on Linux or pdftohtml.exe on Windows) in your project repository.
+        <div class="text_separator"></div>
+        The operations executed in order to fetch the files, and to optimize them for the search, are performed by the script <b>tasks/pfizearch/get_documents.pl</b>. These operations are detailed hereafter, if you simply wish to understand how the searches are performed.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Files gathering & optimization</h2>
+        <b>1.</b> The script first fetches all the archives from the <a href="https://phmpt.org/multiple-file-downloads/" target="_blank">dedicated PHMPT's page</a>. It stores them on public/pfizer_documents/zip_files, in order to avoid to re-download them if you perform a simple update.
+        <div class="text_separator"></div>
+        The following archives are currently indexed :
+        <ul>
+            % for my $archiveName (sort keys %{$docData{'archives'}}) {
+                <li><%=$archiveName%></li>
+            % }
+        </ul>
+        <div class="text_separator"></div>
+        <b>2.</b> The script then extracts every archive in the public/pfizer_documents/native_files folder/{archiveName} folder. It results in the following number of files getting extracted, categorized by file types :
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);">
+                <div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <span style="color:white !important;font-weight: bold;">File Type</span>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <span style="color:white !important;font-weight: bold;">Total Files</span>
+                </div>
+            </div>
+        </div>
+        % my $f1 = 0;
+        % for my $fileType (sort keys %{$docData{'extensions'}}) {
+            % my $totalFiles = $docData{'extensions'}->{$fileType}->{'totalFiles'} // die;
+            % $f1++;
+            % if ($f1 == 2) {
+                % $f1 = 0;
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;text-align: center;">
+                <div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+                    <%=$fileType%>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+                    <%=$totalFiles%>
+                </div>
+            </div>
+            % } else {
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;text-align: center;">
+                <div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <%=$fileType%>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+                    <%=$totalFiles%>
+                </div>
+            </div>
+            % }
+        % }
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        % my $totalHtmlFiles = $docData{'extensions'}->{'pdf'}->{'html'}->{'totalFiles'} // die;
+        <b>3.</b> On this first release of the search engine, <b>we are only covering .pdf files</b>. Using pdftohtml, they are extracted page by page, <b>generating <%=$totalHtmlFiles%> extracted pages</b>.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <b>4.</b> The HTML pages are then parsed, and the inner text in each \<div\> element is extracted and categorized, generating the "search optimized" stats/pfizer_json_data.json file</b>. Note that words under 3 characters long are ignored at this stage.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Search Behavior</h2>
+        <div class="text_separator"></div>
+        <h3>Basic Search (single keyword)</h2>
+        To take a first practical example, let's say that you're performing a basic search, including a single keyword, "ACV0PFEINFP6000" (which is a testing site reference).
+        <div class="text_separator"></div>
+        The search will then return every PDF document including your keyword, sorted by decreasing number of occurences, as illustrated on the picture below.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/simple_search.png" onclick="openInNewTab('/doc/pfizearch/simple_search.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        Every PDF file is named according to the .zip file (1) containing the PDF File (2).
+        <h3>Complex Search (multiple keywords)</h2>
+        Now let's add "child" keyword to our query. By default, the search will return the documents containing pages having every keyword will soly be returned by the search.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/complex_search_1.png" onclick="openInNewTab('/doc/pfizearch/complex_search_1.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        You can further refine your search by clicking the top-right option. If selected, the documents including one keyword or the other ; in this case, all the documents which have "child" & "ACV0PFEINFP6000" in their content. In this keyword example, this would enlarge the search scope significantly, from 2 documents to 102 documents.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/complex_search_2.png" onclick="openInNewTab('/doc/pfizearch/complex_search_2.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Page by page preview</h2>
+        Selecting a document allows you to access the "Page by page" view of the document.
+        <div class="text_separator"></div>
+        Every page corresponding to your keywords & refinement parameter is returned by the search when you click on a document from the search, and the keywords are highlighted.  
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/page_by_page.png" onclick="openInNewTab('/doc/pfizearch/page_by_page.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        The original .PDF document can be accessed by clicking on the file name (1), and the pages can be navigated using the left (2) & right arrows (3).
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Original .PDF Viewer</h2>
+        The original .PDF document can be downloaded, by selecting the button circled in red. For more behaviors description, please refer to Mozilla's PDF.js linked above. 
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/pdf_viewer.png" onclick="openInNewTab('/doc/pfizearch/pdf_viewer.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+    % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/pfizearch');return;">&#10229; Retour à la recherche</div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Introduction</h2>
+        Ce moteur de recherche vise à accélérer les recherches effectuées sur les documents Pfizer entrés dans le domaine public grâce au travail de la Public Health and Medical Professionals for Transparency Association ("PHMPT", "Association des professionnels de la santé publique pour la transparence"). Ces documents, que Pfizer & FDA avait originellement prévu de maintenir secrets pour 75 ans, ont été rendus publics après que PHMPT ait obtenu satisfaction à sa requête de Droit d'accès libre à l'information (Freedom of information act). Vous pouvez trouver la décision <a href="https://phmpt.org/court-documents/" target="_blank">sur leur site internet</a>.
+        <div class="text_separator"></div>
+        Ce moteur de recherche doit son existence à <a href="https://twitter.com/zebulon75018" target="_blank">@Zebulon75018</a></b> (Twitter), qui nous a contacté pour publier la version d'origine, et que vous pouvez <a href="https://github.com/zebulon75018/pfizearch" target="_blank">retrouver sur Github</a>.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Exécuter le projet sur votre ordinateur</h2>
+        Comme d'habitude, vous aurez besoin d'avoir Perl 5 et les dépendances du projet, comme décrit dans la <a href="/data?currentLanguage=<%=$currentLanguage%>">Section Data - Dependences générales</a>.
+        <div class="text_separator"></div>
+        Vous aurez aussi besoin de télécharger la <a href="https://mozilla.github.io/pdf.js/getting_started/#download" target="_blank">librairie Pdj.js</a>, et de placer le contenu décompressé dans le dossier "public" de votre répertoire projet.
+        <div class="text_separator"></div>
+        Enfin, vous aurez besoin de <a href="https://www.xpdfreader.com/download.html" target="_blank">la version XPDF correspondante à votre système d'exploitation</a>. Placez le fichier (soit pdftohtml sur Linux ou pdftohtml.exe sur Windows).
+        <div class="text_separator"></div>
+        Les opérations exécutées pour obtenir les fichiers, et pour les optimiser pour la recherche, sont effectuées par le script <b>tasks/pfizearch/get_documents.pl</b>. Ces opérations sont détaillées ci-après, si vous souhaitez simplement comprendre comment les recherches sont exécutées.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Obtention et optimisation des fichiers</h2>
+        <b>1.</b> Le script obtient d'abord tous les archives depuis <a href="https://phmpt.org/multiple-file-downloads/" target="_blank">la page PHMPT dédiée</a>. Les fichiers .zip sont stockés dans le répertoire public/pfizer_documents/zip_files, afin d'éviter de les re-télécharger lorsque vous souhaitez effectuer une mise à jour.
+        <div class="text_separator"></div>
+        Les fichiers suivants sont indexés à l'heure actuelle :
+        <ul>
+            % for my $archiveName (sort keys %{$docData{'archives'}}) {
+                <li><%=$archiveName%></li>
+            % }
+        </ul>
+        <div class="text_separator"></div>
+        <b>2.</b> Le script extrait ensuite chaque archive dans le répertoire public/pfizer_documents/native_files folder/{nomDeLArchive}. L'opération résulte dans le nombre suivant de fichiers extraits, classés par types de fichier :
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: rgb(38, 36, 54);">
+                <div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <span style="color:white !important;font-weight: bold;">Type de fichiers</span>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <span style="color:white !important;font-weight: bold;">Total de fichiers</span>
+                </div>
+            </div>
+        </div>
+        % my $f1 = 0;
+        % for my $fileType (sort keys %{$docData{'extensions'}}) {
+            % my $totalFiles = $docData{'extensions'}->{$fileType}->{'totalFiles'} // die;
+            % $f1++;
+            % if ($f1 == 2) {
+                % $f1 = 0;
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid lightgrey;background: #fff;color:#000;text-align: center;">
+                <div style="width:calc(70% - 2px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid lightgrey;">
+                    <%=$fileType%>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+                    <%=$totalFiles%>
+                </div>
+            </div>
+            % } else {
+            <div style="width: 100%;min-width: 380px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;background: lightgrey;color:#000;text-align: center;">
+                <div style="width:calc(70% - 2px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #fff;">
+                    <%=$fileType%>
+                </div>
+                <div style="width:30%;min-width: 114px;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid #lightgrey;">
+                    <%=$totalFiles%>
+                </div>
+            </div>
+            % }
+        % }
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        % my $totalHtmlFiles = $docData{'extensions'}->{'pdf'}->{'html'}->{'totalFiles'} // die;
+        <b>3.</b> Pour cette version actuelle du moteur de recherches, <b>nous couvrons uniquement les fichiers .pdf</b>. En utilisant pdftohtml, les fichiers .PDF sont extraits page par page, <b>générant <%=$totalHtmlFiles%> pages extraites</b>.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <b>4.</b> Les pages HTML sont ensuite indexées, et le texte contenu à l'intérieur de chaque balise HTML \<div\> est extrait et catégorisé, afin de générer un fichier "optimisé pour la recherche" stats/pfizer_json_data.json</b>. Notez que les mots longs de moins de 3 caractères sont ignorés à cette étape.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Comportement de la recherche</h2>
+        <div class="text_separator"></div>
+        <h3>Recherche de base (mot clé simple)</h2>
+        Pour prendre un premier exemple pratique, disons que vous effectuez une recherche incluant un seul mot clé, "ACV0PFEINFP6000" (qui est une référence de Site de test).
+        <div class="text_separator"></div>
+        La recherche retournera chaque document PDF incluant votre mot clé, triés par nombre décroissant d'occurences, comme illustrés sur l'image ci-dessous.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/simple_search.png" onclick="openInNewTab('/doc/pfizearch/simple_search.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        Chaque fichier PDF est nommé, par convention, avec la concaténation du nom de l'archive d'origine (1) et du fichier PDF (2).
+        <h3>Recherche complexe (mots clés multiples)</h2>
+        Maintenant ajoutons un mot clé "Child" à votre requête (même si vous êtes français, vous devez rechercher les mots clés dans la langue de rédaction des documents ; en anglais). Par défault, la recherche va renvoyer les documents contenant des pages qui ont tous les mots clés.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/complex_search_1.png" onclick="openInNewTab('/doc/pfizearch/complex_search_1.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        Vous pouvez affiner davantage votre recherche en cliquant sur l'option en haut à droite. Si elle est sélectionnée, les documents qui contiennent au moins l'un des mots clés ; dans le cas suivant, tous les documents qui contiennent "child" ou "ACV0PFEINFP6000". Dans l'exemple actuel, cela élargirait le champ de la recherche de 2 documents à 102 documents.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/complex_search_2.png" onclick="openInNewTab('/doc/pfizearch/complex_search_2.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Revue page par page</h2>
+        Sélectionner un document vous autorise à accéder à la revue "Page par page" du document.
+        <div class="text_separator"></div>
+        Chaque page correspondant à vos mots clés et affinages de paramètres est retournée par la recherche quand vous sélectionnez un document depuis la recherhce, et les mots clés sont surlignés.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/page_by_page.png" onclick="openInNewTab('/doc/pfizearch/page_by_page.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        Le .PDF d'origine peut être atteint en cliquant sur le nom du fichier (1), et les pages peuvent être naviguées en utilisant les flêches de gauche (2) et droites (3).
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Visualiser le PDF d'origine</h2>
+        Le document .PDF d'origine peut être téléchargé, en sélectionnant le bouton entourré en rouge. Pour davantage de documentation quant au lecteur PDF, veuillez vous référer à la documentation de PDF.js sur le site Mozilla, dont vous avez le lien plus haut.
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:70%;display:block;margin:auto;cursor: pointer;"><img src="/doc/pfizearch/pdf_viewer.png" onclick="openInNewTab('/doc/pfizearch/pdf_viewer.png');return;" style="width:70%;display:block;margin:auto;"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+    % } else {
+
+    % }
     <div class="text_separator"></div>
-    This search engine aims at speeding the researches performed on the Pfizer Documents released thanks to the work of the Public Health and Medical Professionals for Transparency association.
     <div class="text_separator"></div>
-    Most of the credit for this engine are to <a href="https://twitter.com/zebulon75018" target="_blank">@Zebulon75018</a>, who contacted us to publish it, and whom you can find on Github, <a href="https://github.com/zebulon75018/pfizearch" target="_blank">@Zebulon75018</a>.
     <div class="text_separator"></div>
-    The operations executed on the files are performed by the script <b>tasks/pfizearch/get_documents.pl</b>.
     <div class="text_separator"></div>
-    As usual, you need to setup your environment as described on the <a href="/data?currentLanguage=<%=$currentLanguage%>">Data section - General Dependencies</a> ; overwise the behavior is described below :
     <div class="text_separator"></div>
-    We are first fetching all the archives.
 </div>

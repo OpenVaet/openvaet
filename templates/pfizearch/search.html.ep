@@ -16,6 +16,16 @@
     </style>
 </head>
 <div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div style="text-align:right;width: 95%;" class="url-link" onclick="openLocation('/pfizearch/documentation');return;">Search's Documentation</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div style="text-align:right;width: 95%;" class="url-link" onclick="openLocation('/pfizearch/documentation');return;">Documentation de la recherche</div>
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <div class="wrapper">
         <div class="headerWrapper">
             <div class="headerContent">
@@ -29,6 +39,8 @@
                 <div class="searchContainer">
                     <form action="search" method="GET">
                         <div class="searchBarContainer">
+                            <input type="hidden" name="currentLanguage" autocomplete="off" value="<%=$currentLanguage%>">
+                            <input type="hidden" name="allTermsOnly" autocomplete="off" value="<%=$allTermsOnly%>">
                             <input class="searchBox" type="text" name="terms" value="<%=$terms%>" autocomplete="off">
                             <button class="searchButton">
                                     <img src="/images/search.png">
@@ -37,24 +49,58 @@
                     </form>
                 </div>
             </div>
+            <div  style="text-align:right;width: 95%;padding-bottom: 15px;" class="noselect">
+                % if ($totalTerms > 1) {
+                    % if ($allTermsOnly eq 'true') {
+                        % if ($currentLanguage eq 'en') {
+                        <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearch('false');return;">Display the documents which have pages including at least one of the keywords.</span>
+                        % } elsif ($currentLanguage eq 'fr') {
+                        <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearch('false');return;">Afficher les documents dont des pages comportent au moins l'un des mots clés.</span>
+                        % } else {
 
+                        % }
+                    % } else {
+                        % if ($currentLanguage eq 'en') {
+                        <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearch('true');return;">Display the documents which have pages including every keywords.</span>
+                        % } elsif ($currentLanguage eq 'fr') {
+                        <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearch('true');return;">Afficher les documents dont des pages comportent tous les mots clés.</span>
+                        % } else {
+
+                        % }
+                    % }
+                % }
+            </div>
            <div class="tabsContainer">
                 <ul class="tabList">
                     <li class="active">
                         <a href='/pfizearch/search?terms=<%=$terms%>&'>
-                            Sites
+                            % if ($currentLanguage eq 'en') {
+                            Results
+                            % } elsif ($currentLanguage eq 'fr') {
+                            Résultats
+                            % } else {
+
+                            % }
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
-
+        % # use Data::Printer;
         <div class="mainResultsSection">
+            % if ($currentLanguage eq 'en') {
             <p class='resultsCount'><%=$filesFound%> results found</p>
+            % } elsif ($currentLanguage eq 'fr') {
+            <p class='resultsCount'><%=$filesFound%> resultats trouvés</p>
+            % } else {
+
+            % }
             <ul>
                 % if ($results) {
                     % for my $fileObj (@$results) {
+                        % # p$fileObj;
                         % my $totalPages     = %$fileObj{'totalPages'}     // die;
+                        % my $fileMd5        = %$fileObj{'fileMd5'}        // die;
                         % my $fileShort      = %$fileObj{'fileShort'}      // die;
                         % my $fileLocal      = %$fileObj{'fileLocal'}      // die;
                         % my $fileSize       = %$fileObj{'fileSize'}       // die;
@@ -62,7 +108,7 @@
                 <li>
                     <div>
                         <h4>
-                            <a href="/pfizearch/viewer?pdf=<%=$fileLocal%>" target="_blank"><%=$fileShort%></a>
+                            <a href="/pfizearch/pdf_search_details?fileShort=<%=$fileShort%>&fileMd5=<%=$fileMd5%>&terms=<%=$terms%>&allTermsOnly=<%=$allTermsOnly%>"><%=$fileShort%></a>
                         </h4>
                         <i><%=$totalPages%> pages (<%=$fileSize%>), occurences : <%=$wordOccurences%> </i>
                     </div>
@@ -76,3 +122,9 @@
     <script src="/js/masonry/4.2.2/masonry.pkgd.min.js"></script>
     <script type="text/javascript" src="/js/pfizearch.js"></script>
 </div>
+
+<script type="text/javascript">
+    function reloadSearch(allTermsOnly) {
+        window.location.href = '/pfizearch/search?terms=<%=$terms%>&currentLanguage=<%=$currentLanguage%>&allTermsOnly=' + allTermsOnly;
+    }
+</script>

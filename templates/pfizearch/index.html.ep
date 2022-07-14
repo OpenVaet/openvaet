@@ -10,7 +10,13 @@
 </head>
 <div class="content-container">
     <div class="text_separator"></div>
-    <div style="text-align:right;width: 95%;" class="url-link" onclick="openLocation('/pfizearch/documentation');return;">How it works</div>
+    % if ($currentLanguage eq 'en') {
+    <div style="text-align:right;width: 95%;" class="url-link" onclick="openLocation('/pfizearch/documentation');return;">Search's Documentation</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div style="text-align:right;width: 95%;" class="url-link" onclick="openLocation('/pfizearch/documentation');return;">Documentation de la recherche</div>
+    % } else {
+
+    % }
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="wrapper indexPage">
@@ -23,7 +29,13 @@
                 <form action="pfizearch/search" method="GET">
                     <input class="searchBox" type="text" name="terms" autocomplete="off">
                     <input type="hidden" name="currentLanguage" autocomplete="off" value="<%=$currentLanguage%>">
+                    % if ($currentLanguage eq 'en') {
                     <input class="searchButton" type="submit" value="Search">
+                    % } elsif ($currentLanguage eq 'fr') {
+                    <input class="searchButton" type="submit" value="Rechercher">
+                    % } else {
+
+                    % }
                 </form>
             </div>
         </div>

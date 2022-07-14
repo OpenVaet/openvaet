@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.13</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>First release of the search engine dedicated to the Pfizer Documents, "Pfizearch"</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Première version du moteur de recherche dédié aux documents Pfizer "Pfizearch"</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.12</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

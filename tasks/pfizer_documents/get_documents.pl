@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use v5.30;
+use v5.26;
 use Data::Dumper;
 use Data::Printer;
 binmode STDOUT, ":utf8";
@@ -21,6 +21,7 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 
 # Verifies we have the folder aiming at receiving the files.
 make_path("public/pfizer_documents/zip_files")         unless (-d "public/pfizer_documents/zip_files");
+make_path("public/pfizer_documents/json_words")         unless (-d "public/pfizer_documents/json_words");
 make_path("public/pfizer_documents/pdf_to_html_files") unless (-d "public/pfizer_documents/pdf_to_html_files");
 
 my %data = ();
@@ -43,8 +44,10 @@ my $pdfToHtmlExecutable = 'pdftohtml.exe'; # Either pdftohtml or pdftohtml.exe, 
 convert_pdf_to_html();
 
 # Outputs files preparation synthesis.
+my %dump = %data;
+delete $dump{'archives'}; # Comment this line if you wish a complete file structure dump.
 open my $out, '>:utf8', 'stats/pfizer_documents_stats.json';
-print $out encode_json\%data;
+print $out encode_json\%dump;
 close $out;
 
 # We then index every word in every html file.
@@ -123,7 +126,7 @@ sub extract_pfizer_documents {
 			my $unzipFile = "$unzipFolder/$file";
 			my @elems     = split '\.', $unzipFile;
 			my $fileExt   = $elems[scalar@elems-1];
-			$data{'fileStats'}->{'extensions'}->{$fileExt}->{'totalFiles'}++;
+			$data{'extensions'}->{$fileExt}->{'totalFiles'}++;
 			my $filePath  = "$fileName/$file";
 
 			# We will output the PDF in a folder corresponding to the MD5 of
@@ -242,14 +245,16 @@ sub convert_pdf_to_html {
 							$htmlFile{'fileExt'}   = $fileExt;
 							$htmlFile{'fileSize'}  = nearest(0.1, $fileStats->size / 1000) . ' KB';
 							push @{$file{'files'}}, \%htmlFile;
-							$data{'fileStats'}->{'extensions'}->{'pdf'}->{'html'}->{'totalFiles'}++;
+							$data{'extensions'}->{'pdf'}->{'html'}->{'totalFiles'}++;
 							# say "pdfExtractFile : $pdfExtractFile";
 							$totalPages++;
 						}
 					} else {
 
 						# We erase fonts & png files, which we won't use for indexing purposes.
-						unlink $pdfExtractFile;
+						if ($fileExt ne 'png') {
+							unlink $pdfExtractFile;
+						}
 					}
 				}
 				$file{'totalPages'} = $totalPages;
@@ -294,19 +299,23 @@ sub index_html_content {
 				my $pdfFileLocal = %$pdfFile{'fileLocal'}  // die;
 				$pdfFileLocal    =~ s/public\///;
 				my $fileSize     = %$pdfFile{'fileSize'}   // die;
+				my $fileMd5      = %$pdfFile{'fileMd5'}    // die;
 				my $totalPages   = %$pdfFile{'totalPages'} // die;
 				my $fileShort    = $pdfFileLocal;
                 $fileShort       =~ s/pfizer_documents\/native_files\///;
 				my %pdfObj = ();
+				$pdfObj{'fileMd5'}    = $fileMd5;
 				$pdfObj{'fileSize'}   = $fileSize;
 				$pdfObj{'fileShort'}  = $fileShort;
 				$pdfObj{'fileLocal'}  = $pdfFileLocal;
 				$pdfObj{'totalPages'} = $totalPages;
 				push @{$jsonData{'files'}}, \%pdfObj;
+				my %fileWords    = ();
 				for my $htmlFile (@{%$pdfFile{'files'}}) {
 					$current++;
 					STDOUT->printflush("\rParsing html files [$current / $total]");
 					my $htmlFileLocal = %$htmlFile{'fileLocal'} // die;
+        			my ($pageNum) = $htmlFileLocal =~ /\/page(.*)\.html$/;
 					# say "htmlFileLocal : $htmlFileLocal";
 					open my $in, '<:utf8', $htmlFileLocal;
 					my $content;
@@ -329,14 +338,21 @@ sub index_html_content {
 							# results in the "fast" query attempt.
 							next unless length $word >= 3;
 							next if looks_like_number $word;
-							next if $word =~ /[a-zA-Z0-9]*[0-9]+[a-zA-Z]+/;
-							next if $word =~ /[a-zA-Z0-9]*[0-9]+/;
+							# next if $word =~ /[a-zA-Z0-9]*[0-9]+[a-zA-Z]+/;
+							# next if $word =~ /[a-zA-Z0-9]*[0-9]+/;
 							next if exists $excludedKeywords{$word};
 							$jsonData{'words'}->{$word}->{$fileRef}++;
+							$fileWords{$word}->{$pageNum}++;
 						}
 					}
 				}
 				$fileRef++;
+				my $wordFile = "public/pfizer_documents/json_words/$fileMd5.json";
+				unless (-f $wordFile) {
+					open my $out, '>:utf8', $wordFile;
+					print $out encode_json\%fileWords;
+					close $out;
+				}
 			}
 		}
 	}

@@ -127,6 +127,7 @@ sub startup {
     $r->get('/pfizearch')->to('pfizearch#index');
     $r->get('/pfizearch/search')->to('pfizearch#search');
     $r->get('/pfizearch/documentation')->to('pfizearch#documentation');
+    $r->get('/pfizearch/pdf_search_details')->to('pfizearch#pdf_search_details');
     $r->get('/pfizearch/viewer')->to('pfizearch#viewer');
     $r->post('/pfizearch/pdf_loader')->to('pfizearch#pdf_loader');
 }

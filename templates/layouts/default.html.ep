@@ -411,8 +411,8 @@
                         <li onclick="openLocation('/studies');return;">Studies</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
-                        % # <li class="divider"></li>
-                        % # <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
                       </ul>
                       % } else {
 
@@ -426,8 +426,8 @@
                         <li onclick="openLocation('/studies');return;">Etudes</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
-                        % # <li class="divider"></li>
-                        % # <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
                       </ul>
                       % }
                       
@@ -440,7 +440,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.12&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.13&nbsp;</span>
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

@@ -1,0 +1,117 @@
+% layout 'default';
+% title 'OPENVAET - Pfizearch Search';
+
+<head>
+    <meta name="description" content="Search the pfizer documents for keywords.">
+    <meta name="keywords" content="search engine, pfizer documents">
+    <meta name="author" content="Charles Vidal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/fancybox/3.3.5/jquery.fancybox.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/pfizearch.css">
+    <script src="/js/jquery.js"></script>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+
+<style type="text/css">
+    .fileName {
+        margin-left: 25px;
+    }
+</style>
+
+<div class="content-container" style="width:100%;height: 1000px;">
+    <div class="wrapper">
+        <div class="headerWrapper">
+            <div class="headerContent">
+
+                <div class="logoContainer">
+                    <a href="/pfizearch?currentLanguage=<%=$currentLanguage%>">
+                        <img src="/images/pfizearch_logo.png">
+                    </a>
+                </div>
+
+                <div class="searchContainer">
+                    <form action="search" method="GET">
+                        <div class="searchBarContainer">
+                            <input type="hidden" name="currentLanguage" autocomplete="off" value="<%=$currentLanguage%>">
+                            <input type="hidden" name="allTermsOnly" autocomplete="off" value="<%=$allTermsOnly%>">
+                            <input class="searchBox" type="text" name="terms" value="<%=$terms%>" autocomplete="off">
+                            <button class="searchButton">
+                                    <img src="/images/search.png">
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div  style="text-align:right;width: 95%;padding-bottom: 15px;" class="noselect">
+            % if ($totalTerms > 1) {
+                % if ($allTermsOnly eq 'true') {
+                    % if ($currentLanguage eq 'en') {
+                    <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearchDetails('false');return;">Display the pages including at least one of the keywords.</span>
+                    % } elsif ($currentLanguage eq 'fr') {
+                    <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearchDetails('false');return;">Afficher les pages comportant au moins l'un des mots clés.</span>
+                    % } else {
+
+                    % }
+                % } else {
+                    % if ($currentLanguage eq 'en') {
+                    <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearchDetails('true');return;">Display the pages including every keywords.</span>
+                    % } elsif ($currentLanguage eq 'fr') {
+                    <span style="cursor: pointer;color:#396ebf;font-weight: bold;" onclick="reloadSearchDetails('true');return;">Afficher les pages comportant tous les mots clés.</span>
+                    % } else {
+
+                    % }
+                % }
+            % }
+        </div>
+        <div class="mainResultsSection">
+            <div class="fileName">
+            % if ($currentLanguage eq 'en') {
+                <a href="/pfizearch/viewer?pdf=<%=$fileLocal%>&currentLanguage=<%=$currentLanguage%>" title="To open the complete .pdf, click here" target="_blank"><%=$fileShort%></a>, page <%=$pageNum%>
+            % } elsif ($currentLanguage eq 'fr') {
+                <a href="/pfizearch/viewer?pdf=<%=$fileLocal%>&currentLanguage=<%=$currentLanguage%>" title="Pour ouvrir le fichier .pdf complet, cliquez ici" target="_blank"><%=$fileShort%></a>, page <%=$pageNum%>
+            % } else {
+
+            % }
+            </div>
+            <ul>
+                % # say "content : $content";
+                <li>
+                    <div>
+                        <h4>
+                            % if ($formerPNum && $nextPNum) {
+                            <span style="padding: 3px 6px;border: 1px solid #396ebf;margin-right: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPage(<%=$formerPNum%>);return;">&#10229;</span>Page found <%=$pNum%> / <%==$totalPages%><span style="padding: 3px 6px;border: 1px solid #396ebf;margin-left: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPage(<%=$nextPNum%>);return;">&#10230;</span>
+                            % } elsif ($formerPNum) {
+                            <span style="padding: 3px 6px;border: 1px solid #396ebf;margin-right: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPage(<%=$formerPNum%>);return;">&#10229;</span>Page found <%=$pNum%> / <%==$totalPages%>
+                            % } elsif ($nextPNum) {
+                            <span style="padding: 3px 6px;margin-right: 34px;color: white;"></span>Page found <%=$pNum%> / <%==$totalPages%><span style="padding: 3px 6px;border: 1px solid #396ebf;margin-left: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPage(<%=$nextPNum%>);return;">&#10230;</span>
+                            % } else {
+                            Page found <%=$pNum%> / <%==$totalPages%>
+                            % }
+                        </h4>
+                        <i>Occurences : <%=$wordOccurences%> </i>
+                        <div style="width: 100%;position: relative;">
+                            <%==$content%>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="/js/fancybox/3.3.5/jquery.fancybox.min.js"></script>
+    <script src="/js/masonry/4.2.2/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="/js/pfizearch.js"></script>
+</div>
+
+<script type="text/javascript">
+    function reloadSearchDetails(allTermsOnly) {
+        window.location.href = '/pfizearch/pdf_search_details?fileShort=<%=$fileShort%>&fileMd5=<%=$fileMd5%>&terms=<%=$terms%>&allTermsOnly=' + allTermsOnly;
+    }
+    function loadPage(pNum) {
+        window.location.href = '/pfizearch/pdf_search_details?fileShort=<%=$fileShort%>&fileMd5=<%=$fileMd5%>&terms=<%=$terms%>&allTermsOnly=<%=$allTermsOnly%>&pNum=' + pNum;
+    }
+</script>
