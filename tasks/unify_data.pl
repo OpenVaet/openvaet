@@ -980,7 +980,8 @@ sub substance_synthesis {
         $substanceShortenedName = 'COVID-19 VACCINE UNKNOWN MANUFACTURER';
     } elsif ($substanceName eq 'ECDC - COVID-19 VACCINE ASTRAZENECA (CHADOX1 NCOV-19)') {
         $substanceShortenedName = 'COVID-19 VACCINE ASTRAZENECA';
-    } elsif ($substanceName eq 'ECDC - COVID-19 VACCINE NOVAVAX (NVX-COV2373)') {
+    } elsif ($substanceName eq 'ECDC - COVID-19 VACCINE NOVAVAX (NVX-COV2373)' ||
+    		 $substanceName eq 'CDC - NOVAVAX - COVID19 - COVID19 (COVID19 (NOVAVAX))') {
         $substanceShortenedName = 'COVID-19 VACCINE NOVAVAX';
     } else {
     	$unknownSubstances{$substanceName} = 1;

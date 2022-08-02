@@ -1,0 +1,625 @@
+% layout 'default';
+% title 'OPENVAET - Twitter Thought Police';
+
+<style type="text/css">
+    .ndt_note {
+        display: inline-block;
+        width: calc(100% - 50px);
+        margin: auto;
+        background: #dee0e3;
+        border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+    }
+
+    .tab-button:hover {
+        background: #262436;
+        cursor: pointer;
+    }
+
+    .clickable-user {
+        width: 100%;
+        min-width: 840px;
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #fff;
+        border-top: 1px solid #fff;
+        cursor:pointer;
+    }
+
+    .clickable-user:hover {
+        background: lightblue;
+        cursor: pointer;
+    }
+</style>
+% my $vaersReceptionLastDate = 'Tralala';
+
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour home</div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+            Twitter's Thought Police
+        </div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
+            <div style="width:100%;min-width: 330px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+                <div class="tab-button noselect" style="background: #262436;" id="global-censored-button" onclick="openGlobalTab('global-censored');return;">
+                    Censored
+                </div>
+                % if ($environment eq 'local') {
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-users-button" onclick="openGlobalTab('global-users');return;">
+                    Users
+                </div>
+                % }
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-docu-button" onclick="openGlobalTab('global-docu');return;">
+                    Documentation
+                </div>
+            </div>
+        </div>
+
+        % # <div id="global-censored" style="width:calc(100% - 2px);position: top;display:none;">
+        <div id="global-censored" style="width:calc(100% - 2px);position: top;font-size: 13px;">
+            <div class="text_separator"></div>
+            <h2>Censored Voices</h2>
+            We feature here the confirmed cases of censorship, of qualified scientists or members of the public; whose accounts have been <b>terminated by Twitter on the sole motive that they shared facts, jokes or opinions with the public, which were diverging from the authorised dogma</b>.
+            <div class="text_separator"></div>
+            Such an inventory became necessary following the increase, always more systematic & blind, of the weight of the censorship and of the propaganda on Twitter; a state of affairs which is a direct consequence of the <a href="https://dailycaller.com/2022/07/28/cdc-big-tech-censorship-covid-coronavirus-vaccine/" target="_blank">collusion between the US's "Health" Institutions and the main social networks.</a>
+            <div class="text_separator"></div>
+            We exclusively focused, on this first version, on the inventory of the accounts banned definitely by Twitter. We haven't cared at this stage about the countless accounts whose audience is artificialy limited by various means (false "Adult content" warnings, impossibility to "retweet", false "Misleading" warnings totaly ignorant of the state of the science's knowledge, forced followers removal, etc.).
+            <div class="text_separator"></div>
+            This titanic work will be the one of an archivist or - let's hope - <b>of the legal investigator who will soon audit the actions performed by the director comitee of Twitter - and of their moderators, during this crysis</b>.
+            <div class="text_separator"></div>
+            It will be, on the other hand, of prime interest to also inventory quickly the countless scientists who paid, out of the frame of the social networks, in their professions & in their honor, their commitment against the totalitarian health policy which we suffer. We shall focus a soon to be article on that subject.
+            <div class="text_separator"></div>
+            We have established a preliminary inventory on the basis established by the community on the thread opened on that topic by <a href="https://twitter.com/DrJBhattacharya/status/1548168340459229184" target="_blank">Dr Jay Bhattacharya</a>.
+            <div class="text_separator"></div>
+            We inventoried the profiles available on Internet Wayback Machine when they were available (some profiles have obviously been subject to special "care", and have been deleted even in this database).
+            <div class="text_separator"></div>
+            We also looked for these profiles on the "free" social networks, to allow you to follow back these people.
+            <div class="text_separator"></div>
+            The only exception we made to these "contacts restoration" were the Twitter accounts, when these victims of censorship are returning to the Platform, in order not to ease the work of the book burners.
+            <div class="text_separator"></div>
+            We then have written a script dedicated to save every Twitter relation we had. When a user unfollows us or is unfollowed by us, the script automatically checks if the relation has been removed on purpose, or if he has been banned.
+            <div class="text_separator"></div>
+            The tweets of all of these users are systematically archived when they are accessible through the Twitter API; in order to be able to restore the considerable amount of scientific knowledge which is, at this stage, irremediably lost when such censorship operates. Detailed behavior of the script is available in the "Documentation" tab.
+            <div class="text_separator"></div>
+            This process of systematic reporting of the censorships costed us our own Twitter account, <a href="https://gettr.com/post/p1jxy628201" target="_blank">censored for the stupid motive that we would have performed a "ban evasion"</a>, when we were simply signaling who was banned and when.
+            <div class="text_separator"></div>
+            We shall update this data indicating exact ban motives and the ways to re-establish contact as time goes by and as we collect more data.
+            <div class="text_separator"></div>
+            If you know relays that we wouldn't have inventoried, accounts censored for speaking about Covid which we wouldn't have listed, or if you fear to be banned and wish that we archive your account, <a href="/contact_us" target="_blank">don't hésitate to contact us</a>. <b>Please provide us with the exact Twitter Username of the account you wish us to archive or add to this list.</b>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;font-size: 12px;">
+                <div style="width: 100%;min-width: 846px;display: flex;flex-wrap: wrap;cursor: pointer;">
+                    <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;background: #1c4a6b;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-users');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Twitter User</b></div>
+                            <img id="sort-banned-users" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:14%;min-width: 110px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-date');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Ban Date</b></div>
+                            <img id="sort-banned-date" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-motive');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Exact Motive</b></div>
+                            <img id="sort-banned-motive" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:13%;min-width: 110px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-followers');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Followers</b></div>
+                            <img id="sort-banned-followers" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-indexed-tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Archived</b></div>
+                            <img id="sort-banned-indexed-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-contact-known');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Alt. Contacts</b></div>
+                            <img id="sort-banned-contact-known" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                </div>
+                <div style="width:100%;min-width: 846px;" id="usersBanned">
+
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+        % if ($environment eq 'local') {
+        <div id="global-users" style="width:calc(100% - 2px);border:position: top;display:none;">
+        % # <div id="global-users" style="width:calc(100% - 2px);border:position: top;">
+            <div class="text_separator"></div>
+            <h2>Followed Users</h2>
+            The following users are followed & archived, according to the fact that they have a direct relation with the operating account (followers, or accounts which it follows).
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;font-size: 12px;">
+                <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;cursor: pointer;">
+                    <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 20px;background: #1c4a6b;color:white;border-right: 1px solid #fff;" onclick="sortUsers('users');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Twitter User</b></div>
+                            <img id="sort-users" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortUsers('followers');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Followers</b></div>
+                            <img id="sort-followers" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('following');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Following</b></div>
+                            <img id="sort-following" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('indexed-tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Indexed Tweets</b></div>
+                            <img id="sort-indexed-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Tweets</b></div>
+                            <img id="sort-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                </div>
+                <div style="width:100%;min-width: 840px;" id="usersFollowed">
+
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+        % }
+        <div id="global-docu" style="width:calc(100% - 2px);border:position: top;display:none;">
+            <div class="text_separator"></div>
+            <h2>Indexing & Archiving Relations</h2>
+            The script ensuring the monitoring & archiving of the users in relation with the targeted account is "tasks/twitter/twitter_anticensor.pl".
+            <div class="text_separator"></div>
+            <h2>Executing the script on your computer</h2>
+            As usual, you need to have Perl 5 and the project's dependencies, as described on the <a href="/data?currentLanguage=<%=$currentLanguage%>">Data section - General Dependencies</a>.
+            <div class="text_separator"></div>
+            You'll have to edit the configuration file located in <b>tasks/twitter/api_config.cfg</b>. Place your Twitter API Token here (we will add a detailed guide on "How to obtain it" soon for those who need help), and the Twitter identifier or the account you wish to monitor (it doesn't have to be your account).
+            <div class="text_separator"></div>
+            Then, execute the script with the command <b>"perl tasks/twitter/twitter_anticensor.pl"</b> to initiate the monitoring.
+            <div class="text_separator"></div>
+            The script will create a folder "twitter_data" in your project's root folder, which will contain the following :
+            <ul>
+                <li><b>twitter_user.json</b>, which contains all the Twitter data at indexation time.</li>
+                <li><b>twitter_user_bans.csv</b>, which contains all the related users banned since the monitoring began</li>
+                <li><b>twitter_user_relations.csv</b>, which contains every active or inactive relation between users</li>
+                <li><b>un dossier "tweets"</b>, which contains all the archived tweets (structured by user / message's UNIX timestamp)</li>
+            </ul>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+    % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+            Police de la Pensée sur Twitter
+        </div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
+            <div style="width:100%;min-width: 330px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+                <div class="tab-button noselect" style="background: #262436;" id="global-censored-button" onclick="openGlobalTab('global-censored');return;">
+                    Censurés
+                </div>
+                % if ($environment eq 'local') {
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-users-button" onclick="openGlobalTab('global-users');return;">
+                    Utilisateurs
+                </div>
+                % }
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-docu-button" onclick="openGlobalTab('global-docu');return;">
+                    Documentation
+                </div>
+            </div>
+        </div>
+
+        % # <div id="global-censored" style="width:calc(100% - 2px);position: top;display:none;">
+        <div id="global-censored" style="width:calc(100% - 2px);position: top;font-size: 13px;">
+            <div class="text_separator"></div>
+            <h2>Voix censurées</h2>
+            Nous présentons ici les cas confirmés de censure, de scientifiques qualifiés ou de membres du public ; dont les comptes ont été <b>suspendus par Twitter au seul motif de partager des faits, plaisanteries ou opinions avec le public, qui divergeaient de la doxa autorisée</b>.
+            <div class="text_separator"></div>
+            Un tel inventaire est devenu nécessaire suite à l'accroissement, toujours plus systématique et aveugle, du poid de la censure et de la bienpensance sur Twitter ; un état des lieux qui relève de la <a href="https://dailycaller.com/2022/07/28/cdc-big-tech-censorship-covid-coronavirus-vaccine/" target="_blank">collusion entre les institutions de "santé" américaines et les principaux réseaux sociaux</a>. 
+            <div class="text_separator"></div>
+            Nous nous sommes concentrés uniquement, dans un premier temps, sur l'inventaire des comptes bannis définitivement par Twitter ; et non les comptes dont l'audience est limitée artificiellement par différents moyens (faux warning "Contenus pour adultes", impossibilité de retweet, faux warning "Misleading" en totale ignorance de l'état de la connaissance scientifique, désabonnements forcés de comptes, etc.).
+            <div class="text_separator"></div>
+           Ce travail titanesque sera celui d'un archiviste ou - espérons-le, <b>de l'investigateur légal qui auditera les actions du comité directeur de Twitter et de leur modération des contenus, pendant cette crise</b>.
+            <div class="text_separator"></div>
+            Il sera, en revanche, de prime intérêt d'inventorier aussi rapidement les innombrables scientifiques qui ont payé, hors du cadre des réseaux sociaux, dans leurs professions et leur honneur, leur engagement contre la doctrine politique totalitaire que nous subissons. Nous consacrerons un prochain article à ce sujet.
+            <div class="text_separator"></div>
+            Nous avons établi l'inventaire préliminaire sur la base constituée par la communauté, sur le fil ouvert à ce sujet par le <a href="https://twitter.com/DrJBhattacharya/status/1548168340459229184" target="_blank">Dr Jay Bhattacharya</a>.
+            <div class="text_separator"></div>
+            Nous avons inventorié les profils disponibles sur Internet Wayback Machine lorsqu'ils étaient disponibles (certains profils ont à l'évidence fait l'objet d'une attention particulière et d'un effacement même dans cette base de données).
+            <div class="text_separator"></div>
+            Nous avons aussi cherché ces profils sur les réseaux sociaux "libres", pour vous fournir les moyens de suivre à nouveau ces personnes.
+            <div class="text_separator"></div>
+            La seule exception que nous ferons à ces "restorations de contacts" seront les comptes Twitter lorsque les victimes de censure reviendront sur la plateforme ; pour ne pas faciliter le travail de leurs brûleurs de livres.
+            <div class="text_separator"></div>
+            Nous avons ensuite écrit un programme dédié à l'archivage de toutes nos relations Twitter. Lorsqu'un utilisateur est désinscrit de notre liste d'abonnés ou de la liste de comptes auquels nous sommes abonnés, nous vérifions immédiatemment s'il s'agit d'une désinscription volontaire, ou si l'utilisateur a été banni.
+            <div class="text_separator"></div>
+            Les tweets de tous ces utilisateurs sont archivés systématiquement lorsqu'ils sont accessibles via l'API Twitter ; afin que lorsque l'un d'eux est censuré, nous puissions désormais restaurer la quantité considérable de savoirs scientifiques dont l'accès au public est, actuellement, supprimé à chaque fermeture de compte. Le comportement détaillé du programme est disponible dans la tabulation "Documentation".
+            <div class="text_separator"></div>
+            Cette démarche de dénonciation systématique des censures nous a coûté notre propre compte Twitter, <a href="https://gettr.com/post/p1jxy628201" target="_blank">censuré pour le motif stupide que nous aurions fait du contournement de ban</a>, alors que nous contentions de signaler qui était banni et quand.
+            <div class="text_separator"></div>
+            Nous mettrons à jour les données indiquant les motifs de bannissement et les moyens de rétablir le contact au fur et à mesure que nous les trouvons.
+            <div class="text_separator"></div>
+            Si vous connaissez des relais que nous n'avons pas inventorié, des comptes censurés pour avoir parlé du Covid 19 que nous aurions manqué, ou si vous craignez d'être banni et souhaitez que nous archivions votre compte, <a href="/contact_us" target="_blank">n'hésitez pas à nous contacter</a>. <b>Le cas échéant, veuillez fournir l'identifiant Twitter précis qui est l'objet de votre requête et nous l'addresser en anglais, ou en français.</b>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;font-size: 12px;">
+                <div style="width: 100%;min-width: 846px;display: flex;flex-wrap: wrap;cursor: pointer;">
+                    <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;background: #1c4a6b;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-users');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Utilisateur</b></div>
+                            <img id="sort-banned-users" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:14%;min-width: 110px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-date');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Date Ban</b></div>
+                            <img id="sort-banned-date" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-motive');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Motif Exact</b></div>
+                            <img id="sort-banned-motive" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:13%;min-width: 110px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortBannedUsers('banned-followers');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Abonnés</b></div>
+                            <img id="sort-banned-followers" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-indexed-tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Archivés</b></div>
+                            <img id="sort-banned-indexed-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortBannedUsers('banned-contact-known');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Contacts Alt.</b></div>
+                            <img id="sort-banned-contact-known" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                </div>
+                <div style="width:100%;min-width: 846px;" id="usersBanned">
+
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+        % if ($environment eq 'local') {
+        <div id="global-users" style="width:calc(100% - 2px);border:position: top;display:none;">
+        % # <div id="global-users" style="width:calc(100% - 2px);border:position: top;">
+            <div class="text_separator"></div>
+            <h2>Utilisateurs suivis</h2>
+            Les utilisateurs suivants sont suivis & archivés, dans la mesure où ils sont en relation avec notre compte (abonnés, ou comptes auxquels nous sommes abonnés).
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;font-size: 12px;">
+                <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;cursor: pointer;">
+                    <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 20px;background: #1c4a6b;color:white;border-right: 1px solid #fff;" onclick="sortUsers('users');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Utilisateur</b></div>
+                            <img id="sort-users" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:15%;min-width: 125px;padding-top: 20px;background: #002D63;color:white;border-right: 1px solid #fff;" onclick="sortUsers('followers');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Abonnés</b></div>
+                            <img id="sort-followers" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('following');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Abonnements</b></div>
+                            <img id="sort-following" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('indexed-tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Tweets Indexés</b></div>
+                            <img id="sort-indexed-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                    <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 20px;background: #002D63;border-right: 1px solid #fff;color:white;" onclick="sortUsers('tweets');return;">
+                        <div style="width:100%;height:25px;display: flex;flex-wrap: wrap;">
+                            <div style="margin: auto;"><b>Tweets</b></div>
+                            <img id="sort-tweets" src="/images/up-and-down-arrow.png" style="margin-left: 15px;width: 25px;height: 25px;">
+                        </div>
+                        <div class="text_separator"></div>
+                    </div>
+                </div>
+                <div style="width:100%;min-width: 840px;" id="usersFollowed">
+
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+        % }
+        <div id="global-docu" style="width:calc(100% - 2px);border:position: top;display:none;">
+            <div class="text_separator"></div>
+            <h2>Programme d'indexation & d'archivage des relations</h2>
+            Le programme assurant le monitoring & l'archivage des utilisateurs en relation avec nous est <b>"perl tasks/twitter/twitter_anticensor.pl"</b>.
+            <div class="text_separator"></div>
+            <h2>Exécuter le script sur votre ordinateur</h2>
+            Comme d'habitude, vous aurez besoin d'avoir Perl 5 et les dépendances du projet, comme décrit dans notre Section <a href="/data?currentLanguage=<%=$currentLanguage%>">Données - Dépendances Générales</a>.
+            <div class="text_separator"></div>
+            Vous aurez besoin d'éditer le fichier de configuration situé dans tasks/twitter/api_config.cfg. Placez ici votre token API Twitter (guide détaillé sur "comment l'obtenir" à venir sous peu), et l'identifiant Twitter du compte que vous souhaitez monitorer (pas nécessairement votre compte).
+            <div class="text_separator"></div>
+            Exécutez ensuite le script avec la commande <b>"perl tasks/twitter/twitter_anticensor.pl"</b> pour initier le monitoring.
+            <div class="text_separator"></div>
+            Le script va créer un fichier "twitter_data" dans votre fichier racine du projet, qui contiendra :
+            <ul>
+                <li><b>twitter_user.json</b>, qui contient toutes les données utilisateurs à temps T.</li>
+                <li><b>twitter_user_bans.csv</b>, qui contient tous les utilisateurs bannis depuis le début du monitoring</li>
+                <li><b>twitter_user_relations.csv</b>, qui contient toutes les relations actives et inactives des utilisateurs entre-eux</li>
+                <li><b>un dossier "tweets"</b>, qui contient tous les tweets archivés (structurés par utilisateur / UNIX timestamp du message)</li>
+            </ul>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
+    % } else {
+
+    % }
+</div>
+
+
+<script type="text/javascript">
+    let currentGlobalTab;
+    let currentStateTab;
+    % if ($environment eq 'local') {
+    let globalTabs = ['global-censored', 'global-users', 'global-docu'];
+    % } else {
+    let globalTabs = ['global-censored', 'global-docu'];
+    % }
+    let stateTabs  = ['state-TOTALS', 'state-MODERNA', 'state-PFIZER-BIONTECH', 'state-JANSSEN'];
+
+    $( document ).ready(function() {
+
+        // Loading users banned, sorted, by default, by ban date.
+        loadBannedUsers('banned-date');
+
+        // Loading users data sorted, by default, by followers desc.
+        % if ($environment eq 'local') {
+        loadFollowedUsers('followers');
+        % }
+    });
+
+    function openStateTab(tabLabel) {
+        currentStateTab = tabLabel;
+        stateTabs.forEach(setStateTabButton);
+        let tab = document.getElementById(tabLabel);
+        let tabButton = document.getElementById(tabLabel + '-button');
+        tab.style.display = 'block';
+        tabButton.style.background = '#262436';
+    }
+
+    function setStateTabButton(tabLabel) {
+        if (tabLabel != currentTab) {
+            let tab = document.getElementById(tabLabel);
+            let tabButton = document.getElementById(tabLabel + '-button');
+            tab.style.display = 'none';
+            tabButton.style.background = '#4f4d66';
+        }
+    }
+
+    function setTabButton(tabLabel) {
+        if (tabLabel != currentTab) {
+            let tab = document.getElementById(tabLabel);
+            let tabButton = document.getElementById(tabLabel + '-button');
+            tab.style.display = 'none';
+            tabButton.style.background = '#4f4d66';
+        }
+    }
+
+    function openGlobalTab(tabLabel) {
+        currentGlobalTab = tabLabel;
+        globalTabs.forEach(setGlobalTabButton);
+        let tab = document.getElementById(tabLabel);
+        let tabButton = document.getElementById(tabLabel + '-button');
+        tab.style.display = 'block';
+        tabButton.style.background = '#262436';
+    }
+
+    function setGlobalTabButton(tabLabel) {
+        if (tabLabel != currentGlobalTab) {
+            let tab = document.getElementById(tabLabel);
+            let tabButton = document.getElementById(tabLabel + '-button');
+            tab.style.display = 'none';
+            tabButton.style.background = '#4f4d66';
+        }
+    }
+
+    var lastSortingCriterion;
+    var lastSortingCriterionOrder = 'desc';
+    var lastBanSortingCriterion;
+    var lastBanSortingCriterionOrder = 'desc';
+    let userCriterions = ['users', 'followers', 'following', 'indexed-tweets', 'tweets'];
+    let userBannedCriterions = ['banned-users', 'banned-followers', 'banned-date', 'banned-indexed-tweets', 'banned-motive'];
+    function sortUsers(sortCriterion) {
+        console.log('sortCriterion : ' + sortCriterion);
+
+        // Unselecting all options.
+        userCriterions.forEach(resetUserCriterion);
+
+        loadFollowedUsers(sortCriterion);
+    }
+    function sortBannedUsers(sortCriterion) {
+        console.log('sortCriterion : ' + sortCriterion);
+
+        // Unselecting all options.
+        userBannedCriterions.forEach(resetUserCriterion);
+
+        loadBannedUsers(sortCriterion);
+    }
+
+    function resetUserCriterion(sortCriterion) {
+        document.getElementById("sort-" + sortCriterion).src="/images/up-and-down-arrow.png";
+    }
+
+    function loadFollowedUsers(sortCriterion) {
+        let sortCriterionOrder;
+        if (lastSortingCriterion) {
+            if (lastSortingCriterion == sortCriterion) {
+                if (lastSortingCriterionOrder == 'desc') {
+                    sortCriterionOrder = 'asc';
+                } else {
+                    sortCriterionOrder = 'desc';
+                }
+            } else {
+                if (sortCriterion == 'users') {
+                    sortCriterionOrder = 'asc';
+                } else {
+                    sortCriterionOrder = 'desc';
+                }
+            }
+        } else {
+            if (sortCriterion == 'users') {
+                sortCriterionOrder = 'asc';
+            } else {
+                sortCriterionOrder = 'desc';
+            }
+        }
+        lastSortingCriterion = sortCriterion;
+        lastSortingCriterionOrder = sortCriterionOrder;
+        let currentLanguage = '<%=$currentLanguage%>';
+        let request = $.ajax({
+            url: "/twitter_thought_police/twitter_followed_users",
+            type: "POST",
+            data: {
+                sortCriterion      : sortCriterion,
+                sortCriterionOrder : sortCriterionOrder,
+                currentLanguage    : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            $('#usersFollowed').html(data);
+
+            // Display sorting by criterion.
+            document.getElementById("sort-" + sortCriterion).src="/images/up-and-down-arrow-selected-" + sortCriterionOrder + ".png";
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+    function loadBannedUsers(sortCriterion) {
+        console.log('sortCriterion : ' + sortCriterion);
+        let sortCriterionOrder;
+        if (lastBanSortingCriterion) {
+            if (lastBanSortingCriterion == sortCriterion) {
+                if (lastBanSortingCriterionOrder == 'desc') {
+                    sortCriterionOrder = 'asc';
+                } else {
+                    sortCriterionOrder = 'desc';
+                }
+            } else {
+                if (sortCriterion == 'users') {
+                    sortCriterionOrder = 'asc';
+                } else {
+                    sortCriterionOrder = 'desc';
+                }
+            }
+        } else {
+            if (sortCriterion == 'users') {
+                sortCriterionOrder = 'asc';
+            } else {
+                sortCriterionOrder = 'desc';
+            }
+        }
+        lastBanSortingCriterion = sortCriterion;
+        lastBanSortingCriterionOrder = sortCriterionOrder;
+        let currentLanguage = '<%=$currentLanguage%>';
+        let request = $.ajax({
+            url: "/twitter_thought_police/twitter_banned_users",
+            type: "POST",
+            data: {
+                sortCriterion      : sortCriterion,
+                sortCriterionOrder : sortCriterionOrder,
+                currentLanguage    : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            $('#usersBanned').html(data);
+
+            // Display sorting by criterion.
+            document.getElementById("sort-" + sortCriterion).src="/images/up-and-down-arrow-selected-" + sortCriterionOrder + ".png";
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+    function openUserTweets(twitterUserName, twitterId) {
+        // console.log('twitterId : ' + twitterId);
+        // alert('pause');
+        let currentLanguage = '<%=$currentLanguage%>';
+        window.location.href = "/twitter_thought_police/open_user_tweets?twitterId=" + twitterId + '&twitterUserName=' + twitterUserName + '&currentLanguage=' + currentLanguage;
+    }
+</script>

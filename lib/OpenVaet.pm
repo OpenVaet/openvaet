@@ -130,6 +130,10 @@ sub startup {
     $r->get('/pfizearch/pdf_search_details')->to('pfizearch#pdf_search_details');
     $r->get('/pfizearch/viewer')->to('pfizearch#viewer');
     $r->post('/pfizearch/pdf_loader')->to('pfizearch#pdf_loader');
+    $r->get('/twitter_thought_police')->to('twitter_thought_police#twitter_thought_police');
+    $r->post('/twitter_thought_police/twitter_followed_users')->to('twitter_thought_police#twitter_followed_users');
+    $r->post('/twitter_thought_police/twitter_banned_users')->to('twitter_thought_police#twitter_banned_users');
+    $r->get('/twitter_thought_police/open_user_tweets')->to('twitter_thought_police#open_user_tweets');
 }
 
 sub connect_dbi

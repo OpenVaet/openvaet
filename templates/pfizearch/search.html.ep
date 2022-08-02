@@ -108,7 +108,7 @@
                 <li>
                     <div>
                         <h4>
-                            <a href="/pfizearch/pdf_search_details?fileShort=<%=$fileShort%>&fileMd5=<%=$fileMd5%>&terms=<%=$terms%>&allTermsOnly=<%=$allTermsOnly%>"><%=$fileShort%></a>
+                            <a href="/pfizearch/pdf_search_details?fileShort=<%=$fileShort%>&fileMd5=<%=$fileMd5%>&terms=<%=$terms%>&allTermsOnly=<%=$allTermsOnly%>&currentLanguage=<%=$currentLanguage%>"><%=$fileShort%></a>
                         </h4>
                         <i><%=$totalPages%> pages (<%=$fileSize%>), occurences : <%=$wordOccurences%> </i>
                     </div>

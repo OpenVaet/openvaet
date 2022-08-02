@@ -191,6 +191,8 @@ sub pdf_search_details {
         $totalTerms++;
     }
 
+    p@terms;
+
     my %results        = pages_from_file($fileMd5, $allTermsOnly, $totalTerms, @terms);
     my $totalPages     = keys %results;
     my ($pageNum, $content, $htmlFileLocal, $wordOccurences);
@@ -251,7 +253,7 @@ sub pages_from_file {
     close $in;
     $json = decode_json($json);
     my %fileWorlds = %$json;
-    # p$json;
+    # p%fileWorlds;
     my %pre_pages = ();
     for my $term (@terms) {
         next if length $term < 3;

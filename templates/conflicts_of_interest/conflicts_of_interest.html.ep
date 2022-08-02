@@ -65,9 +65,9 @@
     <div style="width:100%;max-width: 400px;margin: auto;text-align:right;font-size: 10px;">
         Source: <a href="https://transparence.sante.gouv.fr" target="_blank">transparence.sante.gouv.fr</a>
         <div class="text_separator"></div>
-        Si vous souhaitez accéder à d'autres données qu'aux données françaises
+        If you wish to access more than the french data,
         <div class="text_separator" style="height: 5px;"></div>
-        visitez <a href="https://www.eurosfordocs.fr/" target="_blank">https://www.eurosfordocs.fr/</a>
+        visit <a href="https://www.eurosfordocs.fr/" target="_blank">https://www.eurosfordocs.fr/</a>
     </div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>

@@ -10,7 +10,7 @@ USE `openvaet`;
 # the database to a minimal "functional stage".
 ######################### END INIT DB #########################
 
-######################### V 1 - 2021-01-11 12:42:00
+######################### V 1 - 2022-01-11 12:42:00
 # Created table ecdc_drug.
 CREATE TABLE `openvaet`.`ecdc_drug` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -787,7 +787,7 @@ BEFORE INSERT ON `contact`
 FOR EACH ROW  
 SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
 
-######################### V 2 - 2021-05-08 08:30:00
+######################### V 2 - 2022-05-08 08:30:00
 # Initiated a temporary set of tables to work on the fertility study ; prior merging it with the rest of the infrastructure.
 # Created vaers_fertility_symptom table.
 CREATE TABLE `openvaet`.`vaers_fertility_symptom` (
@@ -932,7 +932,7 @@ ADD CONSTRAINT `vaers_fertility_report_to_cdc_state`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-######################### V 3 - 2021-06-20 11:50:00
+######################### V 3 - 2022-06-20 11:50:00
 # Added detailsTimestamp & immProjectNumber to cdc_report.
 ALTER TABLE `openvaet`.`cdc_report` 
 ADD COLUMN `detailsTimestamp` INT NULL AFTER `parsingTimestamp`;
@@ -959,3 +959,75 @@ CREATE TRIGGER `before_cdc_dose_insert`
 BEFORE INSERT ON `cdc_dose` 
 FOR EACH ROW  
 SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+######################### V 4 - 2022-07-17 04:35:00
+# Created twitter_user table.
+CREATE TABLE `openvaet`.`twitter_user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `twitterId` BIGINT NOT NULL,
+  `name` VARCHAR(250) NOT NULL,
+  `profileImageUrl` VARCHAR(500) NOT NULL,
+  `followersCount` INT NOT NULL,
+  `followingCount` INT NOT NULL,
+  `tweetCount` INT NOT NULL,
+  `twitterUserName` VARCHAR(250) NOT NULL,
+  `createdOn` INT NOT NULL,
+  `creationTimestamp` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `twitter_user_unique_id` (`twitterId` ASC) INVISIBLE,
+  UNIQUE INDEX `twitter_user_unique_name` (`name` ASC) VISIBLE);
+ALTER TABLE `openvaet`.`twitter_user` 
+CHANGE COLUMN `tweetCount` `tweetsCount` INT NOT NULL ;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_twitter_user_insert` 
+BEFORE INSERT ON `twitter_user` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`twitter_user` 
+ADD COLUMN `description` LONGTEXT NULL AFTER `creationTimestamp`;
+ALTER TABLE `openvaet`.`twitter_user` 
+ADD COLUMN `websiteUrl` VARCHAR(500) NULL AFTER `description`;
+ALTER TABLE `openvaet`.`twitter_user` 
+DROP COLUMN `description`,
+CHANGE COLUMN `twitterUserName` `twitterUserName` VARCHAR(250) NOT NULL AFTER `md5`,
+CHANGE COLUMN `name` `md5` VARCHAR(250) NOT NULL ;
+ALTER TABLE `openvaet`.`twitter_user` 
+ADD COLUMN `updateTimestamp` INT NULL AFTER `websiteUrl`;
+
+# Created twitter_user_relation table.
+CREATE TABLE `openvaet`.`twitter_user_relation` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `twitterUserRelationType` INT NOT NULL,
+  `twitterUser1Id` INT NOT NULL,
+  `twitterUser2Id` INT NOT NULL,
+  `creationTimestamp` INT NOT NULL,
+  PRIMARY KEY (`id`));
+ALTER TABLE `openvaet`.`twitter_user_relation` 
+CHANGE COLUMN `twitterUserRelationType` `twitterUserRelationType` INT NOT NULL AFTER `twitterUser2Id`;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_twitter_user_relation_insert` 
+BEFORE INSERT ON `twitter_user_relation` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+# Created twitter_user_relation_page table.
+CREATE TABLE `openvaet`.`twitter_user_relation_page` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `twitterUserId` INT NOT NULL,
+  `token` VARCHAR(50) NULL,
+  `creationTimestamp` INT NOT NULL,
+  `updateTimestamp` INT NULL,
+  PRIMARY KEY (`id`));
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_twitter_user_relation_page_insert` 
+BEFORE INSERT ON `twitter_user_relation_page` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`twitter_user_relation_page` 
+CHANGE COLUMN `token` `nextToken` VARCHAR(50) NULL DEFAULT NULL ;
+DROP TABLE `openvaet`.`twitter_user_relation_page`;
+DROP TABLE `openvaet`.`twitter_user_relation`;
+DROP TABLE `openvaet`.`twitter_user`;

@@ -337,7 +337,7 @@ sub index_html_content {
 							# which we will use only if a search fails to find
 							# results in the "fast" query attempt.
 							next unless length $word >= 3;
-							next if looks_like_number $word;
+							# next if looks_like_number $word;
 							# next if $word =~ /[a-zA-Z0-9]*[0-9]+[a-zA-Z]+/;
 							# next if $word =~ /[a-zA-Z0-9]*[0-9]+/;
 							next if exists $excludedKeywords{$word};

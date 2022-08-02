@@ -1,0 +1,181 @@
+
+
+% my %twitterUsers = %$twitterUsers;
+% use Data::Printer;
+% if ($sortCriterionOrder eq 'desc') {
+    % if ($sortCriterion eq 'users') {
+        % for my $criterion (reverse sort keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % # p $obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $followingCount  = $obj{'followingCount'}  // die;
+                % my $totalTweets     = $obj{'indexedTweets'}->{'totalTweets'} // 0;
+                % my $tweetsCount     = $obj{'tweetsCount'}     // die;
+            <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+                <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followingCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$totalTweets%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsCount%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % } else {
+        % for my $criterion (sort{$b <=> $a} keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % # p $obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $followingCount  = $obj{'followingCount'}  // die;
+                % my $totalTweets     = $obj{'indexedTweets'}->{'totalTweets'} // 0;
+                % my $tweetsCount     = $obj{'tweetsCount'}     // die;
+            <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+                <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followingCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$totalTweets%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsCount%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % }
+% } elsif ($sortCriterionOrder eq 'asc') {
+    % if ($sortCriterion eq 'users') {
+        % for my $criterion (sort keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $followingCount  = $obj{'followingCount'}  // die;
+                % my $totalTweets     = $obj{'indexedTweets'}->{'totalTweets'} // 0;
+                % my $tweetsCount     = $obj{'tweetsCount'}     // die;
+            <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+                <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followingCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$totalTweets%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsCount%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % } else {
+        % for my $criterion (sort{$a <=> $b} keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $followingCount  = $obj{'followingCount'}  // die;
+                % my $totalTweets     = $obj{'indexedTweets'}->{'totalTweets'} // 0;
+                % my $tweetsCount     = $obj{'tweetsCount'}     // die;
+            <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
+                <div style="width:calc(40% - 2px);min-width: 325px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followingCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$totalTweets%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsCount%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % }
+% } else {
+
+% }

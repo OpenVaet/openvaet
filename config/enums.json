@@ -85,6 +85,10 @@
         "2" : "Male",
         "3" : "Unknown"
     },
+    "twitterUserRelationType" : {
+        "1" : "Followed",
+        "2" : "Unfollowed"
+    },
     "vaersVaccine" : {
         "1" : "MODERNA",
         "2" : "PFIZER-BIONTECH",

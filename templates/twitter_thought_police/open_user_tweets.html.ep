@@ -1,0 +1,317 @@
+% layout 'default';
+% title 'OPENVAET - Twitter Thought Police';
+
+<style type="text/css">
+    .ndt_note {
+        display: inline-block;
+        width: calc(100% - 50px);
+        margin: auto;
+        background: #dee0e3;
+        border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+    }
+
+    .tab-button:hover {
+        background: #262436;
+        cursor: pointer;
+    }
+
+    .clickable-user {
+        width: 100%;
+        min-width: 840px;
+        display: flex;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #fff;
+        border-top: 1px solid #fff;
+        cursor:pointer;
+    }
+
+    .clickable-user:hover {
+        background: lightblue;
+        cursor: pointer;
+    }
+</style>
+% use Data::Printer;
+% my %twitterUser     = %$twitterUser;
+% # p%twitterUser;
+% my $localUrl        = $twitterUser{'localUrl'}        // '';
+% my $twitterName     = $twitterUser{'twitterName'}     // die;
+% my $hasAltContact   = $twitterUser{'hasAltContact'}   // die;
+% my $banSpecificReasons = $twitterUser{'banSpecificReasons'};
+% my $twitterUserName = $twitterUser{'twitterUserName'} // die;
+% my $description     = $twitterUser{'description'}     // die;
+% my $banDate         = $twitterUser{'banDate'}         // die;
+% ($banDate) = split ' ', $banDate;
+% my %tweets = %$tweets;
+
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/twitter_thought_police');return;">&#10229; Return to censored users</div>
+        <div class="text_separator"></div>
+        <div style="height: 150px;width: 100%;display: flex;flex-wrap: wrap;">
+            <div style="height:100%;width: 150px;">
+                <img src="<%=$localUrl%>" style="width: 150px;height: 150px;">
+            </div>
+            <div style="height:100%;width: calc(100% - 150px);">
+                <div class="text_separator"></div>
+                <div style="margin-left: 15px;font-size: 14px;font-weight: bold;"><%=$twitterName%></div>
+                <div style="margin-left: 15px;font-size: 12px;">(@<%=$twitterUserName%>)</div>
+                <div class="text_separator"></div>
+                <div style="width:100%;font-size: 13px;margin-left: 5px;">
+                    <%==$description%>
+                </div>
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % if ($banSpecificReasons) {
+        <div><b>Ban Date : <%=$banDate%></b>, for the specific "motive" : <%==$banSpecificReasons%></div>
+        % } else {
+        <div><b>Ban Date : <%=$banDate%></b></div>
+        % }
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % if (keys %{$twitterUser{'altContacts'}}) {
+            % if ($hasAltContact) {
+                <h4>Alternative Contacts & Resources</h4>
+            % } else {
+                <h4>Other Resources</h4>
+            % }
+            <ul>
+            % for my $contactProvider (sort keys %{$twitterUser{'altContacts'}}) {
+                % my $url = $twitterUser{'altContacts'}->{$contactProvider} // die;
+                <li><a href="<%=$url%>" target="_blank"><%=$contactProvider%></a></li>
+            % }
+            </ul>
+        % }
+        % if (keys %tweets) {
+            <h4>Archived Messages</h4>
+            % my $c = 0;
+            % my $cT = 0;
+            % my $background1 = "#F5F5F5";
+            % my $background2 = "#F9ECEC";
+            % my $background;
+            % for my $conversationId (sort{$b <=> $a} keys %tweets) {
+                % $cT++;
+                % if ($cT == 2) {
+                    % $cT = 0;
+                    % $background = $background1;
+                % } else {
+                    % $background = $background2;
+                % }
+                % for my $uts (sort{$a <=> $b} keys %{$tweets{$conversationId}}) {
+                    % for my $tweetId (sort{$b <=> $a} keys %{$tweets{$conversationId}->{$uts}}) {
+                        % my $json = $tweets{$conversationId}->{$uts}->{$tweetId}->{'json'};
+                        % my %obj  = %$json;
+                        % my $authorId = $obj{'author_id'} // die;
+                        % my $creationDatetime = $obj{'created_at'} // die;
+                        % my ($creationDate, $creationHour) = split 'T', $creationDatetime;
+                        % ($creationHour) = split '\.', $creationHour;
+                        % my $text = $obj{'text'} // die;
+                        % $text =~ s/\n/ <br>/g;
+                        % my $referenceTweetUrl;
+                        % if (exists $obj{'entities'}->{'urls'}) {
+                            % my $refEntities = \@{$obj{'entities'}->{'urls'}};
+                            % my @refEntities = @$refEntities;
+                            % for my $uO (@refEntities) {
+                                % my $url         = %$uO{'url'}          // die;
+                                % my $displayUrl  = %$uO{'display_url'}  // die;
+                                % my $expandedUrl = %$uO{'expanded_url'} // die;
+                                % $referenceTweetUrl = $expandedUrl;
+                                % $text =~ s/$url/<a href=\"$expandedUrl\" target=\"_blank\">$displayUrl<\/a>/g;
+                            % }
+                        % }
+                        <div style="border:1px solid darkgrey;width: 100%;display: flex;flex-wrap: wrap;background: <%=$background%>;">
+                            <div style="width:100%;padding:5px 10px;font-size: 12px;text-align: right;">
+                                <%=$creationDate%> <%=$creationHour%>
+                            </div>
+                            <div style="width:100%;">
+                            % if ($obj{'referenced_tweets'}) {
+                                % my $refTweet = shift @{$obj{'referenced_tweets'}};
+                                % my %refTweet = %$refTweet;
+                                % my $referencedTweetId = $refTweet{'id'}   // die;
+                                % my $referenceType     = $refTweet{'type'} // die;
+                                % my $referencedAuthor;
+                                % if ($referenceType eq 'retweeted') {
+                                    % die unless $text =~ /^RT @.*:/;
+                                    % my @elems = split ':', $text;
+                                    % my $extract = $elems[0] // die;
+                                    % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
+                                    % # say "referencedAuthor : $referencedAuthor";
+                                    % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
+                                <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> forwarded <a href="<%=$referenceTweetUrl%>" target="_blank">this message</a>...
+                                % } elsif ($referenceType eq 'quoted') {
+                                <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> quoted <a href="<%=$referenceTweetUrl%>" target="_blank">this message</a>...
+                                % } elsif ($referenceType eq 'replied_to') {
+                                    % my @elems = split ' ', $text;
+                                    % # p@elems;
+                                    % my $extract = $elems[0] // die;
+                                    % if ($extract =~ /^\@.*$/) {
+                                        % ($referencedAuthor) = $extract =~ /^\@(.*)/;
+                                    % } else {
+                                        % $referencedAuthor = $twitterUserName;
+                                    % }
+                                    % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
+                                    <%=$twitterName%> replied to <a href="<%=$referenceTweetUrl%>" target="_blank">this message</a> ...
+                                % } else {
+                                    % die "not coded";
+                                % }
+                            % } else {
+                                <%=$twitterName%> published ...
+                            % }
+                            </div>
+                            <div style="width:100%;padding:5px 10px;">
+                                <%==$text%>
+                            </div>
+                        </div>
+                        <div class="text_separator"></div>
+                    % }
+                % }
+                % # $c++;
+                % # last if $c > 3;
+                <div class="text_separator"></div>
+                <div class="text_separator"></div>
+            % }
+        % }
+    % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/twitter_thought_police');return;">&#10229; Retour aux utilisateurs censurés</div>
+        <div class="text_separator"></div>
+        <div style="height: 150px;width: 100%;display: flex;flex-wrap: wrap;">
+            <div style="height:100%;width: 150px;">
+                <img src="<%=$localUrl%>" style="width: 150px;height: 150px;">
+            </div>
+            <div style="height:100%;width: calc(100% - 150px);">
+                <div class="text_separator"></div>
+                <div style="margin-left: 15px;font-size: 14px;font-weight: bold;"><%=$twitterName%></div>
+                <div style="margin-left: 15px;font-size: 12px;">(@<%=$twitterUserName%>)</div>
+                <div class="text_separator"></div>
+                <div style="width:100%;font-size: 13px;margin-left: 5px;">
+                    <%==$description%>
+                </div>
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % if ($banSpecificReasons) {
+        <div><b>Date du Ban : <%=$banDate%></b>, pour le "motif" exact : <%==$banSpecificReasons%></div>
+        % } else {
+        <div><b>Date du Ban : <%=$banDate%></b></div>
+        % }
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % if (keys %{$twitterUser{'altContacts'}}) {
+            % if ($hasAltContact) {
+                <h4>Contacts alternatifs et Ressources</h4>
+            % } else {
+                <h4>Autres Ressources</h4>
+            % }
+            <ul>
+            % for my $contactProvider (sort keys %{$twitterUser{'altContacts'}}) {
+                % my $url = $twitterUser{'altContacts'}->{$contactProvider} // die;
+                <li><a href="<%=$url%>" target="_blank"><%=$contactProvider%></a></li>
+            % }
+            </ul>
+        % }
+        % if (keys %tweets) {
+            <h4>Messages Archivés</h4>
+            % my $c = 0;
+            % my $cT = 0;
+            % my $background1 = "#F5F5F5";
+            % my $background2 = "#F9ECEC";
+            % my $background;
+            % for my $conversationId (sort{$b <=> $a} keys %tweets) {
+                % $cT++;
+                % if ($cT == 2) {
+                    % $cT = 0;
+                    % $background = $background1;
+                % } else {
+                    % $background = $background2;
+                % }
+                % for my $uts (sort{$a <=> $b} keys %{$tweets{$conversationId}}) {
+                    % for my $tweetId (sort{$b <=> $a} keys %{$tweets{$conversationId}->{$uts}}) {
+                        % my $json = $tweets{$conversationId}->{$uts}->{$tweetId}->{'json'};
+                        % my %obj  = %$json;
+                        % my $authorId = $obj{'author_id'} // die;
+                        % my $creationDatetime = $obj{'created_at'} // die;
+                        % my ($creationDate, $creationHour) = split 'T', $creationDatetime;
+                        % ($creationHour) = split '\.', $creationHour;
+                        % my $text = $obj{'text'} // die;
+                        % $text =~ s/\n/ <br>/g;
+                        % my $referenceTweetUrl;
+                        % if (exists $obj{'entities'}->{'urls'}) {
+                            % my $refEntities = \@{$obj{'entities'}->{'urls'}};
+                            % my @refEntities = @$refEntities;
+                            % for my $uO (@refEntities) {
+                                % my $url         = %$uO{'url'}          // die;
+                                % my $displayUrl  = %$uO{'display_url'}  // die;
+                                % my $expandedUrl = %$uO{'expanded_url'} // die;
+                                % $referenceTweetUrl = $expandedUrl;
+                                % $text =~ s/$url/<a href=\"$expandedUrl\" target=\"_blank\">$displayUrl<\/a>/g;
+                            % }
+                        % }
+                        <div style="border:1px solid darkgrey;width: 100%;display: flex;flex-wrap: wrap;background: <%=$background%>;">
+                            <div style="width:100%;padding:5px 10px;font-size: 12px;text-align: right;">
+                                <%=$creationDate%> <%=$creationHour%>
+                            </div>
+                            <div style="width:100%;">
+                            % if ($obj{'referenced_tweets'}) {
+                                % my $refTweet = shift @{$obj{'referenced_tweets'}};
+                                % my %refTweet = %$refTweet;
+                                % my $referencedTweetId = $refTweet{'id'}   // die;
+                                % my $referenceType     = $refTweet{'type'} // die;
+                                % my $referencedAuthor;
+                                % if ($referenceType eq 'retweeted') {
+                                    % die unless $text =~ /^RT @.*:/;
+                                    % my @elems = split ':', $text;
+                                    % my $extract = $elems[0] // die;
+                                    % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
+                                    % # say "referencedAuthor : $referencedAuthor";
+                                    % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
+                                <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> a transféré <a href="<%=$referenceTweetUrl%>" target="_blank">ce message</a>...
+                                % } elsif ($referenceType eq 'quoted') {
+                                <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> a cité <a href="<%=$referenceTweetUrl%>" target="_blank">ce message</a>...
+                                % } elsif ($referenceType eq 'replied_to') {
+                                    % my @elems = split ' ', $text;
+                                    % # p@elems;
+                                    % my $extract = $elems[0] // die;
+                                    % if ($extract =~ /^\@.*$/) {
+                                        % ($referencedAuthor) = $extract =~ /^\@(.*)/;
+                                    % } else {
+                                        % $referencedAuthor = $twitterUserName;
+                                    % }
+                                    % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
+                                    <%=$twitterName%> a répondu à <a href="<%=$referenceTweetUrl%>" target="_blank">ce message</a> ...
+                                % } else {
+                                    % die "not coded";
+                                % }
+                            % } else {
+                                <%=$twitterName%> a publié ...
+                            % }
+                            </div>
+                            <div style="width:100%;padding:5px 10px;">
+                                <%==$text%>
+                            </div>
+                        </div>
+                        <div class="text_separator"></div>
+                    % }
+                % }
+                % # $c++;
+                % # last if $c > 3;
+                <div class="text_separator"></div>
+                <div class="text_separator"></div>
+            % }
+        % }
+    % } else {
+
+    % }
+</div>

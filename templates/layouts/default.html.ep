@@ -341,11 +341,12 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 0;
-            margin: 2px 0 0 0;
+            margin: 0px 0 -10px 0;
             box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
             background-color: #91a7c9;
             font-weight: bold;
             list-style-type: none;
+            font-size: 16px;
         }
 
         .dd-input + .dd-menu {
@@ -413,11 +414,13 @@
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                       </ul>
                       % } else {
 
                       <div class="dd-button">
-                        Plus ...
+                        Plus ...&nbsp;
                       </div>
                       <input type="checkbox" class="dd-input" id="test">
                       <ul class="dd-menu">
@@ -428,6 +431,8 @@
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                        <li class="divider"></li>
+                        <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                       </ul>
                       % }
                       
@@ -440,7 +445,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.13&nbsp;</span>
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.15</span>&nbsp;
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

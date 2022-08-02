@@ -281,7 +281,6 @@ sub parse_non_domestic_data {
 				$lN++;
 			}
 			$expectedValues = keys %symptomsLabels;
-			print $out2 $line;
 		} else {
 
 			# Verifying we have the expected number of values.
@@ -342,7 +341,6 @@ sub parse_non_domestic_data {
 				$lN++;
 			}
 			$expectedValues = keys %vaccinesLabels;
-			print $out3 $line;
 		} else {
 
 
@@ -459,7 +457,7 @@ sub parse_domestic_data {
 	my %statistics = ();
 	open my $out, '>>:utf8', $rawDataOut;
 	open my $out2, '>>:utf8', $rawSymptOut;
-	open my $out3, '>:utf8', $rawVaxOut;
+	open my $out3, '>>:utf8', $rawVaxOut;
 	for my $year (sort{$a <=> $b} keys %years) {
 		next if $year < 2019;
 
