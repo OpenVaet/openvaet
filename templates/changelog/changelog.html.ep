@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.16</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Fixed a bug preventing some "Twitter thought police" profiles to open properly.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Réparation d'un bug qui empêchait l'ouverture correcte de certains profils dans la page "Police de la pensée - Twitter"</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.15</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

@@ -54,7 +54,7 @@
     % if ($currentLanguage eq 'en') {
         <div class="url-link noselect" onclick="openLocation('/twitter_thought_police');return;">&#10229; Return to censored users</div>
         <div class="text_separator"></div>
-        <div style="height: 150px;width: 100%;display: flex;flex-wrap: wrap;">
+        <div style="min-height: 150px;width: 100%;display: flex;flex-wrap: wrap;">
             <div style="height:100%;width: 150px;">
                 <img src="<%=$localUrl%>" style="width: 150px;height: 150px;">
             </div>
