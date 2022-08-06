@@ -26,7 +26,7 @@
                 <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
                     <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
                         <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
-                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterUserName%> (@<%=$twitterName%>)</b></div>
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
                     </div>
                 </div>
                 <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
@@ -84,7 +84,7 @@
                 <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
                     <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
                         <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
-                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterUserName%> (@<%=$twitterName%>)</b></div>
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
                     </div>
                 </div>
                 <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
@@ -151,7 +151,7 @@
                 <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
                     <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
                         <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
-                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterUserName%> (@<%=$twitterName%>)</b></div>
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
                     </div>
                 </div>
                 <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
@@ -208,7 +208,7 @@
                 <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
                     <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
                         <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
-                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterUserName%> (@<%=$twitterName%>)</b></div>
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
                     </div>
                 </div>
                 <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
