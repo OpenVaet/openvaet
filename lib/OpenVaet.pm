@@ -134,6 +134,7 @@ sub startup {
     $r->post('/twitter_thought_police/twitter_followed_users')->to('twitter_thought_police#twitter_followed_users');
     $r->post('/twitter_thought_police/twitter_banned_users')->to('twitter_thought_police#twitter_banned_users');
     $r->get('/twitter_thought_police/open_user_tweets')->to('twitter_thought_police#open_user_tweets');
+    $r->get('/open_medic')->to('open_medic#open_medic');
 }
 
 sub connect_dbi

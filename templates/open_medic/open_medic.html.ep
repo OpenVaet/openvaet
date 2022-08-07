@@ -1,0 +1,243 @@
+% layout 'default';
+% title 'OPENVAET - OpenMedic Children Data';
+% my %openMedicStats = %$openMedicStats;
+% my %medicAmStats   = %$medicAmStats;
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div class="content-container" style="font-size:13px;text-align: justify;text-justify: inter-word;padding-left: 5px;padding-right: 5px;">
+    <h3>Données OpenMedic sources et post-traitements</h3>
+    Le fichier <a href="https://www.data.gouv.fr/fr/datasets/r/1491f4b2-8f92-4e48-8099-948c0491033e">"Open Medic - Descriptif des données"</a> permet d'interprêter les scalaires et énumérations utilisées dans les fichiers.
+    <div class="text_separator"></div>
+    Nous avons téléchargé les 6 fichiers suivants depuis la page dédiée de www.data.gouv.fr, <a href="https://www.data.gouv.fr/en/datasets/open-medic-base-complete-sur-les-depenses-de-medicaments-interregimes/" target="_blank">"Open Medic : base complète sur les dépenses de médicaments interrégimes"</a>.
+    <ul>
+    % for my $sourceFile (sort keys %{$openMedicStats{'openMedic'}->{'byYears'}}) {
+        % my $file = $openMedicStats{'openMedic'}->{'byYears'}->{$sourceFile}->{'file'} // die;
+        % my $fileSize = $openMedicStats{'openMedic'}->{'byYears'}->{$sourceFile}->{'fileSize'} // die;
+        % my $totalLines = $openMedicStats{'openMedic'}->{'byYears'}->{$sourceFile}->{'totalLines'} // die;
+        <li><%=$file%> (<%=$fileSize%> Mb) - <%=$totalLines%> prescriptions</li>
+        <div class="text_separator"></div>
+    % }
+    </ul>
+    <div class="text_separator"></div>
+    Nous avons d'abord effectué quelques post-traitements sur les fichiers ; pour les convertir en encoding UTF-8 et s'assurer de l'unicité de tous les "Groupes principaux anatomiques" (valeurs l_atc1 ; un certain nombre d'entre eux n'ont pas les mêmes noms dans le fichier "2016" et sur les autres années). Un archive contentant les 6 fichiers post-traités peut-être <a href="/doc/openmedic/openmedic_yearly_files_2016_2021.zip">téléchargé ici (136 Mo)</a>.
+    <div class="text_separator"></div>
+    Nous avons filtré les entrées que nous voulions traiter depuis le fichier fourni par Hélène (en conservant uniquement les entrées pertinentes et en le convertissant en .csv).
+    <div class="text_separator"></div>
+    Le fichier actuellement utilisé est <a href="/doc/openmedic/openmedic_selected_chemical_substances.csv">téléchargeable ici</a>.
+    <div class="text_separator"></div>
+    Le fichier contenant toutes les catégories apparaissant dans les fichiers annuels est <a href="/doc/openmedic/openmedic_categories.csv">téléchargeable ici</a> - si l'on veut s'assurer que le filtrage actuel est complet.
+    <div class="text_separator"></div>
+    Comme le souligne Catherine, nous ne disposons pas des dates de prescription, ni de davantage de granularité pour l'âge du patient que 4 groupes (identifiés par un code dans le fichier) :
+    <ul>
+        <li>0 &#10230; 0-19 ANS</li>
+        <li>20 &#10230; 20-59 ANS</li>
+        <li>60 &#10230; 60 ANS ET +</li>
+        <li>99 &#10230; AGE INCONNU</li>
+    </ul>
+    Il est possible que nous puissions obtenir davantage d'informations, en utilisant le Code CIP 13 dans une base de traçabilité <a target="_blank" href="https://basesdedonnees.cipclub.org">type "CIP Club"</a>, mais celle-ci n'est ouverte qu'aux professionnels de la Pharmacie affiliés.
+    <div class="text_separator"></div>
+    En attendant, il semble au moins intéressant d'établir quelques synthèses par années sur le public le plus jeune (0-19 ans). Les graphiques ci-dessous illustrent l'évolution de 2016 à 2021, par groupe principal anatomique et par boites vendues / montants remboursables.
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données OpenMedic annuelles par boites prescrites</h3>
+    <div class="text_separator"></div>
+    % my $lNum = 0;
+    % for my $label (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}}) {
+        % $lNum++;
+        <div id="chart_div_<%=$lNum%>"></div>
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données OpenMedic annuelles par bases de remboursement</h3>
+    <div class="text_separator"></div>
+    % for my $label (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}}) {
+        % $lNum++;
+        <div id="chart_div_<%=$lNum%>"></div>
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données Medic'AM sources et post-traitements</h3>
+    Les fichiers sources 2016 à 2021 ont été recupérés depuis les pages <a href="https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2016" target="_blank">"Médicaments par types de prescripteurs - 2016"</a>. L'accès aux données d'autres années se fait en bas de la page pré-citée, "AUTRES JEUX DE DONNÉES DE LA SÉRIE".
+    <div class="text_separator"></div>
+    On obtient donc 13 fichiers .zip & autant de fichiers .XLS, qui permettent l'accès aux données soit condensées, soit par type d'établissement prescripteur ("médecine de ville" ou "hopital").
+    <div class="text_separator"></div>
+    Après extraction de la tabulation "Tous prescripteurs" au format .csv et conversion en .utf8, on obtient un archive plus exploitable, <a href="/doc/openmedic/medicam_all_providers_csv.zip">qui peut-être téléchargé ici (12.9 Mo)</a>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données Medic'Am mensuelles par boites prescrites</h3>
+    Aucune granularité n'est disponible quant à l'âge des patients, les données Medic'Am sont donc <b>toutes classes d'âges confondues</b>.
+    <div class="text_separator"></div>
+    Les données relatives aux ventes de boites pour les médicaments préalablement identifiés, et aux bases remboursables, sont synthétisées ci-dessous.
+    <div class="text_separator"></div>
+    % for my $label (sort keys %{$medicAmStats{'medicam'}->{'byGroups'}}) {
+        % $lNum++;
+        <div id="chart_div_<%=$lNum%>"></div>
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données Medic'Am mensuelles par bases de remboursement</h3>
+    % for my $label (sort keys %{$medicAmStats{'medicam'}->{'byGroups'}}) {
+        % $lNum++;
+        <div id="chart_div_<%=$lNum%>"></div>
+    % }
+
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+
+</div>
+
+<script type="text/javascript">
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    % $lNum = 0;
+    % for my $label (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}}) {
+        % $lNum++;
+    google.charts.setOnLoadCallback(drawMultSeries<%=$lNum%>);
+
+    function drawMultSeries<%=$lNum%>() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', 'Boites prescrites');
+
+        data.addRows([
+        % for my $year (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}->{$label}}) {
+            % my $totalPacks = $openMedicStats{'openMedic'}->{'byGroups'}->{$label}->{$year}->{'totalPacks'} // die;
+            ['<%=$year%>', <%=$totalPacks%>],
+        % }
+        ]);
+
+        var options = {
+        title: 'Boites prescrites pour [<%=$label%>], de 2016 à 2021',
+        hAxis: {
+          title: 'Année',
+          format: '',
+          viewWindow: {
+            min: [0]
+          }
+        },
+        vAxis: {
+          title: 'Boites prescrites'
+        }
+        };
+
+        var chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div_<%=$lNum%>'));
+
+        chart.draw(data, options);
+    }
+    % }
+    % for my $label (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}}) {
+        % $lNum++;
+    google.charts.setOnLoadCallback(drawMultSeries<%=$lNum%>);
+
+    function drawMultSeries<%=$lNum%>() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', 'Bases de remboursement');
+
+        data.addRows([
+        % for my $year (sort keys %{$openMedicStats{'openMedic'}->{'byGroups'}->{$label}}) {
+            % my $refundBasis = $openMedicStats{'openMedic'}->{'byGroups'}->{$label}->{$year}->{'refundBasis'} // die;
+            ['<%=$year%>', <%=$refundBasis%>],
+        % }
+        ]);
+
+        var options = {
+            title: 'Bases de remboursement pour [<%=$label%>], de 2016 à 2021',
+            hAxis: {
+              title: 'Année',
+              format: '',
+              viewWindow: {
+                min: [0]
+              }
+            },
+            vAxis: {
+              title: 'Bases de remboursement'
+            },
+            colors: ['#cbb69d', '#603913', '#c69c6e']
+        };
+
+        var chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div_<%=$lNum%>'));
+
+        chart.draw(data, options);
+    }
+    % }
+    % for my $label (sort keys %{$medicAmStats{'medicam'}->{'byGroups'}}) {
+        % $lNum++;
+    google.charts.setOnLoadCallback(drawMultSeries<%=$lNum%>);
+
+    function drawMultSeries<%=$lNum%>() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', 'Boites prescrites');
+
+        data.addRows([
+        % for my $year (sort{$a <=> $b} keys %{$medicAmStats{'medicam'}->{'byGroups'}->{$label}}) {
+            % for my $month (sort{$a <=> $b} keys %{$medicAmStats{'medicam'}->{'byGroups'}->{$label}->{$year}}) {
+                % my $totalPacks = $medicAmStats{'medicam'}->{'byGroups'}->{$label}->{$year}->{$month}->{'totalPacks'} // die;
+                ['<%=$year%>-<%=$month%>', <%=$totalPacks%>],
+            % }
+        % }
+        ]);
+
+        var options = {
+            title: 'Boites prescrites pour [<%=$label%>], de 2016 à 2021',
+            hAxis: {
+              title: 'Année',
+              format: '',
+              viewWindow: {
+                min: [0]
+              }
+            },
+            vAxis: {
+              title: 'Boites prescrites'
+            },
+            colors: ['#603913', '#c69c6e']
+        };
+
+        var chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div_<%=$lNum%>'));
+
+        chart.draw(data, options);
+    }
+    % }
+    % for my $label (sort keys %{$medicAmStats{'medicam'}->{'byGroups'}}) {
+        % $lNum++;
+    google.charts.setOnLoadCallback(drawMultSeries<%=$lNum%>);
+
+    function drawMultSeries<%=$lNum%>() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', 'Bases de remboursement');
+
+        data.addRows([
+        % for my $year (sort{$a <=> $b} keys %{$medicAmStats{'medicam'}->{'byGroups'}->{$label}}) {
+            % for my $month (sort{$a <=> $b} keys %{$medicAmStats{'medicam'}->{'byGroups'}->{$label}->{$year}}) {
+                % my $refundBasis = $medicAmStats{'medicam'}->{'byGroups'}->{$label}->{$year}->{$month}->{'refundBasis'} // die;
+                ['<%=$year%>-<%=$month%>', <%=$refundBasis%>],
+            % }
+        % }
+        ]);
+
+        var options = {
+            title: 'Bases de remboursement pour [<%=$label%>], de 2016 à 2021',
+            hAxis: {
+              title: 'Année',
+              format: '',
+              viewWindow: {
+                min: [0]
+              }
+            },
+            vAxis: {
+              title: 'Bases de remboursement'
+            },
+            colors: ['#603913', '#c69c6e']
+        };
+
+        var chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div_<%=$lNum%>'));
+
+        chart.draw(data, options);
+    }
+    % }
+</script>
