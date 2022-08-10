@@ -10,6 +10,48 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.19</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a view "By Social Networks" to the "Twitter Thought Police" page.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'un angle de vue "Par réseau social" sur la page "Police de la Pensée - Twitter"</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.18</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>A few preliminary analytic tools on OpenMedic & MedicAM french drugs consumption databases.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Quelques outils d'analyses préliminaires sur les bases françaises de consommation de médicaments OpenMedic & MedicAM</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 15px;">v 1.17</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Fixed a few typos.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Réparation de quelques typographies</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.16</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

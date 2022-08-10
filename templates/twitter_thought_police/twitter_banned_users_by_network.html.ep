@@ -1,0 +1,29 @@
+
+% my %twitterUsers = %$twitterUsers;
+% for my $twitterUserName (sort keys %twitterUsers) {
+    % my $twitterName = $twitterUsers{$twitterUserName}->{'twitterName'} // die;
+    % my $networkUrl  = $twitterUsers{$twitterUserName}->{'networkUrl'} // die;
+    <div style="width: 100%;display: flex;flex-wrap: wrap;font-weight: bold;">
+        <div style="width:80%;padding-top: 5px;padding-bottom: 5px;">
+            <%=$twitterName%> (@<%=$twitterUserName%>)
+        </div>
+        <div style="width:20%;">
+            <div style="border: 1px solid darkgray;border-radius: 15px;text-align: center;padding-top: 5px;padding-bottom: 5px;cursor: pointer;" id="network_button_<%=$twitterUserName%>" onclick="openInNewTab('<%=$twitterUserName%>', '<%=$networkUrl%>');return;">
+    % if ($currentLanguage eq 'en') {
+                Open
+    % } else {
+                Ouvrir
+    % }
+            </div>
+        </div>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+% }
+
+<script type="text/javascript">
+    function openInNewTab(twitterUserName, networkUrl) {
+        window.open(networkUrl, '_blank').focus();
+        document.getElementById('network_button_' + twitterUserName).style.background = '#bbf2bb';
+    }
+</script>

@@ -22,9 +22,46 @@ sub twitter_thought_police {
     $languages{'fr'} = 'French';
     $languages{'en'} = 'English';
 
+    # Fetching twitter banned users & ordering them by network.
+    my $twitterUsersBansFile = 'twitter_data/twitter_users_bans_finalized.json';
+    my $twitterUsersBansJson = json_from_file($twitterUsersBansFile);
+    # p$twitterUsersBansJson;
+
+    my %altContacts = ();
+    for my $userObj (@$twitterUsersBansJson) {
+        my %obj = %$userObj;
+
+        # Listing users by alternate networks.
+        if (keys %{$obj{'altContacts'}}) {
+            for my $contactName (sort keys %{$obj{'altContacts'}}) {
+                if ($contactName eq 'Gab' || $contactName eq 'Substack' || $contactName eq 'Gettr') {
+                    $altContacts{$contactName}->{'totalContacts'}++;
+                }
+            }
+        }
+    }
+
+    # Listing contacts alt networks & identifying highest one ; calculating percents.
+    my $highestContactNum = 0;
+    for my $networkName (sort keys %altContacts) {
+        my $totalContacts = $altContacts{$networkName}->{'totalContacts'} // die;
+        if ($totalContacts > $highestContactNum) {
+            $highestContactNum = $totalContacts;
+        }
+    }
+    for my $networkName (sort keys %altContacts) {
+        my $totalContacts = $altContacts{$networkName}->{'totalContacts'} // die;
+        my $percentOfTotal = nearest(1, $totalContacts * 100 / $highestContactNum);
+        $altContacts{$networkName}->{'percentOfTotal'} = $percentOfTotal;
+    }
+
+
+    p%altContacts;
+
     $self->render(
         currentLanguage => $currentLanguage,
         environment => $environment,
+        altContacts => \%altContacts,
         languages => \%languages
     );
 }
@@ -71,7 +108,6 @@ sub twitter_followed_users {
             my $twitterUserName = $obj{'twitterUserName'} // die;
             push @{$twitterUsers{$twitterUserName}}, \%obj;
         }
-        # p%obj;
         # last;
     }
 
@@ -134,6 +170,7 @@ sub twitter_banned_users {
         } else {
             die "sortCriterion : $sortCriterion"
         }
+        # p%obj;
         # p%obj;
         # last;
     }
@@ -244,6 +281,55 @@ sub open_user_tweets {
         languages       => \%languages,
         twitterUser     => \%twitterUser,
         tweets          => \%tweets,
+    );
+}
+
+sub twitter_banned_users_by_network {
+    my $self = shift;
+
+    my $currentLanguage = $self->param('currentLanguage') // die;
+    my $networkName     = $self->param('networkName')     // die;
+    say "networkName : $networkName";
+
+    # Loggin session if unknown.
+    session::session_from_self($self);
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+    # Fetching twitter users & metrics.
+    my $twitterUsersBansFile = 'twitter_data/twitter_users_bans_finalized.json';
+    my $twitterUsersBansJson = json_from_file($twitterUsersBansFile);
+    # p$twitterUsersBansJson;
+
+    my %twitterUsers = ();
+    for my $userObj (@$twitterUsersBansJson) {
+        my %obj = %$userObj;
+        next unless keys %{$obj{'altContacts'}};
+        my $hasNetwork = 0;
+        my $networkUrl;
+        for my $nName (sort keys %{$obj{'altContacts'}}) {
+            next unless $nName eq $networkName;
+            $hasNetwork = 1;
+            $networkUrl = $obj{'altContacts'}->{$nName} // die;
+            last;
+        }
+        next unless $hasNetwork == 1;
+        $twitterUsers{$obj{'twitterUserName'}}->{'twitterName'} = $obj{'twitterName'};
+        $twitterUsers{$obj{'twitterUserName'}}->{'networkUrl'}  = $networkUrl;
+        # p%obj;
+        # push @{$twitterUsers{$hasAltContact}}, \%obj;
+    }
+
+    p%twitterUsers;
+    # p$twitterUsersBansJson;
+
+    $self->render(
+        networkName      => $networkName,
+        currentLanguage  => $currentLanguage,
+        languages        => \%languages,
+        twitterUsers     => \%twitterUsers
     );
 }
 

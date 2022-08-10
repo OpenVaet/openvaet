@@ -1,7 +1,8 @@
 % layout 'default';
 % title 'OPENVAET - OpenMedic Children Data';
-% my %openMedicStats = %$openMedicStats;
-% my %medicAmStats   = %$medicAmStats;
+% my %openMedicStats   = %$openMedicStats;
+% my %medicAmStats     = %$medicAmStats;
+% my %inseeDeathsStats = %$inseeDeathsStats;
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <div class="content-container" style="font-size:13px;text-align: justify;text-justify: inter-word;padding-left: 5px;padding-right: 5px;">
     <h3>Données OpenMedic sources et post-traitements</h3>
@@ -79,7 +80,20 @@
         % $lNum++;
         <div id="chart_div_<%=$lNum%>"></div>
     % }
-
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h3>Données INSEE sources et post-traitements</h3>
+    Les données INSEE sont téléchargées <a href="https://www.insee.fr/fr/information/4190491" target="_blank">depuis la page "Fichiers des personnes décédées depuis 1970"</a>.
+    <div class="text_separator"></div>
+    Les fichiers depuis 2010 ont été téléchargés.
+    <div class="text_separator"></div>
+    <h3>Mortalité par groupe d'âge depuis 2010</h3>
+    % my @inseeLabels = ('0 to 5 years Old', '5 to 12 years Old', '12 to 17 years Old');
+    % for my $label (@inseeLabels) {
+        % $lNum++;
+        <div id="chart_div_<%=$lNum%>"></div>
+    % }
+    <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -231,7 +245,7 @@
             vAxis: {
               title: 'Bases de remboursement'
             },
-            colors: ['#603913', '#c69c6e']
+            colors: ['#c69c6e']
         };
 
         var chart = new google.visualization.ColumnChart(
@@ -239,5 +253,42 @@
 
         chart.draw(data, options);
     }
+    % }
+    % for my $label (@inseeLabels) {
+        % $lNum++;
+        google.charts.setOnLoadCallback(drawMultSeries<%=$lNum%>);
+
+        function drawMultSeries<%=$lNum%>() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Year');
+            data.addColumn('number', 'Nombre de morts');
+
+            data.addRows([
+            % for my $year (sort{$a <=> $b} keys %{$inseeDeathsStats{$label}}) {
+                % my $deaths = $inseeDeathsStats{$label}->{$year}->{'anySex'} // die;
+                ['<%=$year%>', <%=$deaths%>],
+            % }
+            ]);
+
+            var options = {
+                title: 'Nombre de morts pour [<%=$label%>], de 2010 à 2022',
+                hAxis: {
+                  title: 'Année',
+                  format: '',
+                  viewWindow: {
+                    min: [0]
+                  }
+                },
+                vAxis: {
+                  title: 'Nombre de morts'
+                },
+                colors: ['#ada193']
+            };
+
+            var chart = new google.visualization.ColumnChart(
+            document.getElementById('chart_div_<%=$lNum%>'));
+
+            chart.draw(data, options);
+        }
     % }
 </script>

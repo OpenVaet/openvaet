@@ -12,6 +12,32 @@
         font-size: 14px;
     }
 
+    .network-selector {
+        width:100%;
+        display: flex;
+        flex-wrap: wrap;
+        background: lightgrey;
+        height: 35px;
+        position: relative;
+        border-radius: 15px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .network-selector:hover {
+        background: #abd9bc;
+    }
+
+    .network-percent {
+        position:absolute;
+        top: 0px;
+        left: 0px;
+        background: #bbf2bb;
+        height: 100%;
+        overflow: visible;
+        border-radius: 15px;
+    }
+
     .tab-button {
         padding: 10px 20px;
     }
@@ -36,7 +62,7 @@
         cursor: pointer;
     }
 </style>
-% my $vaersReceptionLastDate = 'Tralala';
+% my %altContacts = %$altContacts;
 
 <div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);">
     <div class="text_separator"></div>
@@ -51,7 +77,7 @@
         <div class="text_separator"></div>
         <div class="text_separator"></div>
         <div style="width:100%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
-            <div style="width:100%;min-width: 330px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+            <div style="width:100%;min-width: 445px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
                 <div class="tab-button noselect" style="background: #262436;" id="global-censored-button" onclick="openGlobalTab('global-censored');return;">
                     Censored
                 </div>
@@ -60,6 +86,9 @@
                     Users
                 </div>
                 % }
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-where-button" onclick="openGlobalTab('global-where');return;">
+                    Where to find them
+                </div>
                 <div class="tab-button noselect" style="background: #4f4d66;" id="global-docu-button" onclick="openGlobalTab('global-docu');return;">
                     Documentation
                 </div>
@@ -205,6 +234,47 @@
             <div class="text_separator"></div>
         </div>
         % }
+        <div id="global-where" style="width:calc(100% - 2px);border:position: top;display:none;">
+            <div class="text_separator"></div>
+            <h2>Social Networks Oriented Display</h2>
+            This page illustrates where to find back people who were banned and for which fallback contacts were obtained on one of the three networks which don't practice censorship : <a href="https://Gab.com/" target="_blank">Gab.com</a>, <a href="https://gettr.com/" target="_blank">Gettr.com</a> or <a href="https://Substack.com/" target="_blank">Substack.com</a>.
+            <div class="text_separator"></div>
+            Click on a social network to obtain the complete list of users registered on it.
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width:100%;">
+                % for my $networkName (sort keys %altContacts) {
+                    % my $percentOfTotal = $altContacts{$networkName}->{'percentOfTotal'} // die;
+                    % my $totalContacts  = $altContacts{$networkName}->{'totalContacts'}  // die;
+                    <div class="network-selector" onclick="loadBannedUsersByNetwork('<%=$networkName%>');return;">
+                        <div class="network-percent" style="width: <%=$percentOfTotal%>%;"></div>
+                        <div style="display: flex;flex-wrap: wrap;width:100%;height:100%;overflow: visible;position: absolute;">
+                            <div style="width:200px;height:100%;display: flex;flex-wrap: wrap;">
+                                <img src="/images/<%=$networkName%>.svg" style="margin-left: 15px;padding-top: 5px;height: 25px;"><div style="margin-left:15px;margin-top: 8px;"><b><%=$networkName%></b></div>
+                            </div>
+                            <div style="width: calc(100% - 215px);text-align: right;height:100%;padding-top: 5px;">
+                                <b><%=$totalContacts%> contacts</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text_separator"></div>
+                    <div class="text_separator"></div>
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;" id="byNetworkUsers">
+
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
         <div id="global-docu" style="width:calc(100% - 2px);border:position: top;display:none;">
             <div class="text_separator"></div>
             <h2>Indexing & Archiving Relations</h2>
@@ -240,7 +310,7 @@
         <div class="text_separator"></div>
         <div class="text_separator"></div>
         <div style="width:100%;margin:auto;display: block;overflow-y: hidden;overflow-x: auto;position: relative;">
-            <div style="width:100%;min-width: 330px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
+            <div style="width:100%;min-width: 461px;background: #666570;font-weight: bold;font-size: 12px;color: white;display: flex;flex-wrap: wrap;text-align: center;">
                 <div class="tab-button noselect" style="background: #262436;" id="global-censored-button" onclick="openGlobalTab('global-censored');return;">
                     Censurés
                 </div>
@@ -249,6 +319,9 @@
                     Utilisateurs
                 </div>
                 % }
+                <div class="tab-button noselect" style="background: #4f4d66;" id="global-where-button" onclick="openGlobalTab('global-where');return;">
+                    Où les retrouver
+                </div>
                 <div class="tab-button noselect" style="background: #4f4d66;" id="global-docu-button" onclick="openGlobalTab('global-docu');return;">
                     Documentation
                 </div>
@@ -394,6 +467,43 @@
             <div class="text_separator"></div>
         </div>
         % }
+        <div id="global-where" style="width:calc(100% - 2px);border:position: top;display:none;">
+            <div class="text_separator"></div>
+            <h2>Vue orientée "Réseaux sociaux"</h2>
+            Cette page illustre où retrouver ceux qui ont été bannis et pour lesquels des contacts alternatifs ont été obtenus sur l'un des trois réseaux ne pratiquant pas la censure : <a href="https://Gab.com/" target="_blank">Gab.com</a>, <a href="https://gettr.com/" target="_blank">Gettr.com</a> ou <a href="https://Substack.com/" target="_blank">Substack.com</a>.
+            <div class="text_separator"></div>
+            Cliquez sur un réseau social pour obtenir la liste complète des utilisateurs sur ce réseau.
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width:100%;">
+                % for my $networkName (sort keys %altContacts) {
+                    % my $percentOfTotal = $altContacts{$networkName}->{'percentOfTotal'} // die;
+                    % my $totalContacts  = $altContacts{$networkName}->{'totalContacts'}  // die;
+                    <div class="network-selector" onclick="loadBannedUsersByNetwork('<%=$networkName%>');return;">
+                        <div class="network-percent" style="width: <%=$percentOfTotal%>%;"></div>
+                        <div style="display: flex;flex-wrap: wrap;width:100%;height:100%;overflow: visible;position: absolute;">
+                            <div style="width:200px;height:100%;display: flex;flex-wrap: wrap;">
+                                <img src="/images/<%=$networkName%>.svg" style="margin-left: 15px;padding-top: 5px;height: 25px;"><div style="margin-left:15px;margin-top: 8px;"><b><%=$networkName%></b></div>
+                            </div>
+                            <div style="width: calc(100% - 215px);text-align: right;height:100%;padding-top: 5px;">
+                                <b><%=$totalContacts%> contacts</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text_separator"></div>
+                    <div class="text_separator"></div>
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;" id="byNetworkUsers">
+
+            </div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+        </div>
         <div id="global-docu" style="width:calc(100% - 2px);border:position: top;display:none;">
             <div class="text_separator"></div>
             <h2>Programme d'indexation & d'archivage des relations</h2>
@@ -428,11 +538,10 @@
     let currentGlobalTab;
     let currentStateTab;
     % if ($environment eq 'local') {
-    let globalTabs = ['global-censored', 'global-users', 'global-docu'];
+    let globalTabs = ['global-censored', 'global-users', 'global-docu', 'global-where'];
     % } else {
-    let globalTabs = ['global-censored', 'global-docu'];
+    let globalTabs = ['global-censored', 'global-docu', 'global-where'];
     % }
-    let stateTabs  = ['state-TOTALS', 'state-MODERNA', 'state-PFIZER-BIONTECH', 'state-JANSSEN'];
 
     $( document ).ready(function() {
 
@@ -443,34 +552,10 @@
         % if ($environment eq 'local') {
         loadFollowedUsers('followers');
         % }
+
+        // Debug.
+        openGlobalTab('global-where');
     });
-
-    function openStateTab(tabLabel) {
-        currentStateTab = tabLabel;
-        stateTabs.forEach(setStateTabButton);
-        let tab = document.getElementById(tabLabel);
-        let tabButton = document.getElementById(tabLabel + '-button');
-        tab.style.display = 'block';
-        tabButton.style.background = '#262436';
-    }
-
-    function setStateTabButton(tabLabel) {
-        if (tabLabel != currentTab) {
-            let tab = document.getElementById(tabLabel);
-            let tabButton = document.getElementById(tabLabel + '-button');
-            tab.style.display = 'none';
-            tabButton.style.background = '#4f4d66';
-        }
-    }
-
-    function setTabButton(tabLabel) {
-        if (tabLabel != currentTab) {
-            let tab = document.getElementById(tabLabel);
-            let tabButton = document.getElementById(tabLabel + '-button');
-            tab.style.display = 'none';
-            tabButton.style.background = '#4f4d66';
-        }
-    }
 
     function openGlobalTab(tabLabel) {
         currentGlobalTab = tabLabel;
@@ -621,5 +706,27 @@
         // alert('pause');
         let currentLanguage = '<%=$currentLanguage%>';
         window.location.href = "/twitter_thought_police/open_user_tweets?twitterId=" + twitterId + '&twitterUserName=' + twitterUserName + '&currentLanguage=' + currentLanguage;
+    }
+
+    function loadBannedUsersByNetwork(networkName) {
+        console.log('Loading users by network : ' + networkName);
+        let currentLanguage = '<%=$currentLanguage%>';
+        let request = $.ajax({
+            url: "/twitter_thought_police/twitter_banned_users_by_network",
+            type: "POST",
+            data: {
+                networkName     : networkName,
+                currentLanguage : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            $('#byNetworkUsers').html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
     }
 </script>

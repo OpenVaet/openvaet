@@ -21,6 +21,7 @@
         % # <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
         % # <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
         % # <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
+        % # <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
     </ul>
     % } else {
 

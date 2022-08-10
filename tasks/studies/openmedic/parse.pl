@@ -144,7 +144,7 @@ sub parse_open_medic_yearly_files {
 	my %stats       = ();
 	for my $year (@years) {
 		my %dataLabels = ();
-		my $file = "tasks/studies/openmedic/OPEN_MEDIC_$year.csv";
+		my $file = "tasks/studies/openmedic/Openmedic/csv/OPEN_MEDIC_$year.csv";
         die unless -f $file;
         my $fileStats = stat($file);
         $stats{'openMedic'}->{'byYears'}->{$year}->{'file'} = $file;

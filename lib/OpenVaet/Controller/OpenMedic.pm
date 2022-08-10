@@ -44,13 +44,27 @@ sub open_medic {
     my $medicAmStats = decode_json($medicAmJson);
     %medicAmStats = %$medicAmStats;
     # p$medicAmStats{'medicAm'}->{'byGroups'};
-    p%medicAmStats;
+
+    # Getting INSEE stats.
+    my %inseeDeathsStats = ();
+    open $in, '<:utf8', 'stats/insee_deathes_data.json';
+    my $inseeDeathsJson;
+    while (<$in>) {
+        $inseeDeathsJson .= $_;
+    }
+    close $in,
+    my $inseeDeathsStats = decode_json($inseeDeathsJson);
+    %inseeDeathsStats = %$inseeDeathsStats;
+    p$inseeDeathsStats;
+
+    # p%medicAmStats;
 
     $self->render(
         currentLanguage => $currentLanguage,
         languages => \%languages,
         openMedicStats => \%openMedicStats,
-        medicAmStats => \%medicAmStats
+        medicAmStats => \%medicAmStats,
+        inseeDeathsStats => \%inseeDeathsStats
     );
 }
 
