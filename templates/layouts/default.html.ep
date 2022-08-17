@@ -378,6 +378,14 @@
             padding: 0;
             border-bottom: 1px solid #cccccc;
         }
+
+        .ws-yellow {
+            background:#ffff00!important;
+        }
+
+        .ws-yellow:hover {
+            background:#d6d606!important;
+        }
     </style>
     <body>
         <!-- Center-screen loader -->
@@ -407,8 +415,10 @@
                       </div>
                       <input type="checkbox" class="dd-input" id="test">
                       <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Data</li>
+                        <li onclick="openLocation('/data');return;">Index Data</li>
                         <li class="divider"></li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;" class="ws-yellow">Covid Injections - Facts & Lies</li>
+                        % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Studies</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
@@ -424,8 +434,10 @@
                       </div>
                       <input type="checkbox" class="dd-input" id="test">
                       <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Data</li>
+                        <li onclick="openLocation('/data');return;">Index Data</li>
                         <li class="divider"></li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;" class="ws-yellow">Injections Covid - Faits & Mensonges</li>
+                        % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Etudes</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
@@ -445,7 +457,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.19</span>&nbsp;
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.20</span>&nbsp;
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

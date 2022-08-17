@@ -1,0 +1,519 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data';
+% } else {
+
+% }
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+% my %vaccinesChildren = %$vaccinesChildren;
+% my %vaccinesChildrenForeign = %$vaccinesChildrenForeign;
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    % } else {
+
+    % }
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">USA - Cumulated Weekly Deaths - 0 to 17 years old - Covid Injections / Common Vaccines</h2>
+    The after effects involving the patient's death are, from the first after effect recorded for Covid on <%=$earliestCovidDate%>, illustrated on the chart below:
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">USA - Décès hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
+    Les effets secondaires impliquant le décès du patient, depuis le premier effet secondaire Covid enregistré le <%=$earliestCovidDate%>, sont représentés dans le graphique ci-dessous :
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div id="chart_div" style="width: 100%;"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">USA - Cumulated Other Serious After Effects - 0 to 17 years old - Covid Injections / Common Vaccines</h2>
+    The after effects involving other serious after effects (hospitalization, prolonged hospitalization, life threatning event, permanent disability) are illustrated on the chart below:
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">USA - Autres effets secondaires graves hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
+    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisatin prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div id="chart_div_2" style="width: 100%;"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">USA - Covid Injections - All Weekly Serious After Effects And Doses Administered</h2>
+    This chart presents the data of administered doses for the 0-17 years old in USA, along with the Covid After Effects reported.
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">USA - Injections Covid - Tous effets secondaires graves hebdomadaires et doses administrées</h2>
+    Ce graphique présente les données des doses administrées aux 0-17 ans aux Etats-Unis, ainsi que les effets secondaires rapportés.
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div id="chart_div_5"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Foreign - Cumulated Weekly Deaths - 0 to 17 years old - Covid Injections / Common Vaccines</h2>
+    The after effects involving the patient's death are, from the first after effect recorded for Covid <b>on <%=$earliestCovidDateForeign%></b>, illustrated on the chart below:
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">Foreign - Décès hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
+    Les effets secondaires impliquant le décès du patient, depuis le premier effet secondaire Covid enregistré <b>le <%=$earliestCovidDateForeign%></b>, sont représentés dans le graphique ci-dessous :
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div id="chart_div_3" style="width: 100%;"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    This data are obviously incomplete. The first report accessible on the EudraVigilance platform for a 0-17 years old Covid injection in Europe, declared by an Healthcare Professional, <a href="https://dap.ema.europa.eu/xmlpserver/PHV%20DAP/Reports/ICSR.xdo?_xpf=&_xt=form&SR_ID=10009747324&_xpt=1&_xf=pdf" target="_blank">has been registered on 2021-08-20</a>. No report for foreign death appears in the Foreign VAERS database prior to 2021-09-23, a bit more than a month later.
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 5px;">Foreign - Cumulated Other Serious After Effects - 0 to 17 years old - Covid Injections / Common Vaccines</h2>
+    The after effects involving other serious after effects (hospitalization, prolonged hospitalization, life threatning event, permanent disability) are illustrated on the chart below:
+    % } elsif ($currentLanguage eq 'fr') {
+    Ces données sont à l'évidence incomplètes. Le premier rapport accessible depuis la plateforme EudraVigilance pour un décès de 0-17 ans en Europe, déclaré par un professionnel de santé, <a href="https://dap.ema.europa.eu/xmlpserver/PHV%20DAP/Reports/ICSR.xdo?_xpf=&_xt=form&SR_ID=10009747324&_xpt=1&_xf=pdf" target="_blank">a été enregistré le 2021-08-20</a>. Aucun rapport de décès n'apparait cependant dans la base Foreign VAERS avant le 2021-09-23, un peu plus d'un mois plus tard.
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 5px;">Foreign - Autres effets secondaires graves hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
+    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisatin prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div id="chart_div_4" style="width: 100%;"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Source Data</h2>
+    The up to date national VAERS data are obtained from the page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
+    <div class="text_separator"></div>
+    The non domestic VAERS data is obtained from the page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=NonDomesticVAERSData.zip" target="_blank">Non Domestic VAERS Data</a>.
+    <div class="text_separator"></div>
+    The data relative to the Covid vaccination rates is obtained from the page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-and-Case-Trends-by-Age-Group-/gxj9-t96f" target="_blank">COVID-19 Vaccination and Case Trends by Age Group, United States</a>. The data is gathered at .csv fromat, and can be accessed <a href="https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B" target="_blank">via this direct link</a>.
+    <div class="text_separator"></div>
+    The data relative to population estimates, which allows the translation of this file, is accessed from <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">this "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021" file</a>, accessible <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/" target="_blank">from the bottom of this page</a>.
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">Données sources</h2>
+    Les données VAERS nationales à jour sont obtenues sur la page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
+    <div class="text_separator"></div>
+    La donnée non domestique VAERS est obtenue depuis la page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=NonDomesticVAERSData.zip" target="_blank">Non Domestic VAERS Data</a>.
+    <div class="text_separator"></div>
+    La donnée relative au taux de vaccination Covid est obtenus depuis la page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-and-Case-Trends-by-Age-Group-/gxj9-t96f" target="_blank">COVID-19 Vaccination and Case Trends by Age Group, United States</a>. La donnée est récupérée au format .csv, et peut-être accédée <a href="https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B" target="_blank">via ce lien direct</a>.
+    <div class="text_separator"></div>
+    La donnée relative aux estimations de population, qui permet la traduction de ce fichier, est accédée depuis <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">ce fichier "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021"</a>, disponible <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/" target="_blank">en bas de cette page</a>.
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Treatment</h2>
+    Data necessary for the charts featured on this page is generated by the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/children_vaers/analyze.pl" target="_blank">tasks/studies/children_vaers/analyze.pl</a>.
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">Traitement</h2>
+    Les données nécessaires aux graphiques présentés sur cette page sont générés par le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/children_vaers/analyze.pl" target="_blank">tasks/studies/children_vaers/analyze.pl</a>.
+    % } else {
+
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Vaccines Categorization</h2>
+    The 5 "Covid injections" are, as codified by the VAERS (Manufacturer - Vaccine Type - Vaccine Name) :
+    <ul>
+        % for my $productCategory (sort keys %{$vaccinesChildren{'vaccines'}->{'COVID-19'}}) {
+            % for my $productName (sort keys %{$vaccinesChildren{'vaccines'}->{'COVID-19'}->{$productCategory}}) {
+                <li><%=$productName%></li>
+                <div class="text_separator"></div>
+            % }
+        % }
+    </ul>
+    % my $otherVaccines = 0;
+    % for my $productCategory (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}}) {
+        % for my $productName (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}->{$productCategory}}) {
+            % $otherVaccines++;
+        % }
+    % }
+    The <%=$otherVaccines%> "common vaccines" are, as categorized, the following (click on a category to render the vaccines concerned, on the same format than above) :
+    % } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">Catégorisation des vaccins</h2>
+    Les 5 "injections Covid" sont, telles que codifiées par le VAERS (Fabriquant - Type de Vaccin - Nom du vaccin) :
+    <ul>
+        % for my $productCategory (sort keys %{$vaccinesChildren{'vaccines'}->{'COVID-19'}}) {
+            % for my $productName (sort keys %{$vaccinesChildren{'vaccines'}->{'COVID-19'}->{$productCategory}}) {
+                <li><%=$productName%></li>
+                <div class="text_separator"></div>
+            % }
+        % }
+    </ul>
+    % my $otherVaccines = 0;
+    % for my $productCategory (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}}) {
+        % for my $productName (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}->{$productCategory}}) {
+            % $otherVaccines++;
+        % }
+    % }
+    Les <%=$otherVaccines%> "vaccins communs" sont, tels que catégorisés, les suivants (cliquez sur une catégorie pour afficher les vaccins concernés au format ci-dessus) :
+    % } else {
+
+    % }
+    <ul>
+        % my $pNum = 0;
+        % for my $productCategory (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}}) {
+            % $pNum++;
+            <li style="cursor: pointer;padding: 5px 10px;" onclick="expandDrugCategory('<%=$pNum%>');return;" class="noselect"><%=$productCategory%> <span style="margin-left:15px;" id="expanded_button_<%=$pNum%>">+</span></li>
+            <div id="expanded_drug_<%=$pNum%>" style="width:100%;display: none;">
+                <div class="text_separator"></div>
+                <ul>
+                    % for my $productName (sort keys %{$vaccinesChildren{'vaccines'}->{'OTHER'}->{$productCategory}}) {
+                        <li><%=$productName%></li>
+                        <div class="text_separator"></div>
+                    % }
+                </ul>
+            </div>
+        % }
+    </ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+</div>
+
+<script type="text/javascript">
+
+    var DrugTabsStatus = {};
+
+    function expandDrugCategory(pNum) {
+        console.log('Expanding ' + pNum);
+        if (DrugTabsStatus.pNum) {
+            if (DrugTabsStatus.pNum == 1) {
+                $('#expanded_button_' + pNum).html('+');
+                document.getElementById('expanded_drug_' + pNum).style.display = 'none';
+                DrugTabsStatus.pNum = 0;
+            } else {
+                $('#expanded_button_' + pNum).html('-');
+                document.getElementById('expanded_drug_' + pNum).style.display = 'block';
+                DrugTabsStatus.pNum = 1;
+            }
+        } else {
+            $('#expanded_button_' + pNum).html('-');
+            document.getElementById('expanded_drug_' + pNum).style.display = 'block';
+            DrugTabsStatus.pNum = 1;
+        }
+    }
+
+    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.setOnLoadCallback(drawChartDeathsUS);
+    google.charts.setOnLoadCallback(drawChartSeriousUS);
+    google.charts.setOnLoadCallback(drawChartDeathsForeign);
+    google.charts.setOnLoadCallback(drawChartSeriousForeign);
+    google.charts.setOnLoadCallback(drawChartAllSeriousAndDoses);
+
+    function drawChartDeathsUS() {
+
+        let chartContainerWidth = document.getElementById('chart_div').offsetWidth;
+        console.log('chartContainerWidth : ' + chartContainerWidth);
+
+        var chartDiv = document.getElementById('chart_div');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Common Vaccines AE");
+
+        data.addRows([
+        % my $lastWeek = 'NA';
+        % my ($covidDeaths, $commonDeaths) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}}) {
+            % for my $month (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}}) {
+                % for my $day (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}->{$month}}) {
+                    % my $weekNumber  = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} // 0;
+                    % my $cDeaths  = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lethal'} // 0;
+                    % my $cmDeaths = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'commonVaccines'}->{'lethal'} // 0;
+                    % $covidDeaths  += $cDeaths;
+                    % $commonDeaths += $cmDeaths;
+                    % if ($weekNumber ne $lastWeek) {
+                        % $lastWeek = $weekNumber;
+                    [new Date(<%=$year%>, <%=$month%>, <%=$day%>),  <%=$covidDeaths%>,  <%=$commonDeaths%>],
+                    % }
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+         legend: {position: 'bottom'},
+            width: chartContainerWidth,
+            height: 500,
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                vAxis: {
+                    viewWindow: {
+                        max: 30
+                    }
+                }
+            }
+        };
+
+        function drawMaterialChart() {
+            var materialChart = new google.visualization.LineChart(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+
+        drawMaterialChart();
+
+    }
+
+    function drawChartSeriousUS() {
+
+        let chartContainerWidth = document.getElementById('chart_div_2').offsetWidth;
+        console.log('chartContainerWidth : ' + chartContainerWidth);
+
+        var chartDiv = document.getElementById('chart_div_2');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Common Vaccines AE");
+
+        data.addRows([
+        % $lastWeek = 'NA';
+        % my ($covidSerious, $commonSerious) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}}) {
+            % for my $month (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}}) {
+                % for my $day (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}->{$month}}) {
+                    % my $weekNumber  = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} // 0;
+                    % my $cSerious  = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lifeThreatningDisability'} // 0;
+                    % my $cmSerious = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'commonVaccines'}->{'lifeThreatningDisability'} // 0;
+                    % $covidSerious  += $cSerious;
+                    % $commonSerious += $cmSerious;
+                    % if ($weekNumber ne $lastWeek) {
+                        % $lastWeek = $weekNumber;
+                    [new Date(<%=$year%>, <%=$month%>, <%=$day%>),  <%=$covidSerious%>,  <%=$commonSerious%>],
+                    % }
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+         legend: {position: 'bottom'},
+            width: chartContainerWidth,
+            height: 500,
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                vAxis: {
+                    viewWindow: {
+                        max: 30
+                    }
+                }
+            }
+        };
+
+        function drawMaterialChart() {
+            var materialChart = new google.visualization.LineChart(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+        var formatter = new google.visualization.NumberFormat(
+            {prefix: '', negativeParens: false, pattern: '#,##0'});
+        formatter.format(data, 1); // Apply formatter to second column
+
+        drawMaterialChart();
+
+    }
+
+    function drawChartDeathsForeign() {
+
+        let chartContainerWidth = document.getElementById('chart_div_3').offsetWidth;
+        console.log('chartContainerWidth : ' + chartContainerWidth);
+
+        var chartDiv = document.getElementById('chart_div_3');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Common Vaccines AE");
+
+        data.addRows([
+        % $lastWeek = 'NA';
+        % ($covidDeaths, $commonDeaths) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}}) {
+            % for my $month (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}->{$year}}) {
+                % for my $day (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}->{$year}->{$month}}) {
+                    % my $weekNumber  = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} // 0;
+                    % my $cDeaths  = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lethal'} // 0;
+                    % my $cmDeaths = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'commonVaccines'}->{'lethal'} // 0;
+                    % $covidDeaths  += $cDeaths;
+                    % $commonDeaths += $cmDeaths;
+                    % if ($weekNumber ne $lastWeek) {
+                        % $lastWeek = $weekNumber;
+                    [new Date(<%=$year%>, <%=$month%>, <%=$day%>),  <%=$covidDeaths%>,  <%=$commonDeaths%>],
+                    % }
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+         legend: {position: 'bottom'},
+            width: chartContainerWidth,
+            height: 500,
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                vAxis: {
+                    viewWindow: {
+                        max: 30
+                    }
+                }
+            }
+        };
+
+        function drawMaterialChart() {
+            var materialChart = new google.visualization.LineChart(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+
+        drawMaterialChart();
+
+    }
+
+    function drawChartSeriousForeign() {
+
+        let chartContainerWidth = document.getElementById('chart_div_4').offsetWidth;
+        console.log('chartContainerWidth : ' + chartContainerWidth);
+
+        var chartDiv = document.getElementById('chart_div_4');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Common Vaccines AE");
+
+        data.addRows([
+        % $lastWeek = 'NA';
+        % ($covidSerious, $commonSerious) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}}) {
+            % for my $month (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}->{$year}}) {
+                % for my $day (sort{$a <=> $b} keys %{$vaccinesChildrenForeign{'byDates'}->{$year}->{$month}}) {
+                    % my $weekNumber  = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} // 0;
+                    % my $cSerious  = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lifeThreatningDisability'} // 0;
+                    % my $cmSerious = $vaccinesChildrenForeign{'byDates'}->{$year}->{$month}->{$day}->{'commonVaccines'}->{'lifeThreatningDisability'} // 0;
+                    % $covidSerious  += $cSerious;
+                    % $commonSerious += $cmSerious;
+                    % if ($weekNumber ne $lastWeek) {
+                        % $lastWeek = $weekNumber;
+                    [new Date(<%=$year%>, <%=$month%>, <%=$day%>),  <%=$covidSerious%>,  <%=$commonSerious%>],
+                    % }
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+         legend: {position: 'bottom'},
+            width: chartContainerWidth,
+            height: 500,
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                vAxis: {
+                    viewWindow: {
+                        max: 30
+                    }
+                }
+            }
+        };
+
+        function drawMaterialChart() {
+            var materialChart = new google.visualization.LineChart(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+        var formatter = new google.visualization.NumberFormat(
+            {prefix: '', negativeParens: false, pattern: '#,##0'});
+        formatter.format(data, 1); // Apply formatter to second column
+
+        drawMaterialChart();
+
+    }
+
+    function drawChartAllSeriousAndDoses() {
+        let chartContainerWidth = document.getElementById('chart_div_5').offsetWidth;
+
+        var chartDiv = document.getElementById('chart_div_5');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Covid Injections");
+
+        data.addRows([
+        % $lastWeek = 'NA';
+        % my ($covidCases, $covidDoses) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}}) {
+            % for my $month (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}}) {
+                % for my $day (sort{$a <=> $b} keys %{$vaccinesChildren{'byDates'}->{$year}->{$month}}) {
+                    % my $weekNumber = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'}                          // 0;
+                    % my $cDeaths    = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lethal'}                   // 0;
+                    % my $cSerious   = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'covid'}->{'lifeThreatningDisability'} // 0;
+                    % my $doses1     = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'doses1Administered'}                  // 0;
+                    % my $doses2     = $vaccinesChildren{'byDates'}->{$year}->{$month}->{$day}->{'doses2Administered'}                  // 0;
+                    % $covidCases   += $cDeaths;
+                    % $covidCases   += $cSerious;
+                    % if ($doses1 && $doses2) {
+                        % $covidDoses = $doses1 + $doses2;
+                    % }
+                    % if ($weekNumber ne $lastWeek) {
+                        % $lastWeek  = $weekNumber;
+                    [new Date(<%=$year%>, <%=$month%>, <%=$day%>),  <%=$covidCases%>,  <%=$covidDoses%>],
+                    % }
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+         legend: {position: 'bottom'},
+            width: chartContainerWidth,
+            height: 500,
+            series: {
+              // Gives each series an axis name that matches the Y-axis below.
+              0: {axis: 'cIAE'},
+              1: {axis: 'cI'}
+            },
+            axes: {
+              // Adds labels to each axis; they don't have to match the axis names.
+              y: {
+                cIAE: {label: 'Covid Injections AE'},
+                cI: {label: 'Covid Injections'}
+              }
+            }
+        };
+        var formatter = new google.visualization.NumberFormat(
+            {prefix: '', negativeParens: false, pattern: '#,##0'});
+        formatter.format(data, 1); // Apply formatter to second column
+
+        function drawMaterialChart() {
+            var materialChart = new google.visualization.LineChart(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+
+        drawMaterialChart();
+
+    }
+</script>

@@ -1,0 +1,112 @@
+% layout 'default';
+% title 'OPENVAET - Covid Injections - Facts & Lies';
+
+<style type="text/css">
+	.ws-index-container {
+		color: darkgrey;
+	}
+
+	.ws-index-category-1 {
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	.ws-index-category-2 {
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	.ws-index-category-3 {
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.category-item-done {
+		color: black;
+		cursor: pointer;
+	}
+</style>
+
+<div class="content-container" style="width:100%;max-width: 100%;font-size:1.25rem;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to home</div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+    % } else {
+
+    % }
+    <ul class="ws-index-container">
+    	<li class="ws-index-category-1">Traditional Vaccines</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Brief History of Traditional Vaccines</li>
+    			<li class="ws-index-category-2">Traditional Vaccine technology including Adjuvants</li>
+    			<li class="ws-index-category-2">Vaccine agencies including WHO, Bill & Melinda Gates Foundation, CEPI, GAVI, UN, Welcome Trust, etc.</li>
+    			<li class="ws-index-category-2">Conficts of Interest</li>
+    			<li class="ws-index-category-2 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/traditional_vaccines_controversies');return;">Traditional Vaccine Controversies and alleged vaccine injuries</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3">Pandemrix Vaccine for Swine Flu 2009</li>
+		    		</ul>
+		    	</div>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1">Clinical Drug Trials</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Stages in Clinical Drug Trials before Full Approval</li>
+    			<li class="ws-index-category-2">Approval Processes (Full and Emergency)</li>
+    			<li class="ws-index-category-2">Trial Design</li>
+    			<li class="ws-index-category-2">Integrity & Conflicts of Interest</li>
+    		</ul>
+    	</div>
+    	<li>MRNA Technology</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">RNA Biology basics</li>
+    			<li class="ws-index-category-2">MRNA</li>
+    			<li class="ws-index-category-2">Lipid Nanoparticles</li>
+    			<li class="ws-index-category-2">Adjuvants</li>
+    			<li class="ws-index-category-2">History of MRNA Development within Big Pharma</li>
+    			<li class="ws-index-category-2">MRNA Future plans</li>
+    			<li class="ws-index-category-2">MRNA in the Covid Vaccines</li>
+    			<li class="ws-index-category-2">Unanswered Questions & Concerns</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1">The Covid Vaccine</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Brief History of Sars Cov2</li>
+    			<li class="ws-index-category-2">The PCR test & its limitations</li>
+    			<li class="ws-index-category-2">Covid Vaccine Development Timeline</li>
+    			<li class="ws-index-category-2">Types of Covid Vaccine</li>
+    			<li class="ws-index-category-2">What is in Covid MRNA vaccine</li>
+    			<li class="ws-index-category-2">Covid Vaccine Clinical Trial Documents 2020</li>
+    			<li class="ws-index-category-2">Criticism of the Pfizer Covid Vaccine Clinical Trial & Data used for Emergency Authorisation</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3">Trial Design</li>
+    					<li class="ws-index-category-3">Trial Implementation</li>
+    					<li class="ws-index-category-3">Trial Data</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2">Covid Vaccine Clinical Approval Process</li>
+    			<li class="ws-index-category-2">Monitoring and Reporting Mechanisms for Adverse Reactions</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1">Covid Vaccine Injuries</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Anaphylaxis</li>
+    			<li class="ws-index-category-2">Heart & Circulatory damage</li>
+    			<li class="ws-index-category-2">Cancer</li>
+    			<li class="ws-index-category-2">Autoimmune disease</li>
+    			<li class="ws-index-category-2">Neurological</li>
+    			<li class="ws-index-category-2">Amyloidosis</li>
+    			<li class="ws-index-category-2">Miscarriage, Stillbirth, Foetal injuries</li>
+    			<li class="ws-index-category-2">Vaccine Shedding</li>
+    			<li class="ws-index-category-2">Technical Glossary</li>
+    		</ul>
+    	</div>
+    </ul>
+</div>

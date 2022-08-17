@@ -552,9 +552,6 @@
         % if ($environment eq 'local') {
         loadFollowedUsers('followers');
         % }
-
-        // Debug.
-        openGlobalTab('global-where');
     });
 
     function openGlobalTab(tabLabel) {

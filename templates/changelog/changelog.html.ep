@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.20</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a new study "Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data".</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'une nouvelle étude "Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS".</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.19</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

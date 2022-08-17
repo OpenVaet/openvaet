@@ -21,3 +21,4 @@ sudo cpanm HTTP::Request::Common
 sudo cpanm Number::Format
 sudo cpanm LWP::Protocol::https
 sudo cpanm Archive::Any
+sudo cpanm Date::WeekNumber

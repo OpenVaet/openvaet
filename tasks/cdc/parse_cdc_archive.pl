@@ -541,8 +541,7 @@ sub parse_yearly_data {
 					cdc_vaccine_types();
 				}
 				my $cdcVaccineTypeId = $cdcVaccineTypes{$cdcVaccineTypeName}->{'cdcVaccineTypeId'} // die;
-				my $cdcVaccineName = $values{'VAX_NAME
-'} // die;
+				my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
 				unless (exists $cdcVaccines{$cdcManufacturerId}->{$cdcVaccineTypeId}->{$cdcVaccineName}->{'cdcVaccineId'}) {
 					my $sth = $dbh->prepare("INSERT INTO cdc_vaccine (cdcManufacturerId, cdcVaccineTypeId, name) VALUES (?, ?, ?)");
 					$sth->execute($cdcManufacturerId, $cdcVaccineTypeId, $cdcVaccineName) or die $sth->err();

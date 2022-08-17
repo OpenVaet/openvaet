@@ -136,6 +136,9 @@ sub startup {
     $r->get('/twitter_thought_police/open_user_tweets')->to('twitter_thought_police#open_user_tweets');
     $r->post('/twitter_thought_police/twitter_banned_users_by_network')->to('twitter_thought_police#twitter_banned_users_by_network');
     $r->get('/open_medic')->to('open_medic#open_medic');
+    $r->get('/children_vaers')->to('children_vaers#children_vaers');
+    $r->get('/covid_injections_facts_and_lies')->to('covid_injections_facts_and_lies#covid_injections_facts_and_lies');
+    $r->get('/covid_injections_facts_and_lies/traditional_vaccines_controversies')->to('covid_injections_facts_and_lies#traditional_vaccines_controversies');
 }
 
 sub connect_dbi
