@@ -1,112 +1,626 @@
 % layout 'default';
-% title 'OPENVAET - Covid Injections - Facts & Lies';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - COVID Injections - Challenging "The Facts"';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid - Mettre "les faits" à l\'épreuve';
+% } else {
+
+% }
 
 <style type="text/css">
-	.ws-index-container {
-		color: darkgrey;
+
+	.ws-title {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		width: 100%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
 	}
 
-	.ws-index-category-1 {
+	.ws-title-container {
+		padding: 10px 5px;
+		margin: auto;
+		display: block;
+		border: 1px solid black;
+		border-radius: 5px;
+		max-width: 500px;
+	}
+
+	.ws-subtitle {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		width: 100%;
+		text-align: center;
+		color: black;
+		font-style: italic;
+		font-size: 1.3rem;
+	}
+
+	.ws-credits-container {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		width: 98%;
+	}
+
+	.ws-credits {
+		max-width: 200px;
+		margin-left: calc(100% - 200px);
+		display: block;
+		text-align: right;
+		color: black;
+		font-style: italic;
+		font-size: 0.9rem;
+	}
+
+	.ws-index-container {
+	}
+
+	.ws-index-category-1-a {
+		margin-top: 10px;
 		color: black;
 		padding-top: 5px;
 		padding-bottom: 5px;
 	}
-	.ws-index-category-2 {
+
+	.ws-index-category-2-a {
 		padding-top: 5px;
 		padding-bottom: 5px;
+		color: darkgrey;
 	}
-	.ws-index-category-3 {
+
+	.ws-index-category-3-a {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-a {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-b {
+		margin-top: 10px;
+		color: black;
 		padding-top: 5px;
 		padding-bottom: 5px;
 	}
 
-	.category-item-done {
+	.ws-index-category-2-b {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-b {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-b {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-c {
+		margin-top: 10px;
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.ws-index-category-2-c {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-c {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-c {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-d {
+		margin-top: 10px;
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.ws-index-category-2-d {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-d {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-d {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-e {
+		margin-top: 10px;
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.ws-index-category-2-e {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-e {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-e {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-f {
+		margin-top: 10px;
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.ws-index-category-2-f {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-f {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-f {
+		color: black;
+		cursor: pointer;
+	}
+
+	.ws-index-category-1-g {
+		margin-top: 10px;
+		color: black;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.ws-index-category-2-g {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.ws-index-category-3-g {
+		padding-top: 5px;
+		padding-bottom: 5px;
+		color: darkgrey;
+	}
+
+	.category-item-done-g {
 		color: black;
 		cursor: pointer;
 	}
 </style>
 
-<div class="content-container" style="width:100%;max-width: 100%;font-size:1.25rem;">
+<div class="content-container"  style="width:100%;max-width: 100%;font-size:1.25rem;padding-left: 15px;">
+    <div class="text_separator"></div>
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
-    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to home</div>
-    % } elsif ($currentLanguage eq 'fr') {
-    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
-    % } else {
-
-    % }
+    <div class="url-link" onclick="openLocation('/');return;">&#10229; Return to home</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-title">
+    	<div class="ws-title-container">
+    	COVID Injections - Challenging "The Facts"
+    	</div>
+    </div>
+    <div class="ws-subtitle">
+    	A Resource to Help You Question Everything
+    </div>
+    <div class="ws-credits-container">
+	    <div class="ws-credits">
+	    	This content has been realized by <a href="https://twitter.com/D14951351" target="_blank">Twitter</a>'s / <a href="https://gettr.com/user/jan_febmary" target="_blank">Gettr's</a> / <a href="https://gab.com/GlisteningSwan" target="_blank">Gab's</a> <b>WhiteSwan</b>💜🐭💊, to whom the credit goes.
+	    </div>
+    </div>
+    <div class="text_separator"></div>
     <ul class="ws-index-container">
-    	<li class="ws-index-category-1">Traditional Vaccines</li>
+    	<li class="ws-index-category-1-a">1. Traditional Vaccines</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2">Brief History of Traditional Vaccines</li>
-    			<li class="ws-index-category-2">Traditional Vaccine technology including Adjuvants</li>
-    			<li class="ws-index-category-2">Vaccine agencies including WHO, Bill & Melinda Gates Foundation, CEPI, GAVI, UN, Welcome Trust, etc.</li>
-    			<li class="ws-index-category-2">Conficts of Interest</li>
-    			<li class="ws-index-category-2 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/traditional_vaccines_controversies');return;">Traditional Vaccine Controversies and alleged vaccine injuries</li>
+    			<li class="ws-index-category-2-a">Brief History of Traditional Vaccines</li>
+    			<li class="ws-index-category-2-a">Immune Response (Simple)</li>
+    			<li class="ws-index-category-2-a">Traditional Vaccine Technology & Adjuvants</li>
+    			<li class="ws-index-category-2-a">Questioning the Vaccine Success Narrative</li>
+    			<li class="ws-index-category-2-a">Traditional Vaccine Injuries & Controversies</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3">Pandemrix Vaccine for Swine Flu 2009</li>
+    					<li class="ws-index-category-3-a">The Cutter Incident - Salk Polio Vaccine 1955</li>
+    					<li class="ws-index-category-3-a">DPT Diphtheria – Tetanus – Pertussis (Whooping Cough) Vaccine 1970s</li>
+    					<li class="ws-index-category-3-a">Rubella Vaccine 1970s</li>
+    					<li class="ws-index-category-3-a">Alleged MMR Autism Link Controversy 1998</li>
+    					<li class="ws-index-category-3-a">India Polio Vaccine Controversy 2006</li>
+    					<li class="ws-index-category-3-a">Pandemrix Vaccine for Swine Flu 2009</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-a">Vaccine Injuries & History of Legal Redress</li>
+    			<li class="ws-index-category-2-a">Big Pharma Indemnity from Liability</li>
+    			<li class="ws-index-category-2-a">Current Vaccine Agencies Including Conflicts of Interest</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-a">WHO, UNICEF</li>
+    					<li class="ws-index-category-3-a">The Bill & Melinda Gates Foundation</li>
+    					<li class="ws-index-category-3-a">GAVI, CEPI</li>
+    					<li class="ws-index-category-3-a">The Wellcome Trust</li>
 		    		</ul>
 		    	</div>
     		</ul>
     	</div>
-    	<li class="ws-index-category-1">Clinical Drug Trials</li>
+    	<li class="ws-index-category-1-b">2. Clinical Drug Trials</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2">Stages in Clinical Drug Trials before Full Approval</li>
-    			<li class="ws-index-category-2">Approval Processes (Full and Emergency)</li>
-    			<li class="ws-index-category-2">Trial Design</li>
-    			<li class="ws-index-category-2">Integrity & Conflicts of Interest</li>
+    			<li class="ws-index-category-2-b">The Importance of Thorough Testing including Animal Studies</li>
+    			<li class="ws-index-category-2-b">When it goes Wrong Thalidomide 1950s</li>
+    			<li class="ws-index-category-2-b">Drug Controversy Primodos 1960s</li>
+    			<li class="ws-index-category-2-b">Best Practice for Clinical Trial Design & Terminology</li>
+    			<li class="ws-index-category-2-b">Stages in Clinical Drug Trials before Full Approval</li>
+    			<li class="ws-index-category-2-b">Approval Processes (Full & Emergency Use)</li>
     		</ul>
     	</div>
-    	<li>MRNA Technology</li>
+    	<li class="ws-index-category-1-c">3. MRNA Technology</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2">RNA Biology basics</li>
-    			<li class="ws-index-category-2">MRNA</li>
-    			<li class="ws-index-category-2">Lipid Nanoparticles</li>
-    			<li class="ws-index-category-2">Adjuvants</li>
-    			<li class="ws-index-category-2">History of MRNA Development within Big Pharma</li>
-    			<li class="ws-index-category-2">MRNA Future plans</li>
-    			<li class="ws-index-category-2">MRNA in the Covid Vaccines</li>
-    			<li class="ws-index-category-2">Unanswered Questions & Concerns</li>
-    		</ul>
-    	</div>
-    	<li class="ws-index-category-1">The Covid Vaccine</li>
-    	<div style="width:100%;">
-    		<ul>
-    			<li class="ws-index-category-2">Brief History of Sars Cov2</li>
-    			<li class="ws-index-category-2">The PCR test & its limitations</li>
-    			<li class="ws-index-category-2">Covid Vaccine Development Timeline</li>
-    			<li class="ws-index-category-2">Types of Covid Vaccine</li>
-    			<li class="ws-index-category-2">What is in Covid MRNA vaccine</li>
-    			<li class="ws-index-category-2">Covid Vaccine Clinical Trial Documents 2020</li>
-    			<li class="ws-index-category-2">Criticism of the Pfizer Covid Vaccine Clinical Trial & Data used for Emergency Authorisation</li>
+    			<li class="ws-index-category-2-c">Biology basics</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3">Trial Design</li>
-    					<li class="ws-index-category-3">Trial Implementation</li>
-    					<li class="ws-index-category-3">Trial Data</li>
+    					<li class="ws-index-category-3-c">Cell Components</li>
+    					<li class="ws-index-category-3-c">Your Genome & Passing on Mutation</li>
+    					<li class="ws-index-category-3-c">Nucleotides</li>
+    					<li class="ws-index-category-3-c">DNA</li>
+    					<li class="ws-index-category-3-c">RNA</li>
+    					<li class="ws-index-category-3-c">MRNA</li>
+    					<li class="ws-index-category-3-c">Extracellular Vesicles, Exosomes & miRNA (micro RNA)</li>
 		    		</ul>
 		    	</div>
-    			<li class="ws-index-category-2">Covid Vaccine Clinical Approval Process</li>
-    			<li class="ws-index-category-2">Monitoring and Reporting Mechanisms for Adverse Reactions</li>
+    			<li class="ws-index-category-2-c">History of MRNA Development within Big Pharma</li>
+    			<li class="ws-index-category-2-c">Synthetic MRNA & the Role of Pseudouridine</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-c">Codon Optimisation</li>
+    					<li class="ws-index-category-3-c">Stop Codons</li>
+    					<li class="ws-index-category-3-c">Translation & Fidelity</li>
+    					<li class="ws-index-category-3-c">Reverse Transcription</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-c">Lipid Nanoparticles & Adjuvants</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-c">Toxicity</li>
+    					<li class="ws-index-category-3-c">Controversy</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-c">MRNA Future Plans & Concerns</li>
     		</ul>
     	</div>
-    	<li class="ws-index-category-1">Covid Vaccine Injuries</li>
+    	<li class="ws-index-category-1-d">4. The Covid Injection First Generation 2020</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2">Anaphylaxis</li>
-    			<li class="ws-index-category-2">Heart & Circulatory damage</li>
-    			<li class="ws-index-category-2">Cancer</li>
-    			<li class="ws-index-category-2">Autoimmune disease</li>
-    			<li class="ws-index-category-2">Neurological</li>
-    			<li class="ws-index-category-2">Amyloidosis</li>
-    			<li class="ws-index-category-2">Miscarriage, Stillbirth, Foetal injuries</li>
-    			<li class="ws-index-category-2">Vaccine Shedding</li>
-    			<li class="ws-index-category-2">Technical Glossary</li>
+    			<li class="ws-index-category-2-d">Official Narrative of SARS Cov2 2020</li>
+    			<li class="ws-index-category-2-d">Not Debated in MSM. Destroying the Narrative?</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">P Pradhan Paper HIV Inserts Jan 2020</li>
+    					<li class="ws-index-category-3-d">Nicola Bidoli Analysis</li>
+    					<li class="ws-index-category-3-d">Furin Cleavage Site</li>
+    					<li class="ws-index-category-3-d">Moderna Patented Gene Sequence</li>
+    					<li class="ws-index-category-3-d">US China Co-operation in Gain of Function Lab Experiments</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-d">The PCR Test, LFT & Limitations</li>
+    			<li class="ws-index-category-2-d">Kary Mullis on PCR & Criticism of Dr Fauci</li>
+    			<li class="ws-index-category-2-d">Covid Injection First Generation Timeline</li>
+    			<li class="ws-index-category-2-d">Types of First Generation Covid Injection</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">MRNA (Pfizer & Moderna)</li>
+    					<li class="ws-index-category-3-d">Virus Vector (AstraZeneca (Oxford) & Janssen (Johnson & Johnson))</li>
+    					<li class="ws-index-category-3-d">Spike Protein Adjuvanted (Novavax)</li>
+    					<li class="ws-index-category-3-d">Inactivated Virus Adjuvanted (Valneva)</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-d">Covid Injection Ingredients & Controversy</li>
+    			<li class="ws-index-category-2-d">Covid Injection Claims Questioned</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">Staying at the Injection Site</li>
+    					<li class="ws-index-category-3-d">Length of Time in the Body</li>
+    					<li class="ws-index-category-3-d">Effect on DNA i.e. Gene Therapy</li>
+    					<li class="ws-index-category-3-d">Long History of MRNA Vaccines</li>
+    					<li class="ws-index-category-3-d">Fully Tested & Approved</li>
+    					<li class="ws-index-category-3-d">Safe & Effective</li>
+		    		</ul>
+		    	</div>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-e">5. Covid Injection Clinical Trials</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Covid Injection Clinical Trial Documents 2020</li>
+    			<li class="ws-index-category-2-e">Covid Injection Testing in Animals</li>
+    			<li class="ws-index-category-2-e">Antibody Dependent Enhancement</li>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Criticism of the Pfizer Covid Injection Clinical Trial & Data used for Emergency Authorisation</li>
+    			<li class="ws-index-category-2-e">Covid Injection Clinical Approval Process</li>
+    			<li class="ws-index-category-2-e">Discreditation of Hydroxychloroquine & Ivermectin using "Clinical Studies"</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-f">6. Covid Vaccine Injuries (& New "Antivirals")</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-f">Monitoring & Reporting Mechanisms for Adverse Reactions e.g. VAERS</li>
+    			<li class="ws-index-category-2-f">Can We Trust the Official Data?</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-f">Data Capture Shortfalls & Accuracy</li>
+    					<li class="ws-index-category-3-f">"Lies, Damned Lies & Statistics" Scrutinizing Definitions & Moving Goalposts</li>
+    					<li class="ws-index-category-3-f">The Jikkyleaks Files Examining Pfizer Data "Mouse Army"</li>
+    					<li class="ws-index-category-3-f">OpenVAET Database Tool</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-f">A Closer Look at the Immune System & The Interactions with the Injection</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-f">Antibodies Aren’t the Only Stars. Innate & Adaptive Immunity</li>
+    					<li class="ws-index-category-3-f">Natural Killer Cells, Helper T Cells (CD4+), Cytotoxic T Cells (CD8+), & Memory B Cells</li>
+    					<li class="ws-index-category-3-f">Non-Neutralising Antibodies, Antibody Dependent Enhancement & Viral Escape</li>
+    					<li class="ws-index-category-3-f">Original Antigenic Sin</li>
+    					<li class="ws-index-category-3-f">Molecular Mimicry</li>
+    					<li class="ws-index-category-3-f">Toll Like Receptors & Gene Suppression</li>
+    					<li class="ws-index-category-3-f">T Cell Exhaustion</li>
+    					<li class="ws-index-category-3-f">Covid "Anti-Viral" Molnupiravir (Merck)</li>
+    					<li class="ws-index-category-3-f">Covid "Anti-Viral" Paxlovid (Pfizer)</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-f">Amyloidosis</li>
+    			<li class="ws-index-category-2-f">Anaphylaxis</li>
+    			<li class="ws-index-category-2-f">Autoimmune disease</li>
+    			<li class="ws-index-category-2-f">Cancer</li>
+    			<li class="ws-index-category-2-f">Eye Injuries including Blindness</li>
+    			<li class="ws-index-category-2-f">Heart & Circulation</li>
+    			<li class="ws-index-category-2-f">Miscarriage & Stillbirth</li>
+    			<li class="ws-index-category-2-f">Neurological</li>
+    			<li class="ws-index-category-2-f">Organ Damage Kidneys Liver</li>
+    			<li class="ws-index-category-2-f">Vaccine Shedding</li>
+    			<li class="ws-index-category-2-f">Getting Help – FLCCC etc</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-g">7. More Covid Injections</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-g">Moderna Spikevax Bivalent Original / Omicron mRNA 1273,214 Covid Injection Approved UK 15Aug2022</li>
+    			<li class="ws-index-category-2-g">G7 100 Days Mission Pandemic Preparedness</li>
+    			<li class="ws-index-category-2-g">Suppressed Voices of Scientific & Medical Debate in Social Media</li>
     		</ul>
     	</div>
     </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link" onclick="openLocation('/');return;">&#10229; Retour à l'accueil</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-title">
+    	<div class="ws-title-container">
+    	OPENVAET - Injections Covid - Mettre "les faits" à l'épreuve
+    	</div>
+    </div>
+    <div class="ws-subtitle">
+    	Une ressource pour vous aider à tout questionner
+    </div>
+    <div class="ws-credits-container">
+	    <div class="ws-credits">
+	    	Ce contenu a été réalisé par <b>WhiteSwan</b> 💜🐭💊 (<a href="https://twitter.com/D14951351" target="_blank">Twitter</a>'s / <a href="https://gettr.com/user/jan_febmary" target="_blank">Gettr's</a> / <a href="https://gab.com/GlisteningSwan" target="_blank">Gab's</a>), a qui le crédit revient.
+	    </div>
+    </div>
+    <div class="text_separator"></div>
+    <ul class="ws-index-container">
+    	<li class="ws-index-category-1-a">1. Vaccins Traditionnels</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-a">Brêve histoire des Vaccins Traditionnels</li>
+    			<li class="ws-index-category-2-a">Réponse immunitaire (Simplifiée)</li>
+    			<li class="ws-index-category-2-a">Technologie des Vaccins Traditionnels & Adjuvants</li>
+    			<li class="ws-index-category-2-a">Questionner le narratif du succès des Vaccins Traditionnels</li>
+    			<li class="ws-index-category-2-a">Blessures liées aux vaccins traditionnels & Controverses</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-a">L'incident de Cutter - Salk Polio Vaccine 1955</li>
+    					<li class="ws-index-category-3-a">Vaccin DTC Diphtérie – Tétanos – Coqueluche (Coqueluche) (années 1970)</li>
+    					<li class="ws-index-category-3-a">Vaccin contre la rubéole (années 1970)</li>
+    					<li class="ws-index-category-3-a">Controverse sur le lien allégué avec l'autisme du ROR 1998</li>
+    					<li class="ws-index-category-3-a">Controverse sur le vaccin contre la poliomyélite en Inde 2006</li>
+    					<li class="ws-index-category-3-a">Vaccin Pandemrix contre la grippe porcine 2009</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-a">Blessures causées par les vaccins et antécédents de réparation légale</li>
+    			<li class="ws-index-category-2-a">Indemnité de responsabilité pour Big Pharma</li>
+    			<li class="ws-index-category-2-a">Agences de vaccins actuelles, considérant les conflits d'intérêts</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-a">WHO, UNICEF</li>
+    					<li class="ws-index-category-3-a">La Fondation Bill & Melinda Gates</li>
+    					<li class="ws-index-category-3-a">GAVI, CEPI</li>
+    					<li class="ws-index-category-3-a">Le Wellcome Trust</li>
+		    		</ul>
+		    	</div>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-b">2. Essais cliniques des médicaments</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-b">L'importance des tests approfondis, y compris les études sur les animaux</li>
+    			<li class="ws-index-category-2-b">Quand ça tourne mal : Thalidomide 1950s</li>
+    			<li class="ws-index-category-2-b">Controverse sur la drogue Primodos 1960</li>
+    			<li class="ws-index-category-2-b">"Bonnes pratiques" pour la conception et la terminologie des essais cliniques</li>
+    			<li class="ws-index-category-2-b">Étapes des essais cliniques de médicaments avant l'approbation complète</li>
+    			<li class="ws-index-category-2-b">Processus d'approbation (complète et utilisation d'urgence)</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-c">3. Technologie ARNM</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-c">Bases de la biologie</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-c">Composants de la cellule</li>
+    					<li class="ws-index-category-3-c">Votre génome et transmission de mutation</li>
+    					<li class="ws-index-category-3-c">Nucléotides</li>
+    					<li class="ws-index-category-3-c">ADN</li>
+    					<li class="ws-index-category-3-c">ARN</li>
+    					<li class="ws-index-category-3-c">ARNM</li>
+    					<li class="ws-index-category-3-c">Vésicules extracellulaires, exosomes et miARN (micro ARN)</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-c">Histoire du développement de l'ARNm au sein de Big Pharma</li>
+    			<li class="ws-index-category-2-c">ARNm synthétique et rôle de la pseudouridine</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-c">Optimisation des codons</li>
+    					<li class="ws-index-category-3-c">Codons d'arrêt</li>
+    					<li class="ws-index-category-3-c">Traduction & Fidélité</li>
+    					<li class="ws-index-category-3-c">Transcription inversée</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-c">Nanoparticules lipidiques et adjuvants</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-c">Toxicité</li>
+    					<li class="ws-index-category-3-c">Controverse</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-c">Plans futurs et préoccupations sur l'ARNM</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-d">4. La Première Génération des Injection Covid en 2020</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-d">Récit officiel du SARS Cov2 2020</li>
+    			<li class="ws-index-category-2-d">Sujets non débattus dans les médias principaux. Détruire le récit ?</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">Etude de P Pradhan sur les inserts de VIH - Jan 2020</li>
+    					<li class="ws-index-category-3-d">Analyse de Nicola Bidoli</li>
+    					<li class="ws-index-category-3-d">Site de clivage de la furine</li>
+    					<li class="ws-index-category-3-d">Séquence génétique brevetée Moderna</li>
+    					<li class="ws-index-category-3-d">Coopération US-Chine dans les expériences de laboratoire de gain de fonction</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-d">Le test PCR, LFT et ses limites</li>
+    			<li class="ws-index-category-2-d">Kary Mullis sur le PCR et critique du Dr Fauci</li>
+    			<li class="ws-index-category-2-d">Chronologie de la première génération d'injection de Covid</li>
+    			<li class="ws-index-category-2-d">Types d'injection de Covid de première génération</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">ARNM (Pfizer & Moderna)</li>
+    					<li class="ws-index-category-3-d">Vecteur Viral (AstraZeneca (Oxford) & Janssen (Johnson & Johnson))</li>
+    					<li class="ws-index-category-3-d">Protéine Spike & Adjuvants (Novavax)</li>
+    					<li class="ws-index-category-3-d">Virus Désactivé Adjuvanté (Valneva)</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-d">Ingrédients des injections Covid et controverse</li>
+    			<li class="ws-index-category-2-d">Affirmations sur les injection Covid remises en question</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-d">Reste au site d'injection</li>
+    					<li class="ws-index-category-3-d">Durée de persistance dans le corps</li>
+    					<li class="ws-index-category-3-d">Effet sur l'ADN, c'est-à-dire thérapie génique</li>
+    					<li class="ws-index-category-3-d">Longue histoire des vaccins à ARNm</li>
+    					<li class="ws-index-category-3-d">Entièrement testé et approuvé</li>
+    					<li class="ws-index-category-3-d">Sûr et efficace</li>
+		    		</ul>
+		    	</div>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-e">5. Essais cliniques sur les injections de Covid</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Documents d'essais cliniques sur l'injection de Covid 2020</li>
+    			<li class="ws-index-category-2-e">Test d'injection de Covid chez les animaux</li>
+    			<li class="ws-index-category-2-e">Amélioration dépendante des anticorps</li>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Critique de l'essai clinique Pfizer des Injections Covid et données utilisées pour l'autorisation d'urgence</li>
+    			<li class="ws-index-category-2-e">Processus d'approbation clinique des injections Covid</li>
+    			<li class="ws-index-category-2-e">Discrédit de l'hydroxychloroquine et de l'ivermectine à l'aide d'"études cliniques"</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-f">6. Blessures causées par le vaccin Covid (et nouveaux "antiviraux")</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-f">Mécanismes de surveillance et de notification des effets indésirables, par ex. VAERS</li>
+    			<li class="ws-index-category-2-f">Pouvons-nous faire confiance aux données officielles ?</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-f">Lacunes et précision de la capture de données</li>
+    					<li class="ws-index-category-3-f">"Mensonges, Gros mensonges & Statistiques" Examen des définitions et du déplacement des poteaux de but</li>
+    					<li class="ws-index-category-3-f">Les fichiers Jikkyleaks examinant les données de Pfizer - "Mouse Army"</li>
+    					<li class="ws-index-category-3-f">Outils de Base de données OpenVAET</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-f">Un examen plus approfondi du système immunitaire et des interactions avec l'injection</li>
+		    	<div style="width:100%;">
+		    		<ul>
+    					<li class="ws-index-category-3-f">Les anticorps ne sont pas les seules stars. Immunité innée et adaptative</li>
+    					<li class="ws-index-category-3-f">Cellules tueuses naturelles, cellules T auxiliaires (CD4+), cellules T cytotoxiques (CD8+) et cellules B mémoire</li>
+    					<li class="ws-index-category-3-f">Anticorps non neutralisants, amélioration dépendante des anticorps et évasion virale</li>
+    					<li class="ws-index-category-3-f">Péché antigénique originel</li>
+    					<li class="ws-index-category-3-f">Mimétisme moléculaire</li>
+    					<li class="ws-index-category-3-f">Récepteur de type Toll et suppression de gènes</li>
+    					<li class="ws-index-category-3-f">Epuisement des cellules T</li>
+    					<li class="ws-index-category-3-f">Covid "Anti-Viral" Molnupiravir (Merck)</li>
+    					<li class="ws-index-category-3-f">Covid "Anti-Viral" Paxlovid (Pfizer)</li>
+		    		</ul>
+		    	</div>
+    			<li class="ws-index-category-2-f">Amylose</li>
+    			<li class="ws-index-category-2-f">Anaphylaxie</li>
+    			<li class="ws-index-category-2-f">Maladie auto-immune</li>
+    			<li class="ws-index-category-2-f">Cancer</li>
+    			<li class="ws-index-category-2-f">Blessures aux yeux, y compris cécités</li>
+    			<li class="ws-index-category-2-f">Coeur & Circulation</li>
+    			<li class="ws-index-category-2-f">Fausses couches & naissances mort-nées</li>
+    			<li class="ws-index-category-2-f">Neurologique</li>
+    			<li class="ws-index-category-2-f">Dégats des organes, reins, foie</li>
+    			<li class="ws-index-category-2-f">Excrétion de vaccin</li>
+    			<li class="ws-index-category-2-f">Obtenir de l'aide - FLCCC, etc.</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1-g">7. Plus d'injections de Covid</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2-g">Injections Covid Moderna Spikevax Bivalent Original / Omicron ARNm 1273,214 approuvées au Royaume-Unis le 15 août 2022</li>
+    			<li class="ws-index-category-2-g">G7 Mission de 100 jours de Préparation à la pandémie</li>
+    			<li class="ws-index-category-2-g">Voix supprimées du débat scientifique et médical dans les médias sociaux</li>
+    		</ul>
+    	</div>
+    </ul>
+    % } else {
+
+    % }
 </div>

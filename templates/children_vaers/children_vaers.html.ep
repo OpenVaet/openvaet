@@ -37,7 +37,7 @@
     The after effects involving other serious after effects (hospitalization, prolonged hospitalization, life threatning event, permanent disability) are illustrated on the chart below:
     % } elsif ($currentLanguage eq 'fr') {
     <h2 style="margin-left: 5px;">USA - Autres effets secondaires graves hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
-    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisatin prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
+    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisation prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
     % } else {
 
     % }
@@ -84,7 +84,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <h2 style="margin-left: 5px;">Foreign - Autres effets secondaires graves hebdomadaires cumulés - 0 à 17 ans - Injections Covid / Vaccins Communs</h2>
-    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisatin prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
+    Les effets secondaires impliquant les autres cas sérieux (hospitalisation ou hospitalisation prolongée, mise en danger de la vie, infirmité permanente), sont représentés dans le graphique ci-dessous :
     % } else {
 
     % }
@@ -264,7 +264,7 @@
         };
 
         function drawMaterialChart() {
-            var materialChart = new google.visualization.LineChart(chartDiv);
+            var materialChart = new google.charts.Line(chartDiv);
             materialChart.draw(data, materialOptions);
         }
 
@@ -322,7 +322,7 @@
         };
 
         function drawMaterialChart() {
-            var materialChart = new google.visualization.LineChart(chartDiv);
+            var materialChart = new google.charts.Line(chartDiv);
             materialChart.draw(data, materialOptions);
         }
         var formatter = new google.visualization.NumberFormat(
@@ -383,7 +383,7 @@
         };
 
         function drawMaterialChart() {
-            var materialChart = new google.visualization.LineChart(chartDiv);
+            var materialChart = new google.charts.Line(chartDiv);
             materialChart.draw(data, materialOptions);
         }
 
@@ -441,7 +441,7 @@
         };
 
         function drawMaterialChart() {
-            var materialChart = new google.visualization.LineChart(chartDiv);
+            var materialChart = new google.charts.Line(chartDiv);
             materialChart.draw(data, materialOptions);
         }
         var formatter = new google.visualization.NumberFormat(
@@ -509,7 +509,7 @@
         formatter.format(data, 1); // Apply formatter to second column
 
         function drawMaterialChart() {
-            var materialChart = new google.visualization.LineChart(chartDiv);
+            var materialChart = new google.charts.Line(chartDiv);
             materialChart.draw(data, materialOptions);
         }
 

@@ -138,7 +138,9 @@ sub startup {
     $r->get('/open_medic')->to('open_medic#open_medic');
     $r->get('/children_vaers')->to('children_vaers#children_vaers');
     $r->get('/covid_injections_facts_and_lies')->to('covid_injections_facts_and_lies#covid_injections_facts_and_lies');
-    $r->get('/covid_injections_facts_and_lies/traditional_vaccines_controversies')->to('covid_injections_facts_and_lies#traditional_vaccines_controversies');
+    $r->get('/covid_injections_facts_and_lies/criticism_clinical_trials')->to('covid_injections_facts_and_lies#criticism_clinical_trials');
+    $r->get('/covid_injections_facts_and_lies/clinical_trial_2020')->to('covid_injections_facts_and_lies#clinical_trial_2020');
+    $r->get('/australian_data')->to('australian_data#australian_data');
 }
 
 sub connect_dbi

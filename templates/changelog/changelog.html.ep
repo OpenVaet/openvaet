@@ -10,6 +10,22 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.21</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a new script to extract Australian Data from VAERS' Foreign Data.</li>
+        <li>Few visual upgrades for the top bar.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'un nouveau script pour extraire les données Australiennes depuis la données VAERS Foreign.</li>
+        <li>Quelques améliorations visuelles de la top-bar</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.20</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

@@ -16,7 +16,6 @@
             font-size: 1.6rem;
             display: flex;
             flex-wrap: wrap;
-            line
         }
         .noselect {
             -webkit-user-select: none;
@@ -59,7 +58,7 @@
         div.menu_lang_filler {
             border: 2px solid #647287;
             background: #647287;
-            width: calc(100% - 290px);
+            width: calc(100% - 280px);
         }
         div.text_separator {
             width: 100%;
@@ -306,7 +305,7 @@
             display: inline-block;
             border: 1px solid gray;
             border-radius: 4px;
-            padding: 12px 30px 12px 20px;
+            padding: 12px 20px 12px 20px;
             background-color: #91a7c9;
             font-weight: bold;
             cursor: pointer;
@@ -338,15 +337,16 @@
         .dd-menu {
             position: absolute;
             top: 100%;
+            left: -167px;
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 0;
-            margin: 0px 0 -10px 0;
+            margin: 0px 0 0px 0;
             box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
             background-color: #91a7c9;
             font-weight: bold;
             list-style-type: none;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .dd-input + .dd-menu {
@@ -355,13 +355,16 @@
 
         .dd-input:checked + .dd-menu {
             display: block;
-        } 
+        }
+
+        /*.dd-menu ul {
+            max-width: 150px;
+        }*/
 
         .dd-menu li {
-            min-width: 80px;
+            min-width: 150px;
             padding: 10px 20px;
             cursor: pointer;
-            white-space: nowrap;
         }
 
         .dd-menu li:hover {
@@ -375,6 +378,7 @@
         }
 
         .dd-menu li.divider{
+            width: 100%;
             padding: 0;
             border-bottom: 1px solid #cccccc;
         }
@@ -405,19 +409,19 @@
                     <img src="/images/target.png" style="height: 20px;width: 20px;">&nbsp;<b>OPEN-VAET</b>
                 </div>
                 <div class="menu_separator"></div>
-                <div class="menu_item" style="width: 110px;padding-left: 0px;padding-top: 0px;">
+                <div class="menu_item" style="width: 100px;padding-left: 0px;padding-top: 0px;">
                     <label class="dropdown">
 
                       % if ($currentLanguage eq 'en') {
 
                       <div class="dd-button">
-                        More ...
+                        More...&nbsp;
                       </div>
                       <input type="checkbox" class="dd-input" id="test">
                       <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Index Data</li>
+                        <li onclick="openLocation('/data');return;">Index Data & Code</li>
                         <li class="divider"></li>
-                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;" class="ws-yellow">Covid Injections - Facts & Lies</li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
                         % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Studies</li>
                         <li class="divider"></li>
@@ -430,13 +434,13 @@
                       % } else {
 
                       <div class="dd-button">
-                        Plus ...&nbsp;
+                        Plus...&nbsp;&nbsp;
                       </div>
                       <input type="checkbox" class="dd-input" id="test">
                       <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Index Data</li>
+                        <li onclick="openLocation('/data');return;">Données Index & Code</li>
                         <li class="divider"></li>
-                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;" class="ws-yellow">Injections Covid - Faits & Mensonges</li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
                         % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Etudes</li>
                         <li class="divider"></li>
@@ -457,7 +461,7 @@
                 <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
             </div>
             <div class="version-container">
-                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.20</span>&nbsp;
+                <span class="url-link" onclick="openLocation('/changelog');return;">v 1.21</span>&nbsp;
             </div>
             <div id="language-display-container" class="language-display-container">
                 <div class="language-item-canvas" style="margin-top:5px;">

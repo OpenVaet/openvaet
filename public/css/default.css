@@ -2,6 +2,9 @@
 @font-face { font-family: "Spectral-Bold"; font-weight: bold; src: url('/fonts/Spectral-Bold.ttf');}
 @font-face { font-family: Roboto; src: url('/fonts/Roboto-Regular.ttf'); } 
 @font-face { font-family: "Roboto-Bold"; font-weight: bold; src: url('/fonts/Roboto-Bold.ttf');}
+@font-face { font-family: Arial; src: url('/fonts/Arial-Regular.ttf'); } 
+@font-face { font-family: "Arial-Bold"; font-weight: bold; src: url('/fonts/Arial-Bold.ttf');}
+@font-face { font-family: OpenSans-Regular; src: url('/fonts/OpenSans-Regular.ttf'); } 
 
 /* Body */
 body {

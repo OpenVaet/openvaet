@@ -1,0 +1,358 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections - Criticism of the Pfizer Covid Injection Clinical Trial & Data used for Emergency Authorisation';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid - Critique des essais cliniques des injections Pfizer & des données utilisées pour obtenir les autorisations d\'urgence';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Criticism of the Pfizer Covid Injection Clinical Trial & Data used for Emergency Authorisation
+    </div>
+    <div class="ws-article-subtitle">
+		Trial Design
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article in the British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+		Published 21 October 2020
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Will covid-19  vaccines save lives? Current trials aren’t designed to tell us
+    	<div class="text_separator"></div>
+		BMJ 2020;371:m4037
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/371/bmj.m4037" target="_blank">https://www.bmj.com/content/371/bmj.m4037</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.m4037" target="_blank">https://doi.org/10.1136/bmj.m4037</a>
+    </div>
+    <div class="ws-article-comic-green">
+		Surely the trial was designed to find out if the injection prevented you catching the disease (transmission) and if it prevented you from getting seriously ill with it....???
+    </div>
+    <div class="ws-article-comic-blue">
+		“Peter Hotez, dean of the National School of Tropical Medicine at Baylor College of Medicine in Houston, said, “Ideally, you want an antiviral vaccine to do two things . . . first, reduce the likelihood you will get severely ill and go to the hospital, and two, prevent infection and therefore interrupt disease transmission.”
+    </div>
+    <div class="ws-article-arial-red">
+		The trial was not designed to test if the vaccine prevented death or serious disease. It had an early end point.
+    </div>
+    <div class="ws-article-arial-black">
+		“Yet the current phase III trials are <b>not actually set up to prove either...</b> None of the trials currently under way are designed to detect a reduction in any serious outcome such as hospital admissions, use of intensive care, or deaths. Nor are the vaccines being studied to determine whether they can interrupt transmission of the virus...
+		<div class="text_separator"></div>
+		In all the ongoing phase III trials for which details have been released, laboratory confirmed infections even with only mild symptoms qualify as meeting the primary endpoint definition... In Pfizer and Moderna’s trials, for example, people with only a cough and positive laboratory test would bring those trials one event closer to their completion. (If AstraZeneca’s ongoing UK trial is designed similarly to its “paused” US trial for which the company has released details, a cough and fever with positive PCR test would suffice.)”
+    </div>
+    <div class="ws-article-arial-red">
+		The chosen range of participants is also questionable... and method for disease diagnostics
+    </div>
+    <div class="ws-article-arial-black">
+		<div class="text_separator"></div>
+		The trial omitted  those immunocompromised, pregnant & breastfeeding.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		The trial did not look at interactions with other drugs.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		The trial used PCR as dignostic tool
+    </div>
+    <div class="ws-article-highlight">
+		See Site Map page for “Kary Mullis on PCR & Criticism of Dr Fauci”
+    </div>
+    <div class="ws-article-subtitle">
+		Trial Implementation
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article in the British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+		Published 02 November 2021
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Covid-19: Researcher blows the whistle on data integrity issues in Pfizer’s vaccine trial
+    	<div class="text_separator"></div>
+		BMJ 2021;375:n2635
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/375/bmj.n2635" target="_blank">https://www.bmj.com/content/375/bmj.n2635</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.n2635" target="_blank">https://doi.org/10.1136/bmj.n2635</a>
+    </div>
+    <div class="ws-article-arial-red" style="margin-top:25px;">
+		Whistleblower Brook Jackson, a Regional Director at Pfizer contractor Ventavia Research Group in Texas, cast doubt on the integrity of the Pfizer trial implementation claiming poor practice including:
+    </div>
+    <ul>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">The Covid injections not being stored at proper temperatures.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Mislabelled laboratory specimens.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Drug assignment confirmation printouts left in participants’ charts, accessible to blinded personnel.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Inadequately trained vaccinators. Participants placed in a hallway after injection and not being monitored by clinical staff.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Lack of timely follow-up of patients who experienced adverse events.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Quality Control Staff overwhelmed by the volume of problems they were finding.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Protocol deviations not being reported.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Targeting of Ventavia staff for reporting some of the problems.</div></li>
+    </ul>
+    <div class="ws-article-arial-black">
+		“After repeatedly notifying Ventavia of problems, Brook Jackson emailed a complaint to the US Food and Drug Administration (FDA). Ventavia fired Jackson... deemed “not a good fit,” according to her separation letter. Jackson told The BMJ it was the first time she had been fired in her 20 year career in research.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		After Jackson left the company problems persisted at Ventavia, another employee said…in several cases Ventavia lacked enough employees to swab all trial participants who reported covid-like symptoms, to test for infection. Laboratory confirmed symptomatic covid-19 was the trial’s primary endpoint, the employee noted. The site was not audited.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Since Jackson reported problems with Ventavia to the FDA in September 2020, Pfizer has hired Ventavia as a research subcontractor on four other vaccine clinical trials (covid-19 vaccine in children and young adults, pregnant women, and a booster dose, as well an RSV vaccine trial).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		FDA Regulatory oversight has been called into question. In 2007 the Department of Health and Human Services’ Office of the Inspector General released a report on FDA’s oversight of clinical trials conducted between 2000 and 2005. The report found that the FDA inspected only 1% of clinical trial sites. Inspections carried out by the FDA’s vaccines and biologics branch have been decreasing in recent years, with just 50 conducted in the 2020 fiscal year.”
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-subtitle" style="text-align: center;width: 100%;">
+		Learning More
+    </div>
+    <div class="ws-article-arial-black-italic-centered">
+		If you wish to go deeper in this subject, we suggest you the following video featuring Brook Jackson's interview by Rounding The Earth (and, as usual, to do your own researches).
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1dhrkn/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+    	Critique de l'essai clinique Pfizer des Injections Covid et données utilisées pour l'autorisation d'urgence
+    </div>
+    <div class="ws-article-subtitle">
+		Conception de l'essai
+    </div>
+    <div class="ws-article-highlight">
+    	Les informations ci-dessous citent et se réfèrent à cet article (en anglais) du British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+    	Publié le 21 Octobre 2020
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Est-ce que les vaccins Covid-19 vont sauver des vies ? Les essais cliniques actuels ne sont pas conçus pour nous le dire.
+    	<div class="text_separator"></div>
+		BMJ 2020;371:m4037
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/371/bmj.m4037" target="_blank">https://www.bmj.com/content/371/bmj.m4037</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.m4037" target="_blank">https://doi.org/10.1136/bmj.m4037</a>
+    </div>
+    <div class="ws-article-comic-green">
+    	A coup sûr, les essais cliniques ont été conçus pour déterminer si l'injection vous empêchait d'attraper la maladie (transmission) et si elles prévenaient de tomber gravement malade si vous l'attrapiez tout de même ...???
+    </div>
+    <div class="ws-article-comic-blue">
+		“Peter Hotez, doyen de l'Ecole nationale de médecine tropicale du Baylor College of Medicine à Houston, a déclaré: « Idéalement, vous voulez qu'un vaccin antiviral fasse deux choses. . . premièrement, réduire la probabilité que vous tombiez gravement malade et que vous vous rendiez à l'hôpital, et deuxièmement, prévenir l'infection et donc interrompre la transmission de la maladie”.
+    </div>
+    <div class="ws-article-arial-red">
+    	L'essai clinique n'a pas été conçu pour vérifier si le vaccin prévenait la mort ou les formes sérieuses de la maladie. Il se terminait trop tôt.
+    </div>
+    <div class="ws-article-arial-black">
+		“Pourtant, les essais de phase III actuels ne sont <b>pas réellement mis en place pour prouver ça non plus...</b> Aucun des essais actuellement en cours n'est conçu pour détecter une réduction des résultats graves tels que les hospitalisations, le recours aux soins intensifs ou les décès. Les vaccins ne sont pas non plus étudiés pour déterminer s'ils peuvent interrompre la transmission du virus...
+		<div class="text_separator"></div>
+		Dans tous les essais de phase III en cours pour lesquels des détails ont été publiés, les infections confirmées en laboratoire, même avec seulement des symptômes légers, sont considérées comme répondant à la définition du critère d'évaluation principal... Dans les essais de Pfizer et Moderna, par exemple, les personnes souffrant uniquement de toux et d'un test de laboratoire positif rapprocherait ces essais de leur achèvement d'un événement. (Si l'essai britannique en cours d'AstraZeneca est conçu de la même manière que son essai américain "en pause" pour lequel la société a publié des détails, une toux et de la fièvre avec un test PCR positif suffiraient.)"
+    </div>
+    <div class="ws-article-arial-red">
+		La gamme de participants choisie est également discutable... et la méthode de diagnostic des maladies l'est de même.
+    </div>
+    <div class="ws-article-arial-black">
+		<div class="text_separator"></div>
+		L'essai a omis les personnes immunodéprimées, enceintes et allaitantes.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		L'essai n'a pas examiné les interactions avec d'autres médicaments.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		L'essai a utilisé le PCR comme outil diagnostique
+    </div>
+    <div class="ws-article-highlight">
+		Voir la référence "Kary Mullis sur la PCR et la critique du Dr Fauci"
+    </div>
+    <div class="ws-article-subtitle">
+		Mise en œuvre de l'essai
+    </div>
+    <div class="ws-article-highlight">
+    	Les informations ci-dessous citent et se réfèrent à cet article (en anglais) du British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+		Publié le 02 Novembre 2021
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Covid-19: Des chercheurs lancent l'alerte sur les problèmes d'intégrité des données dans les essais cliniques Pfizer
+    	<div class="text_separator"></div>
+		BMJ 2021;375:n2635
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/375/bmj.n2635" target="_blank">https://www.bmj.com/content/375/bmj.n2635</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.n2635" target="_blank">https://doi.org/10.1136/bmj.n2635</a>
+    </div>
+    <div class="ws-article-arial-red" style="margin-top:25px;">
+		La lanceuse d'alerte Brook Jackson, directrice régionale du sous-traitant Pfizer "Ventavia Research Group" au Texas, a mis en doute l'intégrité de la mise en œuvre de l'essai Pfizer, affirmant qu'il souffrait de nombreuses mauvaises pratiques, notamment :
+    </div>
+    <ul>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Les injections de Covid ne sont pas stockées à des températures appropriées.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Échantillons de laboratoire mal étiquetés.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Formulaires de confirmation d'attribution de médicaments laissés dans les dossiers des participants, accessibles au personnel "aveugle".</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Vaccinateurs insuffisamment formés. Participants placés dans un couloir après l'injection et non surveillés par le personnel clinique.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Manque de suivi en temps opportun des patients qui ont subi des événements indésirables.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Personnel de contrôle de la qualité dépassé par le volume de problèmes qu'il trouve.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Ecarts de protocole non signalés.</div></li>
+    	<li class="article-bulletpoint"><div class="article-bulletpoint-text">Ciblage du personnel de Ventavia pour signaler certains des problèmes.</div></li>
+    </ul>
+    <div class="ws-article-arial-black">
+		«Après avoir informé à plusieurs reprises Ventavia des problèmes, Brook Jackson a envoyé une plainte par courrier électronique à la Food and Drug Administration (FDA) des États-Unis. Ventavia a renvoyé Jackson... jugée "pas une bonne candidate", selon sa lettre de licenciement. Jackson a déclaré au BMJ que c'était la première fois qu'elle était licenciée en 20 ans de carrière dans la recherche.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Après que Jackson ait quitté l'entreprise, les problèmes ont persisté à Ventavia, a déclaré un autre employé… dans plusieurs cas, Ventavia manquait d'employés pour prélever tous les participants à l'essai qui ont signalé des symptômes de type covid, afin de tester l'infection. Le laboratoire a confirmé que le covid-19 symptomatique était le principal critère d'évaluation de l'essai, a noté l'employé. Le site n'a pas été audité.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Depuis que Jackson a signalé des problèmes avec Ventavia à la FDA en septembre 2020, Pfizer a engagé Ventavia comme sous-traitant de recherche sur quatre autres essais cliniques de vaccins (vaccin covid-19 chez les enfants et les jeunes adultes, les femmes enceintes et une dose de rappel, ainsi qu'un VRS essai de vaccin).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		La surveillance réglementaire de la FDA a été remise en question. En 2007, le Bureau de l'inspecteur général du ministère de la Santé et des Services sociaux a publié un rapport sur la surveillance par la FDA des essais cliniques menés entre 2000 et 2005. Le rapport a révélé que la FDA n'avait inspecté que 1 % des sites d'essais cliniques. Les inspections effectuées par la branche des vaccins et des produits biologiques de la FDA ont diminué ces dernières années, avec seulement 50 effectuées au cours de l'exercice 2020. »
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-subtitle" style="text-align: center;width: 100%;">
+		En savoir plus
+    </div>
+    <div class="ws-article-arial-black-italic-centered">
+		Si vous souhaitez approfondir ce sujet, nous vous proposons la vidéo suivante présentant l'interview de Brook Jackson par Rounding The Earth (et, comme d'habitude, de faire vos propres recherches).
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1dhrkn/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

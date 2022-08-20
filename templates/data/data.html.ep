@@ -58,7 +58,7 @@
     <h3>Database Building.</h3>
     Having MySQL server installed, you can build the database from the scratch by simply applying data/history.sql (database has it has been built during the project construction).
     <h3>Configuration File.</h3>
-    Having the database built from the history file, or imported from a structure or complete dump, you must configure the config/openvaet.conf file (simply open it in a text editor such as Notepad, SublimeText, etc.).
+    Having the database built from the history file, you must configure the config/openvaet.conf file (simply open it in a text editor such as Notepad, SublimeText, etc.).
     <div class="text_separator"></div>
     <ul>
         <li>Replace the "secrets" entry by a 40 chars random string.</li>
@@ -126,9 +126,9 @@
     <h3>Exécuter le projet sous Linux.</h3>
     Vous aurez besoin des librairies requises par le projet, que vous pouvez installer manuellement en utilisant cpan, ou en éxécutant le fichier ./config/dependencies.sh.
     <h3>Construction de la base de données.</h3>
-    Ayant MySQL Server installé, vous pouvez construire la base de données en exécutant data/history.sql (la base de donnée telle qu'elle a été construite au fil du projet). L'avantage de l'importation de la dernière version est que vous gagnerez quelque temps d'indexation de la donnée du CDC & de l'Union Européenne.
+    Ayant MySQL Server installé, vous pouvez construire la base de données en exécutant data/history.sql (la base de donnée telle qu'elle a été construite au fil du projet).
     <h3>Fichier de Configuration.</h3>
-    Ayant construit la base de donnée depuis le fichier d'historique ou ayant importé la copie d'icelle, vous devez configurer le fichier config/openvaet.conf (ouvrez le simplement dans un éditeur de texte ou votre IDE).
+    Ayant construit la base de donnée depuis le fichier d'historique, vous devez configurer le fichier config/openvaet.conf (ouvrez le simplement dans un éditeur de texte ou votre IDE).
     <div class="text_separator"></div>
     <ul>
         <li>Remplacez l'entrée "secrets" par une chaine aléatoire de 40 caractères.</li>

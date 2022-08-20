@@ -25,7 +25,24 @@ sub covid_injections_facts_and_lies {
     );
 }
 
-sub traditional_vaccines_controversies {
+sub criticism_clinical_trials {
+    my $self = shift;
+    my $currentLanguage = $self->param('currentLanguage') // 'en';
+
+    # Loggin session if unknown.
+    session::session_from_self($self);
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+    $self->render(
+        currentLanguage => $currentLanguage,
+        languages => \%languages
+    );
+}
+
+sub clinical_trial_2020 {
     my $self = shift;
     my $currentLanguage = $self->param('currentLanguage') // 'en';
 

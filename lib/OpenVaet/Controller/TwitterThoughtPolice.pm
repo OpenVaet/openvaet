@@ -8,6 +8,8 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
 
+# Note for later : have an in depth look to https://github.com/twintproject/twint
+
 sub twitter_thought_police {
 	my $self = shift;
 
