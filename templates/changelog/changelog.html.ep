@@ -10,6 +10,28 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.22</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Database V5</li>
+        <li>Reworked topbar visual</li>
+        <li>Gettr relations monitoring script (tasks/gettr/gettr_relations.pl)</li>
+        <li>Preparations for users release</li>
+        <li>Bug fix on archived tweets rendering</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Database V5</li>
+        <li>Visuel topbar retravaillé</li>
+        <li>Script de monitoring des relations Gettr (tasks/gettr/gettr_relations.pl)</li>
+        <li>Préparations de la publication des utilisateurs</li>
+        <li>Réparation d'un bug dans le rendu visuel des tweets archivés</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.21</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

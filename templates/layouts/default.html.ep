@@ -592,7 +592,7 @@
                         <li class="divider"></li>
                         <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.21</div></li>
+                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.22</div></li>
                       </ul>
                       % } else {
 
@@ -613,7 +613,7 @@
                         <li class="divider"></li>
                         <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.21</div></li>
+                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.22</div></li>
                       </ul>
                       % }
                       
