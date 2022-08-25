@@ -3,7 +3,6 @@ use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
 use Scalar::Util qw(looks_like_number);
-use Proc::Background;
 use Data::Printer;
 use FindBin;
 use lib "$FindBin::Bin/../lib";

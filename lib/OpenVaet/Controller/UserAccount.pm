@@ -1,7 +1,6 @@
 package OpenVaet::Controller::UserAccount;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
-use Proc::Background;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use config;
