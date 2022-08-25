@@ -4,17 +4,29 @@
     <div class="horizontal-separator-20"></div>
     <div class="login-inputs-container">
         <div class="login-inputs-margin"></div>
+        % if ($currentLanguage eq 'en') {
         <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Email">
+        % } else {
+        <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Courriel">
+        % }
         <div class="login-inputs-margin"></div>
     </div>
     <div class="horizontal-separator-20"></div>
     <div class="login-inputs-container">
         <div class="login-inputs-margin"></div>
+        % if ($currentLanguage eq 'en') {
         <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Password">
+        % } else {
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Mot de passe">
+        % }
         <div class="login-inputs-margin"></div>
     </div>
     <div class="horizontal-separator-5"></div>
+    % if ($currentLanguage eq 'en') {
     <div class="login-form-forgot-password" onclick="forgotPassword();return;">Forgot your password ?</div>
+    % } else {
+    <div class="login-form-forgot-password" onclick="forgotPassword();return;">Mot de passe oublié ?</div>
+    % }
     <div class="horizontal-separator-5"></div>
     <div id="loginError" class="login-error"></div>
     <button type="submit" name="submit" class="login-button noselect">Connexion</button>
@@ -89,23 +101,39 @@
     <div class="horizontal-separator-10"></div>
     <div class="login-inputs-container">
         <div class="login-inputs-margin"></div>
+        % if ($currentLanguage eq 'en') {
         <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Email">
+        % } else {
+        <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Courriel">
+        % }
         <div class="login-inputs-margin"></div>
     </div>
     <div class="horizontal-separator-5"></div>
     <div class="login-inputs-container">
         <div class="login-inputs-margin"></div>
+        % if ($currentLanguage eq 'en') {
         <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Password">
+        % } else {
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Mot de passe">
+        % }
         <div class="login-inputs-margin"></div>
     </div>
     <div class="horizontal-separator-5"></div>
     <div class="login-inputs-container">
         <div class="login-inputs-margin"></div>
+        % if ($currentLanguage eq 'en') {
         <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="passwordConfirm" placeholder="Confirm Your Password">
+        % } else {
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="passwordConfirm" placeholder="Confirmer Mot de Passe">
+        % }
         <div class="login-inputs-margin"></div>
     </div>
     <div id="loginError" class="login-error"></div>
+    % if ($currentLanguage eq 'en') {
     <button type="submit" name="submit" class="login-button noselect">Create an account</button>
+    % } else {
+    <button type="submit" name="submit" class="login-button noselect">Créer un compte</button>
+    % }
 </form>
 <script type="text/javascript">
     $("#loginFormArgs").submit(

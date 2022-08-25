@@ -125,7 +125,7 @@
             margin-left: calc(100% - 95px);
             top: 2px;
             z-index: 2;
-            display: none;
+            /*display: none;*/
         }
 
         /* Layout language menu */
@@ -658,8 +658,13 @@
                 <div class="horizontal-separator-10"></div>
                 <div class="login-tab">
                     <div class="login-tab-margin"></div>
+                    % if ($currentLanguage eq 'en') {
                     <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>LOGIN</b></div>
                     <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>SIGN UP</b></div>
+                    % } else {
+                    <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>Connexion</b></div>
+                    <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>Créer compte</b></div>
+                    % }
                     <div class="login-tab-margin"></div>
                 </div>
                 <div class="horizontal-separator-2"></div>
@@ -815,7 +820,8 @@
             url: "/new_user/load_email_confirm",
             type: "POST",
             data: {
-                userMail : userMail
+                userMail : userMail,
+                currentLanguage : currentLanguage
            }
         });
 

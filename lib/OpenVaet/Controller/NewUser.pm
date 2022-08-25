@@ -143,6 +143,7 @@ sub forward_email_confirm {
 sub load_email_confirm {
     my $self          = shift;
     my $userMail      = $self->param("userMail");
+    my $currentLanguage       = $self->param('currentLanguage');
 
     if (!$userMail) {
         $self->render(
@@ -151,7 +152,8 @@ sub load_email_confirm {
     }
 
     $self->render(
-        userMail  => $userMail
+        userMail  => $userMail,
+        currentLanguage  => $currentLanguage
     );
 }
 
