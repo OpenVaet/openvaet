@@ -89,6 +89,7 @@ sub change_password {
 sub forgot_password {
     my $self     = shift;
     my $serverMailAddress = $config{'serverMailAddress'} // die;
+    my $currentLanguage = $config{'currentLanguage'} // die;
     my $userMail = $self->param('userMail');
 
     # Verifying mail validity ; sending code if valid request.
@@ -107,26 +108,51 @@ sub forgot_password {
                 my $passwordReinitCode = join " ", map { $chars[rand @chars] } 1 .. 6;
                 $currentTimestamp      = $currentTimestamp + 900; # One new code per 15 minutes by default.
                 say "Mailing [$userMail] : [Saisissez le code suivant pour réinitialiser votre mot de passe : $passwordReinitCode.]";
-                system("
-                (
-                echo \"From: $serverMailAddress\";
-                echo \"To: $userMail\";
-                echo \"Subject: Test complete\";
-                echo \"Content-Type: text/html\";
-                echo \"MIME-Version: 1.0\";
-                echo \"\";
-                echo \"<html>
-                <body>
-                <div style=\\\"
-                    width: 300px;
-                    height: 300px;
-                    \\\">
-                    Saisissez le code suivant pour réinitialiser votre mot de passe : $passwordReinitCode.
-                </div>
-                </body>
-                </html>\";
-                ) | sendmail -t
-                ");
+                if ($currentLanguage eq 'en') {
+                    system("
+                    (
+                    echo \"From: $serverMailAddress\";
+                    echo \"To: $userMail\";
+                    echo \"Subject: OpenVAET Code : $passwordReinitCode\";
+                    echo \"Content-Type: text/html\";
+                    echo \"MIME-Version: 1.0\";
+                    echo \"\";
+                    echo \"<html>
+                    <body>
+                    <div style=\\\"
+                        width: 300px;
+                        height: 300px;
+                        text-align:center;
+                        \\\">
+                        Please enter the following code to reset your password<br><b>$passwordReinitCode</b>
+                    </div>
+                    </body>
+                    </html>\";
+                    ) | sendmail -t
+                    ");
+                } else {
+                    system("
+                    (
+                    echo \"From: $serverMailAddress\";
+                    echo \"To: $userMail\";
+                    echo \"Subject: Code OpenVAET : $passwordReinitCode\";
+                    echo \"Content-Type: text/html\";
+                    echo \"MIME-Version: 1.0\";
+                    echo \"\";
+                    echo \"<html>
+                    <body>
+                    <div style=\\\"
+                        width: 300px;
+                        height: 300px;
+                        text-align:center;
+                        \\\">
+                        Saisissez le code suivant pour réinitialiser votre mot de passe<br><b>$passwordReinitCode</b>
+                    </div>
+                    </body>
+                    </html>\";
+                    ) | sendmail -t
+                    ");
+                }
                 $passwordReinitCode =~ s/ //g;
                 my $sth = $self->dbh->prepare("UPDATE user SET passwordReinitCode = ?, passwordReinitAttempts = 0, passwordReinitTimestamp = $currentTimestamp WHERE id = $userId");
                 $sth->execute($passwordReinitCode);

@@ -15,7 +15,11 @@
 
 <div class="email-confirm-container">
 	<div class="email-confirm-text">
+	% if ($currentLanguage eq 'en') {
 		Please confirm that <%=$userMail%> is a valid email by typing in the 6 digits code we just mailed you.
+	% } else {
+		Veuillez confirmed que <%=$userMail%> est un courriel valide en entrant les 6 chiffres que nous vous avons envoyés.
+	% }
 	</div>
 	<div style="width: 300px;margin-top: 20px;">
 		<input style="width:16px;padding: 2px;" id="input1" type="text" onkeyup="validateInput(this);"/>

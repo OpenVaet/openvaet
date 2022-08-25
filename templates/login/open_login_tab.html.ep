@@ -67,7 +67,8 @@
                 url: "/user_account/forgot_password",
                 type: "POST",
                 data: {
-                    userMail  : userMail
+                    userMail  : userMail,
+                    currentLanguage  : currentLanguage
                }
             });
 
@@ -121,7 +122,11 @@
         let password        = $('#password').val();
         let passwordConfirm = $('#passwordConfirm').val();
         if (!userMail || !password || !passwordConfirm) {
+            % if ($currentLanguage eq 'en') {
             $("#loginError").html('Please complete every entry');
+            % } else {
+            $("#loginError").html('Veuillez conirmer toutes les entrées');
+            % }
             return false;
         }
         if (password == passwordConfirm) {
@@ -131,20 +136,26 @@
             } else {
                 return false;
             }
+            let request = $.ajax({
+                url: $('#loginFormArgs').attr('action'),
+                type: 'POST',
+                data : $('#loginFormArgs').serialize()
+            });
+            request.done(function(data) {
+                console.log(data);
+                if (data.status == 'ok') {
+                    loginNewUser(userMail, password, currentLanguage);
+                } else {
+                    $("#loginError").html(data.message);
+                }
+            });
+        } else {
+            % if ($currentLanguage eq 'en') {
+            $("#loginError").html('The passwords you entered aren't matching.');
+            % } else {
+            $("#loginError").html('Les mots de passe saisis ne correspondent pas.');
+            % }
         }
-        let request = $.ajax({
-            url: $('#loginFormArgs').attr('action'),
-            type: 'POST',
-            data : $('#loginFormArgs').serialize()
-        });
-        request.done(function(data) {
-            console.log(data);
-            if (data.status == 'ok') {
-                loginNewUser(userMail, password, currentLanguage);
-            } else {
-                $("#loginError").html(data.message);
-            }
-        });
         return false;
     });
 </script>

@@ -9,20 +9,22 @@ use lib "$FindBin::Bin/../lib";
 sub open_login_tab {
     my $self = shift;
     my $currentLanguage = $self->param('currentLanguage');
+    my $tabName = $self->param("tabName");
     say "open_login_tab ...";
     say "currentLanguage : $currentLanguage";
+    say "tabName : [$tabName]";
 
-    my $tabName = $self->param("tabName");
-    if (!$tabName || ($tabName ne 'login' || $tabName ne 'signout')) {
+    if (!$tabName || ($tabName ne 'login' && $tabName ne 'signup')) {
         $self->render(text => 'Unauthorized')
+    } else {
+
+        say "tabName : $tabName";
+
+        $self->render(
+            tabName => $tabName,
+            currentLanguage => $currentLanguage
+        );
     }
-
-    say "tabName : $tabName";
-
-    $self->render(
-        tabName => $tabName,
-        currentLanguage => $currentLanguage
-    );
 }
 
 sub login {

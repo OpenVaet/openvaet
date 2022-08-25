@@ -310,7 +310,7 @@
             display: inline-block;
             border: 1px solid gray;
             border-radius: 4px;
-            padding: 10px 8px 10px 5px;
+            padding: 9px 8px 10px 5px;
             background-color: #91a7c9;
             font-weight: bold;
             cursor: pointer;

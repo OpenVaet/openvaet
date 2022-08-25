@@ -51,11 +51,10 @@ sub create_user {
                 if ($uTb) {
                     $status   = 'ko';
                     if ($currentLanguage eq 'en') {
-
+                        $message  = 'This user already exists. Please login instead.';
                     } else {
-                        
+                        $message  = 'Cet utilisateur existe déjà. Veuillez vous connecter';
                     }
-                    $message  = 'mailAlreadyKnown';
                 } else {
                     $status   = 'ok';
                     $referrer = $self->session->{referrer};
@@ -94,26 +93,51 @@ sub forward_email_confirm {
     my ($userMail, $emailVerificationCode, $currentLanguage) = @_;
     my $serverMailAddress = $config{'serverMailAddress'} // die;
     say "Mailing [$userMail] : [Saisissez le code suivant pour valider votre email : $emailVerificationCode.]";
-    system("
-    (
-    echo \"From: $serverMailAddress\";
-    echo \"To: $userMail\";
-    echo \"Subject: Test complete\";
-    echo \"Content-Type: text/html\";
-    echo \"MIME-Version: 1.0\";
-    echo \"\";
-    echo \"<html>
-    <body>
-    <div style=\\\"
-        width: 300px;
-        height: 300px;
-        \\\">
-        Saisissez le code suivant pour valider votre email : $emailVerificationCode.
-    </div>
-    </body>
-    </html>\";
-    ) | sendmail -t
-    ");
+    if ($currentLanguage eq 'en') {
+        system("
+        (
+        echo \"From: $serverMailAddress\";
+        echo \"To: $userMail\";
+        echo \"Subject: OpenVAET Code : $emailVerificationCode\";
+        echo \"Content-Type: text/html\";
+        echo \"MIME-Version: 1.0\";
+        echo \"\";
+        echo \"<html>
+        <body>
+        <div style=\\\"
+            width: 300px;
+            height: 300px;
+            text-align:center;
+            \\\">
+            Please enter the following code to confirm your email<br><b>$emailVerificationCode</b>
+        </div>
+        </body>
+        </html>\";
+        ) | sendmail -t
+        ");
+    } else {
+        system("
+        (
+        echo \"From: $serverMailAddress\";
+        echo \"To: $userMail\";
+        echo \"Subject: Code OpenVAET : $emailVerificationCode\";
+        echo \"Content-Type: text/html\";
+        echo \"MIME-Version: 1.0\";
+        echo \"\";
+        echo \"<html>
+        <body>
+        <div style=\\\"
+            width: 300px;
+            height: 300px;
+            text-align:center;
+            \\\">
+            Veuillez saisir le code suivant pour valider votre courriel<br><b>$emailVerificationCode</b>
+        </div>
+        </body>
+        </html>\";
+        ) | sendmail -t
+        ");
+    }
 }
 
 sub load_email_confirm {
