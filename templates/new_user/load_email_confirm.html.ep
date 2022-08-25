@@ -1,0 +1,108 @@
+<style type="text/css">
+	.email-confirm-container {
+		width:calc(100% - 40px);
+		padding: 20px;
+		text-align:center;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.email-confirm-text {
+		width:100%;
+		font-size: 15px;
+	}
+</style>
+
+<div class="email-confirm-container">
+	<div class="email-confirm-text">
+		Please confirm that <%=$userMail%> is a valid email by typing in the 6 digits code we just mailed you.
+	</div>
+	<div style="width: 300px;margin-top: 20px;">
+		<input style="width:16px;padding: 2px;" id="input1" type="text" onkeyup="validateInput(this);"/>
+		<input style="width:16px;padding: 2px;" id="input2" type="text" onkeyup="validateInput(this);"/>
+		<input style="width:16px;padding: 2px;" id="input3" type="text" onkeyup="validateInput(this);"/>
+		<input style="width:16px;padding: 2px;" id="input4" type="text" onkeyup="validateInput(this);"/>
+		<input style="width:16px;padding: 2px;" id="input5" type="text" onkeyup="validateInput(this);"/>
+		<input style="width:16px;padding: 2px;" id="input6" type="text" onkeyup="validateInput(this);"/>
+	</div>
+</div>
+<div style="height: 25px;width: 100%;"></div>
+<div id="loginError" class="login-error"></div>
+<script type="text/javascript">
+	var inputs         = [1, 2, 3, 4, 5, 6];
+	var inputsComplete = 0;
+	var inputToFill    = 0;
+
+	function validateInput(input){
+		input.value = input.value.replace(/\W|\D/g, '').substr(0, 1).toUpperCase();
+		inputs.forEach(checkInput);
+		if (inputsComplete == 6) {
+			verifyCode();
+		} else {
+			let inputId = findFirstEmptyInput();
+			if (input.value) {
+				document.getElementById('input' + inputToFill).focus();
+			}
+		}
+		inputsComplete = 0;
+		inputToFill    = 0;
+	}
+
+	function findFirstEmptyInput() {
+		for (let input of inputs) {
+			console.log(input);
+			let val = $('#input' + input).val();
+			if (!val) {
+				inputToFill = input;
+				break;
+			}
+		}
+	}
+
+
+	function checkInput(item, index) {
+		let val = $('#input' + item).val();
+		if (val) {
+			inputsComplete += 1
+		}
+	}
+
+	function verifyCode() {
+		let emailVerificationCode = '';
+		for (let input of inputs) {
+			console.log(input);
+			let val = $('#input' + input).val();
+			if (!val) {
+				alert('Something went wrong');
+				break;
+			}
+			emailVerificationCode = emailVerificationCode + val;
+		}
+		console.log('Verifying ' + emailVerificationCode);
+		let userMail = '<%=$userMail%>';
+		let request  = $.ajax({
+		    url: "/new_user/confirm_email",
+		    type: "POST",
+		    data: {
+		    	userMail              : userMail,
+		    	currentLanguage       : currentLanguage,
+		    	emailVerificationCode : emailVerificationCode
+		   }
+		});
+
+		request.done(function(data) {
+			console.log(data);
+
+			if (data.status == 'ok') {
+				closeLogin();
+			} else {
+				$("#loginError").html(data.message);
+			}
+		});
+
+		// Printing error message if case of failure
+		request.fail(function(jqXHR, textStatus) {
+		    alert("Something went wrong : " + textStatus)
+		});
+	}
+</script>

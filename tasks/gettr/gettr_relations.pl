@@ -96,7 +96,7 @@ while (1) {
     %gettrUsersArchived    = ();
     verify_gettr_user_existing_relations();
 
-    say "Sleeping [$sleepSeconds] seconds prior to monitor again.";
+    # say "Sleeping [$sleepSeconds] seconds prior to monitor again.";
     sleep $sleepSeconds;
 }
 

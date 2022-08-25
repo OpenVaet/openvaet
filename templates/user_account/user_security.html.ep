@@ -1,0 +1,149 @@
+% layout 'default';
+% title 'OPENVAET - Password Change';
+
+<style type="text/css">
+
+.user-account-password-change-container {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+    border: 1px solid #696968;
+    border-radius: 5px;
+    padding: 5px 10px;
+	min-width: 200px;
+	max-width: 410px;
+    background: #fffcfc;
+    margin-top: 15px;
+}
+
+.user-account-title {
+	width: 100%;
+	text-align: center;
+    font-size: 13px;
+}
+
+.user-account-function-button {
+    border: 1px solid #696968;
+    border-radius: 5px;
+    width: 150px;
+    margin: auto;
+    margin-top:15px;
+    padding: 5px 10px;
+    background: #e9eef0;
+    color: #8a8a88;
+    font-family: "Roboto",Arial,sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.user-account-function-button:hover {
+    background: rgb(200, 205, 205, .75) !important;
+}
+
+.confirm-entry {
+    margin-top: 15px;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    padding: 0 10px;
+    color: darkgreen;
+}
+
+</style>
+
+<div style="width:100%;position: relative;">
+	<div class="user-account-password-change-container">
+		<div class="user-account-title"><b>PASSWORD CHANGE</b></div>
+		<div class="horizontal-separator-10"></div>
+		<input id="currentPassword" type="password" name="currentPassword" style="width:94%;padding:5px 5px;" placeholder="Your current password">
+		<div style="height: 2vh;width: 100%;"></div>
+		<input id="newPassword" type="password" name="newPassword" style="width:94%;padding:5px 5px;" placeholder="Your new password">
+		<div style="height: 2vh;width: 100%;"></div>
+		<input id="passwordConfirm" type="password" name="passwordConfirm" style="width:94%;padding:5px 5px;" placeholder="Confirm new password">
+		<div style="height: 2vh;width: 100%;"></div>
+		<div class="login-error" id="passwordChangeErrorEntry">
+			
+		</div>
+		<div class="confirm-entry" id="passwordConfirmEntry">
+			
+		</div>
+		<div class="user-account-function-button noselect" onclick="passwordChange();return;">
+			<b>Change my password&nbsp;&nbsp;<img src="/images/lock.png" style="height:16px;"></b>
+		</div>
+		<div class="horizontal-separator-10"></div>
+	</div>
+</div>
+<script type="text/javascript">
+	var userMail = '<%=$userMail%>';
+	function passwordChange() {
+        let currentPassword = $('#currentPassword').val();
+        let password        = $('#newPassword').val();
+        let passwordConfirm = $('#passwordConfirm').val();
+        if (!currentPassword || !password || !passwordConfirm) {
+			$("#passwordConfirmEntry").html('');
+			% if ($currentLanguage eq 'en') {
+    		$("#passwordChangeErrorEntry").html('Please fill all the inputs.');
+			% } else {
+    		$("#passwordChangeErrorEntry").html('Veuillez compléter toutes les entrées.');
+			% }
+        } else {
+        	if (currentPassword == password) {
+				$("#passwordConfirmEntry").html('');
+				% if ($currentLanguage eq 'en') {
+	    		$("#passwordChangeErrorEntry").html('Your new password is identical to your current password.');
+				% } else {
+    			$("#passwordChangeErrorEntry").html('Le nouveau mot de passe est identique au mot de passe actuel.');
+				% }
+        	} else {
+	        	if (password == passwordConfirm) {
+	        		let check = checkPwd(password);
+	        		if (check == 'ok') {
+		    			$("#passwordChangeErrorEntry").html('');
+				        console.log('userMail        : ' + userMail);
+				        console.log('password        : ' + password);
+						let request = $.ajax({
+						    url: "/user_account/change_password",
+						    type: "POST",
+						    data: {
+						    	currentLanguage : currentLanguage,
+						    	currentPassword : currentPassword,
+						    	password        : password
+						   }
+						});
+
+						request.done(function(data) {
+							console.log(data);
+
+							if (data.status == 'ok') {
+		    					$("#passwordChangeErrorEntry").html('');
+								% if ($currentLanguage eq 'en') {
+	    						$("#passwordConfirmEntry").html('Your password has been properly saved.');
+								% } else {
+	    						$("#passwordConfirmEntry").html('Votre changement de mot de passe a été sauvegardé.');
+								% }
+							} else {
+	    						$("#passwordConfirmEntry").html('');
+	    						$("#passwordChangeErrorEntry").html(data.message);
+							}
+						});
+
+						// Printing error message if case of failure
+						request.fail(function(jqXHR, textStatus) {
+						    alert("Something went wrong : " + textStatus)
+						});
+	        		} else {
+						$("#passwordConfirmEntry").html('');
+	    				$("#passwordChangeErrorEntry").html(check);
+	        		}
+	        	} else {
+					$("#passwordConfirmEntry").html('');
+					% if ($currentLanguage eq 'en') {
+	    			$("#passwordChangeErrorEntry").html('The two new passwords you entered aren't corresponding.');
+					% } else {
+	    			$("#passwordChangeErrorEntry").html('Les mots de passe saisis ne correspondent pas.');
+					% }
+	        	}
+        	}
+		}
+	}
+</script>

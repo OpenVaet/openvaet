@@ -40,14 +40,21 @@
 	.ws-credits-container {
 		padding-top: 15px;
 		padding-bottom: 5px;
+		display: flex;
+		flex-wrap: wrap;
 		width: 98%;
 	}
 
+	.ws-credits-icon {
+		margin-left: calc(100% - 275px);
+		width: 70px;
+		height: 70px;
+	}
+
 	.ws-credits {
-		max-width: 200px;
-		margin-left: calc(100% - 200px);
+		margin-left: 15px;
+		max-width: 190px;
 		display: block;
-		text-align: right;
 		color: black;
 		font-style: italic;
 		font-size: 0.9rem;
@@ -241,6 +248,9 @@
     	A Resource to Help You Question Everything
     </div>
     <div class="ws-credits-container">
+	    <div class="ws-credits-icon">
+	    	<img src="/doc/covid_injections_challenging_facts/ws.jpg" style="width:70px;height: 70px;">
+	    </div>
 	    <div class="ws-credits">
 	    	This content has been realized by <a href="https://twitter.com/D14951351" target="_blank">Twitter</a>'s / <a href="https://gettr.com/user/jan_febmary" target="_blank">Gettr's</a> / <a href="https://gab.com/GlisteningSwan" target="_blank">Gab's</a> <b>WhiteSwan</b>💜🐭💊, to whom the credit goes.
 	    </div>
@@ -437,6 +447,9 @@
     	Une ressource pour vous aider à tout questionner
     </div>
     <div class="ws-credits-container">
+	    <div class="ws-credits-icon">
+	    	<img src="/doc/covid_injections_challenging_facts/ws.jpg" style="width:70px;height: 70px;">
+	    </div>
 	    <div class="ws-credits">
 	    	Ce contenu a été réalisé par <b>WhiteSwan</b> 💜🐭💊 (<a href="https://twitter.com/D14951351" target="_blank">Twitter</a>'s / <a href="https://gettr.com/user/jan_febmary" target="_blank">Gettr's</a> / <a href="https://gab.com/GlisteningSwan" target="_blank">Gab's</a>), a qui le crédit revient.
 	    </div>

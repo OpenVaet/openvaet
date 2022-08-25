@@ -1,0 +1,151 @@
+% if ($tabName eq 'login') {
+<form id="loginFormArgs" method="post" action="/login/do_login" class="login-form-container">
+    <div class="horizontal-separator-20"></div>
+    <div class="horizontal-separator-20"></div>
+    <div class="login-inputs-container">
+        <div class="login-inputs-margin"></div>
+        <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Email">
+        <div class="login-inputs-margin"></div>
+    </div>
+    <div class="horizontal-separator-20"></div>
+    <div class="login-inputs-container">
+        <div class="login-inputs-margin"></div>
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Password">
+        <div class="login-inputs-margin"></div>
+    </div>
+    <div class="horizontal-separator-5"></div>
+    <div class="login-form-forgot-password" onclick="forgotPassword();return;">Forgot your password ?</div>
+    <div class="horizontal-separator-5"></div>
+    <div id="loginError" class="login-error"></div>
+    <button type="submit" name="submit" class="login-button noselect">Connexion</button>
+</form>
+
+<script type="text/javascript">
+    $("#loginFormArgs").submit(
+        function(eventObj) {
+            $("<input />").attr("type", "hidden")
+            .attr("name", "currentLanguage")
+            .attr("value", currentLanguage)
+            .appendTo("#loginFormArgs");
+            return true;
+        }
+    );
+    $('#loginFormArgs').submit(function(){
+        let request = $.ajax({
+            url: $('#loginFormArgs').attr('action'),
+            type: 'POST',
+            data : $('#loginFormArgs').serialize()
+        });
+        request.done(function(data) {
+            console.log(data);
+            if (data.status == 'ok') {
+                console.log('user properly logged in');
+                if (data.emailVerification == 0) {
+                    let userMail = $('#userMail').val();
+                    confirmMail(userMail);
+                } else {
+                    closeLogin();
+                }
+            } else {
+                $("#loginError").html(data.message);
+            }
+        });
+        return false;
+    });
+
+    function forgotPassword() {
+        let userMail = $('#userMail').val();
+        if (!userMail) {
+        % if ($currentLanguage eq 'en') {
+            $("#loginError").html('Please input your email to reset your password.');
+        % } else {
+            $("#loginError").html('Veuillez saisir votre email pour réinitialiser votre mot de passe.');
+        % }
+        } else {
+            console.log('Resetting password for [' + userMail + '] ...');
+            let request = $.ajax({
+                url: "/user_account/forgot_password",
+                type: "POST",
+                data: {
+                    userMail  : userMail
+               }
+            });
+
+            request.done(function(data) {
+                $("#loginContainer").html(data);
+            });
+
+            // Printing error message if case of failure
+            request.fail(function(jqXHR, textStatus) {
+                alert("Something went wrong : " + textStatus)
+            });
+        }
+    }
+</script>
+% } else {
+<form id="loginFormArgs" method="post" action="/new_user/create_user" class="login-form-container">
+    <div class="horizontal-separator-20"></div>
+    <div class="horizontal-separator-10"></div>
+    <div class="login-inputs-container">
+        <div class="login-inputs-margin"></div>
+        <input class="login-text-input noselect" autocomplete="nope" type="text" name="userMail" id="userMail" placeholder="Email">
+        <div class="login-inputs-margin"></div>
+    </div>
+    <div class="horizontal-separator-5"></div>
+    <div class="login-inputs-container">
+        <div class="login-inputs-margin"></div>
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="password" placeholder="Password">
+        <div class="login-inputs-margin"></div>
+    </div>
+    <div class="horizontal-separator-5"></div>
+    <div class="login-inputs-container">
+        <div class="login-inputs-margin"></div>
+        <input class="login-text-input noselect" autocomplete="new-password" type="password" name="password" id="passwordConfirm" placeholder="Confirm Your Password">
+        <div class="login-inputs-margin"></div>
+    </div>
+    <div id="loginError" class="login-error"></div>
+    <button type="submit" name="submit" class="login-button noselect">Create an account</button>
+</form>
+<script type="text/javascript">
+    $("#loginFormArgs").submit(
+        function(eventObj) {
+            $("<input />").attr("type", "hidden")
+            .attr("name", "currentLanguage")
+            .attr("value", currentLanguage)
+            .appendTo("#loginFormArgs");
+            return true;
+        }
+    );
+    $('#loginFormArgs').submit(function(){
+        let userMail        = $('#userMail').val();
+        let password        = $('#password').val();
+        let passwordConfirm = $('#passwordConfirm').val();
+        if (!userMail || !password || !passwordConfirm) {
+            $("#loginError").html('Please complete every entry');
+            return false;
+        }
+        if (password == passwordConfirm) {
+            let check = checkPwd(password);
+            if (check == 'ok') {
+                $("#loginError").html('');
+            } else {
+                return false;
+            }
+        }
+        let request = $.ajax({
+            url: $('#loginFormArgs').attr('action'),
+            type: 'POST',
+            data : $('#loginFormArgs').serialize()
+        });
+        request.done(function(data) {
+            console.log(data);
+            if (data.status == 'ok') {
+                loginNewUser(userMail, password, currentLanguage);
+            } else {
+                $("#loginError").html(data.message);
+            }
+        });
+        return false;
+    });
+</script>
+% }

@@ -1,12 +1,26 @@
 % use Data::Printer;
 % my %australianData  = %$australianData;
-<div style="width:100%;height: 100%;max-width:1000px;display:block;margin:auto;">
+
+<style type="text/css">
+	body {
+		margin: 0;
+	}
+	@media print {  
+	  @page {
+	    size: 210mm 297mm; /* portrait */
+	    /* you can also specify margins here: */
+	  }
+	}
+</style>
+
+<div style="width:100%;display:block;margin:auto;margin-top:0;">
 	% for my $compdate (sort{$a <=> $b} keys %australianData) {
 		% for my $reportData (@{$australianData{$compdate}}) {
 			% my %reportData = %$reportData;
 			% my $cdcReportInternalId = $reportData{'cdcReportInternalId'} // die;
 			% my $sCode2 = $reportData{'sCode2'} // die;
 			% my $cdcSexName = $reportData{'cdcSexName'} // die;
+			% my $source = uc $reportData{'source'} // die;
 			% my $patientAge = $reportData{'patientAge'} // 'Unknown';
 			% my $vaccinationDate = $reportData{'vaccinationDate'} || 'Unknown';
 			% my $onsetDate = $reportData{'onsetDateFixed'} || $reportData{'onsetDate'} || 'Unknown';
@@ -15,19 +29,24 @@
 			% my $hospitalized = $reportData{'hospitalized'} // die;
 			% my $patientDied = $reportData{'patientDied'} // die;
 			% my $lifeThreatning = $reportData{'lifeThreatning'} // die;
-			<div style="width: 100%;min-height:800px;font-size: 13px;border:1px solid black;border-radius:15px;margin-top:25px;">
+			<div style="width: 100vw;min-height:calc(100vh - 2px);font-size: 13px;border:1px solid black;border-radius:15px;">
 				<div style="width:100%;overflow-y: auto;">
 					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
 						<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>ID VAERS :</b> <%=$cdcReportInternalId%></div>
 						<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Age :</b> <%=$patientAge%>, <b>Sexe :</b> <%=$cdcSexName%></div>
 					</div>
-					<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
-						<b>State</b> : <%=$sCode2%>
+					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
+						<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>State</b> : <%=$sCode2%></div>
+						<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Source</b> : <%=$source%></div>
+					</div>
+					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
+						
 					</div>
 					% for my $vaccineData (@{$reportData{'vaccines'}}) {
-						 % my $substanceShortenedName = %$vaccineData{'substanceShortenedName'} // die;
-					<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
-						<b>Product :</b> <%=$substanceShortenedName%>
+						 % my $cdcVaccineName = %$vaccineData{'cdcVaccineName'} // die;
+						 % my $lotNumber = %$vaccineData{'lotNumber'} // die;
+					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
+						<b>Product :</b> <%=$cdcVaccineName%> (<%=$lotNumber%>)
 					</div>
 					% }
 					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
@@ -37,50 +56,54 @@
 					<div style="width: calc(100% - 100px);padding: 2px 50px;">
 						<hr>
 					</div>
-					<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
 						<b>Outcomes for the patient :</b>
 					</div>
 					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
 						% if ($patientDied == 1) {
-						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Death :</b> Oui</div>
+						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Death :</b> Yes</div>
 						% } else {
-						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Death :</b> Non</div>
+						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Death :</b> No</div>
 						% }
 						% if ($permanentDisability == 1) {
-						<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Permanent Disability :</b> Oui</div>
+						<div style="width: calc(57% - 15px);text-align: left;padding: 7px 15px;"><b>Permanent Disability :</b> Yes</div>
 						% } else {
-						<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Permanent Disability :</b> Non</div>
+						<div style="width: calc(57% - 15px);text-align: left;padding: 7px 15px;"><b>Permanent Disability :</b> No</div>
 						% }
 					</div>
 					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
 						% if ($lifeThreatning == 1) {
-						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Life Threatning :</b> Oui</div>
+						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Life Threatning :</b> Yes</div>
 						% } else {
-						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Life Threatning :</b> Non</div>
+						<div style="width: calc(43% - 30px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Life Threatning :</b> No</div>
 						% }
 						% if ($hospitalized == 1) {
-						<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Hospitalization :</b> Oui</div>
+						<div style="width: calc(57% - 15px);text-align: left;padding: 7px 15px;"><b>Hospitalization :</b> Yes</div>
 						% } else {
-						<div style="width: calc(57% - 15px);text-align: left;padding: 15px 15px;"><b>Hospitalization :</b> Non</div>
+						<div style="width: calc(57% - 15px);text-align: left;padding: 7px 15px;"><b>Hospitalization :</b> No</div>
 						% }
 					</div>
 					<div style="width: calc(100% - 100px);padding: 2px 50px;">
 						<hr>
 					</div>
-					<div style="width: calc(100% - 100px);padding: 2px 50px;">
-						<hr>
-					</div>
-					<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
+					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
 						<b>Description :</b>
 					</div>
 					<div style="width: calc(100% - 30px);text-align: left;padding: 13px 15px;overflow-y: auto;">
-						<%=$aEDescription%>
+						% for my $hit (sort keys %{$reportData{'hits'}}) {
+							% my $ucHit = uc $hit;
+							% my $ucFHit = ucfirst $hit;
+							% $aEDescription =~ s/$hit/<span style="background:yellow;">$hit<\/span>/g;
+							% $aEDescription =~ s/$ucHit/<span style="background:yellow;">$ucHit<\/span>/g;
+							% $aEDescription =~ s/$ucFHit/<span style="background:yellow;">$ucFHit<\/span>/g;
+						% }
+						<%==$aEDescription%>
 					</div>
 					<div style="width: calc(100% - 100px);padding: 2px 50px;">
 						<hr>
 					</div>
-					<div style="width:calc(100% - 30px);text-align: left;padding: 15px 15px;">
-						<b>Symptômes :</b>
+					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
+						<b>Symptoms :</b>
 					</div>
 					<div style="width: calc(100% - 30px);text-align: left;padding: 13px 15px;overflow-y: auto;">
 					% my $symptoms;

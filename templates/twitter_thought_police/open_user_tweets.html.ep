@@ -141,11 +141,17 @@
                                 % my $referenceType     = $refTweet{'type'} // die;
                                 % my $referencedAuthor;
                                 % if ($referenceType eq 'retweeted') {
-                                    % die unless $text =~ /^RT @.*:/;
-                                    % my @elems = split ':', $text;
-                                    % my $extract = $elems[0] // die;
-                                    % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
-                                    % # say "referencedAuthor : $referencedAuthor";
+                                    % if ($text =~ /^RT @.*:/) {
+                                        % die "text : $text" unless $text =~ /^RT @.*:/;
+                                        % my @elems = split ':', $text;
+                                        % my $extract = $elems[0] // die;
+                                        % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
+                                    % } else {
+                                        % die "text : $text" unless $text =~ /^@.*\'/;
+                                        % my @elems = split '\'', $text;
+                                        % my $extract = $elems[0] // die;
+                                        % ($referencedAuthor) = $extract =~ /^@(.*)/;
+                                    % }
                                     % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
                                 <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> forwarded <a href="<%=$referenceTweetUrl%>" target="_blank">this message</a>...
                                 % } elsif ($referenceType eq 'quoted') {
@@ -271,10 +277,17 @@
                                 % my $referenceType     = $refTweet{'type'} // die;
                                 % my $referencedAuthor;
                                 % if ($referenceType eq 'retweeted') {
-                                    % die unless $text =~ /^RT @.*:/;
-                                    % my @elems = split ':', $text;
-                                    % my $extract = $elems[0] // die;
-                                    % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
+                                    % if ($text =~ /^RT @.*:/) {
+                                        % die "text : $text" unless $text =~ /^RT @.*:/;
+                                        % my @elems = split ':', $text;
+                                        % my $extract = $elems[0] // die;
+                                        % ($referencedAuthor) = $extract =~ /^RT @(.*)/;
+                                    % } else {
+                                        % die "text : $text" unless $text =~ /^@.*\'/;
+                                        % my @elems = split '\'', $text;
+                                        % my $extract = $elems[0] // die;
+                                        % ($referencedAuthor) = $extract =~ /^@(.*)/;
+                                    % }
                                     % # say "referencedAuthor : $referencedAuthor";
                                     % my $referenceTweetUrl = "https://twitter.com/$referencedAuthor/status/$referencedTweetId";
                                 <img src="/images/retweet.png" style="width:15px;height:15px;margin-right: 15px;margin-left: 5px;margin-top: 5px;"><%=$twitterName%> a transféré <a href="<%=$referenceTweetUrl%>" target="_blank">ce message</a>...

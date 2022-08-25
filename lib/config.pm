@@ -5,8 +5,6 @@ package config;
 use strict;
 use warnings;
 use v5.14;
-no autovivification;
-use Data::Printer;
 use JSON;
 use DBI;
 use Hash::Merge;

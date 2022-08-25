@@ -1031,3 +1031,50 @@ CHANGE COLUMN `token` `nextToken` VARCHAR(50) NULL DEFAULT NULL ;
 DROP TABLE `openvaet`.`twitter_user_relation_page`;
 DROP TABLE `openvaet`.`twitter_user_relation`;
 DROP TABLE `openvaet`.`twitter_user`;
+
+
+######################### V 5 - 2022-08-21 01:45:00
+# Created aus_symptom table.
+CREATE TABLE `openvaet`.`aus_symptom` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(250) NOT NULL,
+  `timeSeen` INT NOT NULL,
+  `active` BIT(1) NOT NULL DEFAULT 0,
+  `creationTimestamp` INT NOT NULL,
+  `activeTimestamp` INT NULL,
+  PRIMARY KEY (`id`));
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_aus_symptom_insert` 
+BEFORE INSERT ON `aus_symptom` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+# Created user table.
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(250) NOT NULL,
+  `emailVerification` bit(1) NOT NULL DEFAULT b'0',
+  `emailVerificationCode` varchar(6) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `emailVerificationTimestamp` int DEFAULT NULL,
+  `failedAccessCount` int NOT NULL DEFAULT '0',
+  `token` varchar(100) DEFAULT NULL,
+  `lockoutUntilDatetime` datetime DEFAULT NULL,
+  `lastLoginTimestamp` int DEFAULT NULL,
+  `creationTimestamp` int NOT NULL,
+  `isAdmin` bit(1) NOT NULL DEFAULT b'0',
+  `phoneNumber` varchar(20) DEFAULT NULL,
+  `passwordReinitCode` varchar(6) DEFAULT NULL,
+  `passwordReinitAttempts` int NOT NULL DEFAULT '0',
+  `passwordReinitTimestamp` int DEFAULT NULL,
+  `passwordReinitFailedAttemtps` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_user_insert` 
+BEFORE INSERT ON `user` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();

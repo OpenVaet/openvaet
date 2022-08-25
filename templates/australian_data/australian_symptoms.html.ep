@@ -1,0 +1,77 @@
+% layout 'default';
+% title 'OPENVAET - Symptoms - Australia';
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+
+% my %ausSymptoms = %$ausSymptoms;
+<div class="content-container">
+	<table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="symptoms-table">
+		<thead>
+	        <tr style="width: 100%;">
+	            <th style="width: 70%;"><b>Symptom Name</b></th>
+	            <th style="width: 20%;"><b>Times seen</b></th>
+	            <th style="width: 10%;"><b>Active</b></th>
+	        </tr>
+		</thead>
+		<tbody>
+		    % for my $ausSymptomName (sort keys %ausSymptoms) {
+		        % my $ausSymptomId = $ausSymptoms{$ausSymptomName}->{'ausSymptomId'} // die;
+		        % my $timeSeen     = $ausSymptoms{$ausSymptomName}->{'timeSeen'}     // die;
+		        % my $active       = $ausSymptoms{$ausSymptomName}->{'active'}       // die;
+		    	<tr>
+		            <td style="width: 70%;"><b><%=$ausSymptomName%></b></td>
+		            <td style="width: 20%;"><b><%=$timeSeen%></b></td>
+		            <td style="width: 10%;cursor: pointer;" id="<%=$ausSymptomId%>-activity">
+			            % if ($active) {
+			            <img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity('<%=$ausSymptomId%>', 0);return;">
+			            % } else {
+			            <img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity('<%=$ausSymptomId%>', 1);return;">
+			            % }
+		            </td>
+		    	</tr>
+        	% }
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+    function setSymptomActivity(ausSymptomId, activity) {
+
+        let request = $.ajax({
+            url: "/australian_data/australian_symptoms/set_symptom_activity",
+            type: "POST",
+            data: {
+                ausSymptomId : ausSymptomId,
+                activity : activity
+            }
+        });
+
+        request.done(function(data) {
+            if (activity == 0) {
+                $('#' + ausSymptomId + '-activity').html('<img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity(' + ausSymptomId + ', 1);return;">');
+            } else {
+                $('#' + ausSymptomId + '-activity').html('<img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity(' + ausSymptomId + ', 0);return;">');
+            }
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+
+	$(document).ready( function () {
+		$('#symptoms-table').DataTable({
+			"paging": false,
+			"searching": true,
+			"order": [[ 0, "asc" ]],
+			"columnDefs": [
+				{ "searchable": false, "targets": 1 },
+				{ "searchable": false, "targets": 2 }
+			]
+		});
+	} );
+</script>
