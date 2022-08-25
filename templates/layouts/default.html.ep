@@ -582,8 +582,8 @@
                       <ul class="dd-menu">
                         <li onclick="openLocation('/data');return;">Index Data & Code</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
-                        <li class="divider"></li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
+                        % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Studies</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
@@ -603,8 +603,8 @@
                       <ul class="dd-menu">
                         <li onclick="openLocation('/data');return;">Données Index & Code</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
-                        <li class="divider"></li>
+                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
+                        % # <li class="divider"></li>
                         <li onclick="openLocation('/studies');return;">Etudes</li>
                         <li class="divider"></li>
                         <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
