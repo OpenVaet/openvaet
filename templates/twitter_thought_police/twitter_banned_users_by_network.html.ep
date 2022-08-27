@@ -1,5 +1,6 @@
 
 % my %twitterUsers = %$twitterUsers;
+% my %userTwitterBans = %$userTwitterBans;
 % for my $twitterUserName (sort keys %twitterUsers) {
     % my $twitterName = $twitterUsers{$twitterUserName}->{'twitterName'} // die;
     % my $networkUrl  = $twitterUsers{$twitterUserName}->{'networkUrl'} // die;
@@ -8,7 +9,12 @@
             <%=$twitterName%> (@<%=$twitterUserName%>)
         </div>
         <div style="width:20%;">
+    % if ($self->is_connected() && exists $userTwitterBans{$twitterUserName}->{$networkName}) {
+            <div style="border: 1px solid darkgray;border-radius: 15px;text-align: center;padding-top: 5px;padding-bottom: 5px;cursor: pointer;background: #bbf2bb;" id="network_button_<%=$twitterUserName%>" onclick="openInNewTab('<%=$twitterUserName%>', '<%=$networkUrl%>');return;">
+    % } else {
             <div style="border: 1px solid darkgray;border-radius: 15px;text-align: center;padding-top: 5px;padding-bottom: 5px;cursor: pointer;" id="network_button_<%=$twitterUserName%>" onclick="openInNewTab('<%=$twitterUserName%>', '<%=$networkUrl%>');return;">
+
+    % }
     % if ($currentLanguage eq 'en') {
                 Open
     % } else {
@@ -23,7 +29,30 @@
 
 <script type="text/javascript">
     function openInNewTab(twitterUserName, networkUrl) {
-        window.open(networkUrl, '_blank').focus();
-        document.getElementById('network_button_' + twitterUserName).style.background = '#bbf2bb';
+        % if ($self->is_connected()) {
+            
+            let networkName = '<%=$networkName%>';
+            let request = $.ajax({
+                url: "/twitter_thought_police/tag_username",
+                type: "POST",
+                data: {
+                    twitterUserName : twitterUserName,
+                    networkName : networkName
+                }
+            });
+
+            request.done(function(data) {
+                window.open(networkUrl, '_blank').focus();
+                document.getElementById('network_button_' + twitterUserName).style.background = '#bbf2bb';
+            });
+
+            // Printing error message if case of failure
+            request.fail(function(jqXHR, textStatus) {
+                alert("Something went wrong : " + textStatus)
+            });
+        % } else {
+            window.open(networkUrl, '_blank').focus();
+            document.getElementById('network_button_' + twitterUserName).style.background = '#bbf2bb';
+        % }
     }
 </script>

@@ -592,7 +592,7 @@
                         <li class="divider"></li>
                         <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.22</div></li>
+                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
                       </ul>
                       % } else {
 
@@ -613,7 +613,7 @@
                         <li class="divider"></li>
                         <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                         <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.22</div></li>
+                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
                       </ul>
                       % }
                       
@@ -647,12 +647,21 @@
             <div id="loginForm" class="login-form">
                 % if ($self->is_connected()) {
                 <div class="login-form-container" id="loginContainer">
+                    % if ($currentLanguage eq 'en') {
                     <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
-                        <b>Security</b>
+                        <b>Change your password</b>
                     </div>
                     <div class="user-account-signout noselect" onclick="disconnectUser();return;">
                         <b>DISCONNECT &#10230;</b>
                     </div>
+                    % } else {
+                    <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
+                        <b>Modifier mot de passe</b>
+                    </div>
+                    <div class="user-account-signout noselect" onclick="disconnectUser();return;">
+                        <b>Déconnecter &#10230;</b>
+                    </div>
+                    % }
                 </div>
                 % } else {
                 <div class="horizontal-separator-10"></div>

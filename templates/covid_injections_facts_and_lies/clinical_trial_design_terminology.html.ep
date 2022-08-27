@@ -1,0 +1,635 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections - Clinical Trial Design & Terminology';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid - Clinical Trial Design & Terminology';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-highlight-red {
+		background: #FF0000;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #fff;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-purpleback {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.3rem;
+		background: #E6E0EC;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Clinical Trial Design & Terminology
+    </div>
+    <div class="ws-article-subtitle">
+		What is a Clinical Trial? 
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this site
+    	<div class="text_separator"></div>
+		<b>What Are Clinical Trials and Studies?</b>
+    	<div class="text_separator"></div>
+    	National Institute on Aging (nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/health/what-are-clinical-trials-and-studies" target="_blank">
+			What Are Clinical Trials and Studies? | National Institute on Aging (nih.gov)
+	    	<br>
+	    	www.nia.nih.gov/health/what-are-clinical-trials-and-studies
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“Clinical research is medical research involving people...Clinical trials are research studies performed in people that are aimed at evaluating a medical, surgical, or behavioral intervention. They are the primary way that researchers find out if a new treatment, like a new drug or diet or medical device (for example, a pacemaker) is safe and effective in people. Often a clinical trial is used to learn if a new treatment is more effective and/or has less harmful side effects than the standard treatment. Other clinical trials test ways to find a disease early, sometimes before there are symptoms. Still others test ways to prevent a health problem. A clinical trial may also look at how to make life better for people living with a life-threatening disease or a chronic health problem. Clinical trials sometimes study the role of caregivers or support groups.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i>The lnfographic (poster) below summarises how Clinical trials should be designed and implemented in stages.</i>
+		<div class="text_separator"></div>
+		<a href="https://www.nih.gov/sites/default/files/about-nih/public-trust/clinical-trials-infographic.pdf" target="_blank">Why do researchers do different kinds of clinical studies? (nih.gov)</a>
+    </div>
+    <div class="ws-article-subtitle">
+		Before Human Clinical Testing - The Value of Animal Studies
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+	    “Before the U.S. Food and Drug Administration (FDA) approves a clinical trial to begin, scientists perform laboratory tests and studies in animals to test a potential therapy’s safety and efficacy. If these studies show favorable results, the FDA gives approval for the intervention to be tested in humans.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		The term Animal Studies refers to the testing of the experimental drug on animals before progressing to clinical trials in humans.
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this site
+    	<div class="text_separator"></div>
+		<b>Animal Testing and Medicine</b>
+    	<div class="text_separator"></div>
+    	NIH National Library of Medicine
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/" target="_blank">
+			Animal Testing and Medicine - PMC (nih.gov)
+	    	<br>
+	    	https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/
+	    </a>
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+	    <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/" target="_blank">Heart Views.</a> 2011 Jan-Mar; 12(1): 42.
+    	<div class="text_separator"></div>
+		doi: <a href="https://doi.org/10.4103%2F1995-705X.81548" target="_blank">10.4103/1995-705X.81548</a>
+    	<div class="text_separator"></div>
+		PMCID: PMC3123518
+    	<div class="text_separator"></div>
+		PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/21731811/" target="_blank">21731811</a>
+    	<div class="text_separator"></div>
+		Animal Testing and Medicine
+    	<div class="text_separator"></div>
+		<a href="https://pubmed.ncbi.nlm.nih.gov/?term=Hajar%20R%5BAuthor%5D" target="_blank">Rachel Hajar, M. D.</a>
+    	<div class="text_separator"></div>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+	    “Drug testing using animals became important in the twentieth century. In 1937, a pharmaceutical company in the USA created a preparation of <b>sulfanilamide</b>, using <b>diethylene glycol (DEG)</b> as a solvent, and called the preparation ‘Elixir Sulfanilamide’. DEG was poisonous to humans, but the company's chief pharmacist and chemist was not aware of this. He simply added raspberry flavoring to the sulfa drug, which he had dissolved in DEG, and the company marketed the product. The preparation led to <b>mass poisoning causing the deaths of more than a hundred people.</b> No animal testing was done. The public outcry caused by this incident and other similar disasters led to the passing of the 1938 Federal Food, Drug, and Cosmetic Act requiring safety testing of drugs on animals before they could be marketed.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Another tragic drug fiasco occurred in the late 1950s and early 1960s with <b>thalidomide</b>. It was found to act as an effective tranquilizer and painkiller and was proclaimed a ‘wonder drug’ for insomnia, coughs, colds, and headaches. It was found to have an inhibitory effect on morning sickness, and hence, thousands of pregnant women took the drug to relieve their symptoms. Consequently, more than 10,000 children in 46 countries were born with malformations or missing limbs (phocomelia, from the Greek meaning ‘limb’). The drug was withdrawn in 1961 and 1968 after a long campaign.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>The above-mentioned incidents and others illustrate the harm to humans from the use of substances that <u>have not been first tested on animals</u></b> and underline the importance of animal experimentation to avert or prevent human tragedy. <b>The practice of using animals in biomedical research has led to significant advances in the treatment of various diseases.”</b>
+		<div class="text_separator"></div>
+    </div>
+    <div class="ws-article-subtitle">
+		Clinical Trial Terminology
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this site
+    	<div class="text_separator"></div>
+		<b>NIA Glossary of Clinical Research Terms</b>
+    	<div class="text_separator"></div>
+    	National Institute on Aging (nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/research/dgcg/nia-glossary-clinical-research-terms" target="_blank">
+			NIA Glossary of Clinical Research Terms | National Institute on Aging (nih.gov)
+	    	<br>
+	    	https://www.nia.nih.gov/research/dgcg/nia-glossary-clinical-research-terms
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black-purpleback">
+    	<span style="color: #0070C0;"><i><b>Glossary</b></i></span>
+		<div class="text_separator"></div>
+		<span style="color: #0070C0;"><i><b>Planning the Clinical Trial</b></i></span>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Food and Drug Administration (FDA) –</b></i> An agency within the U.S. Department of Health and Human Services (DHHS) responsible for protecting the public health by assuring the safety, efficacy, and security of human and veterinary drugs, biological products, medical devices, nation’s food supply, cosmetics, and products that emit radiation.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Clinical Trial –</b></i> NIH defines a clinical trial as a research study in which one or more human subjects are prospectively assigned to one or more interventions (which may include placebo or other control) to evaluate the effects of those interventions on health-related biomedical or behavioral outcomes. Clinical trials are used to determine whether new biomedical or behavioral interventions are safe, efficacious, and effective. Behavioral clinical trials involving an intervention to modify behavior (diet, physical activity, cognitive therapy, etc.) fit this definition of a clinical trial.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Intervention –</b></i> A procedure or treatment such as a drug, nutritional supplement, gene transfer, vaccine, behavior or device modification that is performed for clinical research purposes.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Protocol –</b></i> A document that describes the objective(s), design, methodology, statistical consideration, and organization of a trial.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Controlled Clinical Trial –</b></i> A clinical trial in which at least one group of participants is given a test intervention, while at least one other group concurrently receives a control intervention.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Control Group –</b></i> The group of individuals in a clinical trial assigned to a comparison intervention.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Placebo –</b></i> A placebo is an inactive pill, liquid, powder, or other intervention that has no treatment value. In clinical trials, experimental treatments are often compared with placebos to assess the treatment's effectiveness.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Placebo Controlled Study –</b></i> A method of investigation in which an inactive substance/treatment (the placebo) is given to one group of participants, while the test article is given to another group. The results obtained in the two groups are then compared to see if the investigational treatment is more effective in treating the condition.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Eligibility Criteria –</b></i> List of criteria guiding enrollment of participants into a study. The criteria describe both inclusionary and exclusionary factors, (e.g. inclusion criterion - participants must be between 55 and 85 years old; exclusion criterion – must not take drug X three month prior to the study).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Bias –</b></i> A point of view or preference which prevents impartial judgment in the way in which a measurement, assessment, procedure, or analysis is carried out or reported.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Randomization –</b></i> The process of assigning clinical trial participants to treatment or control groups using an element of chance to determine the assignments in order to reduce bias.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Masking/Blinding –</b></i> A procedure in which the investigator administering the assessments and intervention as well as the participants in a clinical trial are kept unaware of the treatment assignment(s). 
+		<ul>
+			<li>Single blinding usually refers to the study participant(s) being unaware, and </li>
+			<li>Double blinding usually refers to the study participant(s) and any of the following being unaware of the treatment assignment(s): investigator(s), monitor, and data analyst(s).</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Unmasking/Unblinding –</b></i> A procedure in which one or more parties to the trial are made aware of the treatment assignment(s).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Prospectively Assigned –</b></i> A pre-defined process (e.g., randomization) specified in an approved protocol that stipulates the assignment of research subjects (individually or in clusters) to one or more arms (e.g., intervention, placebo or other control) of the clinical trial. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Stratification –</b></i> Separation of a study cohort into subgroups or strata according to specific characteristics such as age, gender, etc., so that factors which might affect the outcome of the study, can be taken into account.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Open-Label Trial –</b></i> A clinical trial in which investigators and participants know which intervention is being administered.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Efficacy –</b></i> Indication that the clinical trial intervention produces a desired therapeutic effect on the disease or condition under investigation.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<span style="color: #0070C0;"><i><b>Ensuring Safety and Integrity while Monitoring Side Effects & Reporting Problems in Trial Implementation</b></i></span>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Conflict of Interest –</b></i> A conflict of interest occurs when individuals involved with the conduct, reporting, oversight, or review of research also have financial or other interests, from which they can benefit, depending on the results of the research.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Good Clinical Practice –</b></i> A standard for the design, conduct, performance, monitoring, auditing, recording, analyses, and reporting of clinical trials that provides assurance that the data and reported results are credible and accurate, and that the rights, integrity, and confidentiality of trial participants are protected.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Standard Operating Procedure (SOPs) –</b></i> Detailed written instructions to achieve uniformity of the performance of a specific function across studies and patients at an individual site.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Quality Assurance (QA) –</b></i> Systematic approach to ensure that the data are generated, documented (recorded), and reported in compliance with the protocol and good clinical practice (GCP) standards.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Quality Control (QC) –</b></i> The internal operational techniques and activities undertaken within the quality assurance system to verify that the requirements for quality of trial related activities have been fulfilled (e.g., data and form checks, monitoring by study staff, routine reports, correction actions, etc.)
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Safety Monitoring Plan –</b></i> A plan that outlines the oversight of a clinical trial.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Data and Safety Monitoring Board (DSMB) –</b></i> A group of individuals independent of the study investigators that is appointed by the NIA to monitor participant safety, data quality and to assess clinical trial progress.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Informed Consent –</b></i> A process by which a participant or legal guardian voluntarily confirms his or her willingness to participate in a particular trial, after having been informed of all aspects of the trial that are relevant to the participant’s decision to take part in the clinical trial. Informed consent is usually documented by means of a written, signed, and dated informed consent form, which has been approved by an IRB/IEC.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Informed Consent Form –</b></i> A document that describes the rights of a study participant and provides details about the study, such as its purpose, duration, required procedures, and key contacts. Risks and potential benefits are explained in the informed consent document.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Protocol Amendments –</b></i> A written description of a change(s) to or formal clarification of a protocol
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Protocol Deviations –</b></i> Failure to conduct a study as described in the protocol. The failure may be accidental or due to negligence and in either case, the protocol deviation should be documented. This also includes failure to comply with federal laws and regulations, the institution's commitments and policies, and standards of professional conduct and practice. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Examples of noncompliance include:
+		<ul>
+			<li>failure to obtain/maintain approval for research,</li>
+			<li>failure to obtain informed consent when required,</li>
+			<li>failure to file adverse event reports,</li>
+			<li>performance of an unapproved study procedure,</li>
+			<li>performance of research at an unapproved site,</li>
+			<li>failure to file protocol modifications and</li>
+			<li>failure to adhere to an approved protocol.</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Protocol Deviations Report –</b></i> Internal document created as part of the ongoing quality control process summarizing compliance with the protocol and listing 
+		protocol deviations and/or violations.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Adverse Event (AE) –</b></i> Any untoward or unfavorable medical occurrence in a clinical research study participant, including any abnormal sign (e.g. abnormal physical exam or laboratory finding), symptom, or disease, temporally associated with the participants’ involvement in the research, whether or not considered related to participation in the research.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Serious Adverse Event (SAE) –</b></i> Any adverse event that:
+		<ul>
+			<li>Results in death</li>
+			<li>Is life threatening, or places the participant at immediate risk of death from the event as it occurred</li>
+			<li>Requires or prolongs hospitalization</li>
+			<li>Causes persistent or significant disability or incapacity</li>
+			<li>Results in congenital anomalies or birth defects</li>
+			<li>Is another condition which investigators judge to represent significant hazards</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Stopping Rules –</b></i> Established safety criteria that would either pause or halt a study due to reasons including but not limited to futility or risk(s) to the participants.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    </div>
+
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Conception et terminologie des essais cliniques
+    </div>
+    <div class="ws-article-subtitle">
+    	Qu'est-ce qu'un essais clinique?
+    </div>
+    <div class="ws-article-highlight">
+    	L'information ci-dessous cite et se réfère à ce site
+    	<div class="text_separator"></div>
+		<b>Que sont les essais cliniques et les études?</b>
+    	<div class="text_separator"></div>
+    	Institut National du Vieillissement (National Institute on Aging, nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/health/what-are-clinical-trials-and-studies" target="_blank">
+			What Are Clinical Trials and Studies? | National Institute on Aging (nih.gov)
+	    	<br>
+	    	www.nia.nih.gov/health/what-are-clinical-trials-and-studies
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“La recherche clinique est la recherche médicale impliquant des humains.... Les essais cliniques sont les études de recherche effectuées sur des gens, dont le but est d'évaluer une intervention médicale, chirurgicale ou comportementale. Ils sont le moyen primaire par lequel les chercheurs déterminent si un nouveau traitement, comme un nouveau médicament, ou régime, ou outil médical (par exemple un Pacemaker) sont surs et efficaces pour être utilisés sur des humains. Souvent, un essais clinique est utilisé pour apprendre si un nouveau traitement est plus efficace et/ou à moins d'effets secondaires nocifs qu'un traitement déjà utilisé. D'autres essais cliniques sont utilisés pour apprendre à détecter une maladie tôt, parfois avant l'apparition des symptômes. D'autres cherchent des moyen de prevenir un problème de santé. Les essais cliniques étudient parfois le rôle des professionnels de santé ou de groupes de soutiens.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i>L'infographie ci-dessous résume comment les essais cliniques doivent être conçus et implementés par étapes.</i>
+		<div class="text_separator"></div>
+		<a href="https://www.nih.gov/sites/default/files/about-nih/public-trust/clinical-trials-infographic.pdf" target="_blank">Pourquoi les chercheurs font-ils différents types d'essais cliniques? (nih.gov)</a>
+    </div>
+    <div class="ws-article-subtitle">
+    	Avant les essais cliniques sur les Humains - La valeur des Etudes sur les Animaux.
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+	    “Avant que l'Administration des nourritures et drogues aux USA (FDA) n'approuve le début d'un essais clinique, les scientifiques effectuent des tests et études de laboratoire sur des animaux pour pour vérifier la sureté et l'efficacité d'une potentielle thérapie. Si ces études démontrent des résultats favorables, la FDA accorde son autorisation pour que l'intervention soit testée sur des humains.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Le terme Etudes sur animaux désigne les essais d'un médicament expérimental sur les animaux avant d'atteindre l'étape des essais cliniques sur humains.
+    </div>
+    <div class="ws-article-highlight">
+    	L'information ci-dessous cite et se réfère à ce site
+    	<div class="text_separator"></div>
+		<b>Essais sur les Animaux et Médecine</b>
+    	<div class="text_separator"></div>
+    	NIH National Library of Medicine
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/" target="_blank">
+			Animal Testing and Medicine - PMC (nih.gov)
+	    	<br>
+	    	https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/
+	    </a>
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+	    <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3123518/" target="_blank">Heart Views.</a> 2011 Jan-Mar; 12(1): 42.
+    	<div class="text_separator"></div>
+		doi: <a href="https://doi.org/10.4103%2F1995-705X.81548" target="_blank">10.4103/1995-705X.81548</a>
+    	<div class="text_separator"></div>
+		PMCID: PMC3123518
+    	<div class="text_separator"></div>
+		PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/21731811/" target="_blank">21731811</a>
+    	<div class="text_separator"></div>
+		Animal Testing and Medicine
+    	<div class="text_separator"></div>
+		<a href="https://pubmed.ncbi.nlm.nih.gov/?term=Hajar%20R%5BAuthor%5D" target="_blank">Rachel Hajar, M. D.</a>
+    	<div class="text_separator"></div>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+	    “Les essais médicamenteux utilisant des animaux sont devenus importants au 20e siècle. En 1937, une société pharmaceutique américaine a créé une préparation de <b>sulfanilamide</b>, utilisant du <b>diethylene glycol (DEG)</b> comme solvant, et a appelé la préparation ‘Elixir Sulfanilamidique’. Le DEG était un poison pour les humains, mais le chef pharmacien et chimiste de la société n'était pas au courant du fait. Il a simplement ajouté un parfum framboise au surlfanilamide, qu'il avait dissout dans le DEF, et la société a mis le produit sur le marché. La préparation a conduit à des empoisonnements de masse, causant la mort de centaines de personnes. Aucun essais sur les animaux n'avait été effectué. La réaction indignée du public causé par cet incident, et d'autres similaires, a conduit au Federal Food, Drug, and Cosmetic Act de 1938, qui requiert l'essais préalable des médicaments sur des animaux avant qu'ils ne puissent être mis sur le marché.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Un autre fiasco tragique a eu lieu à la fin des années 50 et au début des années 60 avec le thalidomide. Il avait été découvert qu'il constituait un tranquilisant et antalgique efficace, et avait été célébré comme un "médicament miracle" contre les insomnies, coups de froids, toux, et maux de tête. Il a été découvert ensuite qu'il agissait comme un inhibiteur des effets de nausées matinales, et, en conséquence, des milliers de femmes enceintes l'ont pris pour se soulager de leurs symptômes. En conséquence, plus de 10,000 enfants dans 46 pays sont nés avec des malformations ou poumons manquants (Phocmélie, du grec signifiant 'poumons'). Le produit a été retiré du marché en 1961 et 1968, après une longue campagne.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Les incidents sus-mentionnés illustrent les dégats potentiels aux humains de substances <u>qui n'ont pas été testées sur des animaux</u></b> et souligne l'importance des expérimentations sur les animaux pour limiter ou prévenir les tragédies humaines. <b>La pratique des essais sur les animaux en recherche biomédicale a conduit a des avancées significatives dans le traitement de diverses pathologies.”</b>
+		<div class="text_separator"></div>
+    </div>
+    <div class="ws-article-subtitle">
+    	Terminologie des essais cliniques
+    </div>
+    <div class="ws-article-highlight">
+    	L'information ci-dessous cite et se réfère à ce site
+    	<div class="text_separator"></div>
+		<b>Glossaire de terminologie des essais cliniques du NIA</b>
+    	<div class="text_separator"></div>
+    	National Institute on Aging (nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/research/dgcg/nia-glossary-clinical-research-terms" target="_blank">
+			NIA Glossary of Clinical Research Terms | National Institute on Aging (nih.gov)
+	    	<br>
+	    	https://www.nia.nih.gov/research/dgcg/nia-glossary-clinical-research-terms
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black-purpleback">
+    	<span style="color: #0070C0;"><i><b>Glossaire</b></i></span>
+		<div class="text_separator"></div>
+		<span style="color: #0070C0;"><i><b>Plannification des essais cliniques</b></i></span>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Administration des drogues et médicaments (Food & Drugs Administration - FDA) –</b></i> Une agence au sein du département des Services de la Santé et Humains des Etats-Unis (Department of Health and Human Services - DHHS) responsable de la protection de la santé publique par la garantie de la surêté, l'efficacité et la sécurité des médicaments pour humains et animaux, des produits biologiques, équipements médicaux, approvisionnements en nourritures, cosmétiques et produits qui émettent des radiations.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Essais cliniques –</b></i> Le NIH définit les essais cliniques comme les études de recherches dans lesquelles un ou plusieurs sujets humains sont assignés prospectivement à une ou plusieurs interventions (qui peuvent inclurent un placebo ou autre contrôle) pour évaluer les effets de ces interventions sur les problématiques biomédicales ou comportementales liées à la santé. Les essais cliniques sont utilisés pour déterminer si une nouvelle intervention biomédicale ou comportementale est sure et efficace. Les essais cliniques comportementaux qui impliquent les interventions visant à modifier le comportement (régime, activité physique, thérapies cognitives, etc.) entrent dans cette définition des essais cliniques.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Intervention –</b></i> Une procédure ou traitement tel qu'un médicament, supplément nutritif, transfert génique, vaccin, modification de comportement ou équipement qui est effectué à fins de recherches cliniques.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Protocole –</b></i> Un document qui décrit les objectifs, conceptions, méthodes, considérations statistiques et organisation d'un essai.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Essai clinique contrôlé –</b></i> Un essai clinique au cours duquel au moins l'un des groupes de participants se soit administré une intervention testée, pendant qu'au moins un autre groupe reçoit une intervention de contrôle.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Groupe de contrôle –</b></i> Le groupe d'individus dans un essai clinique assigné à la comparaison de l'intervention.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Placebo –</b></i> Un placébo est une pilule, liquide ou poudre, ou autre intervention, inactivée et sans valeur thérapeutique. Dans les essais cliniques, les traitements expérimentaux sont souvent comparés à des placebos pour évaluer l'efficacité du traitement.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Etude sous contrôle Placebo –</b></i> Une méthode d'investigation dans laquelle une substance ou un traitement inactivé (le placebo) est donné à un groupe de participants, pendant qu'un produit testé est administré à un autre groupe. Les résultats obtenus dans les deux groupes sont ensuite comparés pour vérifier si le traitement investigué est plus efficace pour traité la condition ciblée.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Critères d'éligibilité –</b></i> La liste de critères qui guide le recrutement des participants à une étude. Le critère décrit à la fois les facteurs d'inclusions et d'exclusions (par exemple, comme critère d'inclusion, un participant doit avoir entre 55 et 85 ans. Un critère d'exclusion est par exemple de ne pas avoir pris le médicament X dans les trois mois précédent l'étude).
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Biais –</b></i> Un point de vue ou préférence qui prévient le jugement impartial du cadre duquel est effectuée une mesure, évaluation, procédure ou analyse conduite ou rapportée.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Randomisation –</b></i> Le processus d'assignation d'un essai clinique au cours duquel les participants sont assignés aux groupes de traitement ou de contrôle, en utilisant un facteur chance pour déterminer l'assignation, afin de réduire les biais.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Masquage/Aveugle –</b></i> Une procédure durant laquelle aussi bien le chercheur qui administre l'évaluation et l'intervention et le participants sont maintenus dans l'ignorance du type de traitement assigné.
+		<ul>
+			<li>L'aveugle simple se réfère à une étude dans laquelle le ou les participants sont tenus dans l'ignorance du traitement</li>
+			<li>Le double aveugle se réfère à une étude dans laquelle ni le chercheur, ni les moniteurs, ni les analystes données, ni le patient ne sont au courant du traitement assigné</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Démasquage/Désaveuglement –</b></i> Une procédure durant laquelle une ou plusieurs parties d'un essai clinique se voient mise au courant de leur type de traitement assigné.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Assignation prospective –</b></i> Un processus pré-défini (par exemple une randomisation), spécifié dans un protocole approuvé, qui stipule l'assignation de sujets de recherche (individuellement ou par groupes) à un ou plusieurs groupes (par exemple intervention, placébo ou autre contrôle) durant un essai clinique.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Stratification –</b></i> Séparation de la cohorte d'une étude en sous-groupes ou strates, en accord avec des caractéristiques spécifiques telles que l'âge, le genre, etc., afin que des facteurs qui pourraient affecter le résultat d'une étude soient pris en compte.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Essai Ouvert –</b></i> Un essai clinique au cours duquel les investigateurs et participants sont au courant du traitement qui leur a été administré.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Efficacité –</b></i> Indication que l'essai clinique produit l'effet thérapeutique désiré sur la maladie ou condition en cours d'investigation.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<span style="color: #0070C0;"><i><b>Assurer la surêté et l'intégrité tout en assurant la surveillance des effets secondaires & rapporter les problèmes dans l'implémentation de l'essai</b></i></span>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Conflit d'intérêt –</b></i> Un conflit d'intérêt se produit lorsqu'un individu impliqué dans la conduite, l'observation, la surveillance ou la revue d'une recherche a aussi un intérêt financier ou autre, à partir duquel il peut bénéficier de l'issue de la recherche.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Bonnes pratiques cliniques –</b></i> Un standard qui rassemble les règles de conception, conduite, performance, observation, audit, enregistrement et analyse et rapport des essais cliniques qui fournit l'assurance que la donnée et les résultats rapportés sont crédibles et précis, et que les droits, l'intégrité et la confidentialité des participants à l'essai ont été protégés.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Procedure Opérative Standard (SOPs) –</b></i>Les instructions écrites détaillées qui permettent l'uniformité de la performance d'une fonction spécifique au sein des études et des patients d'un site individuel.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Assurance de Qualité (QA) –</b></i> Approche systématique pour assurer que les données générées, documentées (enregistrées), et rapportées le soient en accord avec le protocole et les standards de bonnes pratiques cliniques.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Contrôle Qualité (QC) –</b></i> Les règles opératives internes et activités conduites au sein des assurance qualité pour The internal operational techniques and activities undertaken within the quality assurance system to verify that the requirements for quality of trial related activities have been fulfilled (e.g., data and form checks, monitoring by study staff, routine reports, correction actions, etc.)
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Plan d'évaluation de la sûreté –</b></i> Un plan qui encadre la surveillance d'un essai clinique.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Bureau de surveillance de la sécurité et de la donnée (Data and Safety Monitoring Board - DSMB) –</b></i> Un groupe d'individus indépendants de l'étude qui est nommé par le NIA pour veiller à la sûreté des particiants, a la qualité de la donnée, et pour évaluer les progrès de l'essai clinique.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Consentement éclairé –</b></i> Un processus par lequel un participant ou représentant légal confirme volontairement sa volonté de participer à un essai clinique spécifique, après avoir été informé de tous les aspects pertinents à sa décision d'y prendre part. Le consentement éclairé est d'ordinaire documenté par écrit, signé, et daté, via un formulaire dédié, qui a été approuvé par un comité de suivi indépendant.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Formulaire de consentement éclairé –</b></i> Un document qui décrit les droits du participant à une étude et fournit les détails à propos de l'étude, tels que son but, sa durée, les procédures impliquées, et les contacts clés. Les risques et bénéfices potentiels sont expliqués dans le formulaire de consentement éclaié.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Amendements de protocole –</b></i> Une description écrite des changements ou des clarifications d'un protocole.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Déviations de protocole –</b></i> L'échec à conduire une étude comme décrit dans le protocole. L'échec peut être accidentel ou dû à la négligence, mais dans les deux cas, la déviation de protocole doit être documenté. Ceci implique aussi les échecs à se conformer avec les réglementations ou lois fédérales, les engagements et pratiques des institutions, et les standards de conduite et de pratique de la profession.. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Par exemple, constitueront des déviations:
+		<ul>
+			<li>l'échec à obtenir ou maintenir l'approbation de la recherche,</li>
+			<li>l'échec à recueillir le consentement éclairé,</li>
+			<li>le non signalement d'un effet indésirable suspecté,</li>
+			<li>l'exécution d'une procédure d'étude non approuvée,</li>
+			<li>l'exécution d'une recherche dans un site non approuvé,</li>
+			<li>l'échec à fournir les modifications de protocoles et</li>
+			<li>l'échec à se conformer à un protocole déterminé.</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Rapports de Déviations de protocole –</b></i> Document interne créé dans le cadre du processus de contrôle de qualité continu, résumant la conformité avec le protocole et listant les dévision et/ou violations de protocole.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Evènement Indésirable (Adverse Event - AE) –</b></i> Tout événement médical indésirable ou défavorable chez un participant à une étude de recherche clinique, y compris tout signe anormal (par exemple, examen physique ou résultat de laboratoire anormal), symptôme ou maladie, temporairement associé à la participation des participants à la recherche, qu'il soit ou non considéré comme lié à la participation dans la recherche. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Événement indésirable grave (SAE) –</b></i> Tout évènement indésirable qui:
+		<ul>
+			<li>Résulte dans le décès du patient</li>
+			<li>Met en danger la vie, ou place le participant à risque immédiat de décès en conséquence de l'évènement</li>
+			<li>Requiert une hospitalisation ou la prolonge</li>
+			<li>Occasionne une infirmité ou incapacité permanente ou de longue durée</li>
+			<li>Résulte dans des anomalies congénitales ou défauts de naissance</li>
+			<li>Est une autre condition que les investigateurs jugent représenter un détriment significatif</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i><b>Règles d'arrêt –</b></i> Critères de sécurité établis qui suspendraient ou arrêteraient une étude pour des raisons incluant, mais sans s'y limiter, la futilité ou le(s) risque(s) pour les participants.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    </div>
+
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

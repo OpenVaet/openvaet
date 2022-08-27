@@ -1,0 +1,346 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections -   Pandemrix Vaccine for Swine Flu 2009';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid -   Vaccin Pandemrix contre la grippe porcine 2009';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-highlight-red {
+		background: #FF0000;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #fff;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		  Pandemrix Vaccine for Swine Flu 2009
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article in the British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+		Published 20 September 2018
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Pandemrix vaccine: why was the public not told of early warning signs?</b>
+    	<div class="text_separator"></div>
+		BMJ 2018;362:k3948
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/362/bmj.k3948" target="_blank">https://www.bmj.com/content/362/bmj.k3948</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.k3948" target="_blank">https://doi.org/10.1136/bmj.k3948</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	“In October 2009, the US National Institutes of Health infectious diseases chief, Anthony Fauci, appeared on YouTube to reassure Americans about the safety of the “swine flu” vaccine. “The track record for serious adverse events is very good. It’s very, very, very rare that you ever see anything that’s associated with the vaccine that’s a serious event,” he said...
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Four months earlier, the World Health Organization had declared H1N1 influenza a pandemic, and by October 2009 the new vaccines were being rolled out across the world. 
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		A similar story was playing out in the UK, with prominent organisations, including the Department of Health, British Medical Association, and Royal Colleges of General Practitioners, working hard to convince a reluctant NHS workforce to get vaccinated. “We fully support the swine flu vaccination programme … The vaccine has been thoroughly tested,” they declared in a joint statement.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		In Germany, senior physicians expressed doubts about GlaxoSmithKline’s Pandemrix vaccine. They were concerned about potential side effects triggered by the AS03 adjuvant, an oil-in-water emulsion that it contained to boost effectiveness. 
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Then controversy erupted when the German newspaper Der Spiegel reported that top politicians and government employees were going to receive Celvapan, Baxter’s unadjuvanted H1N1 vaccine, not Pandemrix.... 
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		The concerns, it seems, were prescient. A year later, signs of a problem with Pandemrix were emerging through postmarket reports of narcolepsy, predominantly among children and adolescents in Sweden and Finland.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Multiple academic and government led studies subsequently judged that the relation between Pandemrix and narcolepsy was likely to be causal. 
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		Over 1300 people are estimated to have been affected among the roughly 30 million vaccinated across Europe, including around 100 families in the UK.”
+    </div>
+    <div class="ws-article-subtitle">
+		Further articles on Pandemrix Vaccine Injury
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article on the Narcolepsy UK charity website
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Pandemrix narcolepsy</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.narcolepsy.org.uk/resources/pandemrix-narcolepsy" target="_blank">
+			Pandemrix narcolepsy | Narcolepsy UK
+    		<div class="text_separator"></div>
+			https://www.narcolepsy.org.uk/resources/pandemrix-narcolepsy
+		</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	“During the Swine Flu epidemic of 2009/10 the vaccine Pandemrix was given to six million people in the UK, to high-risk groups, including children, with asthma, diabetes and heart disease. The vaccine had been approved by the European Medicines Agency for use across the EU, despite <b>minimal clinical trials.</b> The manufacturer, GlaxoSmithKline, was given an <b>indemnity by the UK government</b>. Some 850,000 vaccinations were given to children aged between 6 months and 16 years. After the pandemic, in 2010/11, a further 170,000 adults and children received the jab when seasonal flu vaccine supplies diminished.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		The UK Health Protection Agency (now Public Health England) undertook a major study of 4- to 18-year-olds and found that around one in every 55,000 jabs led to narcolepsy.”
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article on the CDC website
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Narcolepsy Following 2009 Pandemrix Influenza Vaccination in Europe</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.cdc.gov/vaccinesafety/concerns/history/narcolepsy-flu.html" target="_blank">
+			Narcolepsy Following 2009 Pandemrix Influenza Vaccination in Europe | Vaccine Safety | CDC
+    		<div class="text_separator"></div>
+			https://www.cdc.gov/vaccinesafety/concerns/history/narcolepsy-flu.html
+		</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	“An increased risk of narcolepsy was found following vaccination with Pandemrix, a monovalent 2009 H1N1 influenza vaccine that was used in several European countries during the H1N1 influenza pandemic. This risk was initially found in Finland, and then other European countries also detected an association...
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Pandemrix is manufactured by GlaxoSmithKline in Europe and was specifically produced for pandemic 2009 H1N1 influenza. It was not used before 2009, and has not been used since the influenza pandemic season (2009-2010). It contains an <b>oil-in-water emulsion adjuvant called ASO3.</b> Adjuvants are substances added to a vaccine to increase the body’s immune response to that vaccine...
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Pandemrix was not licensed for use in the United States.”
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		  Vaccin Pandemrix contre la grippe porcine 2009
+    </div>
+    <div class="ws-article-highlight">
+    	L'information ci-dessous cite et se réfère à cet article du British Medical Journal (BMJ)
+    	<div class="text_separator"></div>
+    	Publié le 20 Septembre 2018
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Vaccins Pandemrix : pourquoi le public n'a-t-il pas été averti des premiers signaux d'alerte?</b>
+    	<div class="text_separator"></div>
+		BMJ 2018;362:k3948
+    	<div class="text_separator"></div>
+		<a href="https://www.bmj.com/content/362/bmj.k3948" target="_blank">https://www.bmj.com/content/362/bmj.k3948</a>
+    	<div class="text_separator"></div>
+		<a href="https://doi.org/10.1136/bmj.k3948" target="_blank">https://doi.org/10.1136/bmj.k3948</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	"En Octobre 2009, le chef des instituts américains de santé et des maladies infectiueuses, Anthony Fauci, est apparu sur YouTube pour rassurer les américains quant à la sureté du vaccin contre la "grippe porcine". “L'historique des performances pour les effets secondaires sérieux est très bon. Il est très, très, très rare que vous voyez quoique ce soit qui soit associé avec le vaccin et qui constitue un évènement grave”, a-t-il expliqué.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Quatre mois plus tôt, l'Organisation Mondiale de la Santé (OMS) avait qualifié la grippe H1N1 de "pandémie", et en Octobre 2009, les nouveaux vaccins étaient déployés à travers le monde.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Une histoire similaire se jouait au Royaume-Uni, avec des organisations éminentes, incluant le Département de la Santé, l'Association Médicale Britanique, et le Collège Royal des Praticiens Généraux, travaillant dûr pour convaincre les effectifs du NHS de se faire vacciner. "Nous soutenons pleinement le programme de vaccination contre la Grippe Porcine - le vaccin a été extensivement testé", ont-ils déclarés dans un communiqué commun.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	En Allemagne, des praticiens expérimentés ont exprimé leurs doutes à propos des vaccins Pandemrix de GlaxoSmithKline. Ils étaient inquiet à propos des effets secondaires potentiels déclenchés par l'adjuvant AS03, une émulsion d'eau et d'huile que le produit contenait pour accroitre son efficacité.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Ensuite, la controverse a éclaté quand le journal Allemand Der Spiegel a rapporté que des politiciens et employés gouvernementaux de haut rang allaient recevoir du Celvapan, un vaccin adjuvanté de Baxter, et non le Pandemrix...
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Les doutes, semble-t-il, étaient fondés. Un an plus tard, des signes de problèmes avec le Pandemrix ont émergé à travers les rapports postérieurs à la mise sur le marché de narcolepsies, prédominantes chez les enfants et adolescents, en Suède et en Finlande.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	De nombreux académiciens et gouvernements ont mené des études subséquentes, qui ont jugé que la relation entre le Pandemrix et la narcolepsie était probablement causale.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	Plus de 1300 personnes sont estimées avoir été affectées parmi les environ 30 millions de vaccinés à travers l'Europe, incluant 100 familles au Royaume-Uni."
+    </div>
+    <div class="ws-article-subtitle">
+    	Articles pour approfondir les blessures liées au vaccin Pandemrix
+    </div>
+    <div class="ws-article-highlight">
+    	Les informations ci-dessous citent et se réfèrent à cet article sur l'organisation caritative dédiée à la Narcolepsie au Royaume-Uni
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Narcolepsie liée au Pandemrix</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.narcolepsy.org.uk/resources/pandemrix-narcolepsy" target="_blank">
+			Narcolepsie liée au Pandemrix | Narcolepsy UK
+    		<div class="text_separator"></div>
+			https://www.narcolepsy.org.uk/resources/pandemrix-narcolepsy
+		</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	“Pendant la Grippe Porcine de 2009/10, le vaccin Pandemerix a été administré à 6 millions de personnes au Royaume-Uni, parmi des groupes à haut risque, incluant les enfants avec asthme, diabètes, et maladies cardiaques.
+    	Le vaccin avait été approuvé par l'Agence Européenne du Médicament pour utilisation à travers l'Union Européenne, malgré des <b>essais cliniques minimaux</b>. Le fabriquant, GlaxoSmithKline, s'était vu accorder une <b>immunité par le gouvernement anglais</b>. Quelques 850,000 vaccinations ont été administrées à des enfants agés de 6 mois à 16 ans. Après la pandémie, en 2010/11, 170,000 adultes et enfants supplémentaires ont reçu l'injection quand les réserves de vaccins contre la grippe saisonnière ont diminué en approvisionnement.
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+    	L'agence anglaise de protection de la santé (maintenant Santé Publique Angleterre) a conduit une étude majeure sur les moins de 4 ans à 18 ans, et découvert qu'une injection sur 55,000 en moyenne menait à une narcolepsie.”
+    </div>
+    <div class="ws-article-highlight">
+    	Les informations ci-dessous citent et se réfèrent à cet article sur le site internet du CDC
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Narcolepsies conséquentes à la vaccination de 2009 par Pandemrix contre la Grippe Porcine en Europe</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.cdc.gov/vaccinesafety/concerns/history/narcolepsy-flu.html" target="_blank">
+			Narcolepsy Following 2009 Pandemrix Influenza Vaccination in Europe | Vaccine Safety | CDC
+    		<div class="text_separator"></div>
+			https://www.cdc.gov/vaccinesafety/concerns/history/narcolepsy-flu.html
+		</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	“Un risque accru de narcolepsie a été découvert suite à la vaccination au Pandemrix, un vaccin monovalent de 2009 contre la Grippe Porcine H1N1, qui a été utilisé dans plusieurs pays de l'Union Européenne pendant la pandémie de grippe H1N1. Le risque a été découvert à l'origine en Finlande, puis plusieurs autres pays européens ont eux-aussi détectés cette association...
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Le Pandemrix est fabriqué par GlaxoSmithKline en Europe et a été spécifiquement produit pour la pandémie de grippe porcine de 2009 H1N1. Il n'a pas été utilisé avant 2009, et n'a plus été utilisé depuis la pandémie de Grippe Porcine (2009/10). Il contient une émulsion d'eau et d'huile appelée AS03. Les adjuvants sont les substances ajoutées aux vaccins pour accroitre la réponse immunitaire du corps au vaccin...
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Le Pandemrix n'a pas été autorisé pour utilisation aux Etats-Unis.”
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

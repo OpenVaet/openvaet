@@ -1,0 +1,345 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections - When it goes Wrong Thalidomide 1950s';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Quand ça tourne mal : Thalidomide 1950s';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-highlight-red {
+		background: #FF0000;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #fff;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		When it goes Wrong Thalidomide 1950s
+    </div>
+    <div class="ws-article-arial-black">
+		Thalidomide… was never tested on pregnant animals before it was given to pregnant humans. It was sold over-the-counter in West Germany.
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article on the Understanding  Animal Research Mutual Society Website. (Understanding  Animal Research is a not-for-profit organisation that explains why animals are used in medical and scientific research.)
+    	<div class="text_separator"></div>
+    	<b>Understanding  Animal Research</b>
+    	<div class="text_separator"></div>
+		Published 02 December 2021
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Sixty years on: the history of the thalidomide tragedy</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.understandinganimalresearch.org.uk/news/sixty-years-on-the-history-of-the-thalidomide-tragedy" target="_blank">
+			Sixty years on: the history of the thalidomide tragedy : Understanding Animal Research
+	    	<div class="text_separator"></div>
+			https://www.understandinganimalresearch.org.uk/news/sixty-years-on-the-history-of-the-thalidomide-tragedy
+		</a>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“Thalidomide was developed in Germany in the 1950s as a sedative and <b>was tested in several (non-pregnant) animal species</b> and then in humans. The animal results seemed to show that even very high doses were not harmful. In human patients it seemed that the new medicine had remarkably few side effects and was well-tolerated by people taking it, except for those given high doses, who complained of sleepiness, giddiness and constipation. This suggested that it would be a good alternative to existing sedatives such as phenobarbitone. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		However, it appears that the studies published by the company developing the drug, Chemie Grünenthal, were not rigorous: there was <b>no placebo group</b> and no indication of how long treatment had gone on for. None of the studies were double-blind. There was also <b>no measurement of how much thalidomide there was in the blood or tissue of the patients taking it...</b>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Thalidomide was marketed in several countries and was called Distaval in the UK. It was prescribed as a totally <b>safe</b> sedative and was used in treatments for flu and also the morning sickness and insomnia associated with pregnancy, despite the fact that <b>no safety testing had been done on pregnant animals</b>. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		It is sometimes argued that, in the 1950s, no new medicines were tested in pregnant animals because scientists did not yet understand that the foetus could be damaged by external factors. However, Meprobamate, another sedative and muscle relaxant being developed in the 1950s, went through a battery of detailed tests in animals, including a 15-month study where groups of male and female rats were given the drug in their food for several weeks and were then mated, with the offspring examined for any defects.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Later research showed that thalidomide would only damage the foetus if it was taken during a certain stage of pregnancy.</b> It also emerged that a flu treatment called Grippex contained thalidomide, and that mothers who thought they had not been exposed to the drug, had in fact taken it. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		When animal tests did finally happen, they showed the range of effects that thalidomide could have – from miscarriage and re-absorption of the foetus in the womb, to damage to the eyes, the heart, the brain, and the distinctive limb malformations – depending on the stage of pregnancy. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Some have argued that some of the animal experiments did not result in malformed offspring, so animal tests would have failed to prevent thalidomide being marketed. Closer examination shows that this was because most animals give birth at night and many species will cannibalise a baby that is born with deformities. So, when technicians arrive in the morning, only healthy offspring are visible. Caesarean sections and monitoring of animals through the night found that animals given thalidomide during the particular stage of pregnancy did give birth to babies with malformations. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Another problem with some of the studies using pregnant animals was that the drug was dissolved in water or another solution in order to inject it into the animals, rather than being given in tablet form. Many of these animals did not produce malformed offspring, but it was later found that the active ingredients in thalidomide will break down and become inactive in solution. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		As the evidence against thalidomide kept mounting, the manufacturer’s position that it was not to blame became untenable. The drug was formally withdrawn by Chemie Grünenthal on 26 November 1961 and a few days later, on 2 December 1961, the UK distributors followed suit. But the UK government didn’t issue a formal warning until May 1962, so thalidomide probably sat in many medicine cabinets being taken by unsuspecting people in the intervening months.” 
+    </div>
+    <div class="ws-article-subtitle">
+		Thalidomide Videos
+    </div>
+    <div class="ws-article-highlight-red">
+		<b>PLEASE NOTE THIS SITE IS APOLITICAL AND DOES NOT ENDORSE ANY POLITICAL VIEWS EXPRESSED IN VIDEO INTERVIEWS OR ARTICLES.</b>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	<b>Video extracts</b>
+		<div class="text_separator"></div>
+		<b>Thalidomide: The Chemistry Mistake That Killed Thousands of Babies</b>
+		<div class="text_separator"></div>
+		You Tube (Duration 0.49mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=mrTHfBCduRA" target="_blank">Thalidomide: The Chemistry Mistake That Killed Thousands of Babies – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er5jb/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>The Shadow of the Thalidomide Tragedy | Retro Report | The New YorkTimes</b>
+		<div class="text_separator"></div>
+		You Tube (Duration 07.21 mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=41n3mDoVbvk" target="_blank">The Shadow of the Thalidomide Tragedy | Retro Report | The New YorkTimes – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er7lr/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>Frances Oldham Kelsey - Standing Up to Big Pharma</b>
+		<div class="text_separator"></div>
+		You Tube (Duration 1.59 mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=cgS_hf8lhTE" target="_blank">Frances Oldham Kelsey - Standing Up to Big Pharma – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er8j1/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Quand ça tourne mal : Thalidomide 1950s
+    </div>
+    <div class="ws-article-arial-black">
+		La thalidomide… n'a jamais été testée sur des animaux gravides avant d'être administrée à des femmes enceintes. Il a été vendu de gré à gré en Allemagne de l'Ouest.
+    </div>
+    <div class="ws-article-highlight">
+		Les informations ci-dessous citent et font référence à cet article sur le site Web de la Understanding Animal Research Mutual Society. (Understanding Animal Research est une organisation à but non lucratif qui explique pourquoi les animaux sont utilisés dans la recherche médicale et scientifique.)
+    	<div class="text_separator"></div>
+    	<b>Comprendre la recherche animale</b>
+    	<div class="text_separator"></div>
+		Published 02 December 2021
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Soixante ans après : l'histoire de la tragédie de la thalidomide</b>
+    	<div class="text_separator"></div>
+		<a href="https://www.understandinganimalresearch.org.uk/news/sixty-years-on-the-history-of-the-thalidomide-tragedy" target="_blank">
+			Sixty years on: the history of the thalidomide tragedy : Understanding Animal Research
+	    	<div class="text_separator"></div>
+			https://www.understandinganimalresearch.org.uk/news/sixty-years-on-the-history-of-the-thalidomide-tragedy
+		</a>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“La thalidomide a été développée en Allemagne dans les années 1950 comme sédatif et <b>a été testée sur plusieurs espèces animales (non gravides)</b> puis sur l'homme. Les résultats sur les animaux semblaient montrer que même des doses très élevées n'étaient pas nocives. Chez les patients humains, il semblait que le nouveau médicament avait remarquablement peu d'effets secondaires et était bien toléré par les personnes qui le prenaient, à l'exception de ceux qui recevaient des doses élevées, qui se plaignaient de somnolence, de vertiges et de constipation. Cela suggérait que ce serait une bonne alternative aux sédatifs existants tels que le phénobarbital. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Cependant, il semble que les études publiées par la société développant le médicament, Chemie Grünenthal, n'étaient pas rigoureuses : il n'y avait <b>pas de groupe placebo</b> et aucune indication sur la durée du traitement. Aucune des études n'était en double aveugle. Il n'y avait également <b>aucune mesure de la quantité de thalidomide dans le sang ou les tissus des patients qui en prenaient...</b>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		La thalidomide était commercialisée dans plusieurs pays et s'appelait Distaval au Royaume-Uni. Il a été prescrit comme sédatif totalement <b>sûr</b> et a été utilisé dans les traitements de la grippe ainsi que des nausées matinales et de l'insomnie associées à la grossesse, malgré le fait qu'<b>aucun test de sécurité n'avait été effectué sur des animaux gravides</b>.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		On prétend parfois que, dans les années 1950, aucun nouveau médicament n'a été testé sur des animaux gravides parce que les scientifiques ne comprenaient pas encore que le fœtus pouvait être endommagé par des facteurs externes. Cependant, le méprobamate, un autre sédatif et relaxant musculaire mis au point dans les années 1950, a fait l'objet d'une batterie de tests détaillés sur des animaux, y compris une étude de 15 mois au cours de laquelle des groupes de rats mâles et femelles ont reçu le médicament dans leur nourriture pendant plusieurs semaines et ont été puis accouplé, avec la progéniture examinée pour tout défaut.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Des recherches ultérieures ont montré que la thalidomide n'endommagerait le fœtus que si elle était prise à un certain stade de la grossesse.</b> Il est également apparu qu'un traitement contre la grippe appelé Grippex contenait de la thalidomide et que les mères qui pensaient ne pas avoir été exposées au médicament, l'avait en fait pris.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Lorsque les tests sur les animaux ont finalement eu lieu, ils ont montré la gamme d'effets que la thalidomide pouvait avoir - de la fausse couche et la réabsorption du fœtus dans l'utérus, aux dommages aux yeux, au cœur, au cerveau et aux malformations distinctives des membres - selon au stade de la grossesse.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Certains ont fait valoir que certaines des expérimentations animales n'avaient pas abouti à une progéniture malformée, de sorte que les tests sur les animaux n'auraient pas réussi à empêcher la commercialisation de la thalidomide. Un examen plus approfondi montre que c'est parce que la plupart des animaux mettent bas la nuit et que de nombreuses espèces cannibalisent un bébé né avec des malformations. Ainsi, lorsque les techniciens arrivent le matin, seuls les descendants sains sont visibles. Les césariennes et la surveillance des animaux pendant la nuit ont révélé que les animaux ayant reçu de la thalidomide à un stade particulier de la grossesse ont donné naissance à des bébés présentant des malformations.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Un autre problème avec certaines des études utilisant des animaux gravides était que le médicament était dissous dans de l'eau ou une autre solution afin de l'injecter aux animaux, plutôt que d'être administré sous forme de comprimés. Beaucoup de ces animaux n'ont pas produit de progéniture malformée, mais il a été découvert plus tard que les ingrédients actifs de la thalidomide se décomposent et deviennent inactifs en solution.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Au fur et à mesure que les preuves contre la thalidomide s'accumulaient, la position du fabricant selon laquelle il n'était pas à blâmer est devenue intenable. Le médicament a été officiellement retiré par Chemie Grünenthal le 26 novembre 1961 et quelques jours plus tard, le 2 décembre 1961, les distributeurs britanniques ont emboîté le pas. Mais le gouvernement britannique n'a émis un avertissement formel qu'en mai 1962, de sorte que la thalidomide était probablement assise dans de nombreuses armoires à pharmacie et prise par des personnes sans méfiance dans les mois qui ont suivi.
+    </div>
+    <div class="ws-article-subtitle">
+		Videos sur la Thalidomide
+    </div>
+    <div class="ws-article-highlight-red">
+		<b>VEUILLEZ NOTER QUE CE SITE EST APOLITIQUE ET N'APPROUVE AUCUNE VUE POLITIQUE EXPRIMÉE DANS DES INTERVIEWS VIDÉO OU DES ARTICLES.</b>
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+    	<b>Extraits vidéo</b>
+		<div class="text_separator"></div>
+		<b>Thalidomide : l'erreur chimique qui a tué des milliers de bébés (en anglais)</b>
+		<div class="text_separator"></div>
+		You Tube (Durée 0.49mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=mrTHfBCduRA" target="_blank">Thalidomide : l'erreur chimique qui a tué des milliers de bébés – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er5jb/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>L'ombre de la tragédie de la thalidomide | Rapport rétro | Le New York Times (en anglais)</b>
+		<div class="text_separator"></div>
+		You Tube (Durée 07.21 mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=41n3mDoVbvk" target="_blank">L'ombre de la tragédie de la thalidomide | Rapport rétro | Le New York Times – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er7lr/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>Frances Oldham Kelsey - Tenir tête aux grandes sociétés pharmaceutiques (en anglais)</b>
+		<div class="text_separator"></div>
+		You Tube (Durée 1.59 mins)
+		<div class="text_separator"></div>
+		<a href="https://www.youtube.com/watch?v=cgS_hf8lhTE" target="_blank">Frances Oldham Kelsey - Tenir tête aux grandes sociétés pharmaceutiques – YouTube</a>
+    </div>
+	<iframe style="margin:auto;display:block;width: 80%;height: 56.25vw;max-width: 640px;max-height: 320px;" class="rumble" src="https://rumble.com/embed/v1er8j1/?pub=18eiqg" frameborder="0" allowfullscreen></iframe>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

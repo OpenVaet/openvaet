@@ -74,7 +74,7 @@ sub search_recipient {
                 $totalRecipients++;
                 my $recipientId = %$recordData{'fields'}->{'id_beneficiaire'} // die;
                 my $lastName    = %$recordData{'fields'}->{'identite'}        // die;
-                my $firstName   = %$recordData{'fields'}->{'prenom'}          // die;
+                my $firstName   = %$recordData{'fields'}->{'prenom'};
                 my $city        = %$recordData{'fields'}->{'ville'}           // die;
                 $city =~ s/\|/, /g;
                 $recipients{$recipientId}->{'lastName'}  = $lastName;

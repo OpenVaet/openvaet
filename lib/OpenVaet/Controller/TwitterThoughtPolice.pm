@@ -295,6 +295,17 @@ sub twitter_banned_users_by_network {
 
     # Loggin session if unknown.
     session::session_from_self($self);
+    
+    my %userTwitterBans = ();
+    if ($self->is_connected()) {
+        my $userId = $self->session('userId');
+        my $tb = $self->dbh->selectall_hashref("SELECT id as userTwitterBanId, twitterUserName, networkName FROM user_twitter_ban WHERE userId = $userId", 'userTwitterBanId');
+        for my $userTwitterBanId (sort keys %$tb) {
+            my $twitterUserName = %$tb{$userTwitterBanId}->{'twitterUserName'} // die;
+            my $networkName = %$tb{$userTwitterBanId}->{'networkName'} // die;
+            $userTwitterBans{$twitterUserName}->{$networkName} = 1;
+        }
+    }
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -306,6 +317,7 @@ sub twitter_banned_users_by_network {
     # p$twitterUsersBansJson;
 
     my %twitterUsers = ();
+    my %urlsLoaded = ();
     for my $userObj (@$twitterUsersBansJson) {
         my %obj = %$userObj;
         next unless keys %{$obj{'altContacts'}};
@@ -318,6 +330,8 @@ sub twitter_banned_users_by_network {
             last;
         }
         next unless $hasNetwork == 1;
+        next if exists $urlsLoaded{$networkUrl};
+        $urlsLoaded{$networkUrl} = 1;
         $twitterUsers{$obj{'twitterUserName'}}->{'twitterName'} = $obj{'twitterName'};
         $twitterUsers{$obj{'twitterUserName'}}->{'networkUrl'}  = $networkUrl;
         # p%obj;
@@ -331,8 +345,28 @@ sub twitter_banned_users_by_network {
         networkName      => $networkName,
         currentLanguage  => $currentLanguage,
         languages        => \%languages,
-        twitterUsers     => \%twitterUsers
+        twitterUsers     => \%twitterUsers,
+        userTwitterBans  => \%userTwitterBans
     );
+}
+
+sub tag_username {
+    my $self = shift;
+    my $twitterUserName = $self->param('twitterUserName') // die;
+    my $networkName = $self->param('networkName') // die;
+    my $userId = $self->session('userId') // die;
+
+    say "userId : $userId";
+    say "networkName : $networkName";
+    say "twitterUserName : $twitterUserName";
+    my $sth = $self->dbh->prepare("INSERT INTO user_twitter_ban (userId, twitterUserName, networkName) VALUES (?, ?, ?)");
+    $sth->execute($userId, $twitterUserName, $networkName) or die $sth->err();
+
+    $self->render(
+        text => 'ok'
+    );
+
+
 }
 
 1;

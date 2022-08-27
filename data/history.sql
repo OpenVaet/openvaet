@@ -1078,3 +1078,31 @@ CREATE TRIGGER `before_user_insert`
 BEFORE INSERT ON `user` 
 FOR EACH ROW  
 SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+# Created user_twitter_ban table.
+CREATE TABLE `openvaet`.`user_twitter_ban` (
+  `id` INT NOT NULL,
+  `twitterUserName` VARCHAR(45) NOT NULL,
+  `userId` INT NOT NULL,
+  `creationTimestamp` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `user_twitter_ban_to_user_idx` (`userId` ASC),
+  CONSTRAINT `user_twitter_ban_to_user`
+    FOREIGN KEY (`userId`)
+    REFERENCES `openvaet`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_user_twitter_ban_insert` 
+BEFORE INSERT ON `user_twitter_ban` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`user_twitter_ban` 
+CHANGE COLUMN `userId` `userId` INT(11) NOT NULL AFTER `id`,
+CHANGE COLUMN `twitterUserName` `twitterUserName` VARCHAR(250) NOT NULL ;
+ALTER TABLE `openvaet`.`user_twitter_ban` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+ALTER TABLE `openvaet`.`user_twitter_ban` 
+ADD COLUMN `networkName` VARCHAR(250) NOT NULL AFTER `twitterUserName`;
+

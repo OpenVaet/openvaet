@@ -9,7 +9,7 @@
     </div>
 	<div class="search_result_container">
 	% for my $recipientId (sort{$a <=> $b} keys %recipients) {
-		% my $firstName = $recipients{$recipientId}->{'firstName'} // die;
+		% my $firstName = $recipients{$recipientId}->{'firstName'};
 		% my $lastName  = $recipients{$recipientId}->{'lastName'}  // die;
 		% my $city      = $recipients{$recipientId}->{'city'}      // die;
 		<div class="search_result">

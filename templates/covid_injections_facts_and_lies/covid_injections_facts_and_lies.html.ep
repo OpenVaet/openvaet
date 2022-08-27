@@ -63,26 +63,26 @@
 	.ws-index-container {
 	}
 
-	.ws-index-category-1-a {
+	.ws-index-category-1 {
 		margin-top: 10px;
 		color: black;
 		padding-top: 5px;
 		padding-bottom: 5px;
 	}
 
-	.ws-index-category-2-a {
+	.ws-index-category-2 {
 		padding-top: 5px;
 		padding-bottom: 5px;
 		color: darkgrey;
 	}
 
-	.ws-index-category-3-a {
+	.ws-index-category-3 {
 		padding-top: 5px;
 		padding-bottom: 5px;
 		color: darkgrey;
 	}
 
-	.category-item-done-a {
+	.category-item-done {
 		color: black;
 		cursor: pointer;
 	}
@@ -257,33 +257,33 @@
     </div>
     <div class="text_separator"></div>
     <ul class="ws-index-container">
-    	<li class="ws-index-category-1-a">1. Traditional Vaccines</li>
+    	<li class="ws-index-category-1">1. Traditional Vaccines</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-a">Brief History of Traditional Vaccines</li>
-    			<li class="ws-index-category-2-a">Immune Response (Simple)</li>
-    			<li class="ws-index-category-2-a">Traditional Vaccine Technology & Adjuvants</li>
-    			<li class="ws-index-category-2-a">Questioning the Vaccine Success Narrative</li>
-    			<li class="ws-index-category-2-a">Traditional Vaccine Injuries & Controversies</li>
+    			<li class="ws-index-category-2">Brief History of Traditional Vaccines</li>
+    			<li class="ws-index-category-2">Immune Response (Simple)</li>
+    			<li class="ws-index-category-2">Traditional Vaccine Technology & Adjuvants</li>
+    			<li class="ws-index-category-2">Questioning the Vaccine Success Narrative</li>
+    			<li class="ws-index-category-2">Traditional Vaccine Injuries & Controversies</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-a">The Cutter Incident - Salk Polio Vaccine 1955</li>
-    					<li class="ws-index-category-3-a">DPT Diphtheria – Tetanus – Pertussis (Whooping Cough) Vaccine 1970s</li>
-    					<li class="ws-index-category-3-a">Rubella Vaccine 1970s</li>
-    					<li class="ws-index-category-3-a">Alleged MMR Autism Link Controversy 1998</li>
-    					<li class="ws-index-category-3-a">India Polio Vaccine Controversy 2006</li>
-    					<li class="ws-index-category-3-a">Pandemrix Vaccine for Swine Flu 2009</li>
+    					<li class="ws-index-category-3">The Cutter Incident - Salk Polio Vaccine 1955</li>
+    					<li class="ws-index-category-3">DPT Diphtheria – Tetanus – Pertussis (Whooping Cough) Vaccine 1970s</li>
+    					<li class="ws-index-category-3">Rubella Vaccine 1970s</li>
+    					<li class="ws-index-category-3">Alleged MMR Autism Link Controversy 1998</li>
+    					<li class="ws-index-category-3">India Polio Vaccine Controversy 2006</li>
+    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Pandemrix Vaccine for Swine Flu 2009</li>
 		    		</ul>
 		    	</div>
-    			<li class="ws-index-category-2-a">Vaccine Injuries & History of Legal Redress</li>
-    			<li class="ws-index-category-2-a">Big Pharma Indemnity from Liability</li>
-    			<li class="ws-index-category-2-a">Current Vaccine Agencies Including Conflicts of Interest</li>
+    			<li class="ws-index-category-2">Vaccine Injuries & History of Legal Redress</li>
+    			<li class="ws-index-category-2">Big Pharma Indemnity from Liability</li>
+    			<li class="ws-index-category-2">Current Vaccine Agencies Including Conflicts of Interest</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-a">WHO, UNICEF</li>
-    					<li class="ws-index-category-3-a">The Bill & Melinda Gates Foundation</li>
-    					<li class="ws-index-category-3-a">GAVI, CEPI</li>
-    					<li class="ws-index-category-3-a">The Wellcome Trust</li>
+    					<li class="ws-index-category-3">WHO, UNICEF</li>
+    					<li class="ws-index-category-3">The Bill & Melinda Gates Foundation</li>
+    					<li class="ws-index-category-3">GAVI, CEPI</li>
+    					<li class="ws-index-category-3">The Wellcome Trust</li>
 		    		</ul>
 		    	</div>
     		</ul>
@@ -292,10 +292,10 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-b">The Importance of Thorough Testing including Animal Studies</li>
-    			<li class="ws-index-category-2-b">When it goes Wrong Thalidomide 1950s</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">When it goes Wrong Thalidomide 1950s</li>
     			<li class="ws-index-category-2-b">Drug Controversy Primodos 1960s</li>
-    			<li class="ws-index-category-2-b">Best Practice for Clinical Trial Design & Terminology</li>
-    			<li class="ws-index-category-2-b">Stages in Clinical Drug Trials before Full Approval</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Clinical Trial Design & Terminology</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">The Four Phases of Clinical Drug Trials</li>
     			<li class="ws-index-category-2-b">Approval Processes (Full & Emergency Use)</li>
     		</ul>
     	</div>
@@ -348,8 +348,8 @@
     					<li class="ws-index-category-3-d">US China Co-operation in Gain of Function Lab Experiments</li>
 		    		</ul>
 		    	</div>
-    			<li class="ws-index-category-2-d">The PCR Test, LFT & Limitations</li>
-    			<li class="ws-index-category-2-d">Kary Mullis on PCR & Criticism of Dr Fauci</li>
+    			<li class="ws-index-category-2-d category-item-done-d" onclick="openLocation('/covid_injections_facts_and_lies/pcr_test_lft_limitations');return;">The PCR Test, LFT & Limitations</li>
+    			<li class="ws-index-category-2-d category-item-done-d" onclick="openLocation('/covid_injections_facts_and_lies/kary_mullis_pcr_fauci');return;">Kary Mullis on PCR & Criticism of Dr Fauci</li>
     			<li class="ws-index-category-2-d">Covid Injection First Generation Timeline</li>
     			<li class="ws-index-category-2-d">Types of First Generation Covid Injection</li>
 		    	<div style="width:100%;">
@@ -429,8 +429,16 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-g">Moderna Spikevax Bivalent Original / Omicron mRNA 1273,214 Covid Injection Approved UK 15Aug2022</li>
-    			<li class="ws-index-category-2-g">G7 100 Days Mission Pandemic Preparedness</li>
+    			<li class="ws-index-category-2-g category-item-done-g" onclick="openLocation('/covid_injections_facts_and_lies/g7_100days_pand_prepare');return;">G7 100 Days Mission Pandemic Preparedness</li>
     			<li class="ws-index-category-2-g">Suppressed Voices of Scientific & Medical Debate in Social Media</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1">8. Moderna Covid Injections</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Timeline</li>
+    			<li class="ws-index-category-2">Animal Studies</li>
+    			<li class="ws-index-category-2">Phase 1 Clinical Trial NCT04283461 mRNA-1273 16 March 2020</li>
     		</ul>
     	</div>
     </ul>
@@ -456,33 +464,33 @@
     </div>
     <div class="text_separator"></div>
     <ul class="ws-index-container">
-    	<li class="ws-index-category-1-a">1. Vaccins Traditionnels</li>
+    	<li class="ws-index-category-1">1. Vaccins Traditionnels</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-a">Brêve histoire des Vaccins Traditionnels</li>
-    			<li class="ws-index-category-2-a">Réponse immunitaire (Simplifiée)</li>
-    			<li class="ws-index-category-2-a">Technologie des Vaccins Traditionnels & Adjuvants</li>
-    			<li class="ws-index-category-2-a">Questionner le narratif du succès des Vaccins Traditionnels</li>
-    			<li class="ws-index-category-2-a">Blessures liées aux vaccins traditionnels & Controverses</li>
+    			<li class="ws-index-category-2">Brêve histoire des Vaccins Traditionnels</li>
+    			<li class="ws-index-category-2">Réponse immunitaire (Simplifiée)</li>
+    			<li class="ws-index-category-2">Technologie des Vaccins Traditionnels & Adjuvants</li>
+    			<li class="ws-index-category-2">Questionner le narratif du succès des Vaccins Traditionnels</li>
+    			<li class="ws-index-category-2">Blessures liées aux vaccins traditionnels & Controverses</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-a">L'incident de Cutter - Salk Polio Vaccine 1955</li>
-    					<li class="ws-index-category-3-a">Vaccin DTC Diphtérie – Tétanos – Coqueluche (Coqueluche) (années 1970)</li>
-    					<li class="ws-index-category-3-a">Vaccin contre la rubéole (années 1970)</li>
-    					<li class="ws-index-category-3-a">Controverse sur le lien allégué avec l'autisme du ROR 1998</li>
-    					<li class="ws-index-category-3-a">Controverse sur le vaccin contre la poliomyélite en Inde 2006</li>
-    					<li class="ws-index-category-3-a">Vaccin Pandemrix contre la grippe porcine 2009</li>
+    					<li class="ws-index-category-3">L'incident de Cutter - Salk Polio Vaccine 1955</li>
+    					<li class="ws-index-category-3">Vaccin DTC Diphtérie – Tétanos – Coqueluche (Coqueluche) (années 1970)</li>
+    					<li class="ws-index-category-3">Vaccin contre la rubéole (années 1970)</li>
+    					<li class="ws-index-category-3">Controverse sur le lien allégué avec l'autisme du ROR 1998</li>
+    					<li class="ws-index-category-3">Controverse sur le vaccin contre la poliomyélite en Inde 2006</li>
+    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Vaccin Pandemrix contre la grippe porcine 2009</li>
 		    		</ul>
 		    	</div>
-    			<li class="ws-index-category-2-a">Blessures causées par les vaccins et antécédents de réparation légale</li>
-    			<li class="ws-index-category-2-a">Indemnité de responsabilité pour Big Pharma</li>
-    			<li class="ws-index-category-2-a">Agences de vaccins actuelles, considérant les conflits d'intérêts</li>
+    			<li class="ws-index-category-2">Blessures causées par les vaccins et antécédents de réparation légale</li>
+    			<li class="ws-index-category-2">Indemnité de responsabilité pour Big Pharma</li>
+    			<li class="ws-index-category-2">Agences de vaccins actuelles, considérant les conflits d'intérêts</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-a">WHO, UNICEF</li>
-    					<li class="ws-index-category-3-a">La Fondation Bill & Melinda Gates</li>
-    					<li class="ws-index-category-3-a">GAVI, CEPI</li>
-    					<li class="ws-index-category-3-a">Le Wellcome Trust</li>
+    					<li class="ws-index-category-3">WHO, UNICEF</li>
+    					<li class="ws-index-category-3">La Fondation Bill & Melinda Gates</li>
+    					<li class="ws-index-category-3">GAVI, CEPI</li>
+    					<li class="ws-index-category-3">Le Wellcome Trust</li>
 		    		</ul>
 		    	</div>
     		</ul>
@@ -491,10 +499,10 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-b">L'importance des tests approfondis, y compris les études sur les animaux</li>
-    			<li class="ws-index-category-2-b">Quand ça tourne mal : Thalidomide 1950s</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Quand ça tourne mal : Thalidomide 1950s</li>
     			<li class="ws-index-category-2-b">Controverse sur la drogue Primodos 1960</li>
-    			<li class="ws-index-category-2-b">"Bonnes pratiques" pour la conception et la terminologie des essais cliniques</li>
-    			<li class="ws-index-category-2-b">Étapes des essais cliniques de médicaments avant l'approbation complète</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Conception et terminologie des essais cliniques</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">Les 4 phases des essais cliniques de médicaments</li>
     			<li class="ws-index-category-2-b">Processus d'approbation (complète et utilisation d'urgence)</li>
     		</ul>
     	</div>
@@ -547,8 +555,8 @@
     					<li class="ws-index-category-3-d">Coopération US-Chine dans les expériences de laboratoire de gain de fonction</li>
 		    		</ul>
 		    	</div>
-    			<li class="ws-index-category-2-d">Le test PCR, LFT et ses limites</li>
-    			<li class="ws-index-category-2-d">Kary Mullis sur le PCR et critique du Dr Fauci</li>
+    			<li class="ws-index-category-2-d category-item-done-d" onclick="openLocation('/covid_injections_facts_and_lies/pcr_test_lft_limitations');return;">Le test PCR, LFT et ses limites</li>
+    			<li class="ws-index-category-2-d category-item-done-d" onclick="openLocation('/covid_injections_facts_and_lies/kary_mullis_pcr_fauci');return;">Kary Mullis sur le PCR et critique du Dr Fauci</li>
     			<li class="ws-index-category-2-d">Chronologie de la première génération d'injection de Covid</li>
     			<li class="ws-index-category-2-d">Types d'injection de Covid de première génération</li>
 		    	<div style="width:100%;">
@@ -628,8 +636,16 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-g">Injections Covid Moderna Spikevax Bivalent Original / Omicron ARNm 1273,214 approuvées au Royaume-Unis le 15 août 2022</li>
-    			<li class="ws-index-category-2-g">G7 Mission de 100 jours de Préparation à la pandémie</li>
+    			<li class="ws-index-category-2-g category-item-done-g" onclick="openLocation('/covid_injections_facts_and_lies/g7_100days_pand_prepare');return;">G7 Mission de 100 jours de Préparation à la pandémie</li>
     			<li class="ws-index-category-2-g">Voix supprimées du débat scientifique et médical dans les médias sociaux</li>
+    		</ul>
+    	</div>
+    	<li class="ws-index-category-1">8. Moderna Covid Injections</li>
+    	<div style="width:100%;">
+    		<ul>
+    			<li class="ws-index-category-2">Répères temporels</li>
+    			<li class="ws-index-category-2">Etudes sur les animaux</li>
+    			<li class="ws-index-category-2">Essais cliniques de Phase 1 NCT04283461 mRNA-1273 le 16 Mars 2020</li>
     		</ul>
     	</div>
     </ul>

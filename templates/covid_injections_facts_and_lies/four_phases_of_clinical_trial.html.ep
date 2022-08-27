@@ -1,0 +1,363 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections - The Four Phases of Clinical Drug Trials';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid - Les 4 phases des essais cliniques de médicaments';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-highlight-red {
+		background: #FF0000;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #fff;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		The Four Phases of Clinical Drug Trials
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this site
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>What Are Clinical Trials and Studies?</b>
+    	<div class="text_separator"></div>
+		National Institute on Aging (nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/health/what-are-clinical-trials-and-studies" target="_blank">
+			What Are Clinical Trials and Studies? | National Institute on Aging (nih.gov)
+	    	<div class="text_separator"></div>
+			www.nia.nih.gov/health/what-are-clinical-trials-and-studies
+		</a>
+    	<div class="text_separator"></div>
+    </div>
+    <div class="ws-article-subtitle">
+		Clinical trials are carried out in phases* 
+    </div>
+    <div class="ws-article-arial-black">
+		Clinical trials advance through four phases to test a drug, find the appropriate dosage, and look for side effects. 
+		<div class="text_separator"></div>
+		If, after the first three phases, researchers find a drug to be safe and effective, the FDA approves it for clinical use and continues to monitor its effects.
+    </div>
+    <div class="ws-article-subtitle">
+		Phase I trial emphasises SAFETY.
+    </div>
+    <div class="ws-article-arial-black">
+		Tests the experimental drug on a small group of often healthy people to judge If it’s SAFE, IDENTIFY SIDE EFFECTS, and to find the CORRECT DRUG DOSAGE.
+		<div class="text_separator"></div>
+		Typically less than 100 people.
+    </div>
+    <div class="ws-article-subtitle">
+		Phase II trial empathises EFFECTIVENESS. 
+    </div>
+    <div class="ws-article-arial-black">
+		Tests the experimental drug to obtain preliminary data on whether the drug WORKS in people who have a certain disease or condition. Also continue to study SAFETY, including SHORT-TERM SIDE EFFECTS. 
+		<div class="text_separator"></div>
+		Typically 100 to 300 people. 
+		<div class="text_separator"></div>
+		This phase can last several YEARS
+    </div>
+    <div class="ws-article-subtitle">
+		Phase III trial emphasises EFFECTIVENES & SAFETY especially monitoring SIDE EFFECTS.
+    </div>
+    <div class="ws-article-arial-black">
+		Tests the experimental drug studying different populations and different dosages, using the drug in combination with other drugs and continues the monitoring of side effects.
+		<div class="text_separator"></div>
+		Typically 100s to 3000 people / as many as needed or able to enrol.
+    </div>
+    <div class="ws-article-subtitle">
+		New Drug Application (NDA)
+    </div>
+    <div class="ws-article-arial-black">
+		An application submitted by the manufacturer of a drug to the FDA, after the clinical trial has been completed, for a license to market the drug for a specified indication.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		If the FDA agrees that the Phase III trial results are positive, it will APPROVE the experimental drug.
+    </div>
+    <div class="ws-article-subtitle">
+		Phase IV trial emphasises EFFECTIVENESS & SAFETY especially monitoring SIDE EFFECTS for the drug after the FDA approves its use.
+    </div>
+    <div class="ws-article-arial-black">
+		When the new drug has being approved and marketed, Phase IV studies monitor its effectiveness in the general population and collect information about any adverse effects associated with its widespread use. Sometimes, the side effects of a drug may not become clear until more people have taken it over a longer period of time.
+		<div class="text_separator"></div>
+		Typically 1000s of people in large, diverse populations.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i>* “Before the <a href="https://www.fda.gov/" target="_blank">U.S. Food and Drug Administration</a> (FDA) approves a clinical trial to begin, scientists perform laboratory tests and studies in animals to test a potential therapy’s safety and efficacy. If these studies show favorable results, the FDA gives approval for the intervention to be tested in humans.”</i>
+    </div>
+    <div class="ws-article-subtitle">
+		Finding Clinical Trial Information - ClinicalTrials.gov database
+    </div>
+    <div class="ws-article-arial-black">
+		The ClinicalTrials.gov database holds information about privately and publicly funded clinical studies conducted around the world. It is provided by the U.S. National Library of Medicine.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		The ClinicalTrials.gov Identifier is a useful trial reference code e.g. NCT05096260. Enter the code in the “Other terms” search field on the Home Screen.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<a href="https://www.clinicaltrials.gov/ct2/home" target="_blank">
+			Home - ClinicalTrials.gov 
+			<div class="text_separator"></div>
+			https://www.clinicaltrials.gov/ct2/home 
+		</a>
+    </div>
+    <div class="ws-article-arial-red">
+		Our Comment
+		<div class="text_separator"></div>
+		Critics argue that clinical drug trials can be deliberately designed to lead to data outcomes that falsely credit or discredit the hypothetical usefulness of a specific drug as a specific treatment. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		As such, trial design should be carefully analysed to check the trial is not biased and that it has been implemented with integrity including the management of data. 
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Les 4 phases des essais cliniques de médicaments
+    </div>
+    <div class="ws-article-highlight">
+		Les informations ci-dessous citent et renvoient à ce site
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<b>Que sont les essais cliniques et les études ?</b>
+    	<div class="text_separator"></div>
+		Institut national du vieillissement (National Institute on Aging - nih.gov)
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://www.nia.nih.gov/health/what-are-clinical-trials-and-studies" target="_blank">
+			What Are Clinical Trials and Studies? | National Institute on Aging (nih.gov)
+	    	<div class="text_separator"></div>
+			www.nia.nih.gov/health/what-are-clinical-trials-and-studies
+		</a>
+    	<div class="text_separator"></div>
+    </div>
+    <div class="ws-article-subtitle">
+		Les essais cliniques se déroulent par phases*
+    </div>
+    <div class="ws-article-arial-black">
+		Les essais cliniques passent par quatre phases pour tester un médicament, trouver le dosage approprié et rechercher les effets secondaires.
+		<div class="text_separator"></div>
+		Si, après les trois premières phases, les chercheurs trouvent qu'un médicament est sûr et efficace, la FDA l'approuve pour une utilisation clinique et continue de surveiller ses effets.
+    </div>
+    <div class="ws-article-subtitle">
+		L'essai de phase I met l'accent sur la SÉCURITÉ.
+    </div>
+    <div class="ws-article-arial-black">
+		Teste le médicament expérimental sur un petit groupe de personnes souvent en bonne santé pour juger s'il est SÉCURITAIRE, IDENTIFIER LES EFFETS SECONDAIRES et trouver le DOSAGE CORRECT DU MÉDICAMENT.
+		<div class="text_separator"></div>
+		Généralement moins de 100 personnes.
+    </div>
+    <div class="ws-article-subtitle">
+		L'essai de phase II met l'accent sur l'EFFICACITÉ.
+    </div>
+    <div class="ws-article-arial-black">
+		Teste le médicament expérimental pour obtenir des données préliminaires indiquant si le médicament FONCTIONNE chez les personnes atteintes d'une certaine maladie ou affection. Continue également à étudier la SÉCURITÉ, y compris les EFFETS SECONDAIRES À COURT TERME.
+		<div class="text_separator"></div>
+		Généralement 100 à 300 personnes.
+		<div class="text_separator"></div>
+		Cette phase peut durer plusieurs ANNEES
+    </div>
+    <div class="ws-article-subtitle">
+		L'essai de phase III met l'accent sur l'EFFICACITÉ et la SÉCURITÉ, en particulier sur la surveillance des EFFETS SECONDAIRES.
+    </div>
+    <div class="ws-article-arial-black">
+		Teste le médicament expérimental en étudiant différentes populations et différents dosages, en utilisant le médicament en combinaison avec d'autres médicaments et continue la surveillance des effets secondaires.
+		<div class="text_separator"></div>
+		Généralement 100 à 3000 personnes / autant que nécessaire ou qu'on a été capables d'inscrire.
+    </div>
+    <div class="ws-article-subtitle">
+		Demande de nouveau médicament (New Drug Application - NDA)
+    </div>
+    <div class="ws-article-arial-black">
+		Une demande soumise par le fabricant d'un médicament à la FDA, après la fin de l'essai clinique, pour une licence de commercialisation du médicament, pour une indication spécifiée.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Si la FDA convient que les résultats de l'essai de phase III sont positifs, elle APPROUVERA le médicament expérimental.
+    </div>
+    <div class="ws-article-subtitle">
+		L'essai de phase IV met l'accent sur l'EFFICACITÉ et la SÉCURITÉ, en particulier sur la surveillance des EFFETS SECONDAIRES du médicament après que la FDA a approuvé son utilisation.
+    </div>
+    <div class="ws-article-arial-black">
+		Lorsque le nouveau médicament a été approuvé et commercialisé, des études de phase IV surveillent son efficacité dans la population générale et recueillent des informations sur tout effet indésirable associé à son utilisation généralisée. Parfois, les effets secondaires d'un médicament peuvent ne pas se manifester tant qu'un plus grand nombre de personnes n'en ont pas pris pendant une période plus longue.
+		<div class="text_separator"></div>
+		Généralement des milliers de personnes dans des populations nombreuses et diverses.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<i>* “Avant que <a href="https://www.fda.gov/" target="_blank">la Food and Drug Administration (FDA) des États-Unis</a>  n'approuve le début d'un essai clinique, les scientifiques effectuent des tests de laboratoire et des études sur des animaux pour tester l'innocuité et l'efficacité d'une thérapie potentielle. Si ces études montrent des résultats favorables, la FDA donne son approbation pour que l'intervention soit testée chez l'homme.”</i>
+    </div>
+    <div class="ws-article-subtitle">
+		Recherche d'informations sur les essais cliniques - Base de données ClinicalTrials.gov
+    </div>
+    <div class="ws-article-arial-black">
+		La base de données ClinicalTrials.gov contient des informations sur les études cliniques financées par des fonds privés et publics menées dans le monde entier. Il est fourni par la National Library of Medicine des États-Unis.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		L'identifiant ClinicalTrials.gov est un code de référence d'essai utile, par ex. NCT05096260. Entrez le code dans le champ de recherche "Autres termes" sur l'écran d'accueil.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<a href="https://www.clinicaltrials.gov/ct2/home" target="_blank">
+			Home - ClinicalTrials.gov 
+			<div class="text_separator"></div>
+			https://www.clinicaltrials.gov/ct2/home 
+		</a>
+    </div>
+    <div class="ws-article-arial-red">
+		Notre commentaire
+		<div class="text_separator"></div>
+		Les critiques soutiennent que les essais cliniques de médicaments peuvent être délibérément conçus pour aboutir à des résultats de données qui créditent ou discréditent à tort l'utilité hypothétique d'un médicament spécifique en tant que traitement spécifique.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		En tant que tel, la conception de l'essai doit être soigneusement analysée pour vérifier que l'essai n'est pas biaisé et qu'il a été mis en œuvre avec intégrité, y compris la gestion des données.
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

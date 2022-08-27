@@ -10,6 +10,24 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.23</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a saving when the user is logged in and opens a Twitter banned user profile.</li>
+        <li>Fixed a few location errors.</li>
+        <li>Fixed a bug in the French Conflicts of interest checker.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'une sauvegarde lorsque l'utilisateur est connecté et ouvrir le profil d'un utilisateur Twitter suspendu.</li>
+        <li>Correction de quelques erreurs de traduction.</li>
+        <li>Correction d'un bug dans la vérification des conflits d'intérêts en France.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.22</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

@@ -1,0 +1,306 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid Injections - The PCR Test, LFT & Limitations';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Injections Covid - Le test PCR, LFT et ses limites';
+% } else {
+
+% }
+
+<style type="text/css">
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    a {
+		word-break: break-all;
+    }
+
+	.ws-article-title {
+		padding-top: 15px;
+		padding-bottom: 5px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-subtitle {
+		margin-top: 15px;
+		padding-top: 15px;
+		padding-bottom: 25px;
+		padding-left: 15px;
+		width: 99%;
+		color: black;
+		font-weight: bold;
+		font-size: 1.45rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-highlight-red {
+		background: #FF0000;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #fff;
+		font-size: 1.2rem;
+	}
+
+	.ws-article-comic-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #00B050;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-comic-blue {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: #0070C0;
+		font-size: 1.3rem;
+        font-family: "Comic Sans MS", "OpenSans-Regular";
+	}
+
+	.ws-article-arial-red {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		font-weight: bold;
+		width: 95%;
+		color: #FF0000;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-arial-black-italic-centered {
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		display: block;
+		margin: auto;
+		width: 75%;
+		text-align: center;
+		color: black;
+		font-size: 1.4rem;
+	}
+
+	.ws-article-highlight {
+		background: #FFFF00;
+		padding-top: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: calc(95% - 30px);
+		color: black;
+		font-size: 1.2rem;
+	}
+
+	.article-bulletpoint {
+		margin-top: 15px;
+		font-size: 1.4rem;
+		color: black;
+	}
+
+	.article-bulletpoint-text {
+		padding-left: 25px;
+	}
+</style>
+
+% if ($currentLanguage eq 'en') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		The PCR Test, LFT & Limitations
+    </div>
+    <div class="ws-article-subtitle">
+		Polymerase Chain Reaction (PCR)
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		Kary Mullis was awarded The Nobel Prize in Chemistry 1993 for his creation of the Polymerase chain reaction (PCR) laboratory technique, like a DNA photocopier.
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article on the Nobel Prize website 
+    	<div class="text_separator"></div>
+		<a href="https://www.nobelprize.org/prizes/chemistry/1993/mullis/facts/" target="_blank">
+			Kary B. Mullis - Facts (nobelprize.org)
+			<br>
+			https://www.nobelprize.org/prizes/chemistry/1993/mullis/facts/
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“An organism's genome is stored inside DNA molecules, but analyzing this genetic information requires quite a large amount of DNA. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		In 1985, Kary Mullis invented the process known as polymerase chain reaction (PCR), in which a small amount of DNA can be copied in large quantities over a short period of time. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		By applying heat, the DNA molecule's two strands are separated and the DNA building blocks that have been added are bonded to each strand. With the help of the enzyme DNA polymerase, new DNA chains are formed and the process can then be repeated. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		PCR has been of major importance in both medical research and forensic science.”
+    </div>
+    <div class="ws-article-subtitle">
+		The Covid-19 PCR Test (Also known as nucleic acid amplification tests (NAATs)
+    </div>
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this article on the Cleveland Clinic website
+    	<div class="text_separator"></div>
+		<a href="https://my.clevelandclinic.org/health/diagnostics/21462-covid-19-and-pcr-testing" target="_blank">
+			PCR Test for COVID-19: What It Is, How Its Done, What The Results Mean (clevelandclinic.org)
+			<br>
+			https://my.clevelandclinic.org/health/diagnostics/21462-covid-19-and-pcr-testing
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>“What is a COVID-19 PCR test?</b>
+		<div class="text_separator"></div>
+		The polymerase chain reaction (PCR) test for COVID-19 is a molecular test that analyzes your upper respiratory specimen, looking for genetic material (ribonucleic acid or RNA) of SARS-CoV-2, the virus that causes COVID-19. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Scientists use the PCR technology to amplify small amounts of RNA from specimens into deoxyribonucleic acid (DNA), which is replicated until SARS-CoV-2 is detectable if present.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		There are three key steps to the COVID-19 PCR test:
+		<div class="text_separator"></div>
+		1. <b>Sample collection</b>: A healthcare provider uses a swab to collect respiratory material found in your nose. After collection, the swab is sealed in a tube and then sent to a laboratory.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		2. <b>Extraction</b>: When a laboratory scientist receives the sample, they <b>isolate (extract) genetic material</b> from the rest of the material in the sample.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		3. <b>PCR</b>: The PCR step then uses special chemicals and enzymes and a PCR machine called a thermal cycler. <b>Each heating and cooling cycle increases (amplifies) the amount of the targeted genetic material</b> in the test tube. After many cycles, millions of copies of a small portion of the SARS-CoV-2 virus’s genetic material are present in the test tube. One of the chemicals in the tube produces a fluorescent light if SARS-CoV-2 is present in the sample. <b>Once amplified enough</b>, the PCR machine can detect this signal. Scientists use special software to interpret the signal as a positive test result.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Please note SARS-CoV-2, consist of RNA rather than DNA. The RNA undergoes a process called reverse transcription PCR (rtPCR)Trusted Source. This turns the RNA into DNA before copying it. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		At the start of  viral infection, the “latent period” is the time when a person is infected, but is unable to transmit the virus to anyone else. The “incubation period” is the time before the person develops symptoms.  The highest viral loads are often during the first few days of symptoms. ( Note, Prolonged infection in immunocompromised individuals can occur where they shed infectious virus for months.)
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Limitations of the Covid-19 PCR Test</b> 
+		<div class="text_separator"></div>
+		Repeated tests may be needed as viral load varies during infection.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Why the test gives a False Negative i.e. the test is negative in an infected person?</b>
+		<div class="text_separator"></div>
+		A. Problems with sample collection and laboratory handling.
+		<div class="text_separator"></div>
+		1. Mistakes during specimen collection.
+		<div class="text_separator"></div>
+		2. Choosing the wrong genetic target and not picking up all variants of the virus.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		B. Low levels of viral RNA at the time of the test reflective of changes in viral load and shedding over time rather than the lack of infection. 
+		<div class="text_separator"></div>
+		1.Testing too early in the disease process especially before symptoms  or early in symptom onset.
+		<div class="text_separator"></div>
+		2.Testing too late. Viral shedding declines after symptoms have peaked.
+		<div class="text_separator"></div>
+		3.Variability in viral shedding despite symptom onset.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Why the test gives a False Positive i.e. the test is positive in a person not currently infectious? </b>
+		<div class="text_separator"></div>
+		 1. Samples were amplified  with a excessive number of cycles.
+		<div class="text_separator"></div>
+		 2. Person is post-infection & not contagious but the test picks up “old inactive” fragments of virus.
+    </div>
+    <div class="ws-article-subtitle">
+		The Covid-19 LFT Test  (Also known as Rapid Antigen Test) 
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		<b>What is a COVID-19 LFT test?</b> 
+		<div class="text_separator"></div>
+		The Lateral Flow Test (LFT) looks for antigens (bits of proteins on the surface of the virus) present in the sample. Lateral flow tests use a strip coated in antibodies specific to antigens from the SARS-CoV-2 virus. If viral proteins are present, this will show up as a coloured line – much like a positive pregnancy test. Tests  take 15 to 30 minutes.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Limitations of the Covid-19 LFT Test</b> 
+		<div class="text_separator"></div>
+		Repeated tests may be needed as viral load varies during infection.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Why the test gives a False Negative i.e. the test is negative in an infected person?</b> 
+		<div class="text_separator"></div>
+		1. Need a high viral load to record a positive result, so may miss early stage infection.
+		<div class="text_separator"></div>
+		2. Test looks for the wrong antigen / misses antigens from new variants of the virus.
+		<div class="text_separator"></div>
+		3. Home tests may be less accurate due to poor sampling technique.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>		 
+		<b>Why the test gives a False Positive i.e. the test is positive in a person not currently infectious?</b> 
+		<div class="text_separator"></div>
+		Unable to distinguish between infected people who are no longer transmitting the virus, and those who are still infectious.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Test sensitivity and specificity.</b>  
+		<div class="text_separator"></div>
+		<b>Test sensitivity</b>  measures how often the test correctly identifies those who have the virus, so a test with high sensitivity will not have many false-negative results. 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<b>Test specificity</b>  measures how often the test correctly identifies those who do not have the virus, so a test with high specificity will not have many false-positive results. 
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } elsif ($currentLanguage eq 'fr') {
+<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="ws-article-title">
+		Le test PCR, LFT et ses limites
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+% } else {
+
+% }

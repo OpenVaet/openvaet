@@ -1,8 +1,8 @@
 % layout 'default';
 % if ($currentLanguage eq 'en') {
-% title 'OPENVAET - Covid Injections - Covid Injection Clinical Trial Documents 2020';
+% title 'OPENVAET - G7 100 Days Mission Pandemic Preparedness';
 % } elsif ($currentLanguage eq 'fr') {
-% title 'OPENVAET - Injections Covid - Covid Injection Clinical Trial Documents 2020';
+% title 'OPENVAET - G7 Mission de 100 jours de Préparation à la pandémie';
 % } else {
 
 % }
@@ -146,10 +146,34 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="ws-article-title">
-		Covid Injection Clinical Trial Documents 2020
+		G7 100 Days Mission Pandemic Preparedness
     </div>
-    <div class="ws-article-subtitle">
-		Conception de l'essai
+    <div class="ws-article-highlight">
+		The information below quotes and refers to this site
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://cepi.net/news_cepi/cepi-uk-government-and-life-sciences-industry-unite-around-100-days-mission/" target="_blank">
+			CEPI, UK Government, and Life Sciences Industry unite around 100 Days Mission – CEPI
+	    	<br>
+			https://cepi.net/news_cepi/cepi-uk-government-and-life-sciences-industry-unite-around-100-days-mission/
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“CEPI, UK Government, and Life Sciences Industry unite around 100 Days Mission
+		<div class="text_separator"></div>
+		08 Mar 2022 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		On the day of the Global Pandemic Preparedness Summit, the Coalition for Epidemic Preparedness Innovations (CEPI), the UK Government and members of the life sciences industry <a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">have issued a joint statement committing to deliver CEPI’s ambition to develop vaccines against emerging diseases <a href="https://100days.cepi.net/" target="_blank">in as little as 100 days</a>. This 100 Days Mission, put forward by the UK Government under its G7 Presidency in <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/992762/100_Days_Mission_to_respond_to_future_pandemic_threats__3_.pdf" target="_blank">June 2021</a>, and backed by leaders of the G7 and G20, sits at the heart of CEPI’s five-year pandemic preparedness plan.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Joint Statement
+		<div class="text_separator"></div>
+		<a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf</a>
+    </div>
+    <div class="ws-article-arial-red" style="margin-top:25px;">
+		Critical attention must be paid to question the existence and validity of animal testing and clinical trials in addition to the safety of the MRNA platform short and long term.  
     </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -164,10 +188,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="ws-article-title">
-		Covid Injection Clinical Trial Documents 2020
-    </div>
-    <div class="ws-article-subtitle">
-		Conception de l'essai
+		G7 Mission de 100 jours de Préparation à la pandémie
     </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
