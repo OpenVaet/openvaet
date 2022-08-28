@@ -21,7 +21,7 @@ sub australian_data {
     $languages{'en'} = 'English';
 
     my $australianData;
-    open my $in, '<:utf8', 'australian_death_reports.json';
+    open my $in, '<:utf8', 'french_death_reports.json';
     while (<$in>) {
         $australianData .= $_;
     }

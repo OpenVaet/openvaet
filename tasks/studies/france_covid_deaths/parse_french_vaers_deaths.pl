@@ -298,13 +298,14 @@ sub parse_foreign_data {
 			# say "immProjectNumber : $immProjectNumber";
 			# say "countryCode2     : $countryCode2";
 			$countryCodes{$countryCode2}++;
-			if ($immProjectNumber !~ /^FR.*$/) {
+			if ($immProjectNumber =~ /^FR.*$/) {
 
 				# Taking care of building stats.
 				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
 				if (
 					$patientDied 
 				) {
+					next unless $cdcAgeInternalId;
 				    if (defined $patientAge) {
 				    	$definedAgeInCountry++;
 				    }
