@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <script src="/js/jquery.js"></script>
+        <script type="text/javascript" src="/js/jquery.js"></script>
+        <script type="text/javascript" src="/js/charts_loader.js"></script>
         <link rel="stylesheet" href="/css/jquery-ui.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <title><%= title %></title>
     </head>
     <style type="text/css">
+        html {
+            width: 100vw;
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            overflow-y: hidden;
+            overflow-X: hidden;
+        }
         body {
             margin: 0;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -41,6 +49,23 @@
             font-size: 16px;
             background:#91a7c9;
         }
+        div.menu_logo {
+            cursor: pointer;
+            padding-top: 11px;
+            z-index: 3;
+            padding-left: 10px;
+            padding-right: 10px;
+            width: 161px;
+            display: flex;
+            flex-wrap: wrap;
+            height: 30px;
+        }
+        div.menu_container {
+            width: calc(100% - 161px);
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
         div.menu_item {
             cursor: pointer;
             padding-top: 11px;
@@ -49,16 +74,6 @@
             padding-right: 10px;
             display: flex;
             flex-wrap: wrap;
-        }
-        div.menu_separator {
-            border: 2px solid #647287;
-            background: #647287;
-            width: 1px;
-        }
-        div.menu_lang_filler {
-            border: 2px solid #647287;
-            background: #647287;
-            width: calc(100% - 235px);
         }
         div.text_separator {
             width: 100%;
@@ -79,92 +94,14 @@
         }
         div.content-container {
             width: 100vw;
+            min-height: calc(100vh - 40px);
             padding-left: 5px;
             padding-right: 5px;
-            min-height: 100%;
             margin: auto;
             display: block;
             background: #fff;
-            max-width: 1000px;
+            /*max-width: 1000px;*/
             font-size: 14px;
-        }
-
-        /* Layout language selector */
-        .language-container {
-            position: absolute;
-            z-index: 2;
-            top: 2px;
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .language-icon-container {
-            height: 38px;
-            z-index: 0;
-            margin-left: calc(100% - 42px);
-        }
-
-        .language-icon {
-            position: relative;
-            display: block;
-            height: 35px;
-            z-index: 3;
-            cursor: pointer;
-        }
-
-        .profile-icon {
-            position: relative;
-            height: 35px;
-            cursor: pointer;
-        }
-
-        /* Version container */
-        .profile-container {
-            position: absolute;
-            margin-left: calc(100% - 95px);
-            top: 2px;
-            z-index: 2;
-            /*display: none;*/
-        }
-
-        /* Layout language menu */
-        .language-display-container {
-            position: absolute;
-            flex-wrap: wrap;
-            top: 0px;
-            margin-left: calc(100% - 46px);
-            height: 90px;
-            display: none;
-            width: 46px;
-            z-index: 1;
-            background: rgb(10, 18, 59, .75);
-            /*border-radius: 25px;*/
-        }
-
-        .language-item-canvas {
-            width: 100%;
-            height: 25px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .language-item-margin-left {
-            width: 11%;
-            height: 100%;
-        }
-
-        .language-item {
-            width: 60%;
-            height: 100%;
-            color: white;
-            text-align: right;
-            font-size: 20px;
-        }
-
-        .language-option-icon {
-            height: 35px;
-            cursor: pointer;
         }
 
         /* Blank Container */
@@ -172,12 +109,12 @@
             z-index: 99;
             display: none;
             position: absolute;
-            background: #fff;
+            background: #d8e4ed;
             margin-left: 0px;
             margin-top: 0px;
-            top: 50px;
+            top: 40px;
             width: 100%;
-            height: calc(100% - 50px);
+            height: calc(100% - 40px);
         }
 
         /* Main Loader */
@@ -289,268 +226,6 @@
             background-clip: content-box;
             background-color: #3c518f;
         }
-
-        /* Dropdown menu (taken from Rane, https://codepen.io/raneio/pen/NbbZEM) */
-        .dropdown a {
-          text-decoration: none;
-          color: #000000;
-        }
-
-        .dropdown a:hover {
-          color: #222222
-        }
-
-        /* Dropdown */
-        .dropdown {
-            display: inline-block;
-            position: relative;
-        }
-
-        .dd-button {
-            display: inline-block;
-            border: 1px solid gray;
-            border-radius: 4px;
-            padding: 9px 8px 10px 5px;
-            background-color: #91a7c9;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .dd-button:after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 7px;
-            transform: translateY(-50%);
-            width: 0; 
-            height: 0; 
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid black;
-        }
-
-        .dd-button:hover {
-            background-color: #b5cff7;
-        }
-
-
-        .dd-input {
-            display: none;
-        }
-
-        .dd-menu {
-            position: absolute;
-            top: 100%;
-            left: -167px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 0;
-            margin: 0px 0 0px 0;
-            box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
-            background-color: #91a7c9;
-            font-weight: bold;
-            list-style-type: none;
-            font-size: 15px;
-        }
-
-        .dd-input + .dd-menu {
-            display: none;
-        } 
-
-        .dd-input:checked + .dd-menu {
-            display: block;
-        }
-
-        /*.dd-menu ul {
-            max-width: 150px;
-        }*/
-
-        .dd-menu li {
-            min-width: 190px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        .dd-menu li:hover {
-            background-color: #b5cff7;
-        }
-
-        .dd-menu li a {
-            display: block;
-            margin: -10px -20px;
-            padding: 10px 20px;
-        }
-
-        .dd-menu li.divider{
-            width: 100%;
-            padding: 0;
-            border-bottom: 1px solid #cccccc;
-        }
-
-        .ws-yellow {
-            background:#ffff00!important;
-        }
-
-        .ws-yellow:hover {
-            background:#d6d606!important;
-        }
-
-        /* Login */
-        /* Login Form */
-        .login-form {
-            z-index: 1;
-            position: absolute;
-            top: 40px;
-            color: #575757;
-            border-radius: 5px;
-            border: 1px solid #696968;
-            width: 325px;
-            height: 300px;
-            margin-left: calc(100% - 341px);
-            display: none;
-            background: rgb(100, 114, 135, .75);
-        }
-
-        .login-form::-webkit-input-placeholder {
-           text-align: center;
-        }
-
-        .login-form:-ms-input-placeholder {  
-           text-align: center; 
-        }
-
-        .login-form:-moz-placeholder { /* Firefox 18- */
-           text-align: center;  
-        }
-
-        .login-form::-moz-placeholder {  /* Firefox 19+ */
-           text-align: center;  
-        }
-
-        .login-tab {
-            height: 25px;
-            display: flex;
-            flex-wrap: wrap;
-            text-align: center;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .login-tab-item {
-            width: 100px;
-            cursor: pointer;
-        }
-
-        .login-inputs-margin {
-            height: 5px;
-            width: 100%;
-        }
-
-        .login-form-forgot-password {
-            margin-top: 5px;
-            width: calc(100% - 15px);
-            margin-right: 15px;
-            text-align: right;
-            color: #16377d;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .underlined {
-            border-bottom: 3px solid #9e1e11;
-        }
-
-        .login-tab-margin {
-            width: calc(50% - 100px);
-        }
-
-        .login-form-container {
-            width: 100%;
-            height: calc(100% - 29px);
-        }
-
-        .login-inputs-container {
-            width: 100%;
-            text-align: center;
-        }
-
-        .login-input-container {
-            width: calc(350px - 35px);
-            height: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            position: relative;
-        }
-
-        .login-text-input {
-            width: 275px;
-            position: relative;
-            border-radius: 5px;
-            padding: 0 10px;
-            height: 30px;
-            text-align:center;
-        }
-
-        .login-button {
-            display: block;
-            width: 150px;
-            border-radius: 5px;
-            height: 30px;
-            background: #262b27;
-            position: absolute;
-            color: white;
-            margin-left: calc(50% - 75px);
-            bottom: 10px;
-        }
-
-        .login-error {
-            margin-top: 15px;
-            font-size: 18px;
-            width: 100%;
-            text-align: center;
-            padding: 0 10px;
-            color: darkred;
-        }
-
-        /* User Account */
-        .user-account-signout {
-            margin-top: 10px;
-            border-radius: 5px;
-            padding: 5px 10px;
-            border: 1px solid #696968;
-            margin-left: 10px;
-            font-size: 10px;
-            background: #e9eef0;
-            cursor: pointer;
-        }
-
-        .user-account-signout:hover {
-            background: rgb(200, 205, 205, .75) !important;
-        }
-
-        .user-account-lef-bar-item {
-            font-family: "Roboto",Arial,sans-serif;
-            font-size: 14px;
-            width: calc(100% - 20px);
-            margin-left: 10px;
-            height: 32px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #8a8a88;
-            background: #e9eef0;
-            margin-top: 15px;
-        }
-
-        .user-account-lef-bar-item:hover {
-            background: rgb(200, 205, 205, .75) !important;
-        }
-
-        .user-account-content {
-            margin-top: 30px;
-            width: calc(100% - 135px);
-            height: calc(100% - 30px);
-        }
     </style>
     <body>
         <!-- Center-screen loader -->
@@ -566,122 +241,14 @@
         </script>
         <div class="main_container">
             <div id="menu" class="header noselect">
-                <div class="menu_item" title="Open Vaccines Adverse Effects Tracker" onclick="openLocation('/');return;" style="width: 141px;">
-                    <img src="/images/target.png" style="margin-top: -2px;height: 20px;width: 20px;">&nbsp;<b>OPENVAET.org</b>
-                </div>
-                <div class="menu_separator"></div>
-                <div class="menu_item" style="width: 55px;padding-left: 0px;padding-top: 0px;">
-                    <label class="dropdown">
+              <div class="menu_logo" title="Open Vaccines Adverse Effects Tracker" onclick="openLocation('/');return;" style="width: 141px;">
+                  <img src="/images/target.png" style="margin-top: -2px;height: 20px;width: 20px;">&nbsp;<b>OPENVAET.org</b>
+              </div>
+              <div id="menuContainer" class="menu_container noselect">
 
-                      % if ($currentLanguage eq 'en') {
-
-                      <div class="dd-button">
-                        More&nbsp;&nbsp;&nbsp;
-                      </div>
-                      <input type="checkbox" class="dd-input" id="test">
-                      <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Index Data & Code</li>
-                        <li class="divider"></li>
-                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
-                        % # <li class="divider"></li>
-                        <li onclick="openLocation('/studies');return;">Studies</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
-                      </ul>
-                      % } else {
-
-                      <div class="dd-button">
-                        Plus&nbsp;&nbsp;&nbsp;&nbsp;
-                      </div>
-                      <input type="checkbox" class="dd-input" id="test">
-                      <ul class="dd-menu">
-                        <li onclick="openLocation('/data');return;">Données Index & Code</li>
-                        <li class="divider"></li>
-                        % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
-                        % # <li class="divider"></li>
-                        <li onclick="openLocation('/studies');return;">Etudes</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
-                        <li class="divider"></li>
-                        <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
-                      </ul>
-                      % }
-                      
-                    </label>
-                </div>
-                <div class="menu_lang_filler"></div>
+              </div>
             </div>
-            % my %languages = %$languages;
-            <div class="language-container" id="language-container">
-                <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
-            </div>
-            <div class="profile-container">
-                % if ($self->is_connected()) {
-                <img src="/images/profile.png" class="profile-icon noselect" onclick="openCloseLogin('user_account');return;">
-                % } else {
-                <img src="/images/profile.png" class="profile-icon noselect" onclick="openCloseLogin('login');return;">
-                % }
-            </div>
-            <div id="language-display-container" class="language-display-container">
-                <div class="language-item-canvas" style="margin-top:5px;">
-                    <div class="language-item-margin-left"></div>
-                    <div class="language-item noselect">
-                        % for my $l (sort keys %languages) {
-                            % my $lN = $languages{$l} // die;
-                            % next if $l eq $currentLanguage;
-                        <img src="/images/<%=$l%>.png" class="language-option-icon noselect" style="margin-top:40px;" onclick="changeLanguage('<%=$l%>');return;" title="<%=$lN%>">
-                        % }
-                    </div>
-                </div>
-            </div>
-            <div id="loginForm" class="login-form">
-                % if ($self->is_connected()) {
-                <div class="login-form-container" id="loginContainer">
-                    % if ($currentLanguage eq 'en') {
-                    <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
-                        <b>Change your password</b>
-                    </div>
-                    <div class="user-account-signout noselect" onclick="disconnectUser();return;">
-                        <b>DISCONNECT &#10230;</b>
-                    </div>
-                    % } else {
-                    <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
-                        <b>Modifier mot de passe</b>
-                    </div>
-                    <div class="user-account-signout noselect" onclick="disconnectUser();return;">
-                        <b>Déconnecter &#10230;</b>
-                    </div>
-                    % }
-                </div>
-                % } else {
-                <div class="horizontal-separator-10"></div>
-                <div class="login-tab">
-                    <div class="login-tab-margin"></div>
-                    % if ($currentLanguage eq 'en') {
-                    <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>LOGIN</b></div>
-                    <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>SIGN UP</b></div>
-                    % } else {
-                    <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>Connexion</b></div>
-                    <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>Créer compte</b></div>
-                    % }
-                    <div class="login-tab-margin"></div>
-                </div>
-                <div class="horizontal-separator-2"></div>
-                <div class="login-form-container" id="loginContainer">
-                </div>
-                % }
-            </div>
-            <div class="content">
+            <div class="content" id="content">
                 <%= content %> 
             </div>
         </div>
@@ -689,17 +256,42 @@
 </html>
 
 <script type="text/javascript">
-    var languageDisplay      = 0;
-    var currentLanguage      = '<%=$currentLanguage%>';
+    var currentLanguage = '<%=$currentLanguage%>';
+    let mainWidth       = document.getElementById('content').offsetWidth;
+    let mainHeight      = document.getElementById('content').offsetHeight;
 
-    function hideShowLanguage() {
-        if (languageDisplay  == 0) {
-            languageDisplay  = 1;
-            document.getElementById('language-display-container').style.display = "inline-block";
-        } else {
-            languageDisplay  = 0;
-            document.getElementById('language-display-container').style.display = "none";
-        }
+    $( document ).ready(function() {
+        mainLoader      = document.getElementById("mainLoader");
+        mainLoader.style.display  = "none";
+        blankContainer  = document.getElementById("blankContainer");
+        blankContainer.style.display  = "none";
+
+        // Loads top bar.
+        loadTopBar();
+
+    });
+
+    function loadTopBar() {
+
+        console.log('currentLanguage : ' + currentLanguage);
+        let request = $.ajax({
+            url: "/top_bar",
+            type: "POST",
+            data: {
+                mainWidth       : mainWidth,
+                mainHeight      : mainHeight,
+                currentLanguage : currentLanguage
+           }
+        });
+
+        request.done(function(data) {
+            $("#menuContainer").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
     }
 
     function openLocation(dest) {
@@ -709,188 +301,8 @@
         blankContainer.style.display  = "inline-block";
         window.location.href = dest + '?currentLanguage=' + currentLanguage;
     }
-
-    function changeLanguage(cL) {
-        currentLanguage      = cL;
-        let pathname         = window.location.pathname;
-        mainLoader = document.getElementById("mainLoader");
-        mainLoader.style.display  = "inline-block";
-        blankContainer = document.getElementById("blankContainer");
-        blankContainer.style.display  = "inline-block";
-        hideShowLanguage();
-        window.location.href = pathname + '?currentLanguage=' + currentLanguage;
-    }
-
-    $( document ).ready(function() {
-        mainLoader = document.getElementById("mainLoader");
-        mainLoader.style.display  = "none";
-        blankContainer = document.getElementById("blankContainer");
-        blankContainer.style.display  = "none";
-    });
     
     function openInNewTab(url) {
         window.open(url, '_blank').focus();
-    }
-
-    var loginDisplay = 0;
-    var signupButton  = document.getElementById('signup-button');
-    var loginButton   = document.getElementById('login-button');
-    function openCloseLogin(destination) {
-        if (destination == 'signup' || destination == 'login') {
-            if (loginDisplay == 0) {
-                loginDisplay = 1;
-                $( "#loginForm" ).slideDown(250);
-                // document.getElementById('loginForm').style.display = "block";
-                if (destination == 'signup') {
-                    openLoginTab('signup');
-                } else {
-                    openLoginTab('login');
-                }
-            } else {
-                if (currentLoginTab && (currentLoginTab == destination)) {
-                    loginDisplay = 0;
-                    $( "#loginForm" ).slideUp(250);
-                    // document.getElementById('loginForm').style.display = "none";
-                } else {
-                    openLoginTab(destination);
-                }
-            }
-        } else {
-            if (loginDisplay == 0) {
-                loginDisplay = 1;
-                $( "#loginForm" ).slideDown(250);
-            } else {
-                loginDisplay = 0;
-                $( "#loginForm" ).slideUp(250);
-            }
-        }
-    }
-
-    function openLoginTab(tabName) {
-        currentLoginTab = tabName;
-        console.log('opening tab : ' + tabName);
-        if (tabName == 'login' || tabName == 'signup') {
-
-            if (tabName == 'login') {
-                if (signupButton) {
-                    signupButton.classList.remove("underlined");
-                }
-                loginButton.className += " underlined";
-            } else if (tabName == 'signup') {
-                if (loginButton) {
-                    loginButton.classList.remove("underlined");
-                }
-                signupButton.className += " underlined";
-            } else {
-
-            }
-            console.log('currentLanguage : ' + currentLanguage);
-            let request = $.ajax({
-                url: "/login/open_login_tab",
-                type: "POST",
-                data: {
-                    tabName : tabName,
-                    currentLanguage : currentLanguage
-               }
-            });
-
-            request.done(function(data) {
-                $("#loginContainer").html(data);
-            });
-
-            // Printing error message if case of failure
-            request.fail(function(jqXHR, textStatus) {
-                alert("Something went wrong : " + textStatus)
-            });
-        } else {
-
-        }
-    }
-
-    // Passwords & Mails Confirm.
-    function checkPwd(str) {
-        if (str.length < 6) {
-            return("Votre mot de passe est trop court");
-        } else if (str.length > 50) {
-            return("Votre mot de passe est trop long");
-        } else if (str.search(/\d/) == -1) {
-            return("Votre mot de passe doit contenir au moins un chiffre");
-        } else if (str.search(/[a-zA-Z]/) == -1) {
-            return("Votre mot de passe doit contenir au moins une lettre");
-        } else if (str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+]/) != -1) {
-            return("Votre mot de passe contient un caractère spécial non autorisé");
-        }
-        return("ok");
-    }
-
-    function confirmMail(userMail) {
-        console.log('Confirming mail ' + userMail);
-        let request = $.ajax({
-            url: "/new_user/load_email_confirm",
-            type: "POST",
-            data: {
-                userMail : userMail,
-                currentLanguage : currentLanguage
-           }
-        });
-
-
-        request.done(function(data) {
-            $("#loginContainer").html(data);
-        });
-
-        // Printing error message if case of failure
-        request.fail(function(jqXHR, textStatus) {
-            alert("Something went wrong : " + textStatus)
-        });
-    }
-
-    function closeLogin() {
-        loginDisplay = 0;
-        window.location.href = '/';
-    }
-
-    function loginNewUser(userMail, password, currentLanguage) {
-        let request = $.ajax({
-            url: '/login/do_login',
-            type: 'POST',
-            data : {
-                userMail : userMail,
-                password : password,
-                currentLanguage : currentLanguage
-            }
-        });
-        request.done(function(data) {
-            console.log(data);
-            if (data.status == 'ok') {
-                console.log('user properly logged in');
-                if (data.emailVerification == 0) {
-                    let userMail = $('#userMail').val();
-                    confirmMail(userMail);
-                } else {
-                    closeLogin();
-                }
-            } else {
-                $("#loginError").html(data.message);
-            }
-        });
-        return false;
-    }
-
-    function disconnectUser() {
-
-        let request = $.ajax({
-            url: "/logout",
-            type: "POST"
-        });
-
-        request.done(function(data) {
-            window.location.href = '/';
-        });
-
-        // Printing error message if case of failure
-        request.fail(function(jqXHR, textStatus) {
-            alert("Something went wrong : " + textStatus)
-        });
     }
 </script>

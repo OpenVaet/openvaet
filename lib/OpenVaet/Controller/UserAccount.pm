@@ -7,6 +7,16 @@ use config;
 
 use Data::Printer;
 
+sub set_disclaimer_closing {
+    my $self = shift;
+    my $userId = $self->session('userId');
+
+    my $sth = $self->dbh->prepare("UPDATE user SET hasClosedDisclaimer = 1 WHERE id = $userId");
+    $sth->execute() or die $sth->err();
+
+    $self->render(text => 'ok');
+}
+
 sub user_security {
     my $self = shift;
 

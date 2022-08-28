@@ -271,6 +271,9 @@ sub startup {
     $r->post('/login/do_login')->to('login#do_login');
     $r->post('/logout')->to('login#logout');
 
+    ### Top Bar
+    $r->post('/top_bar')->to('top_bar#top_bar');
+
     ### New user registration.
     $r->post('/new_user/create_user')->to('new_user#create_user');
     $r->post('/new_user/load_email_confirm')->to('new_user#load_email_confirm');
@@ -282,11 +285,13 @@ sub startup {
 
     ######################## Protected routes
     ### User account.
+    $auth->post('/set_disclaimer_closing')->to('user_account#set_disclaimer_closing');
     $auth->get('/user_account/user_security')->to('user_account#user_security');
     $auth->post('/user_account/change_password')->to('user_account#change_password');
 
     ### Website browsing route (public).
 	$r->get('/')->to('index#index');
+    $r->post('/index/index_content')->to('index#index_content');
 	$r->post('/contact_email')->to('index#contact_email');
 	$r->post('/index/events_by_substances')->to('index#events_by_substances');
 	$r->post('/index/events_details')->to('index#events_details');

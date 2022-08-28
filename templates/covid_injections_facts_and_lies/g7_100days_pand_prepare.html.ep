@@ -13,7 +13,7 @@
     }
 
     a {
-		word-break: break-all;
+		word-break: break-word;
     }
 
 	.ws-article-title {
@@ -165,7 +165,7 @@
 		08 Mar 2022 
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		On the day of the Global Pandemic Preparedness Summit, the Coalition for Epidemic Preparedness Innovations (CEPI), the UK Government and members of the life sciences industry <a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">have issued a joint statement committing to deliver CEPI’s ambition to develop vaccines against emerging diseases <a href="https://100days.cepi.net/" target="_blank">in as little as 100 days</a>. This 100 Days Mission, put forward by the UK Government under its G7 Presidency in <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/992762/100_Days_Mission_to_respond_to_future_pandemic_threats__3_.pdf" target="_blank">June 2021</a>, and backed by leaders of the G7 and G20, sits at the heart of CEPI’s five-year pandemic preparedness plan.”
+		On the day of the Global Pandemic Preparedness Summit, the Coalition for Epidemic Preparedness Innovations (CEPI), the UK Government and members of the life sciences industry <a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">have issued a joint statement</a> committing to deliver CEPI’s ambition to develop vaccines against emerging diseases <a href="https://100days.cepi.net/" target="_blank">in as little as 100 days</a>. This 100 Days Mission, put forward by the UK Government under its G7 Presidency in <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/992762/100_Days_Mission_to_respond_to_future_pandemic_threats__3_.pdf" target="_blank">June 2021</a>, and backed by leaders of the G7 and G20, sits at the heart of CEPI’s five-year pandemic preparedness plan.”
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		Joint Statement
@@ -189,6 +189,33 @@
     <div class="text_separator"></div>
     <div class="ws-article-title">
 		G7 Mission de 100 jours de Préparation à la pandémie
+    </div>
+    <div class="ws-article-highlight">
+		Les informations ci-dessous citent et renvoient à ce site
+    	<div class="text_separator"></div>
+    	<div class="text_separator"></div>
+		<a href="https://cepi.net/news_cepi/cepi-uk-government-and-life-sciences-industry-unite-around-100-days-mission/" target="_blank">
+			Le CEPI, le gouvernement britannique et l'industrie des sciences de la vie s'unissent autour d'une mission de 100 jours - CEPI
+	    	<br>
+			https://cepi.net/news_cepi/cepi-uk-government-and-life-sciences-industry-unite-around-100-days-mission/
+	    </a>
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
+		“Le CEPI, le gouvernement britannique et l'industrie des sciences de la vie s'unissent autour d'une mission de 100 jours
+		<div class="text_separator"></div>
+		08 Mar 2022 
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Le jour du Sommet mondial sur la préparation aux pandémies, la Coalition for Epidemic Preparedness Innovations (CEPI), le gouvernement britannique et des membres de l'industrie des sciences de la vie <a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">ont publié une déclaration commune</a> s'engageant à concrétiser l'ambition du CEPI de développer des vaccins contre les maladies émergentes <a href="https://100days.cepi.net/" target="_blank">en aussi peu que 100 jours</a>. Cette mission de 100 jours, proposée par le gouvernement britannique sous sa présidence du G7 en <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/992762/100_Days_Mission_to_respond_to_future_pandemic_threats__3_.pdf" target="_blank">juin 2021</a>, et soutenu par les dirigeants du G7 et du G20, est au cœur du plan quinquennal de préparation à la pandémie du CEPI.”
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		Déclaration conjointe
+		<div class="text_separator"></div>
+		<a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf</a>
+    </div>
+    <div class="ws-article-arial-red" style="margin-top:25px;">
+		Une attention critique doit être accordée à la question de l'existence et de la validité des tests sur les animaux et des essais cliniques en plus de la sécurité de la plate-forme d'ARNm à court et à long terme. 
     </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>

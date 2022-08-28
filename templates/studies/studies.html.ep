@@ -20,10 +20,10 @@
     <div class="text_separator"></div>
     <ul>
         <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA</li>
-        % # <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
-        % # <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
-        % # <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
-        % # <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
+        <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
+        <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
+        <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
+        <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/children_vaers');return">Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS</li>
     </ul>

@@ -20,6 +20,38 @@ sub index {
     my $toAge           = $self->param('toAge')           // '64y';
     my $reporter        = $self->param('reporter')        // 'na';
     my $sexGroup        = $self->param('sexGroup')        // 'na';
+
+    my %languages = ();
+    $languages{'fr'} = 'Français';
+    $languages{'en'} = 'English';
+
+    $self->render(
+        currentLanguage           => $currentLanguage,
+        fetchedStat               => $fetchedStat,
+        targetSource              => $targetSource,
+        fromAge                   => $fromAge,
+        toAge                     => $toAge,
+        fromYear                  => $fromYear,
+        toYear                    => $toYear,
+        reporter                  => $reporter,
+        sexGroup                  => $sexGroup,
+        languages                 => \%languages
+    );
+}
+
+sub index_content {
+    my $self = shift;
+    my $currentLanguage = $self->param('currentLanguage') // die;
+    my $targetSource    = $self->param('targetSource')    // die;
+    my $fetchedStat     = $self->param('fetchedStat')     // die;
+    my $fromYear        = $self->param('fromYear')        // die;
+    my $toYear          = $self->param('toYear')          // die;
+    my $fromAge         = $self->param('fromAge')         // die;
+    my $toAge           = $self->param('toAge')           // die;
+    my $reporter        = $self->param('reporter')        // die;
+    my $sexGroup        = $self->param('sexGroup')        // die;
+    my $mainHeight      = $self->param('mainHeight')      // die;
+    my $mainWidth       = $self->param('mainWidth')       // die;
     # say "currentLanguage : [$currentLanguage]";
     # say "fetchedStat     : [$fetchedStat]";
     # say "fromAge         : [$fromAge]";
@@ -29,6 +61,21 @@ sub index {
 
     # Loggin session if unknown.
     session::session_from_self($self);
+    # say "currentLanguage : [$currentLanguage]";
+    # say "fetchedStat     : [$fetchedStat]";
+    # say "fromAge         : [$fromAge]";
+    # say "toAge           : [$toAge]";
+    # say "reporter        : [$reporter]";
+    # say "sexGroup        : [$sexGroup]";
+
+    # Fetching user setting if user is logged.
+    my $userId          = $self->session('userId');
+    my $hasClosedDisclaimer = 0;
+    if ($userId) {
+        my $tb = $self->dbh->selectrow_hashref("SELECT hasClosedDisclaimer FROM user WHERE id = $userId", undef);
+        $hasClosedDisclaimer = %$tb{'hasClosedDisclaimer'} // die;
+        $hasClosedDisclaimer = unpack("N", pack("B32", substr("0" x 32 . $hasClosedDisclaimer, -32)));
+    }
 
     my %languages = ();
     $languages{'fr'} = 'Français';
@@ -252,6 +299,10 @@ sub index {
     }
 
     $self->render(
+        mainHeight                => $mainHeight,
+        mainWidth                 => $mainWidth,
+        currentLanguage           => $currentLanguage,
+        hasClosedDisclaimer       => $hasClosedDisclaimer,
         covidTotalCases           => $covidTotalCases,
         covidTotalDrugs           => $covidTotalDrugs,
         allOthersTotalCases       => $allOthersTotalCases,
@@ -259,7 +310,6 @@ sub index {
         covidPlusOthersTotalCases => $covidPlusOthersTotalCases,
         fetchedStat               => $fetchedStat,
         targetSource              => $targetSource,
-        currentLanguage           => $currentLanguage,
         fromAge                   => $fromAge,
         toAge                     => $toAge,
         fromYear                  => $fromYear,

@@ -1032,7 +1032,6 @@ DROP TABLE `openvaet`.`twitter_user_relation_page`;
 DROP TABLE `openvaet`.`twitter_user_relation`;
 DROP TABLE `openvaet`.`twitter_user`;
 
-
 ######################### V 5 - 2022-08-21 01:45:00
 # Created aus_symptom table.
 CREATE TABLE `openvaet`.`aus_symptom` (
@@ -1105,4 +1104,9 @@ ALTER TABLE `openvaet`.`user_twitter_ban`
 CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
 ALTER TABLE `openvaet`.`user_twitter_ban` 
 ADD COLUMN `networkName` VARCHAR(250) NOT NULL AFTER `twitterUserName`;
+
+######################### V 6 - 2022-08-27 20:10:00
+# Added hasClosedDisclaimer to user.
+ALTER TABLE `openvaet`.`user` 
+ADD COLUMN `hasClosedDisclaimer` BIT(1) NOT NULL DEFAULT 0 AFTER `passwordReinitFailedAttemtps`;
 

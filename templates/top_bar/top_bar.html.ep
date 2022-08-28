@@ -1,0 +1,884 @@
+<style type="text/css">
+
+    /* Dropdown menu (taken from Rane, https://codepen.io/raneio/pen/NbbZEM) */
+    .dropdown {
+        width: 30px;
+        height: 100%;
+        display: inline-block;
+        position: relative;
+    }
+
+    .dd-button {
+        display: inline-block;
+        background-color: #91a7c9;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+        height: 100%;
+    }
+
+    .dropdown a {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    .dropdown a:hover {
+        color: #222222
+    }
+
+    .dd-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: -240px;
+        right: -5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0;
+        margin: 0px 0 0px 0;
+        box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+        background-color: #91a7c9;
+        font-weight: bold;
+        list-style-type: none;
+        font-size: 15px;
+        z-index: 2;
+    }
+
+    .dd-menu li {
+        /*min-width: 190px;*/
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .dd-menu li:hover {
+        background-color: #b5cff7;
+    }
+
+    .dd-menu li a {
+        display: block;
+        margin: -10px -20px;
+        padding: 10px 20px;
+    }
+
+    .dd-menu li.divider{
+        width: 100%;
+        padding: 0;
+        border-bottom: 1px solid #cccccc;
+    }
+  
+    div.menu_lang_filler {
+        border: 2px solid #647287;
+        background: #647287;
+        width: calc(100% - 235px);
+    }
+
+    /* Layout language selector */
+    .language-container {
+        display: flex;
+        flex-wrap: wrap;
+        z-index: 2;
+        width: 46px;
+        position: relative;
+        height: 100%;
+        margin-left: calc(100% - 121px);
+    }
+
+    .language-icon-container {
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .language-icon {
+        position: relative;
+        margin: auto;
+        margin-top: 2px;
+        display: block;
+        height: 35px;
+        z-index: 3;
+        cursor: pointer;
+    }
+
+    /* Layout language menu */
+    .language-display-container {
+        position: absolute;
+        top: 0px;
+        left: calc(100% - 121px);
+        height: 90px;
+        display: none;
+        width: 46px;
+        z-index: 1;
+        background: rgb(10, 18, 59, .75);
+        /*border-radius: 25px;*/
+    }
+
+    .language-item-canvas {
+        width: 100%;
+        height: 25px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .language-item-margin-left {
+        width: 11%;
+        height: 100%;
+    }
+
+    .language-item {
+        width: 60%;
+        height: 100%;
+        color: white;
+        text-align: right;
+        font-size: 20px;
+    }
+
+    .language-option-icon {
+        height: 35px;
+        cursor: pointer;
+    }
+
+    /* Profile container */
+
+    /* Version container */
+    .profile-container {
+        height: 100%;
+        width: 40px;
+        z-index: 2;
+    }
+
+    .profile-icon {
+        position: relative;
+        height: 35px;
+        cursor: pointer;
+        display: block;
+        margin: auto;
+        margin-top: 2px;
+    }
+
+    /* Login */
+    /* Login Form */
+    .login-form {
+        z-index: 1;
+        position: absolute;
+        top: 40px;
+        color: #000;
+        border-radius: 5px;
+        border: 1px solid #696968;
+        width: 250px;
+        height: 300px;
+        left: calc(100% - 253px);
+        display: none;
+        background: rgb(100, 114, 135, .95);
+    }
+
+    .login-form::-webkit-input-placeholder {
+        text-align: center;
+    }
+
+    .login-form:-ms-input-placeholder {  
+        text-align: center; 
+    }
+
+    .login-form:-moz-placeholder { /* Firefox 18- */
+        text-align: center;  
+    }
+
+    .login-form::-moz-placeholder {  /* Firefox 19+ */
+        text-align: center;  
+    }
+
+    .login-tab {
+        height: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .login-tab-item {
+        width: 100px;
+        cursor: pointer;
+    }
+
+    .login-inputs-margin {
+        height: 5px;
+        width: 100%;
+    }
+
+    .login-form-forgot-password {
+        margin-top: 5px;
+        width: calc(100% - 15px);
+        margin-right: 15px;
+        text-align: right;
+        color: #16377d;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .underlined {
+        border-bottom: 3px solid #9e1e11;
+    }
+
+    .login-tab-margin {
+        width: calc(50% - 100px);
+    }
+
+    .login-form-container {
+        width: 100%;
+        height: calc(100% - 29px);
+    }
+
+    .login-inputs-container {
+        width: 100%;
+        text-align: center;
+    }
+
+    .login-input-container {
+        width: calc(350px - 35px);
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    .login-text-input {
+        width: 205px;
+        position: relative;
+        border-radius: 5px;
+        padding: 0 10px;
+        height: 30px;
+        text-align:center;
+    }
+
+    .login-button {
+        display: block;
+        width: 150px;
+        border-radius: 5px;
+        height: 30px;
+        background: #262b27;
+        position: absolute;
+        color: white;
+        margin-left: calc(50% - 75px);
+        bottom: 10px;
+    }
+
+    .login-error {
+        margin-top: 15px;
+        font-size: 18px;
+        width: 100%;
+        text-align: center;
+        padding: 0 10px;
+        color: darkred;
+    }
+
+    /* User Account */
+    .user-account-signout {
+        margin-top: 10px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        border: 1px solid #696968;
+        margin-left: 10px;
+        font-size: 10px;
+        background: #e9eef0;
+        cursor: pointer;
+    }
+
+    .user-account-signout:hover {
+        background: rgb(200, 205, 205, .75) !important;
+    }
+
+    .user-account-lef-bar-item {
+        font-family: "Roboto",Arial,sans-serif;
+        font-size: 14px;
+        width: calc(100% - 20px);
+        margin-left: 10px;
+        height: 32px;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid #8a8a88;
+        background: #e9eef0;
+        margin-top: 15px;
+    }
+
+    .user-account-lef-bar-item:hover {
+        background: rgb(200, 205, 205, .75) !important;
+    }
+
+    .user-account-content {
+        margin-top: 30px;
+        width: calc(100% - 135px);
+        height: calc(100% - 30px);
+    }
+
+    .menu-item-underline-container {
+        margin-left: 15px;
+        padding-top: 11px;
+        cursor: pointer;
+    }
+
+    .menu-item-underline {
+        display: inline-block;
+        position: relative;
+        color: #424242;
+        padding-bottom: 2px;
+        font-weight: bold;
+    }
+
+    .menu-item-underline:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #424242;
+        transform-origin: bottom right;
+        transition: transform 0.75s ease-out;
+    }
+
+    .menu-item-underline:hover:after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+</style>
+
+% my %languages = %$languages;
+% # If the width is under 720 pixel, we simply display a burger menu. Otherwise, we display every clickable option.
+% if ($mainWidth < 720) {
+    <div class="language-container" id="language-container">
+        <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
+    </div>
+    <div id="language-display-container" class="language-display-container">
+        <div class="language-item-canvas" style="margin-top:5px;">
+            <div class="language-item-margin-left"></div>
+            <div class="language-item noselect">
+            % for my $l (sort keys %languages) {
+                % my $lN = $languages{$l} // die;
+                % next if $l eq $currentLanguage;
+                <img src="/images/<%=$l%>.png" class="language-option-icon noselect" style="margin-top:40px;" onclick="changeLanguage('<%=$l%>');return;" title="<%=$lN%>">
+            % }
+            </div>
+        </div>
+    </div>
+    <div class="profile-container">
+        % if ($self->is_connected()) {
+        <img src="/images/profile.png" class="profile-icon noselect" onclick="hideShowLogin('user_account');return;">
+        % } else {
+        <img src="/images/profile.png" class="profile-icon noselect" onclick="hideShowLogin('login');return;">
+        % }
+    </div>
+    <label class="dropdown">
+        <div class="dd-button" onclick="hideShowMenu();return;">
+            <img src="/images/menu.png" style="width:30px;height: 30px;margin-top: 4px;display: block;">
+        </div>
+        <ul class="dd-menu" id="dd-menu">
+            % if ($currentLanguage eq 'en') {
+                <li onclick="openLocation('/data');return;">Data & Code</li>
+                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
+                % # <li class="divider"></li>
+                <li onclick="openLocation('/studies');return;">Studies</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
+            % } else {
+                <li onclick="openLocation('/data');return;">Données & Code</li>
+                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
+                % # <li class="divider"></li>
+                <li onclick="openLocation('/studies');return;">Etudes</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
+            % }
+        </ul>
+    </label>
+    <div id="loginForm" class="login-form">
+        % if ($self->is_connected()) {
+            <div class="login-form-container" id="loginContainer">
+            % if ($currentLanguage eq 'en') {
+                <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
+                    <b>Change your password</b>
+                </div>
+                <div class="user-account-signout noselect" onclick="disconnectUser();return;">
+                    <b>DISCONNECT &#10230;</b>
+                </div>
+            % } else {
+                <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
+                    <b>Modifier mot de passe</b>
+                </div>
+                <div class="user-account-signout noselect" onclick="disconnectUser();return;">
+                    <b>Déconnecter &#10230;</b>
+                </div>
+            % }
+            </div>
+        % } else {
+            <div class="horizontal-separator-10"></div>
+            <div class="login-tab">
+                <div class="login-tab-margin"></div>
+                    % if ($currentLanguage eq 'en') {
+                        <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>LOGIN</b></div>
+                        <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>SIGN UP</b></div>
+                    % } else {
+                        <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>Connexion</b></div>
+                        <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>Créer compte</b></div>
+                    % }
+                    <div class="login-tab-margin"></div>
+                </div>
+                <div class="horizontal-separator-2"></div>
+                <div class="login-form-container" id="loginContainer">
+                </div>
+            </div>
+        % }
+    </div>
+% } else {
+    % if ($currentLanguage eq 'en') {
+        <div class="menu-item-underline-container" onclick="openLocation('/data');return;" style="width: 100px;">
+            <div class="menu-item-underline">
+                Data & Code
+            </div>
+        </div>
+        <div class="menu-item-underline-container" onclick="openLocation('/studies');return;" style="width: 65px;">
+            <div class="menu-item-underline">
+                Studies
+            </div>
+        </div>
+        <div class="menu-item-underline-container" onclick="openLocation('/twitter_thought_police');return;" style="width: 185px;">
+            <div class="menu-item-underline">
+                Twitter - Thought Police
+            </div>
+        </div>
+        % if ($mainWidth >= 950) {
+            <div class="menu-item-underline-container" onclick="openLocation('/conflicts_of_interest');return;" style="width: 220px;">
+                <div class="menu-item-underline">
+                    France - Conflicts Of Interest
+                </div>
+            </div>
+        % }
+        % if ($mainWidth >= 1150) {
+            <div class="menu-item-underline-container" onclick="openLocation('/pfizearch');return;" style="width: 65px;">
+                <div class="menu-item-underline">
+                    Pfizearch
+                </div>
+            </div>
+        % }
+    % } else {
+        <div class="menu-item-underline-container" onclick="openLocation('/data');return;" style="width: 130px;">
+            <div class="menu-item-underline">
+               Données & Code
+            </div>
+        </div>
+        <div class="menu-item-underline-container" onclick="openLocation('/studies');return;" style="width: 65px;">
+            <div class="menu-item-underline">
+                Etudes
+            </div>
+        </div>
+        <div class="menu-item-underline-container" onclick="openLocation('/twitter_thought_police');return;" style="width: 215px;">
+            <div class="menu-item-underline">
+                Police de la pensée - Twitter
+            </div>
+        </div>
+        % if ($mainWidth >= 950) {
+            <div class="menu-item-underline-container" onclick="openLocation('/conflicts_of_interest');return;" style="width: 220px;">
+                <div class="menu-item-underline">
+                    France - Conflits d'Intérêts
+                </div>
+            </div>
+        % }
+        % if ($mainWidth >= 1150) {
+            <div class="menu-item-underline-container" onclick="openLocation('/pfizearch');return;" style="width: 65px;">
+                <div class="menu-item-underline">
+                    Pfizearch
+                </div>
+            </div>
+        % }
+    % }
+    % if ($mainWidth >= 1150) {
+        % if ($currentLanguage eq 'en') {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 832px);
+            }
+        </style>
+        % } else {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 892px);
+            }
+        </style>
+        % }
+    % } elsif ($mainWidth >= 950) {
+        % if ($currentLanguage eq 'en') {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 753px);
+            }
+        </style>
+        % } else {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 813px);
+            }
+        </style>
+        % }
+    % } else {
+        % if ($currentLanguage eq 'en') {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 517px);
+            }
+        </style>
+        % } else {
+        <style type="text/css">
+            .language-container {
+                margin-left: calc(100% - 577px);
+            }
+        </style>
+        % }
+    % }
+    <div class="language-container" id="language-container">
+        <div class="language-icon-container" id="language-icon-container"><img src="/images/<%=$currentLanguage%>.png" class="language-icon noselect" onclick="hideShowLanguage();return;"></div>
+    </div>
+    <div id="language-display-container" class="language-display-container">
+        <div class="language-item-canvas" style="margin-top:5px;">
+            <div class="language-item-margin-left"></div>
+            <div class="language-item noselect">
+            % for my $l (sort keys %languages) {
+                % my $lN = $languages{$l} // die;
+                % next if $l eq $currentLanguage;
+                <img src="/images/<%=$l%>.png" class="language-option-icon noselect" style="margin-top:40px;" onclick="changeLanguage('<%=$l%>');return;" title="<%=$lN%>">
+            % }
+            </div>
+        </div>
+    </div>
+    <div class="profile-container">
+        % if ($self->is_connected()) {
+        <img src="/images/profile.png" class="profile-icon noselect" onclick="hideShowLogin('user_account');return;">
+        % } else {
+        <img src="/images/profile.png" class="profile-icon noselect" onclick="hideShowLogin('login');return;">
+        % }
+    </div>
+    <label class="dropdown">
+        <div class="dd-button" onclick="hideShowMenu();return;">
+            <img src="/images/menu.png" style="width:30px;height: 30px;margin-top: 4px;display: block;">
+        </div>
+        <ul class="dd-menu" id="dd-menu">
+            % if ($currentLanguage eq 'en') {
+                <li onclick="openLocation('/data');return;">Data & Code</li>
+                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
+                % # <li class="divider"></li>
+                <li onclick="openLocation('/studies');return;">Studies</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
+            % } else {
+                <li onclick="openLocation('/data');return;">Données & Code</li>
+                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
+                % # <li class="divider"></li>
+                <li onclick="openLocation('/studies');return;">Etudes</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/pfizearch');return;">Pfizearch</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
+                <li class="divider"></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.23</div></li>
+            % }
+        </ul>
+    </label>
+    <div id="loginForm" class="login-form">
+        % if ($self->is_connected()) {
+            <div class="login-form-container" id="loginContainer">
+            % if ($currentLanguage eq 'en') {
+                <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
+                    <b>Change your password</b>
+                </div>
+                <div class="user-account-signout noselect" onclick="disconnectUser();return;">
+                    <b>DISCONNECT &#10230;</b>
+                </div>
+            % } else {
+                <div class="user-account-signout noselect" onclick="openLocation('/user_account/user_security');return;">
+                    <b>Modifier mot de passe</b>
+                </div>
+                <div class="user-account-signout noselect" onclick="disconnectUser();return;">
+                    <b>Déconnecter &#10230;</b>
+                </div>
+            % }
+            </div>
+        % } else {
+            <div class="horizontal-separator-10"></div>
+            <div class="login-tab">
+                <div class="login-tab-margin"></div>
+                    % if ($currentLanguage eq 'en') {
+                        <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>LOGIN</b></div>
+                        <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>SIGN UP</b></div>
+                    % } else {
+                        <div class="login-tab-item noselect underlined" id="login-button" onclick="openLoginTab('login');return;"><b>Connexion</b></div>
+                        <div class="login-tab-item noselect" id="signup-button" onclick="openLoginTab('signup');return;"><b>Créer compte</b></div>
+                    % }
+                    <div class="login-tab-margin"></div>
+                </div>
+                <div class="horizontal-separator-2"></div>
+                <div class="login-form-container" id="loginContainer">
+                </div>
+            </div>
+        % }
+    </div>
+% }
+
+<script type="text/javascript">
+
+    var languageDisplay = 0;
+    var menuDisplay     = 0;
+    var loginDisplay    = 0;
+    var signupButton    = document.getElementById('signup-button');
+    var loginButton     = document.getElementById('login-button');
+
+    function hideShowLanguage() {
+        if (menuDisplay == 1) {
+            hideMenu();
+        }
+        if (loginDisplay == 1) {
+            hideLogin();
+        }
+        if (languageDisplay  == 0) {
+            showLanguage();
+        } else {
+            hideLanguage();
+        }
+    }
+
+    function showLanguage() {
+        languageDisplay  = 1;
+        $( "#language-display-container" ).slideDown(250);
+    }
+
+    function hideLanguage() {
+        languageDisplay  = 0;
+        $( "#language-display-container" ).slideUp(250);
+    }
+
+    function hideShowMenu() {
+        if (languageDisplay == 1) {
+            hideLanguage();
+        }
+        if (loginDisplay == 1) {
+            hideLogin();
+        }
+        if (menuDisplay  == 0) {
+            showMenu();
+        } else {
+            hideMenu();
+        }
+    }
+
+    function showMenu() {
+        menuDisplay  = 1;
+        $( "#dd-menu" ).slideDown(250);
+    }
+
+    function hideMenu() {
+        menuDisplay  = 0;
+        $( "#dd-menu" ).slideUp(250);
+    }
+
+    function changeLanguage(cL) {
+        currentLanguage      = cL;
+        let pathname         = window.location.pathname;
+        mainLoader = document.getElementById("mainLoader");
+        mainLoader.style.display  = "inline-block";
+        blankContainer = document.getElementById("blankContainer");
+        blankContainer.style.display  = "inline-block";
+        hideShowLanguage();
+        window.location.href = pathname + '?currentLanguage=' + currentLanguage;
+    }
+
+    function hideShowLogin(destination) {
+        if (languageDisplay == 1) {
+            hideLanguage();
+        }
+        if (menuDisplay == 1) {
+            hideMenu();
+        }
+        if (destination == 'signup' || destination == 'login') {
+            if (loginDisplay == 0) {
+                showLogin();
+                if (destination == 'signup') {
+                    openLoginTab('signup');
+                } else {
+                    openLoginTab('login');
+                }
+            } else {
+                if (currentLoginTab && (currentLoginTab == destination)) {
+                    hideLogin();
+                } else {
+                    openLoginTab(destination);
+                }
+            }
+        } else {
+            if (loginDisplay == 0) {
+                showLogin();
+            } else {
+                hideLogin();
+            }
+        }
+    }
+
+    function showLogin() {
+        loginDisplay = 1;
+        $( "#loginForm" ).slideDown(250);
+    }
+
+    function hideLogin() {
+        loginDisplay = 0;
+        $( "#loginForm" ).slideUp(250);
+    }
+
+    function openLoginTab(tabName) {
+        currentLoginTab = tabName;
+        console.log('opening tab : ' + tabName);
+        if (tabName == 'login' || tabName == 'signup') {
+
+            if (tabName == 'login') {
+                if (signupButton) {
+                    signupButton.classList.remove("underlined");
+                }
+                loginButton.className += " underlined";
+            } else if (tabName == 'signup') {
+                if (loginButton) {
+                    loginButton.classList.remove("underlined");
+                }
+                signupButton.className += " underlined";
+            } else {
+
+            }
+            console.log('currentLanguage : ' + currentLanguage);
+            let request = $.ajax({
+                url: "/login/open_login_tab",
+                type: "POST",
+                data: {
+                    tabName : tabName,
+                    currentLanguage : currentLanguage
+               }
+            });
+
+            request.done(function(data) {
+                $("#loginContainer").html(data);
+            });
+
+            // Printing error message if case of failure
+            request.fail(function(jqXHR, textStatus) {
+                alert("Something went wrong : " + textStatus)
+            });
+        } else {
+
+        }
+    }
+
+    // Passwords & Mails Confirm.
+    function checkPwd(str) {
+        if (str.length < 6) {
+            return("Votre mot de passe est trop court (6 à 50 caractères)");
+        } else if (str.length > 50) {
+            return("Votre mot de passe est trop long (6 à 50 caractères)");
+        } else if (str.search(/\d/) == -1) {
+            return("Votre mot de passe doit contenir au moins un chiffre");
+        } else if (str.search(/[a-zA-Z]/) == -1) {
+            return("Votre mot de passe doit contenir au moins une lettre");
+        } else if (str.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+]/) != -1) {
+            return("Votre mot de passe contient un caractère spécial non autorisé");
+        }
+        return("ok");
+    }
+
+    function confirmMail(userMail) {
+        console.log('Confirming mail ' + userMail);
+        let request = $.ajax({
+            url: "/new_user/load_email_confirm",
+            type: "POST",
+            data: {
+                userMail : userMail,
+                currentLanguage : currentLanguage
+           }
+        });
+
+
+        request.done(function(data) {
+            $("#loginContainer").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+    function closeLogin() {
+        loginDisplay = 0;
+        window.location.href = '/';
+    }
+
+    function loginNewUser(userMail, password, currentLanguage) {
+        let request = $.ajax({
+            url: '/login/do_login',
+            type: 'POST',
+            data : {
+                userMail : userMail,
+                password : password,
+                currentLanguage : currentLanguage
+            }
+        });
+        request.done(function(data) {
+            console.log(data);
+            if (data.status == 'ok') {
+                console.log('user properly logged in');
+                if (data.emailVerification == 0) {
+                    let userMail = $('#userMail').val();
+                    confirmMail(userMail);
+                } else {
+                    closeLogin();
+                }
+            } else {
+                $("#loginError").html(data.message);
+            }
+        });
+        return false;
+    }
+
+    function disconnectUser() {
+
+        let request = $.ajax({
+            url: "/logout",
+            type: "POST"
+        });
+
+        request.done(function(data) {
+            window.location.href = '/';
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
