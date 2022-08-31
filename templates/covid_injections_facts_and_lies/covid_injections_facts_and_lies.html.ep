@@ -46,14 +46,14 @@
 	}
 
 	.ws-credits-icon {
-		margin-left: calc(100% - 275px);
+		margin-left: calc(100% - 260px);
 		width: 70px;
 		height: 70px;
 	}
 
 	.ws-credits {
 		margin-left: 15px;
-		max-width: 190px;
+		max-width: 175px;
 		display: block;
 		color: black;
 		font-style: italic;
@@ -232,7 +232,7 @@
 	}
 </style>
 
-<div class="content-container"  style="width:100%;max-width: 100%;font-size:1.25rem;padding-left: 15px;">
+<div class="content-container"  style="width:calc(100% - 30px);max-width: calc(100% - 30px);font-size:1.25rem;padding-left: 15px;">
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
@@ -267,12 +267,12 @@
     			<li class="ws-index-category-2">Traditional Vaccine Injuries & Controversies</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3">The Cutter Incident - Salk Polio Vaccine 1955</li>
-    					<li class="ws-index-category-3">DPT Diphtheria – Tetanus – Pertussis (Whooping Cough) Vaccine 1970s</li>
-    					<li class="ws-index-category-3">Rubella Vaccine 1970s</li>
-    					<li class="ws-index-category-3">Alleged MMR Autism Link Controversy 1998</li>
-    					<li class="ws-index-category-3">India Polio Vaccine Controversy 2006</li>
-    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Pandemrix Vaccine for Swine Flu 2009</li>
+    					<li class="ws-index-category-3">The Cutter Incident - Salk Polio Vaccine (1955)</li>
+    					<li class="ws-index-category-3">DPT Diphtheria – Tetanus – Pertussis (Whooping Cough) Vaccine (1970s)</li>
+    					<li class="ws-index-category-3">Rubella Vaccine (1970s)</li>
+    					<li class="ws-index-category-3">Alleged MMR Autism Link Controversy (1998)</li>
+    					<li class="ws-index-category-3">India Polio Vaccine Controversy (2006)</li>
+    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Pandemrix Vaccine for Swine Flu (2009)</li>
 		    		</ul>
 		    	</div>
     			<li class="ws-index-category-2">Vaccine Injuries & History of Legal Redress</li>
@@ -292,8 +292,8 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-b">The Importance of Thorough Testing including Animal Studies</li>
-    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">When it goes Wrong Thalidomide 1950s</li>
-    			<li class="ws-index-category-2-b">Drug Controversy Primodos 1960s</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">When it goes Wrong Thalidomide (1950s)</li>
+    			<li class="ws-index-category-2-b">Drug Controversy Primodos (1960s)</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Clinical Trial Design & Terminology</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">The Four Phases of Clinical Drug Trials</li>
     			<li class="ws-index-category-2-b">Approval Processes (Full & Emergency Use)</li>
@@ -334,14 +334,14 @@
     			<li class="ws-index-category-2-c">MRNA Future Plans & Concerns</li>
     		</ul>
     	</div>
-    	<li class="ws-index-category-1-d">4. The Covid Injection First Generation 2020</li>
+    	<li class="ws-index-category-1-d">4. The Covid Injection First Generation (2020)</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-d">Official Narrative of SARS Cov2 2020</li>
+    			<li class="ws-index-category-2-d">Official Narrative of SARS Cov2 (2020)</li>
     			<li class="ws-index-category-2-d">Not Debated in MSM. Destroying the Narrative?</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-d">P Pradhan Paper HIV Inserts Jan 2020</li>
+    					<li class="ws-index-category-3-d">P. Pradhan Paper HIV Inserts (January 2020)</li>
     					<li class="ws-index-category-3-d">Nicola Bidoli Analysis</li>
     					<li class="ws-index-category-3-d">Furin Cleavage Site</li>
     					<li class="ws-index-category-3-d">Moderna Patented Gene Sequence</li>
@@ -377,7 +377,7 @@
     	<li class="ws-index-category-1-e">5. Covid Injection Clinical Trials</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Covid Injection Clinical Trial Documents 2020</li>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Covid Injection Clinical Trial Documents (2020)</li>
     			<li class="ws-index-category-2-e">Covid Injection Testing in Animals</li>
     			<li class="ws-index-category-2-e">Antibody Dependent Enhancement</li>
     			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Criticism of the Pfizer Covid Injection Clinical Trial & Data used for Emergency Authorisation</li>
@@ -428,7 +428,7 @@
     	<li class="ws-index-category-1-g">7. More Covid Injections</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-g">Moderna Spikevax Bivalent Original / Omicron mRNA 1273,214 Covid Injection Approved UK 15Aug2022</li>
+    			<li class="ws-index-category-2-g">Moderna Spikevax Bivalent Original / Omicron mRNA 1273, 214 Covid Injection Approved UK (15 August 2022)</li>
     			<li class="ws-index-category-2-g category-item-done-g" onclick="openLocation('/covid_injections_facts_and_lies/g7_100days_pand_prepare');return;">G7 100 Days Mission Pandemic Preparedness</li>
     			<li class="ws-index-category-2-g">Suppressed Voices of Scientific & Medical Debate in Social Media</li>
     		</ul>
@@ -438,7 +438,7 @@
     		<ul>
     			<li class="ws-index-category-2">Timeline</li>
     			<li class="ws-index-category-2">Animal Studies</li>
-    			<li class="ws-index-category-2">Phase 1 Clinical Trial NCT04283461 mRNA-1273 16 March 2020</li>
+    			<li class="ws-index-category-2">Phase 1 Clinical Trial NCT04283461 mRNA-1273 (16 March 2020)</li>
     		</ul>
     	</div>
     </ul>
@@ -474,12 +474,12 @@
     			<li class="ws-index-category-2">Blessures liées aux vaccins traditionnels & Controverses</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3">L'incident de Cutter - Salk Polio Vaccine 1955</li>
+    					<li class="ws-index-category-3">L'incident de Cutter - Salk Polio Vaccine (1955)</li>
     					<li class="ws-index-category-3">Vaccin DTC Diphtérie – Tétanos – Coqueluche (Coqueluche) (années 1970)</li>
     					<li class="ws-index-category-3">Vaccin contre la rubéole (années 1970)</li>
-    					<li class="ws-index-category-3">Controverse sur le lien allégué avec l'autisme du ROR 1998</li>
-    					<li class="ws-index-category-3">Controverse sur le vaccin contre la poliomyélite en Inde 2006</li>
-    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Vaccin Pandemrix contre la grippe porcine 2009</li>
+    					<li class="ws-index-category-3">Controverse sur le lien allégué avec l'autisme du ROR (1998)</li>
+    					<li class="ws-index-category-3">Controverse sur le vaccin contre la poliomyélite en Inde (2006)</li>
+    					<li class="ws-index-category-3 category-item-done" onclick="openLocation('/covid_injections_facts_and_lies/pandemrix_vaccine');return;">Vaccin Pandemrix contre la grippe porcine (2009)</li>
 		    		</ul>
 		    	</div>
     			<li class="ws-index-category-2">Blessures causées par les vaccins et antécédents de réparation légale</li>
@@ -499,8 +499,8 @@
     	<div style="width:100%;">
     		<ul>
     			<li class="ws-index-category-2-b">L'importance des tests approfondis, y compris les études sur les animaux</li>
-    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Quand ça tourne mal : Thalidomide 1950s</li>
-    			<li class="ws-index-category-2-b">Controverse sur la drogue Primodos 1960</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Quand ça tourne mal : Thalidomide (1950s)</li>
+    			<li class="ws-index-category-2-b">Controverse sur la drogue Primodos (1960)</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Conception et terminologie des essais cliniques</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">Les 4 phases des essais cliniques de médicaments</li>
     			<li class="ws-index-category-2-b">Processus d'approbation (complète et utilisation d'urgence)</li>
@@ -544,11 +544,11 @@
     	<li class="ws-index-category-1-d">4. La Première Génération des Injection Covid en 2020</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-d">Récit officiel du SARS Cov2 2020</li>
+    			<li class="ws-index-category-2-d">Récit officiel du SARS Cov2 (2020)</li>
     			<li class="ws-index-category-2-d">Sujets non débattus dans les médias principaux. Détruire le récit ?</li>
 		    	<div style="width:100%;">
 		    		<ul>
-    					<li class="ws-index-category-3-d">Etude de P Pradhan sur les inserts de VIH - Jan 2020</li>
+    					<li class="ws-index-category-3-d">Etude de P Pradhan sur les inserts de VIH - (Janvier 2020)</li>
     					<li class="ws-index-category-3-d">Analyse de Nicola Bidoli</li>
     					<li class="ws-index-category-3-d">Site de clivage de la furine</li>
     					<li class="ws-index-category-3-d">Séquence génétique brevetée Moderna</li>
@@ -584,7 +584,7 @@
     	<li class="ws-index-category-1-e">5. Essais cliniques sur les injections de Covid</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Documents d'essais cliniques sur l'injection de Covid 2020</li>
+    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Documents d'essais cliniques sur l'injection de Covid (2020)</li>
     			<li class="ws-index-category-2-e">Test d'injection de Covid chez les animaux</li>
     			<li class="ws-index-category-2-e">Amélioration dépendante des anticorps</li>
     			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Critique de l'essai clinique Pfizer des Injections Covid et données utilisées pour l'autorisation d'urgence</li>
@@ -645,7 +645,7 @@
     		<ul>
     			<li class="ws-index-category-2">Répères temporels</li>
     			<li class="ws-index-category-2">Etudes sur les animaux</li>
-    			<li class="ws-index-category-2">Essais cliniques de Phase 1 NCT04283461 mRNA-1273 le 16 Mars 2020</li>
+    			<li class="ws-index-category-2">Essais cliniques de Phase 1 NCT04283461 mRNA-1273 (16 Mars 2020)</li>
     		</ul>
     	</div>
     </ul>

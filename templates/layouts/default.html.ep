@@ -16,6 +16,10 @@
             overflow-y: hidden;
             overflow-X: hidden;
         }
+
+        a {
+            word-break: break-word;
+        }
         body {
             margin: 0;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;

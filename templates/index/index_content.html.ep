@@ -22,13 +22,28 @@
         margin-top: 15px;
     }
 
-    .chart-container {
-        margin-left: 30px;
-        width: calc(50% - 30px);
-        min-width: 300px;
+    .charts-wrapper {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .bar-chart-container {
+        margin-left: 20px;
+        min-width: 250px;
+        width: calc(50% - 20px);
         max-width: 450px;
         height: calc(100% - 650px);
         min-height: 550px;
+    }
+
+    .time-chart-container {
+        margin-left: 40px;
+        min-width: 250px;
+        width: calc(100% - 510px);
+        height: calc(100% - 650px);
+        min-height: 550px;
+        padding-top: 45px;
     }
 </style>
 
@@ -60,11 +75,12 @@
 <div class="filters-container">
     <div class="index-container">
         % if ($currentLanguage eq 'en') {
-        European & USA Data - Comparison between reported after effects of COVID vaccines & Common vaccines
+        European & USA Data - Comparison between reported after effects of <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">COVID injections</span> & <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">Common vaccines</span>
         % } else {
-        Data Europe & USA - Comparaison entre les effets secondaires rapportés des vaccins COVID & des vaccins communs
+        Data Europe & USA - Comparaison entre les effets secondaires rapportés des <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'COVID-19', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">injections COVID</span>  & des  <span class="url-link" onclick="filterNotices('<%=$targetSource%>', '<%=$fetchedStat%>', 1, 'OTHER', null, '<%=$fromYear%>', '<%=$toYear%>', '<%=$sexGroup%>', '<%=$reporter%>', '<%=$fromAge%>', '<%=$toAge%>');return;">vaccins communs</span>
         % }
     </div>
+    <div class="text_separator"></div>
     <div class="text_separator"></div>
     % if ($mainWidth < 950) {
         <div style="display: flex;flex-wrap: wrap;margin:auto;max-width: 473px;">
@@ -385,7 +401,7 @@
             </div>
         </div>
     % } else {
-        <div style="width:100%;max-width: 950px;margin:auto;font-weight: bold;text-align: left;">
+        <div style="width:100%;max-width: 980px;margin:auto;font-weight: bold;text-align: left;">
             <div style="width:100%;display: flex;flex-wrap: wrap;">
                 <div style="width: 15px;height: 5px;">
                 </div>
@@ -397,7 +413,7 @@
 
                     % }
                 </div>
-                <div style="width: 150px;max-width:150px;margin-left: 5px;">
+                <div style="margin-left: 31px;width: 150px;max-width:150px;">
                     <select class="js-example-basic-single" id="targetSource" style="width: 95%;height: 95%;">
                     % for my $valNum (sort{$a <=> $b} keys %sources) {
                         % my $value = $sources{$valNum}->{'value'} // die;
@@ -472,7 +488,7 @@
                 </div>
             </div>
             <div class="text_separator"></div>
-            <div style="width:100%;max-width: 950px;margin:auto;font-weight: bold;text-align: left;">
+            <div style="width:100%;max-width: 980px;margin:auto;font-weight: bold;text-align: left;">
                 <div style="width:100%;display: flex;flex-wrap: wrap;">
                     <div style="width: 15px;height: 5px;">
                     </div>
@@ -483,7 +499,7 @@
                         De l'année
                         % }
                     </div>
-                    <div style="width: 116px;max-width:116px;margin-left: 5px;">
+                    <div style="width: 142px;max-width:142px;margin-left: 5px;">
                         <select class="js-example-basic-single" id="fromYear" style="width: 100%;height: 100%;">
                         % for my $valNum (sort{$a <=> $b} keys %fromYears) {
                             % my $label = $fromYears{$valNum}->{'label'} // die;
@@ -684,9 +700,39 @@
         </div>
     % }
 </div>
-<div id="chart-container" class="chart-container">
-    <div id="barchart_values_adv_effects">
+% if ($mainWidth < 950) {
+<div class="charts-wrapper" style="margin-top:30px;">
+    <div id="bar-chart-container-head"  style="font-size:16px;font-weight:bold;text-align:center;margin-left: 20px;min-width: 250px;width: calc(50% - 20px);max-width: 450px;">
+        Total Cases
+    </div>
+</div>
+% } else {
+<div class="charts-wrapper" style="margin-top:30px;">
+    <div id="bar-chart-container-head"  style="font-size:16px;font-weight:bold;text-align:center;margin-left: 20px;min-width: 250px;width: calc(50% - 20px);max-width: 450px;">
+        Total Cases
+    </div>
+    <div id="time-chart-container-head" style="font-size:16px;font-weight:bold;text-align:center;padding-top: 0px;margin-left: 40px;min-width: 250px;width: calc(100% - 510px);">
+        Cases By Weeks
+    </div>
+</div>
+% }
+<div class="charts-wrapper">
+    <div id="bar-chart-container" class="bar-chart-container">
+        <div id="barchart_values_adv_effects">
 
+        </div>
+    </div>
+% if ($mainWidth < 950) {
+<div class="charts-wrapper" style="margin-top:30px;">
+    <div id="bar-chart-container-head"  style="font-size:16px;font-weight:bold;text-align:center;width: 100%;">
+        Cases By Weeks
+    </div>
+</div>
+% }
+    <div id="time-chart-container" class="time-chart-container">
+        <div id="timechart_values_adv_effects">
+
+        </div>
     </div>
 </div>
 % if ($currentLanguage eq 'en') {
@@ -740,6 +786,20 @@
 
 
 <script type="text/javascript">
+
+    let covidTotalDrugs     = '<%=$covidTotalDrugs%>';
+    let allOthersTotalDrugs = '<%=$allOthersTotalDrugs%>';
+    let covidTotalCases     = '<%=$covidTotalCases%>';
+    let allOthersTotalCases = '<%=$allOthersTotalCases%>';
+    let targetSource;
+    let substanceCategory;
+    let fetchedStat;
+    let reporter;
+    let sexGroup;
+    let fromAge;
+    let toAge;
+    let fromYear;
+    let toYear;
     var chartAdvEffects;
     $('#targetSource').select2({
         width: 'element',
@@ -813,12 +873,77 @@
         reloadData();
     });
     $("#toYear").select2({ dropdownCssClass: "select-options" });
+    // function loadDetails(e) {
+    //     var selectedItem = chartAdvEffects.getSelection()[0].row;
+    //     console.log(selectedItem);
+    //     chartAdvEffects.getSelection()[0].row = null;
+    //     // alert('A table row was selected : ' + selectedItem);
+    //     let selectedCategory;
+    //     if (selectedItem == 0) {
+    //     selectedCategory = 'COVID-19';
+    //     } else if (selectedItem == 1) {
+    //     selectedCategory = 'OTHER';
+    //     } else if (selectedItem == 2) {
+    //     selectedCategory = 'COVID-19 + OTHER';
+    //     } else {
+    //     alert('selectedItem : ' + selectedItem);
+    //     return;
+    //     }
+    //     let fetchedStat = $('#fetchedStat').val();
+    //     filterNotices(fetchedStat, 1, selectedCategory, null, null, null, null, null, null, null);
+    // }
 
-    let chartWidth = document.getElementById("barchart_values_adv_effects").clientWidth;
-    console.log('chartWidth : ' + chartWidth);
+    let chartWidth     = document.getElementById("barchart_values_adv_effects").clientWidth;
+    let timeChartWidth = document.getElementById("timechart_values_adv_effects").clientWidth;
+    console.log('chartWidth     : ' + chartWidth);
+    console.log('timeChartWidth : ' + timeChartWidth);
+
+    $( document ).ready(function() {
+
+        // Attending to the loader.
+        let mainLoader = document.getElementById("mainLoader");
+        mainLoader.style.display  = "none";
+        let blankContainer = document.getElementById("blankContainer");
+        blankContainer.style.display  = "none";
+
+        // Get the main modal
+        var modal = document.getElementById("fullScreenModal");
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Get the <span> element that closes the main modal
+        var span = document.getElementsByClassName("full-screen-modal-close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        // Gets the timeline chart if the screen width allows it.
+        if (mainWidth < 950) {
+            document.getElementById('bar-chart-container').style.width  = 'calc(100% - 40px)';
+            document.getElementById('bar-chart-container').style.margin = 'auto';
+            document.getElementById('bar-chart-container-head').style.width  = 'calc(100% - 40px)';
+            document.getElementById('bar-chart-container-head').style.margin = 'auto';
+            chartWidth = document.getElementById("barchart_values_adv_effects").clientWidth;
+            document.getElementById('time-chart-container').style.width  = 'calc(100% - 40px)';
+            document.getElementById('time-chart-container').style.margin = 'auto';
+            document.getElementById('time-chart-container').style.paddingTop = '0px';
+            document.getElementById('time-chart-container-head').style.width  = 'calc(100% - 40px)';
+            document.getElementById('time-chart-container-head').style.margin = 'auto';
+            document.getElementById('time-chart-container-head').style.paddingTop = '0px';
+            timeChartWidth = document.getElementById("timechart_values_adv_effects").clientWidth;
+        }
+    });
 
     google.charts.load("current", {packages:["corechart"]});
     google.charts.setOnLoadCallback(drawChartAdvEffects);
+    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.setOnLoadCallback(drawTimelineChart);
     function drawChartAdvEffects() {
         var dataAdvEffects = google.visualization.arrayToDataTable([
             % if ($currentLanguage eq 'en') {
@@ -867,73 +992,83 @@
         // Every time the table fires the "select" event, it calls the loadDetails function.
         // google.visualization.events.addListener(chartAdvEffects, 'select', loadDetails);
     }
+    % my %weeklyStats = %$weeklyStats;
+
+    function drawTimelineChart() {
+
+        var chartDiv = document.getElementById('timechart_values_adv_effects');
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year & Week');
+        data.addColumn('number', "Covid Injections AE");
+        data.addColumn('number', "Common Vaccines AE");
+
+        data.addRows([
+        % my $lastWeek = 'NA';
+        % my ($covidSerious, $commonSerious) = (0, 0);
+        % for my $year (sort{$a <=> $b} keys %weeklyStats) {
+            % for my $weekNumber (sort{$a <=> $b} keys %{$weeklyStats{$year}}) {
+                % my $covidTotalCases  = $weeklyStats{$year}->{$weekNumber}->{'covidTotalCases'} // 0;
+                % my $othersTotalCases = $weeklyStats{$year}->{$weekNumber}->{'othersTotalCases'} // 0;
+                % $covidSerious  += $covidTotalCases;
+                % $commonSerious += $othersTotalCases;
+                % if ($weekNumber ne $lastWeek) {
+                    % $lastWeek = $weekNumber;
+                [<%=$year%> + ' - W' + <%=$weekNumber%>,  <%=$covidSerious%>,  <%=$commonSerious%>],
+                % }
+            % }
+        % }
+        ]);
+
+        var materialOptions = {
+    % if ($mainWidth < 950) {
+         legend: {position: 'none'},
+    % }
+            width: timeChartWidth,
+            height: 455,
+            series: {
+                0: {targetAxisIndex: 0},
+                1: {targetAxisIndex: 1}
+            },
+            hAxis: {
+                vAxis: {
+                    viewWindow: {
+                        max: 30
+                    }
+                }
+            }
+        };
+
+        function drawMaterialChart() {
+            var materialChart = new google.charts.Line(chartDiv);
+            materialChart.draw(data, materialOptions);
+        }
+        var formatter = new google.visualization.NumberFormat(
+            {prefix: '', negativeParens: false, pattern: '#,##0'});
+        formatter.format(data, 1); // Apply formatter to second column
+
+        drawMaterialChart();
+
+    }
 
     function reloadData() {
         let fetchedStatElem = document.getElementById("fetchedStat");
         fetchedStatElem.style.display  = "none";
-        let currentLanguage  = '<%=$currentLanguage%>';
-        let targetSource     = $('#targetSource').val();
-        let fetchedStat      = $('#fetchedStat').val();
-        let reporter         = $('#reporter').val();
-        let sexGroup         = $('#sexGroup').val();
-        let fromAge          = $('#fromAge').val();
-        let toAge            = $('#toAge').val();
-        let fromYear         = $('#fromYear').val();
-        let toYear           = $('#toYear').val();
+        targetSource     = $('#targetSource').val();
+        fetchedStat      = $('#fetchedStat').val();
+        reporter         = $('#reporter').val();
+        sexGroup         = $('#sexGroup').val();
+        fromAge          = $('#fromAge').val();
+        toAge            = $('#toAge').val();
+        fromYear         = $('#fromYear').val();
+        toYear           = $('#toYear').val();
         let mainLoader = document.getElementById("mainLoader");
         mainLoader.style.display  = "inline-block";
-        console.log('chartWidth : ' + chartWidth);
         let blankContainer = document.getElementById("blankContainer");
         blankContainer.style.display  = "inline-block";
         window.location.href = '/?currentLanguage=' + currentLanguage + '&targetSource=' + targetSource + '&fetchedStat=' + fetchedStat + '&fromAge=' + fromAge + '&toAge=' + toAge + '&fromYear=' + fromYear + '&toYear=' + toYear + '&reporter=' + reporter + '&sexGroup=' + sexGroup;
     }
 
-    // function loadDetails(e) {
-    //     var selectedItem = chartAdvEffects.getSelection()[0].row;
-    //     console.log(selectedItem);
-    //     chartAdvEffects.getSelection()[0].row = null;
-    //     // alert('A table row was selected : ' + selectedItem);
-    //     let selectedCategory;
-    //     if (selectedItem == 0) {
-    //     selectedCategory = 'COVID-19';
-    //     } else if (selectedItem == 1) {
-    //     selectedCategory = 'OTHER';
-    //     } else if (selectedItem == 2) {
-    //     selectedCategory = 'COVID-19 + OTHER';
-    //     } else {
-    //     alert('selectedItem : ' + selectedItem);
-    //     return;
-    //     }
-    //     let fetchedStat = $('#fetchedStat').val();
-    //     filterNotices(fetchedStat, 1, selectedCategory, null, null, null, null, null, null, null);
-    // }
-
-    $( document ).ready(function() {
-
-        // Attending to the loader.
-        let mainLoader = document.getElementById("mainLoader");
-        mainLoader.style.display  = "none";
-        let blankContainer = document.getElementById("blankContainer");
-        blankContainer.style.display  = "none";
-
-        // Get the main modal
-        var modal = document.getElementById("fullScreenModal");
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        // Get the <span> element that closes the main modal
-        var span = document.getElementsByClassName("full-screen-modal-close")[0];
-
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-    });
 
     function closeDisclaimer() {
         let disclaimer = document.getElementById('disclaimer');
@@ -994,19 +1129,6 @@
         modal.style.display     = 'block';
         let modalLoader = document.getElementById("modalLoader");
         modalLoader.style.display  = "inline-block";
-        let currentLanguage     = '<%=$currentLanguage%>';
-        let covidTotalDrugs     = '<%=$covidTotalDrugs%>';
-        let allOthersTotalDrugs = '<%=$allOthersTotalDrugs%>';
-        let covidTotalCases     = '<%=$covidTotalCases%>';
-        let allOthersTotalCases = '<%=$allOthersTotalCases%>';
-        let targetSource        = $('#targetSource').val();
-        let fetchedStat         = $('#fetchedStat').val();
-        let reporter            = $('#reporter').val();
-        let sexGroup            = $('#sexGroup').val();
-        let fromAge             = $('#fromAge').val();
-        let toAge               = $('#toAge').val();
-        let fromYear            = $('#fromYear').val();
-        let toYear              = $('#toYear').val();
         let request = $.ajax({
             url: "/index/events_by_substances",
             type: "POST",

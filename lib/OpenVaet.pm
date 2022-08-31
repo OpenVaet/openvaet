@@ -226,6 +226,9 @@ sub startup {
         }
     );
 
+    # Enums.
+    $self->helper(enums => sub { return \%enums; } );
+
 	# Router
 	my $r = $self->routes;
 
@@ -294,7 +297,7 @@ sub startup {
     $r->post('/index/index_content')->to('index#index_content');
 	$r->post('/contact_email')->to('index#contact_email');
 	$r->post('/index/events_by_substances')->to('index#events_by_substances');
-	$r->post('/index/events_details')->to('index#events_details');
+    $r->post('/index/events_details')->to('index#events_details');
 	$r->get('/disclaimer')->to('disclaimer#disclaimer');
 	$r->get('/contact_us')->to('contact_us#contact_us');
 	$r->post('/contact_us/send_contact_us')->to('contact_us#send_contact_us');
@@ -365,6 +368,7 @@ sub startup {
     $r->get('/australian_data')->to('australian_data#australian_data');
     $r->get('/australian_data/australian_symptoms')->to('australian_data#australian_symptoms');
     $r->post('/australian_data/australian_symptoms/set_symptom_activity')->to('australian_data#set_symptom_activity');
+    $r->get('/miscarriages_within_a_week')->to('miscarriages_within_a_week#miscarriages_within_a_week');
 }
 
 sub connect_dbi

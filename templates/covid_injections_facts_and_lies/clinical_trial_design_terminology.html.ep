@@ -12,10 +12,6 @@
         font-family: Arial, sans-serif;
     }
 
-    a {
-		word-break: break-all;
-    }
-
 	.ws-article-title {
 		padding-top: 15px;
 		padding-bottom: 5px;
@@ -150,7 +146,7 @@
 </style>
 
 % if ($currentLanguage eq 'en') {
-<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+<div class="content-container" style="width:calc(100% - 30px);max-width: calc(100% - 30px);font-size:1.25rem;padding-left: 15px;">
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
@@ -391,7 +387,7 @@
 	<div class="text_separator"></div>
 </div>
 % } elsif ($currentLanguage eq 'fr') {
-<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+<div class="content-container" style="width:calc(100% - 30px);max-width: calc(100% - 30px);font-size:1.25rem;padding-left: 15px;">
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>

@@ -1110,3 +1110,8 @@ ADD COLUMN `networkName` VARCHAR(250) NOT NULL AFTER `twitterUserName`;
 ALTER TABLE `openvaet`.`user` 
 ADD COLUMN `hasClosedDisclaimer` BIT(1) NOT NULL DEFAULT 0 AFTER `passwordReinitFailedAttemtps`;
 
+# Added isPublished tag to ecdc_notice & cdc_report.
+ALTER TABLE `openvaet`.`ecdc_notice` 
+ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `isSerious`;
+ALTER TABLE `openvaet`.`cdc_report` 
+ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `parsingTimestamp`;

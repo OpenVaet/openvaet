@@ -41,13 +41,13 @@ print_reports();
 # p%vals;
 
 sub parse_data {
-	my @files = glob "unified_data/*/data.json";
+	my @files = glob "unified_data/*/*/*/data.json";
 	my ($currentFile, $totalFiles) = (0, 0);
 	$totalFiles = scalar @files;
 	for my $file (@files) {
 		$currentFile++;
 		STDOUT->printflush("\rparsing data - [$currentFile / $totalFiles]");
-		my ($intDate) = $file =~ /unified_data\/(.*)\/data\.json/;
+		my ($year, $weekNumber, $intDate) = $file =~ /unified_data\/(.*)\/(.*)\/(.*)\/data\.json/;
 		open my $in, '<:utf8', $file;
 		my $json;
 		while (<$in>) {
@@ -56,14 +56,14 @@ sub parse_data {
 		close $in;
 		if ($json) {
 			$json = decode_json($json);
-			parse_day($intDate, $json);
+			parse_day($year, $weekNumber, $intDate, $json);
 		}
 	}
 	say "" if $totalFiles;
 }
 
 sub parse_day {
-	my ($intDate, $json) = @_;
+	my ($year, $weekNumber, $intDate, $json) = @_;
     my $reports = shift @$json;
     my @reports = @$reports;
     for my $reportData (@reports) {
@@ -80,6 +80,8 @@ sub parse_day {
     	my $isOtherVaccine   = %$reportData{'isOtherVaccine'}   // die;
     	my $seriousnessName  = %$reportData{'seriousnessName'}  // die;
     	my $reference        = %$reportData{'reference'}        // die;
+    	my $receiptDate      = %$reportData{'receiptDate'}      // die;
+    	my $weekNumber       = %$reportData{'weekNumber'}       // die;
     	# $vals{'patientDied'}->{$patientDied}->{$source}           = 1;
     	# $vals{'yearName'}->{$yearName}->{$source}           = 1;
     	# $vals{'seriousnessName'}->{$seriousnessName}->{$source}   = 1;
@@ -88,11 +90,11 @@ sub parse_day {
     	# $vals{'sexName'}->{$sexName}->{$source} = 1;
     	die unless scalar @{%$reportData{'substances'}};
 	    if ($patientDied == 1) {
-	    	$eventsStats{'deaths'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
+	    	$eventsStats{'deaths'}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		} elsif ($seriousnessName eq 'Serious') {
-	    	$eventsStats{'serious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
+	    	$eventsStats{'serious'}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		} else {
-	    	$eventsStats{'nonSerious'}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
+	    	$eventsStats{'nonSerious'}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{$statSection}++;
 		}
 		my ($confirmedCovidCategory, $confirmedOthersCategory) = (0, 0);
 	    for my $drugData (@{%$reportData{'substances'}}) {

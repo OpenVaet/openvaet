@@ -14,10 +14,10 @@ sub index {
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
     my $targetSource    = $self->param('targetSource')    // 'na';
     my $fetchedStat     = $self->param('fetchedStat')     // 'deaths';
-    my $fromYear        = $self->param('fromYear')        // '2020';
+    my $fromYear        = $self->param('fromYear')        // '2021';
     my $toYear          = $self->param('toYear')          // '2022';
     my $fromAge         = $self->param('fromAge')         // '0m';
-    my $toAge           = $self->param('toAge')           // '64y';
+    my $toAge           = $self->param('toAge')           // '17y';
     my $reporter        = $self->param('reporter')        // 'na';
     my $sexGroup        = $self->param('sexGroup')        // 'na';
 
@@ -205,6 +205,7 @@ sub index_content {
     my $covidTotalDrugs           = 0;
     my $allOthersTotalDrugs       = 0;
     my $eventStats                = "stats/events_stats.json";
+    my %weeklyStats = ();
     if (-f $eventStats) {
         my $json;
         open my $in, '<:utf8', $eventStats;
@@ -220,76 +221,82 @@ sub index_content {
                     next if $fromYear > $yearName;
                 }
                 next if $toYear  < $yearName;
-                for my $reporterTypeName (sort keys %{$eventStats{$fetchedStat}->{$yearName}}) {
-                    if ($reporter ne 'na') {
-                        if ($reporter eq 'md') {
-                            next if $reporterTypeName ne 'Healthcare Professional';
-                        } elsif ($reporter eq 'nmd') {
-                            next if $reporterTypeName eq 'Healthcare Professional';
-                        } else {
-                            die "reporter : $reporter";
-                        }
-                    }
-                    for my $ageGroupName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}}) {
-                        if ($fromAge ne '0m' || $toAge ne '86y') {
-                            next if $ageGroupName eq 'Not Specified';
-                        }
-                        if ($fromAge ne '0m') {
-                            if ($fromAge eq '2m') {
-                                next if $ageGroupName eq '0-1 Month';
-                            } elsif ($fromAge eq '3y') {
-                                next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years';
-                            } elsif ($fromAge eq '12y') {
-                                next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years' || $ageGroupName eq '3 Years - 11 Years';
-                            } elsif ($fromAge eq '18y') {
-                                next if $ageGroupName ne '18-64 Years' && $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
-                            } elsif ($fromAge eq '65y') {
-                                next if $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
-                            } elsif ($fromAge eq '85y') {
-                                next if $ageGroupName ne 'More than 85 Years';
+                for my $weekNumber (sort{$a <=> $b} keys %{$eventStats{$fetchedStat}->{$yearName}}) {
+                    for my $reporterTypeName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$weekNumber}}) {
+                        if ($reporter ne 'na') {
+                            if ($reporter eq 'md') {
+                                next if $reporterTypeName ne 'Healthcare Professional';
+                            } elsif ($reporter eq 'nmd') {
+                                next if $reporterTypeName eq 'Healthcare Professional';
                             } else {
-                                die "fromAge : $fromAge";
+                                die "reporter : $reporter";
                             }
                         }
-                        if ($toAge ne '86y') {
-                            if ($toAge eq '1m') {
-                                next if $ageGroupName ne '0-1 Month';
-                            } elsif ($toAge eq '2y') {
-                                next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years';
-                            } elsif ($toAge eq '11y') {
-                                next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years' && $ageGroupName ne '3 Years - 11 Years';
-                            } elsif ($toAge eq '17y') {
-                                next if $ageGroupName eq '18-64 Years' || $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
-                            } elsif ($toAge eq '64y') {
-                                next if $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
-                            } elsif ($toAge eq '85y') {
-                                next if $ageGroupName eq 'More than 85 Years';
-                            } else {
-                                die "toAge : $toAge";
+                        for my $ageGroupName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}}) {
+                            if ($fromAge ne '0m' || $toAge ne '86y') {
+                                next if $ageGroupName eq 'Not Specified';
                             }
-                        }
-                        for my $sexName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}}) {
-                            if ($sexGroup ne 'na') {
-                                if ($sexGroup eq 'm') {
-                                    next if $sexName ne 'Male';
-                                } elsif ($sexGroup eq 'f') {
-                                    next if $sexName ne 'Female';
+                            if ($fromAge ne '0m') {
+                                if ($fromAge eq '2m') {
+                                    next if $ageGroupName eq '0-1 Month';
+                                } elsif ($fromAge eq '3y') {
+                                    next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years';
+                                } elsif ($fromAge eq '12y') {
+                                    next if $ageGroupName eq '0-1 Month' || $ageGroupName eq '2 Months - 2 Years' || $ageGroupName eq '3 Years - 11 Years';
+                                } elsif ($fromAge eq '18y') {
+                                    next if $ageGroupName ne '18-64 Years' && $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                                } elsif ($fromAge eq '65y') {
+                                    next if $ageGroupName ne '65-85 Years' && $ageGroupName ne 'More than 85 Years';
+                                } elsif ($fromAge eq '85y') {
+                                    next if $ageGroupName ne 'More than 85 Years';
                                 } else {
-                                    die "sexGroup : $sexGroup";
+                                    die "fromAge : $fromAge";
                                 }
                             }
-                            for my $sourceId (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
-                                if ($targetSource ne 'na') {
-                                    next unless $sourceId == $targetSource;
+                            if ($toAge ne '86y') {
+                                if ($toAge eq '1m') {
+                                    next if $ageGroupName ne '0-1 Month';
+                                } elsif ($toAge eq '2y') {
+                                    next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years';
+                                } elsif ($toAge eq '11y') {
+                                    next if $ageGroupName ne '0-1 Month' && $ageGroupName ne '2 Months - 2 Years' && $ageGroupName ne '3 Years - 11 Years';
+                                } elsif ($toAge eq '17y') {
+                                    next if $ageGroupName eq '18-64 Years' || $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                                } elsif ($toAge eq '64y') {
+                                    next if $ageGroupName eq '65-85 Years' || $ageGroupName eq 'More than 85 Years';
+                                } elsif ($toAge eq '85y') {
+                                    next if $ageGroupName eq 'More than 85 Years';
+                                } else {
+                                    die "toAge : $toAge";
                                 }
-                                my $covidAfterEffects                  = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19'}       // 0;
-                                my $otherVaccinesAfterEffects          = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'OTHER'}         // 0;
-                                my $covidPlusOtherVaccinesAfterEffects = $eventStats{$fetchedStat}->{$yearName}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19+OTHER'} // 0;
-                                $covidTotalCases           += $covidAfterEffects;
-                                $allOthersTotalCases       += $otherVaccinesAfterEffects;
-                                $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
-                                # say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
-                                # say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
+                            }
+                            for my $sexName (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}}) {
+                                if ($sexGroup ne 'na') {
+                                    if ($sexGroup eq 'm') {
+                                        next if $sexName ne 'Male';
+                                    } elsif ($sexGroup eq 'f') {
+                                        next if $sexName ne 'Female';
+                                    } else {
+                                        die "sexGroup : $sexGroup";
+                                    }
+                                }
+                                for my $sourceId (sort keys %{$eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}}) {
+                                    if ($targetSource ne 'na') {
+                                        next unless $sourceId == $targetSource;
+                                    }
+                                    my $covidAfterEffects                  = $eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19'}       // 0;
+                                    my $otherVaccinesAfterEffects          = $eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'OTHER'}         // 0;
+                                    my $covidPlusOtherVaccinesAfterEffects = $eventStats{$fetchedStat}->{$yearName}->{$weekNumber}->{$reporterTypeName}->{$ageGroupName}->{$sexName}->{$sourceId}->{'COVID19+OTHER'} // 0;
+                                    $covidTotalCases           += $covidAfterEffects;
+                                    $allOthersTotalCases       += $otherVaccinesAfterEffects;
+                                    $covidPlusOthersTotalCases += $covidPlusOtherVaccinesAfterEffects;
+                                    $weeklyStats{$yearName}->{$weekNumber}->{'covidTotalCases'}  += $covidAfterEffects;
+                                    $weeklyStats{$yearName}->{$weekNumber}->{'covidTotalCases'}  += $covidPlusOtherVaccinesAfterEffects;
+                                    $weeklyStats{$yearName}->{$weekNumber}->{'othersTotalCases'} += $otherVaccinesAfterEffects;
+                                    $weeklyStats{$yearName}->{$weekNumber}->{'othersTotalCases'} += $covidPlusOtherVaccinesAfterEffects;
+                                    # say "$yearName - $reporterTypeName - $ageGroupName - $sexName - $covidAfterEffects - $otherVaccinesAfterEffects - $covidPlusOtherVaccinesAfterEffects";
+                                    # say "--> $covidTotalCases - $allOthersTotalCases - $covidPlusOthersTotalCases";
+                                }
                             }
                         }
                     }
@@ -324,7 +331,8 @@ sub index_content {
         sexGroups                 => \%sexGroups,
         reporters                 => \%reporters,
         fetchedStats              => \%fetchedStats,
-        languages                 => \%languages
+        languages                 => \%languages,
+        weeklyStats               => \%weeklyStats
     );
 }
 
@@ -531,6 +539,7 @@ sub events_by_substances {
         my $eventsReported    = $substancesByNames{$substanceName}->{'eventsReported'}    // die;
         my $percentOfTotal = nearest(1, $eventsReported * 100 / $reference);
         $percentOfTotal = 1 if $percentOfTotal < 1;
+        say "$substanceName - $eventsReported - $reference - $percentOfTotal";
         $substances{$substanceCategory}->{$eventsReported}->{'percentOfTotal'} = $percentOfTotal;
         $substances{$substanceCategory}->{$eventsReported}->{'substances'}->{$substanceName} = 1;
     }

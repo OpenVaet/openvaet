@@ -139,7 +139,7 @@
 </style>
 
 % if ($currentLanguage eq 'en') {
-<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+<div class="content-container" style="width:calc(100% - 30px);max-width: calc(100% - 30px);font-size:1.25rem;padding-left: 15px;">
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Return to index</div>
@@ -159,7 +159,7 @@
 		Kary Mullis was awarded The Nobel Prize in Chemistry 1993 for his creation of the Polymerase chain reaction (PCR) laboratory technique, like a DNA photocopier.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The invention was of huge benefit to forensic science and  general science, but Mullis was concerned that care be taken when using PCR in the diagnosis of disease, especially HIV. (Kary Mullis died  August 2019.)
+		The invention was of huge benefit to forensic science and general science, but Mullis pointed out that PCR was a means of amplifying DNA and not a diagnostic tool in itself. (Kary Mullis died August 2019.)
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<b>Kary Mullis talking on video</b>
@@ -261,7 +261,7 @@
 	<div class="text_separator"></div>
 </div>
 % } elsif ($currentLanguage eq 'fr') {
-<div class="content-container" style="width:calc(100% - 15px);max-width: calc(100% - 15px);font-size:1.25rem;padding-left: 15px;">
+<div class="content-container" style="width:calc(100% - 30px);max-width: calc(100% - 30px);font-size:1.25rem;padding-left: 15px;">
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="url-link noselect" onclick="openLocation('/covid_injections_facts_and_lies');return;">&#10229; Retour à l'index</div>
@@ -281,7 +281,7 @@
 		Kary Mullis a reçu le prix Nobel de chimie 1993 pour sa création de la technique de laboratoire de réaction en chaîne par polymérase (PCR), comme un photocopieur d'ADN.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		L'invention a été d'un énorme avantage pour la science médico-légale et la science générale, mais Mullis craignait que des précautions soient prises lors de l'utilisation de la PCR dans le diagnostic de la maladie, en particulier le VIH. (Kary Mullis est décédé en août 2019).
+		L'invention a été un énorme avantage pour la science médico-légale et la science générale, mais Mullis soulignait que que le PCR était un moyen d'amplifier l'ADN et non un outil diagnostique en lui-même. (Kary Mullis est décédé en août 2019).
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<b>Kary Mullis parle en vidéo</b>

@@ -268,10 +268,10 @@ sub vaers_fertility {
 
     # Fetching VAERS statistics.
     my %vaersStatistics = ();
-    my $cCottonStatsFile = 'stats/vaers_fertility_study.json';
-    if (-f $cCottonStatsFile) {
+    my $fertilityStatsFile = 'stats/vaers_fertility_study.json';
+    if (-f $fertilityStatsFile) {
         my $json;
-        open my $in, '<:utf8', $cCottonStatsFile;
+        open my $in, '<:utf8', $fertilityStatsFile;
         while (<$in>) {
             $json .= $_;
         }

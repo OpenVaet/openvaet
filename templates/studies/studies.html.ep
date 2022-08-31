@@ -9,9 +9,11 @@
     This section will gather the various analytics on the data which will be realized.
     <div class="text_separator"></div>
     <ul>
-        <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">VAERS Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch</li>
+        % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">VAERS Data - Analyzing miscarriages occuring within a week after the Covid Injections</li>
+        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/children_vaers');return">Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data - Published on August 17, 2022</li>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/children_vaers');return">Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data</li>
+        <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">VAERS Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch - Published on June 3, 2022</li>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
     <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
@@ -19,15 +21,19 @@
     Cette page rassemblera les différentes analyses sur la donnée qui seront réalisées.
     <div class="text_separator"></div>
     <ul>
-        <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA</li>
-        <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
-        <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
-        <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
-        <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
+        % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">Données VAERS - Analyse des fausses-couches se produisant dans la semaine suivant les injections Covid</li>
+        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/children_vaers');return">Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS - Publiée le 17 Août 2022</li>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/children_vaers');return">Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS</li>
+        <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA - Publiée le 3 Juin 2022</li>
     </ul>
     % } else {
 
     % }
 </div>
+
+
+% # <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
+% # <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
+% # <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
+% # <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>

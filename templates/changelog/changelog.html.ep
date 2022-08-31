@@ -10,6 +10,24 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.24</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Database V6 (Added a hasClosedDisclaimer tag for users, added tags to easily distinguish reports which have been unpublished by Eudra or VAERS).</li>
+        <li>Topbar & Index reworks, JSON data structure adjustment to render weekly chart.</li>
+        <li>Fixed a bug in Pfizearch Safari (mobile), the search bar wasn't visible.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Base de donnée V6 (Ajout d'un tag indiquant la fermeture du disclaimer pour les utilisateurs, ajout de tags pour distinguer facilement les rapports dépubliés par Eudra & VAERS).</li>
+        <li>Refonte de la topbar & de l'index. Ajustement en conséquence de la structure de données du JSON pour rendre des graphiques hebdomadaires.</li>
+        <li>Correction d'un bug dans Pfizearch (safari Mobile), qui rendait la barre de recherche invisible.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.23</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

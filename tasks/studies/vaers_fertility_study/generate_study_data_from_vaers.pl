@@ -9,6 +9,7 @@ use Data::Printer;
 use Data::Dumper;
 use File::Path qw(make_path rmtree);
 use Text::CSV qw( csv );
+use File::Path qw(make_path);
 use Math::Round qw(nearest);
 use List::Util qw< min max >;
 use Encode;
@@ -24,10 +25,11 @@ use config;
 use global;
 use time;
 
-my $vaersFolder                    = "raw_data/AllVAERSDataCSVS";          # Where we expect to find VAERS's data folder in the project's root folder.
-my $statesFile                     = "tasks/cdc/states.csv";               # File containing VAERS's states.
-my $fromYear                       = 2020;                                 # We start integrating data from this year (reportingYear >= fromYear).
-my $reportsFolder1                 = 'stats/requalifiedAsPregnancies';     # Various sub-folders which will contain the current JSON extracts when the analysis is ready.
+my $arbitrationsFile               = 'public/doc/vaers_fertility/arbitration_data.csv'; # Where we will find the dump of the arbitrations performed.
+my $vaersFolder                    = "raw_data/AllVAERSDataCSVS";                       # Where we expect to find VAERS's data folder in the project's root folder.
+my $statesFile                     = "tasks/cdc/states.csv";                            # File containing VAERS's states.
+my $fromYear                       = 2020;                                              # We start integrating data from this year (reportingYear >= fromYear).
+my $reportsFolder1                 = 'stats/requalifiedAsPregnancies';                  # Various sub-folders which will contain the current JSON extracts when the analysis is ready.
 my $reportsFolder2                 = 'stats/requalifiedAsNonPregnancies';
 my $reportsFolder3                 = 'stats/improperlyTaggedAsPregnancy';
 my $reportsFolder4                 = 'stats/motherDiedInPregnancy';
@@ -35,25 +37,24 @@ my $reportsFolder5                 = 'stats/motherSeriousAEInPregnancy';
 my $reportsFolder6                 = 'stats/childDiedButIsntFlagged';
 my $reportsFolder7                 = 'stats/childDied';
 my $reportsFolder8                 = 'stats/falsePositiveChildrenDeaths';
-my %reportsExports                 = ();                                   # Stores the references of the exported reports.
+my %reportsExports                 = ();                                                # Stores the references of the exported reports.
+my $miscarriagesFolder             = "raw_data/miscarriages_with_known_delay";          # Stores the confirmed miscarriages for which we had a identifiable delay.
 
-my $latestSymptomId                = 0;                                    # Stores the various interpretations of the symptoms we will use
-my %allSymptoms                    = ();                                   # All the symptoms as we known them from the VAERS parsing
-my %excludedSymptoms               = ();                                   # Symptoms which have been flagged as cause for exclusion
-my %likelyPregnanciesSymptoms      = ();                                   # Symptoms indicating that the patient is probably a pregnant woman
-my %severePregnanciesSymptoms      = ();                                   # Symptoms indicating a severe pregnancy complication
-my %miscarriagePregnanciesSymptoms = ();                                   # Symptoms indicating a miscarriage
-my %cdcStates                      = ();                                   # Stores the states as we known them from our task/cdc/parse_cdc_archive.pl parsing.
-my %statesCodes                    = ();                                   # CSV file (which should be updated if a new USA state appears) storing the matching between the state code2 & its full name.
+my $latestSymptomId                = 0;                                                 # Stores the various interpretations of the symptoms we will use
+my %allSymptoms                    = ();                                                # All the symptoms as we known them from the VAERS parsing
+my %excludedSymptoms               = ();                                                # Symptoms which have been flagged as cause for exclusion
+my %likelyPregnanciesSymptoms      = ();                                                # Symptoms indicating that the patient is probably a pregnant woman
+my %severePregnanciesSymptoms      = ();                                                # Symptoms indicating a severe pregnancy complication
+my %miscarriagePregnanciesSymptoms = ();                                                # Symptoms indicating a miscarriage
+my %cdcStates                      = ();                                                # Stores the states as we known them from our task/cdc/parse_cdc_archive.pl parsing.
+my %statesCodes                    = ();                                                # CSV file (which should be updated if a new USA state appears) storing the matching between the state code2 & its full name.
 
 # Deleting & setting stats storage.
 delete_and_set_storage();
 
 # Verifies we have the expected data folder.
-unless (-d $vaersFolder) {
-	say "No VAERS data found in [$vaersFolder]. Exiting";
-	exit;
-}
+make_path($vaersFolder)         unless -d $vaersFolder;
+make_path($miscarriagesFolder)  unless -d $miscarriagesFolder;
 unless (-f $statesFile) {
 	say "Missing state dictionary [$statesFile]. Exiting";
 	exit;
@@ -1206,6 +1207,40 @@ sub scan_report_data {
 						# say "Enter the foetal age (if known) :";
 						# my $childAge = <STDIN>;
 						# chomp $childAge;
+						my $hoursBetweenVaccineAndAE = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+						if ($hoursBetweenVaccineAndAE) {
+							my ($vaersTimeGroup, $vaersTimeGroupName) = time_group_from_hours_between_vaccine_and_ae($hoursBetweenVaccineAndAE, $vaersId);
+							my %report = ();
+				            $report{'vaersId'}                  = $vaersId;
+				            $report{'patientAge'}               = $patientAge;
+				            $report{'patientDied'}              = $patientDied;
+				            $report{'hospitalized'}             = $hospitalized;
+				            $report{'lifeThreatning'}           = $lifeThreatning;
+				            $report{'vaccinationDate'}          = $vaccinationDate;
+				            $report{'onsetDate'}                = $onsetDate;
+				            $report{'hoursBetweenVaccineAndAE'} = $reports{$vaersId}->{'hoursBetweenVaccineAndAE'};
+				            $report{'vaccinationDateFixed'}     = $reports{$vaersId}->{'vaccinationDateFixed'};
+				            $report{'onsetDateFixed'}           = $reports{$vaersId}->{'onsetDateFixed'};
+				            $report{'permanentDisability'}      = $permanentDisability;
+				            $report{'stateName'}                = $stateName;
+				            $report{'vaersSexName'}             = $vaersSexName;
+				            $report{'aEDescription'}            = $aEDescription;
+				            $report{'childDied'}                = $reports{$vaersId}->{'childDied'};
+				            $report{'childSeriousAE'}           = $reports{$vaersId}->{'childSeriousAE'};
+				            $report{'vaersVaccineName'}         = $vaccineShortName;
+				            $report{'timeGroup'}                = $vaersTimeGroup;
+				            $report{'timeGroupName'}            = $vaersTimeGroupName;
+							for my $symptomData (@reportsSymptoms) {
+								my $symptomName = %$symptomData{'symptomName'} // die;
+				            	$report{'symptoms'}->{$symptomName} = 1;
+							}
+
+							# Printing confirmed miscarriages reports.
+							my $json = encode_json\%report;
+							open my $out, '>:utf8', "$miscarriagesFolder/$vaersId.json";
+							print $out $json;
+							close $out;
+						}
 
 						# say "Enter the vaccination's occurence compared to the vaccination :";
 						if (!$reports{$vaersId}->{'pregnancyDetailsConfirmationRequired'}) {
@@ -1623,6 +1658,12 @@ sub age_group_from_age {
 }
 
 sub generate_end_user_stats {
+	if (-f $arbitrationsFile) {
+		my $arbitrationsFileStats = stat($arbitrationsFile);
+		$vaersStatistics{'arbitrationsFileSize'} = $arbitrationsFileStats->size;
+		$vaersStatistics{'arbitrationsFileSize'} = nearest(0.1, $vaersStatistics{'arbitrationsFileSize'} / 1000);
+		$vaersStatistics{'arbitrationsFileSize'} .= " Ko";
+	}
 	$vaersStatistics{'archiveSize'} = nearest(0.1, $vaersStatistics{'archiveSize'} / 1000000);
 	$vaersStatistics{'archiveSize'} .= " Mo";
 

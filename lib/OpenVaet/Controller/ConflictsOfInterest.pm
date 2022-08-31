@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
 use Data::Printer;
+use File::Path qw(make_path);
 use Math::Round qw(nearest);
 use FindBin;
 use lib "$FindBin::Bin/../lib";
@@ -103,6 +104,9 @@ sub confirm_recipients {
     my $currentLanguage = $self->param('currentLanguage') // die;
     use LWP::Simple;
 
+    my $cOIFolder   = 'conflicts_of_interest';
+    make_path($cOIFolder) unless (-d $cOIFolder);
+
     my $results = decode_json($resultsJson);
     my @results = @$results;
 
@@ -119,7 +123,7 @@ sub confirm_recipients {
         my $url = 'https://sante-sgsocialgouv.opendatasoft.com/explore/dataset/declarations/download/?&sort=-date&refine.id_beneficiaire=' .
                     $recipientId . '&disjunctive.lien_interet=true&disjunctive.raison_sociale=true&q=&timezone=Europe/Berlin&lang=fr&' .
                     'use_labels_for_header=true&csv_separator=%3B';
-        my $filename = "tsg-$recipientId-$currentDate.csv";
+        my $filename = "$cOIFolder/tsg-$recipientId-$currentDate.csv";
         unless (-f $filename) {
             my $rc = getstore($url, $filename);
             if (is_error($rc)) {

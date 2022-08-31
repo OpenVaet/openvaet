@@ -108,7 +108,7 @@ sub parse_foreign_data {
         	# We verify here that the vaccine is indeed related to a COVID one.
         	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
         	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
-        	next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
+        	next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
 			my %o = ();
 			$o{'substanceCategory'} = $substanceCategory;
 			$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -292,8 +292,9 @@ sub parse_foreign_data {
 		    $totalReports++;
 			my $immProjectNumber        = $values{'SPLTTYPE'};
 			my $countryCode2 = 'Unknown';
-			if ($immProjectNumber) {
+			if ($immProjectNumber && length $immProjectNumber > 1) {
 				($countryCode2) = $immProjectNumber =~ /^(..).*$/;
+				die "immProjectNumber : $immProjectNumber" unless $countryCode2;
 			}
 			# say "immProjectNumber : $immProjectNumber";
 			# say "countryCode2     : $countryCode2";
@@ -303,29 +304,30 @@ sub parse_foreign_data {
 				# Taking care of building stats.
 				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
 				if (
-					$patientDied 
+					($patientDied)
 				) {
-					next unless $cdcAgeInternalId;
+					# next unless $cdcAgeInternalId; || $hospitalized || $permanentDisability || $lifeThreatning
 				    if (defined $patientAge) {
 				    	$definedAgeInCountry++;
 				    }
 
 					my %o = ();
-					$o{'cdcReportInternalId'} = $cdcReportInternalId;
-					$o{'cdcReceptionDate'} = $cdcReceptionDate;
-					$o{'sCode2'}          = $sCode2;
-					$o{'patientAge'}      = $patientAge;
-					$o{'cdcSexInternalId'} = $cdcSexInternalId;
-					$o{'cdcSexName'}      = $cdcSexName;
-					$o{'vaccinationDate'} = $vaccinationDate;
-					$o{'deceasedDate'}    = $deceasedDate;
-					$o{'aEDescription'} = $aEDescription;
+					$o{'cdcReportInternalId'}     = $cdcReportInternalId;
+					$o{'cdcReceptionDate'}        = $cdcReceptionDate;
+					$o{'sCode2'}                  = $sCode2;
+					$o{'patientAge'}              = $patientAge;
+					$o{'source'}                  = 'Non Domestic VAERS Data';
+					$o{'cdcSexInternalId'}        = $cdcSexInternalId;
+					$o{'cdcSexName'}              = $cdcSexName;
+					$o{'vaccinationDate'}         = $vaccinationDate;
+					$o{'deceasedDate'}            = $deceasedDate;
+					$o{'aEDescription'}           = $aEDescription;
 					$o{'cdcVaccineAdministrator'} = $cdcVaccineAdministrator;
-					$o{'hospitalized'}    = $hospitalized;
-					$o{'permanentDisability'} = $permanentDisability;
-					$o{'lifeThreatning'}  = $lifeThreatning;
-					$o{'patientDied'} = $patientDied;
-					$o{'immProjectNumber'} = $immProjectNumber;
+					$o{'hospitalized'}            = $hospitalized;
+					$o{'permanentDisability'}     = $permanentDisability;
+					$o{'lifeThreatning'}          = $lifeThreatning;
+					$o{'patientDied'}             = $patientDied;
+					$o{'immProjectNumber'}        = $immProjectNumber;
 					for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
 						$o{'symptoms'}->{$ausSymptomName} = 1;
 					}
