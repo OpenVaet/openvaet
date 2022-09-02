@@ -1,0 +1,31 @@
+% layout 'default';
+% title 'OPENVAET - Data Administration';
+
+<div class="content-container">
+    % if ($self->is_admin()) {
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
+    <h3>Data Administration</h3>
+    This section allows access to our collaborative data management tools.
+    <div class="text_separator"></div>
+    <ul>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">VAERS Domestic Data - Age Completion Wizard</li>
+        <div class="text_separator"></div>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
+    <h3>Administration Données</h3>
+    Cette section permet l'accès à nos outils de gestions collaboratives des données.
+    <div class="text_separator"></div>
+    <ul>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">Données domestiques VAERS - Assistant de complétion des âges</li>
+        <div class="text_separator"></div>
+    </ul>
+    % } else {
+
+    % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>

@@ -10,6 +10,24 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.25</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Database V7 Update.</li>
+        <li>Data Administration V1.</li>
+        <li>Fixed a bug in "VAERS Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch" (file size of the arbitration wasn't properly displayed since v1.25).</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Base de donnée V7</li>
+        <li>Administration des données V1</li>
+        <li>Correction d'un bug dans l'étude "Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA" (la taille du fichier des arbitrations n'était plus rendue correctement depuis la version 1.25).</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.24</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

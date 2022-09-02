@@ -1993,7 +1993,7 @@
 	    <div id="global-data" style="width:calc(100% - 2px);border:position: top;display:none;">
 			<div class="text_separator"></div>
 		    <h2>Downloading our arbitrations</h2>
-		    Data arbitrations required to reproduce or verify this study can be downloaded <a target="_blank" href="/doc/vaers_fertility/arbitration_data.csv">here (.csv, $arbitrationsFileSize)</a>.
+		    Data arbitrations required to reproduce or verify this study can be downloaded <a target="_blank" href="/doc/vaers_fertility/arbitration_data.csv">here (.csv, <%=$arbitrationsFileSize%>)</a>.
 			<div class="text_separator"></div>
 		    <div class="text_separator"></div>
 		    <h2>VAERS data used</h2>
@@ -4131,7 +4131,7 @@
 	    <div id="global-data" style="width:calc(100% - 2px);border:position: top;display:none;">
 			<div class="text_separator"></div>
 		    <h2>Télécharger nos arbitrages</h2>
-		    Les arbitrages de données requis pour reproduire ou vérifier cette étude peuvent être téléchargés <a target="_blank" href="/doc/vaers_fertility/arbitration_data.csv">ici (.csv, $arbitrationsFileSize)</a>.
+		    Les arbitrages de données requis pour reproduire ou vérifier cette étude peuvent être téléchargés <a target="_blank" href="/doc/vaers_fertility/arbitration_data.csv">ici (.csv, <%=$arbitrationsFileSize%>)</a>.
 			<div class="text_separator"></div>
 		    <div class="text_separator"></div>
 		    <h2>Donnée VAERS utilisée</h2>

@@ -506,7 +506,7 @@ CREATE TABLE `ecdc_drug_year_seriousness` (
   KEY `ecdc_drug_year_seriousness_to_ecdc_drug` (`ecdcDrugId`),
   CONSTRAINT `ecdc_drug_year_seriousness_to_ecdc_drug` FOREIGN KEY (`ecdcDrugId`) REFERENCES `ecdc_drug` (`id`),
   CONSTRAINT `ecdc_drug_year_seriousness_to_ecdc_year` FOREIGN KEY (`ecdcYearId`) REFERENCES `ecdc_year` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 USE `openvaet`$$
 DELIMITER ;
 CREATE TRIGGER `before_ecdc_drug_year_seriousness_insert` 
@@ -584,7 +584,7 @@ CREATE TABLE `cdc_vaccine_type` (
   `name` varchar(250) NOT NULL,
   `creationTimestamp` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 USE `openvaet`$$
 DELIMITER ;
 CREATE TRIGGER `before_cdc_vaccine_type_insert` 
@@ -609,7 +609,7 @@ CREATE TABLE `cdc_symptom` (
   `name` varchar(250) NOT NULL,
   `creationTimestamp` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 USE `openvaet`$$
 DELIMITER ;
 CREATE TRIGGER `before_cdc_symptom_insert` 
@@ -779,7 +779,7 @@ CREATE TABLE `contact` (
   PRIMARY KEY (`id`),
   KEY `contact_to_session_idx` (`sessionId`),
   CONSTRAINT `contact_to_session` FOREIGN KEY (`sessionId`) REFERENCES `session` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 USE `openvaet`$$
 DELIMITER ;
 CREATE TRIGGER `before_contact_insert` 
@@ -952,7 +952,7 @@ CREATE TABLE `openvaet`.`cdc_dose` (
   `name` varchar(250) NOT NULL,
   `creationTimestamp` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 USE `openvaet`$$
 DELIMITER ;
 CREATE TRIGGER `before_cdc_dose_insert` 
@@ -1115,3 +1115,85 @@ ALTER TABLE `openvaet`.`ecdc_notice`
 ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `isSerious`;
 ALTER TABLE `openvaet`.`cdc_report` 
 ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `parsingTimestamp`;
+
+
+######################### V 7 - 2022-09-01 20:10:00
+# Created vaers_deaths_symptom table.
+CREATE TABLE `vaers_deaths_symptom` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `discarded` bit(1) NOT NULL DEFAULT b'0',
+  `discardTimestamp` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_vaers_deaths_symptom_insert` 
+BEFORE INSERT ON `vaers_deaths_symptom` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+# Created vaers_deaths_report table.
+CREATE TABLE `vaers_deaths_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `vaersId` varchar(45) NOT NULL,
+  `aEDescription` longtext NOT NULL,
+  `vaersVaccine` int NOT NULL,
+  `vaersSex` int NOT NULL,
+  `vaersSexCorrected` int DEFAULT NULL,
+  `cdcStateId` int DEFAULT NULL,
+  `onsetDate` varchar(45) DEFAULT NULL,
+  `onsetDateFixed` varchar(45) DEFAULT NULL,
+  `vaccinationDate` varchar(45) DEFAULT NULL,
+  `vaccinationDateFixed` varchar(45) DEFAULT NULL,
+  `vaersReceptionDate` varchar(45) NOT NULL,
+  `patientAge` double DEFAULT NULL,
+  `patientAgeFixed` double DEFAULT NULL,
+  `symptomsListed` json NOT NULL,
+  `hospitalized` bit(1) NOT NULL,
+  `hospitalizedFixed` bit(1) NOT NULL,
+  `permanentDisability` bit(1) NOT NULL,
+  `permanentDisabilityFixed` bit(1) NOT NULL,
+  `lifeThreatning` bit(1) NOT NULL,
+  `lifeThreatningFixed` bit(1) NOT NULL,
+  `patientDied` bit(1) NOT NULL,
+  `patientDiedFixed` bit(1) NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `patientAgeConfirmation` int DEFAULT NULL,
+  `patientAgeConfirmationTimestamp` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `vaers_deaths_report_unique` (`vaersId`),
+  KEY `vaers_deaths_report_to_cdc_state_idx` (`cdcStateId`),
+  CONSTRAINT `vaers_deaths_report_to_cdc_state` FOREIGN KEY (`cdcStateId`) REFERENCES `cdc_state` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_vaers_deaths_report_insert` 
+BEFORE INSERT ON `vaers_deaths_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+CHANGE COLUMN `vaersVaccine` `vaccinesListed` JSON NOT NULL ;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+ADD COLUMN `deceasedDate` VARCHAR(45) NULL AFTER `onsetDateFixed`,
+ADD COLUMN `deceasedDateFixed` VARCHAR(45) NULL AFTER `deceasedDate`,
+CHANGE COLUMN `vaersSexCorrected` `vaersSexFixed` INT NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+ADD COLUMN `changelog` JSON NULL AFTER `patientAgeConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+DROP COLUMN `changelog`,
+ADD COLUMN `userId` INT NOT NULL AFTER `patientAgeConfirmationTimestamp`,
+ADD INDEX `vaers_deaths_report_to_user_idx` (`userId` ASC);
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+CHANGE COLUMN `userId` `userId` INT NULL ;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+ADD CONSTRAINT `vaers_deaths_report_to_user`
+  FOREIGN KEY (`userId`)
+  REFERENCES `openvaet`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+ADD COLUMN `patientAgeConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `userId`;
+ALTER TABLE `openvaet`.`vaers_deaths_report` 
+ADD COLUMN `hoursBetweenVaccineAndAE` DOUBLE NULL AFTER `patientAgeConfirmationRequired`;

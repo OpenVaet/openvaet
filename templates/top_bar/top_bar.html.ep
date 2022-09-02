@@ -377,8 +377,8 @@
             % if ($currentLanguage eq 'en') {
                 <li onclick="openLocation('/data');return;">Data & Code</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
-                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
+                % # <li class="divider"></li>
                 <li onclick="openLocation('/studies');return;">Studies</li>
                 <li class="divider"></li>
                 <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflicts Of Interest</li>
@@ -387,12 +387,16 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.24</div></li>
+                % if ($self->is_admin()) {
+                <li onclick="openLocation('/data_admin');return;">Data Administration</li>
+                <li class="divider"></li>
+                % }
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.25</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
-                <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
+                % # <li class="divider"></li>
                 <li onclick="openLocation('/studies');return;">Etudes</li>
                 <li class="divider"></li>
                 <li onclick="openLocation('/conflicts_of_interest');return;">France - Conflits d'Intérêts</li>
@@ -401,7 +405,11 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.24</div></li>
+                % if ($self->is_admin()) {
+                <li onclick="openLocation('/data_admin');return;">Administration Données</li>
+                <li class="divider"></li>
+                % }
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.25</div></li>
             % }
         </ul>
     </label>
@@ -577,8 +585,8 @@
         <ul class="dd-menu" id="dd-menu">
             % if ($currentLanguage eq 'en') {
                 <li onclick="openLocation('/data');return;">Data & Code</li>
-                <li class="divider"></li>
-                <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
+                % # <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Covid Injections - Challenging "The Facts"</li>
                 <li class="divider"></li>
                 <li onclick="openLocation('/studies');return;">Studies</li>
                 <li class="divider"></li>
@@ -588,11 +596,15 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.24</div></li>
+                % if ($self->is_admin()) {
+                <li onclick="openLocation('/data_admin');return;">Data Administration</li>
+                <li class="divider"></li>
+                % }
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.25</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
-                <li class="divider"></li>
-                <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
+                % # <li class="divider"></li>
+                % # <li onclick="openLocation('/covid_injections_facts_and_lies');return;">Injections Covid - Mettre "les faits" à l'épreuve</li>
                 <li class="divider"></li>
                 <li onclick="openLocation('/studies');return;">Etudes</li>
                 <li class="divider"></li>
@@ -602,7 +614,11 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                 <li class="divider"></li>
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.24</div></li>
+                % if ($self->is_admin()) {
+                <li onclick="openLocation('/data_admin');return;">Administration Données</li>
+                <li class="divider"></li>
+                % }
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.25</div></li>
             % }
         </ul>
     </label>

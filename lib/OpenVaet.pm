@@ -127,7 +127,6 @@ sub startup {
         my $self          = shift;
         my $userId        = $self->session("userId");
         my $token         = $self->session("token");
-        # say "tralala : [$name] - {$token}";
 
         return unless $userId && $token;
 
@@ -369,6 +368,11 @@ sub startup {
     $r->get('/australian_data/australian_symptoms')->to('australian_data#australian_symptoms');
     $r->post('/australian_data/australian_symptoms/set_symptom_activity')->to('australian_data#set_symptom_activity');
     $r->get('/miscarriages_within_a_week')->to('miscarriages_within_a_week#miscarriages_within_a_week');
+    $r->get('/lethality_ratio_usa')->to('lethality_ratio_usa#lethality_ratio_usa');
+    $r->get('/data_admin')->to('data_admin#data_admin');
+    $r->get('/data_admin/wizards/patient_age')->to('wizard_patient_age#wizard_patient_age');
+    $r->post('/wizard_patient_age/load_next_report')->to('wizard_patient_age#load_next_report');
+    $r->post('/wizard_patient_age/set_report_attribute')->to('wizard_patient_age#set_report_attribute');
 }
 
 sub connect_dbi

@@ -21,6 +21,8 @@
     Cette page rassemblera les différentes analyses sur la donnée qui seront réalisées.
     <div class="text_separator"></div>
     <ul>
+        % # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">Données VAERS - Analyse de la léthalité des injections Covid par groupes d'âges</li>
+        % # <div class="text_separator"></div>
         % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">Données VAERS - Analyse des fausses-couches se produisant dans la semaine suivant les injections Covid</li>
         % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/children_vaers');return">Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS - Publiée le 17 Août 2022</li>
