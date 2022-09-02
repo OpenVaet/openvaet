@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.26</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Data Administration : added an option to reset treatments.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Administration des données : ajout d'une option pour réinitialiser les traitements</li> 
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.25</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

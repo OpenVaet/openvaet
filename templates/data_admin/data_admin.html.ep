@@ -1,7 +1,7 @@
 % layout 'default';
 % title 'OPENVAET - Data Administration';
 
-<div class="content-container">
+<div class="content-container" style="padding-left: 15px;">
     % if ($self->is_admin()) {
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
@@ -10,7 +10,9 @@
     This section allows access to our collaborative data management tools.
     <div class="text_separator"></div>
     <ul>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">VAERS Domestic Data - Age Completion Wizard</li>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">VAERS Domestic Data - Deaths - Age Completion Wizard</li>
+        <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; VAERS Domestic Data - Deaths - Ages Completed Data</li>
         <div class="text_separator"></div>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
@@ -19,7 +21,9 @@
     Cette section permet l'accès à nos outils de gestions collaboratives des données.
     <div class="text_separator"></div>
     <ul>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">Données domestiques VAERS - Assistant de complétion des âges</li>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">Données domestiques VAERS - Décès - Assistant de complétion des âges</li>
+        <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; Données domestiques VAERS - Décès - Données incluant les âges complétés</li>
         <div class="text_separator"></div>
     </ul>
     % } else {

@@ -1,0 +1,91 @@
+% layout 'default';
+% title 'OPENVAET - Wizard - Patient Ages Completed';
+% my %reports = %$reports;
+<div class="content-container">
+    % if ($self->is_admin()) {
+    	<div class="text_separator"></div>
+	    % if ($currentLanguage eq 'en') {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Return to Data Administration</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    % } else {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Retour à l'administration données</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+    	% }
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-weight: bold;">
+	    	<%=$agesCompleted%> / <%=$totalReports%> ages restored (<%=$agesCompletedPercent%> %)
+	    </div>
+	    <div class="text_separator"></div>
+    	<div style="width: 100%;overflow-x: auto;">
+	    	<table style="min-width: 1850px;width:100%;border: 1px solid black;border-collapse: collapse; ">
+	    		<thead>
+	    			<tr style="border-bottom: 1px solid black;">
+		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">VAERS Id</th>
+		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Patient Age</th>
+		    			<th style="min-width: 300px;width: 18%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Treatment On</th>
+		    			<th style="min-width: 500px;width: 30%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">By</th>
+		    			<th style="min-width: 325px;width: 30%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Review Report</th>
+		    			<th style="min-width: 325px;padding-top: 10px;padding-bottom: 10px;">Reset Treatment</th>
+	    			</tr>
+	    		</thead>
+	    		<tbody>
+	    			% for my $patientAgeConfirmationTimestamp (sort{$b <=> $a} keys %reports) {
+	    				% for my $vaersDeathsReportId (sort{$a <=> $b} keys %{$reports{$patientAgeConfirmationTimestamp}}) {
+	    					% my $patientAgeConfirmationDatetime = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeConfirmationDatetime'} // die;
+	    					% my $patientAgeFixed = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeFixed'};
+	    					% my $vaersId = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'vaersId'} // die;
+	    					% my $userName = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'userName'} // die;
+			    			<tr style="border-bottom: 1px solid black;text-align: center;">
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$vaersId%></td>
+				    			% if (defined $patientAgeFixed) {
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #addb93;"><%=$patientAgeFixed%></td>
+			    				% } else {
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #adabaa;"><%=$patientAgeFixed%></td>
+		    					% }
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$patientAgeConfirmationDatetime%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$userName%></td>
+				    			<td style="min-width: 325px;width: 30%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
+				    				<button disabled>Review</button>
+				    			</td>
+				    			<td style="min-width: 325px;padding-top: 10px;padding-bottom: 10px;">
+				    				<button onclick="resetReportAgeTreatment(<%=$vaersDeathsReportId%>)">Reset</button>
+				    			</td>
+			    			</tr>
+	    				% }
+    				% }
+	    		</tbody>
+	    	</table>
+    	</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+
+<script type="text/javascript">
+	function resetReportAgeTreatment(vaersDeathsReportId) {
+		console.log('vaersDeathsReportId : ' + vaersDeathsReportId);
+        let request            = $.ajax({
+            url: "/wizard_patient_age/reset_report_attributes",
+            type: "POST",
+            data: {
+                vaersDeathsReportId : vaersDeathsReportId
+            }
+        });
+
+        request.done(function(data) {
+        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>'; 
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+	}
+</script>

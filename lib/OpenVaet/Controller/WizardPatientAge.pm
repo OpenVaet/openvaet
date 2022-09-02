@@ -3,6 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
 use Data::Printer;
+use Math::Round qw(nearest);
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
@@ -44,9 +45,6 @@ sub load_next_report {
     $languages{'en'}    = 'English';
     my %config          = %{$self->config()};
     my $environment     = $config{'environment'} // die;
-    if ($environment ne "local") {
-        $self->render(text => 'Disallowed');
-    }
 
     # Fetching vaers symptoms.
     my %symptoms = ();
@@ -131,7 +129,7 @@ sub load_next_report {
         $products .= "<li><span>$substanceShortenedName (dose $dose)</span></li>";
     }
 
-    my @highlights = ('age', 'year', 'deceased', 'yo', 'week', 'day', 'old');
+    my @highlights = ('age', 'year', 'deceased', 'yo', 'week', 'day', 'old', 'decade');
     for my $hl (@highlights) {
         my $ucf = ucfirst $hl;
         my $uc = uc $hl;
@@ -208,6 +206,7 @@ sub set_report_attribute {
     my $reportId          = $self->param('reportId')        // die;
     my $sqlValue          = $self->param('sqlValue')        // die;
     my $value             = $self->param('value')           // die;
+    my $userId            = $self->session('userId')        // die;
     my $patientAgeFixed   = $self->param('patientAgeFixed') // die;
     $patientAgeFixed      = undef unless length $patientAgeFixed    >= 1;
     my $vaersSexFixed     = $self->param('vaersSexFixed')   // die;
@@ -261,7 +260,9 @@ sub set_report_attribute {
             patientDiedFixed = $patientDied,
             lifeThreatningFixed = $lifeThreatning,
             permanentDisabilityFixed = $permanentDisability,
-            hospitalizedFixed = $hospitalized
+            hospitalizedFixed = $hospitalized,
+            patientAgeConfirmationTimestamp = UNIX_TIMESTAMP(),
+            userId = ?
         WHERE id = $reportId");
     $sth->execute(
         $patientAgeFixed,
@@ -269,10 +270,76 @@ sub set_report_attribute {
         $vaccinationDateFixed,
         $onsetDateFixed,
         $deceasedDateFixed,
-        $hoursBetweenVaccineAndAE
+        $hoursBetweenVaccineAndAE,
+        $userId
     ) or die $sth->err();
 
     say "reportId : $reportId";
+
+    $self->render(text => 'ok');
+}
+
+sub patient_ages_completed {
+    my $self = shift;
+
+    my $currentLanguage = $self->param('currentLanguage') // 'fr';
+
+    # Loggin session if unknown.
+    session::session_from_self($self);
+
+    # Fetching total operations to perform.
+    my %reports = ();
+    my ($agesCompleted, $totalReports) = (0, 0);
+    my $tb = $self->dbh->selectall_hashref("
+        SELECT
+            vaers_deaths_report.id as vaersDeathsReportId,
+            vaers_deaths_report.patientAgeFixed,
+            vaers_deaths_report.vaersId,
+            vaers_deaths_report.patientAgeConfirmationTimestamp,
+            vaers_deaths_report.userId,
+            user.email 
+        FROM vaers_deaths_report
+            LEFT JOIN user ON user.id = vaers_deaths_report.userId
+        WHERE patientAgeConfirmationTimestamp IS NOT NULL
+    ", 'vaersDeathsReportId');
+    for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
+        my $patientAgeFixed                 = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
+        my $patientAgeConfirmationTimestamp = %$tb{$vaersDeathsReportId}->{'patientAgeConfirmationTimestamp'} // die;
+        my $userId                          = %$tb{$vaersDeathsReportId}->{'userId'}                          // die;
+        my $vaersId                           = %$tb{$vaersDeathsReportId}->{'vaersId'}                           // die;
+        my $email                           = %$tb{$vaersDeathsReportId}->{'email'}                           // die;
+        my $patientAgeConfirmationDatetime  = time::timestamp_to_datetime($patientAgeConfirmationTimestamp);
+        my ($userName) = split '\@', $email;
+        $agesCompleted++ if defined $patientAgeFixed;
+        $totalReports++;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeConfirmationDatetime'} = $patientAgeConfirmationDatetime;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeFixed'} = $patientAgeFixed;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'userName'} = $userName;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'vaersId'} = $vaersId;
+    }
+    my $agesCompletedPercent = nearest(0.01, $agesCompleted * 100 / $totalReports);
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+    $self->render(
+        currentLanguage => $currentLanguage,
+        agesCompleted => $agesCompleted,
+        totalReports => $totalReports,
+        agesCompletedPercent => $agesCompletedPercent,
+        languages => \%languages,
+        reports => \%reports
+    );
+}
+
+sub reset_report_attributes {
+    my $self = shift;
+    my $vaersDeathsReportId = $self->param('vaersDeathsReportId') // die;
+
+    say "vaersDeathsReportId : $vaersDeathsReportId";
+    my $sth = $self->dbh->prepare("UPDATE vaers_deaths_report SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, userId = NULL WHERE id = $vaersDeathsReportId");
+    $sth->execute() or die $sth->err();
 
     $self->render(text => 'ok');
 }

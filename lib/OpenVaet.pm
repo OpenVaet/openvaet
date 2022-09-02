@@ -373,6 +373,8 @@ sub startup {
     $r->get('/data_admin/wizards/patient_age')->to('wizard_patient_age#wizard_patient_age');
     $r->post('/wizard_patient_age/load_next_report')->to('wizard_patient_age#load_next_report');
     $r->post('/wizard_patient_age/set_report_attribute')->to('wizard_patient_age#set_report_attribute');
+    $r->get('/data_admin/wizards/patient_ages_completed')->to('wizard_patient_age#patient_ages_completed');
+    $r->post('/wizard_patient_age/reset_report_attributes')->to('wizard_patient_age#reset_report_attributes');
 }
 
 sub connect_dbi
