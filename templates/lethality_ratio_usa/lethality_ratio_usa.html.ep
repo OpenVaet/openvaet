@@ -6,12 +6,19 @@
 % } else {
 % }
 % my $earliestCovidDate = 'TO DEFINE';
+% my %statistics = %$statistics;
 <div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        VAERS Domestic Data - Analyzing the mortality ratio of Covid injections by ages groups
+    </div>
     % } elsif ($currentLanguage eq 'fr') {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        Données Domestiques VAERS - Analyse du ratio de léthalité des injections Covid par groupes d'âges
+    </div>
     % } else {
 
     % }
@@ -21,6 +28,8 @@
 	% if ($currentLanguage eq 'en') {
 	<h2 style="margin-left: 5px;">Source Data</h2>
 	The up to date national VAERS data are obtained from the page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
+    <div class="text_separator"></div>
+    Reports concerning Covid injections are extracted, and the patient ages are completed when they have been left out by the VAERS operator while they are available in the clinical description.
 	<div class="text_separator"></div>
 	The data relative to the Covid vaccination rates is obtained from the page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-and-Case-Trends-by-Age-Group-/gxj9-t96f" target="_blank">COVID-19 Vaccination and Case Trends by Age Group, United States</a>. The data is gathered at .csv fromat, and can be accessed <a href="https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B" target="_blank">via this direct link</a>.
 	<div class="text_separator"></div>
@@ -28,7 +37,9 @@
 	% } elsif ($currentLanguage eq 'fr') {
 	<h2 style="margin-left: 5px;">Données sources</h2>
 	Les données VAERS nationales à jour sont obtenues sur la page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
-	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    Les rapports concernant les décès COVID sont extraits, et les âges sont complétés lorsqu'ils sont disponibles dans la description clinique, mais que le champ dédié n'a pas été remplis par l'opérateur VAERS.
+    <div class="text_separator"></div>
 	La donnée relative au taux de vaccination Covid est obtenus depuis la page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-and-Case-Trends-by-Age-Group-/gxj9-t96f" target="_blank">COVID-19 Vaccination and Case Trends by Age Group, United States</a>. La donnée est récupérée au format .csv, et peut-être accédée <a href="https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B" target="_blank">via ce lien direct</a>.
 	<div class="text_separator"></div>
 	La donnée relative aux estimations de population, qui permet la traduction de ce fichier, est accédée depuis <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">ce fichier "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021"</a>, disponible <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/" target="_blank">en bas de cette page</a>.
@@ -51,6 +62,36 @@
 	<div class="text_separator"></div>
 	<h2 style="margin-left: 5px;">Population par groupes d'âge d'après les Census disponibles (2020 & 2021)</h2>
 	<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;">
+        <table style="width:400px;text-align: center;border: 1px solid black;border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <th style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;">Age Group</th>
+                    <th style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;">July 2020</th>
+                    <th style="padding-top: 5px;padding-bottom: 5px;">July 2021</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $ageGroupRef (sort{$a <=> $b} keys %{$statistics{'populationByAgeGroups'}->{'ageGroups'}}) {
+                    % my $label = $statistics{'populationByAgeGroups'}->{'ageGroups'}->{$ageGroupRef}->{'label'} // die;
+                    % my $july20Population = $statistics{'populationByAgeGroups'}->{'ageGroups'}->{$ageGroupRef}->{'july20Population'} // die;
+                    % my $july21Population = $statistics{'populationByAgeGroups'}->{'ageGroups'}->{$ageGroupRef}->{'july21Population'} // die;
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$label%></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july20Population%></td>
+                    <td style="padding-top: 5px;padding-bottom: 5px;"><%=$july21Population%></td>
+                </tr>
+                % }
+                % my $july20Total = $statistics{'populationByAgeGroups'}->{'july20Total'} // die;
+                % my $july21Total = $statistics{'populationByAgeGroups'}->{'july21Total'} // die;
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><b>Total</b></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july20Total%></td>
+                    <td style="padding-top: 5px;padding-bottom: 5px;"><%=$july21Total%></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<h2 style="margin-left: 5px;">Evolution des doses administrées et des décès recencés par groupes d'âges</h2>

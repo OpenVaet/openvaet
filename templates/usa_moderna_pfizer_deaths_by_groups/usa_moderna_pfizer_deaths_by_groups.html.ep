@@ -1,0 +1,290 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - VAERS Data - Moderna & Pfizer Deaths by groups';
+% } else {
+% title 'OPENVAET - Données VAERS - Moderna & Pfizer, Décès par groupes';
+% }
+% my %statistics = %$statistics;
+% my $agesCompleted = $statistics{'agesCompleted'} // die;
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+		VAERS Domestic Data - Moderna & Pfizer, Deaths by groups
+	</div>
+    % } else {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+		Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes
+	</div>
+    % }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div id="chart_div_4" style="width: 100%;"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Introduction</h2>
+	This page renders the deaths by ages groups, and by sexes & ages groups, for the Moderna & Pfizer Covid-19 products.
+	<div class="text_separator"></div>
+	Pfizer, in USA, received an Emergency Use Autorization (EUA) <a href="https://www.nature.com/articles/d41586-020-03542-4" target="_blank">on December 11, 2020</a>. Moderna received an EUA, <a href="https://www.nature.com/articles/d41586-020-03593-7" target="_blank">on December 17, 2020</a>.
+	<div class="text_separator"></div>
+	Pfizer was approved by the FDA <a href="https://www.fda.gov/emergency-preparedness-and-response/coronavirus-disease-2019-covid-19/pfizer-biontech-covid-19-vaccines" target="_blank">on August 23, 2021</a>. Moderna was approved <a href="https://www.fda.gov/emergency-preparedness-and-response/coronavirus-disease-2019-covid-19/moderna-covid-19-vaccines" target="_blank">on January 31, 2022</a>.
+	<div class="text_separator"></div>
+	This page has been realized thanks to, and in close collaboration with Geoff Pain, PHD, whom you can (and should) follow <a href="https://gettr.com/user/geoffpainphd" target="_blank">on Gettr</a> & <a href="https://www.researchgate.net/profile/Geoff-Pain" target="_blank">ResearchGate</a>.
+	% } else {
+	<h2 style="margin-left: 5px;">Introduction</h2>
+	Cette page restitue les décès rapportés par groupes d'âges, et par sexes & groupes d'âges, pour les produits Covid-19 Moderna & Pfizer.
+	<div class="text_separator"></div>
+	Pfizer, aux Etats-Unis, a reçu une autorisation d'urgence <a href="https://www.nature.com/articles/d41586-020-03542-4" target="_blank">le 11 Décembre 2020</a>. Moderna a reçu une autorisation d'urgence, <a href="https://www.nature.com/articles/d41586-020-03593-7" target="_blank">le 17 Décembre 2020</a>.
+	<div class="text_separator"></div>
+	Pfizer a été approuvé par la FDA <a href="https://www.fda.gov/emergency-preparedness-and-response/coronavirus-disease-2019-covid-19/pfizer-biontech-covid-19-vaccines" target="_blank">le 23 Août 2021</a>. Moderna a été approuvé <a href="https://www.fda.gov/emergency-preparedness-and-response/coronavirus-disease-2019-covid-19/moderna-covid-19-vaccines" target="_blank">le 31 Janvier 2022</a>.
+	<div class="text_separator"></div>
+	Cette page a été réalisée grâce à, et en proche collaboration avec Geoff Pain, PHD, que vous pouvez (et devriez) suivre <a href="https://gettr.com/user/geoffpainphd" target="_blank">sur Gettr</a> & <a href="https://www.researchgate.net/profile/Geoff-Pain" target="_blank">ResearchGate</a>.
+	% }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div id="chart_div_4" style="width: 100%;"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Source Data</h2>
+	The up to date national VAERS data are obtained from the page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
+    <div class="text_separator"></div>
+    Reports concerning Covid injections are extracted, and the patient ages are completed when they have been left out by the VAERS operator while they are available in the clinical description.
+	<div class="text_separator"></div>
+	The <%=$agesCompleted%> data completions we performed can be downloaded for verification or use on <a href="/doc/usa_moderna_pfizer_deaths_by_groups/arbitrations.csv"> this .CSV file</a>.
+	% } else {
+	<h2 style="margin-left: 5px;">Données sources</h2>
+	Les données VAERS nationales à jour sont obtenues sur la page <a href="https://vaers.hhs.gov/eSubDownload/index.jsp?fn=AllVAERSDataCSVS.zip" target="_blank">All VAERS Data</a>.
+    <div class="text_separator"></div>
+    Les rapports concernant les décès COVID sont extraits, et les âges sont complétés lorsqu'ils sont disponibles dans la description clinique, mais que le champ dédié n'a pas été remplis par l'opérateur VAERS.
+	<div class="text_separator"></div>
+	Les <%=$agesCompleted%> completions de données que nous avons été réalisées peuvent être téléchargés pour réutilisation ou vérification <a href="/doc/usa_moderna_pfizer_deaths_by_groups/arbitrations.csv"> sur ce fichier .CSV</a>.
+	% }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Treatment</h2>
+	Data necessary for the charts featured on this page is generated by the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/ratio_usa_through_time/mortality_by_groups.pl" target="_blank">tasks/studies/ratio_usa_through_time/mortality_by_groups.pl</a>.
+	% } else {
+	<h2 style="margin-left: 5px;">Traitement</h2>
+	Les données nécessaires aux graphiques présentés sur cette page sont générées par le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/ratio_usa_through_time/mortality_by_groups.pl" target="_blank">tasks/studies/ratio_usa_through_time/mortality_by_groups.pl</a>.
+	<div class="text_separator"></div>
+	% }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">USA - Deaths by ages groups - COVID-19 MODERNA</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Etats-Unis - Décès par groupes d'âges - COVID-19 MODERNA</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="moderna_by_age">
+
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">USA - Deaths by ages groups - COVID-19 PFIZER</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Etats-Unis - Décès par groupes d'âges - COVID-19 PFIZER</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="pfizer_by_age">
+
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">USA - Deaths by sexes & ages groups - COVID-19 MODERNA</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Etats-Unis - Décès par groupes de sexes & d'âges - COVID-19 MODERNA</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="moderna_by_sex_and_age">
+
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">USA - Deaths by sexes & ages groups - COVID-19 PFIZER</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Etats-Unis - Décès par groupes de sexes & d'âges - COVID-19 PFIZER</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="pfizer_by_sex_and_age">
+
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+
+<script type="text/javascript" src="js/charts_loader.js"></script>
+
+<script type="text/javascript">
+
+    let chartWidth     = document.getElementById("moderna_by_age").clientWidth;
+    console.log('chartWidth     : ' + chartWidth);
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawModernaByAge);
+    google.charts.setOnLoadCallback(drawPfizerByAge);
+    google.charts.setOnLoadCallback(drawModernaByAgeSex);
+    google.charts.setOnLoadCallback(drawPfizerByAgeSex);
+    function drawModernaByAge() {
+        var dataAdvEffects = google.visualization.arrayToDataTable([
+            % if ($currentLanguage eq 'en') {
+                ["Age Group", "Total Cases", { role: "style" } ],
+            % } else {
+                ["Groupe d'âge", "Cas Totaux", { role: "style" } ],
+            % }
+            % my $modernaUnknownAge = $statistics{'global'}->{'COVID-19 VACCINE MODERNA'}->{'noAge'} // die;
+            ["Unknown Age", <%=$modernaUnknownAge%>, "#a69280"],
+            % for my $ageInternalId (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $ageGroupName = $statistics{'ages'}->{$ageInternalId} // die;
+            	% my $cases = $statistics{'global'}->{'COVID-19 VACCINE MODERNA'}->{'byAges'}->{$ageInternalId} // 0;
+                ["<%==$ageGroupName%>",          <%=$cases%>,           "#4a8bbd"],
+        	% }
+        ]);
+
+        var viewAdvEffects = new google.visualization.DataView(dataAdvEffects);
+        viewAdvEffects.setColumns(
+            [
+                0, 1,
+                {
+                    calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"
+                },
+                2
+            ]
+        );
+
+        var optionsAdvEffects = {
+            colors: ['#fff'],
+            width: chartWidth,
+            height: 550,
+            bar: {groupWidth: "95%"},
+            chartArea:{
+                left:5,
+                top: 50,
+                width: '100%',
+                height: '400'
+            }
+        };
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("moderna_by_age"));
+        chartAdvEffects.draw(viewAdvEffects, optionsAdvEffects);
+
+        // Every time the table fires the "select" event, it calls the loadDetails function.
+        // google.visualization.events.addListener(chartAdvEffects, 'select', loadDetails);
+    }
+    function drawPfizerByAge() {
+        var dataAdvEffects = google.visualization.arrayToDataTable([
+            % if ($currentLanguage eq 'en') {
+                ["Age Group", "Total Cases", { role: "style" } ],
+            % } else {
+                ["Groupe d'âge", "Cas Totaux", { role: "style" } ],
+            % }
+            % my $pfizerUnknownAge = $statistics{'global'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'noAge'} // die;
+            ["Unknown Age", <%=$pfizerUnknownAge%>, "#a69280"],
+            % for my $ageInternalId (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $ageGroupName = $statistics{'ages'}->{$ageInternalId} // die;
+            	% my $cases = $statistics{'global'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'byAges'}->{$ageInternalId} // die;
+                ["<%==$ageGroupName%>",          <%=$cases%>,           "#4a8bbd"],
+        	% }
+        ]);
+
+        var viewAdvEffects = new google.visualization.DataView(dataAdvEffects);
+        viewAdvEffects.setColumns(
+            [
+                0, 1,
+                {
+                    calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"
+                },
+                2
+            ]
+        );
+
+        var optionsAdvEffects = {
+            colors: ['#fff'],
+            width: chartWidth,
+            height: 550,
+            bar: {groupWidth: "95%"},
+            chartArea:{
+                left:5,
+                top: 50,
+                width: '100%',
+                height: '400'
+            }
+        };
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("pfizer_by_age"));
+        chartAdvEffects.draw(viewAdvEffects, optionsAdvEffects);
+
+        // Every time the table fires the "select" event, it calls the loadDetails function.
+        // google.visualization.events.addListener(chartAdvEffects, 'select', loadDetails);
+    }
+
+    function drawModernaByAgeSex() {
+
+		var data = google.visualization.arrayToDataTable([
+			['Age Group', 'Male', 'Female', 'Unknown', { role: 'annotation' } ],
+            % my $modernaUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Female'}->{'noAge'}  // die;
+            % my $modernaUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Male'}->{'noAge'}    // die;
+            % my $modernaUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Unknown'}->{'noAge'} // die;
+			["Unknown Age", <%=$modernaUnknownAgeH%>, <%=$modernaUnknownAgeF%>, <%=$modernaUnknownAgeU%>, ''],
+            % for my $ageInternalId (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $ageGroupName = $statistics{'ages'}->{$ageInternalId} // die;
+            	% my $casesF = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Female'}->{'byAges'}->{$ageInternalId}  // 0;
+            	% my $casesH = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Male'}->{'byAges'}->{$ageInternalId}    // 0;
+            	% my $casesU = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Unknown'}->{'byAges'}->{$ageInternalId} // 0;
+				["<%==$ageGroupName%>", <%=$casesH%>, <%=$casesF%>, <%=$casesU%>, ''],
+        	% }
+		]);
+
+        var view = new google.visualization.DataView(data);
+
+		var options = {
+			width: chartWidth,
+			height: 550,
+			legend: { position: 'top', maxLines: 3 },
+			bar: { groupWidth: '75%' },
+			isStacked: true,
+		};
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("moderna_by_sex_and_age"));
+        chartAdvEffects.draw(view, options);
+    }
+
+    function drawPfizerByAgeSex() {
+
+		var data = google.visualization.arrayToDataTable([
+			['Age Group', 'Male', 'Female', 'Unknown', { role: 'annotation' } ],
+            % my $modernaUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'noAge'}  // die;
+            % my $modernaUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'noAge'}    // die;
+            % my $modernaUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'noAge'} // die;
+			["Unknown Age", <%=$modernaUnknownAgeH%>, <%=$modernaUnknownAgeF%>, <%=$modernaUnknownAgeU%>, ''],
+            % for my $ageInternalId (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $ageGroupName = $statistics{'ages'}->{$ageInternalId} // die;
+            	% my $casesF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'byAges'}->{$ageInternalId}  // 0;
+            	% my $casesH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'byAges'}->{$ageInternalId}    // 0;
+            	% my $casesU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'byAges'}->{$ageInternalId} // 0;
+				["<%==$ageGroupName%>", <%=$casesH%>, <%=$casesF%>, <%=$casesU%>, ''],
+        	% }
+		]);
+
+        var view = new google.visualization.DataView(data);
+
+		var options = {
+			width: chartWidth,
+			height: 550,
+			legend: { position: 'top', maxLines: 3 },
+			bar: { groupWidth: '75%' },
+			isStacked: true,
+		};
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("pfizer_by_sex_and_age"));
+        chartAdvEffects.draw(view, options);
+    }
+</script>

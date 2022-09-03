@@ -6,17 +6,72 @@
 % } else {
 
 % }
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<style type="text/css">
+    
+    .ndt_note {
+        display: inline-block;
+        width: calc(100% - 50px);
+        margin: auto;
+        background: #dee0e3;
+        border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+    }
+</style>
+<script type="text/javascript" src="/js/charts_loader.js"></script>
 % my %vaccinesChildren = %$vaccinesChildren;
 % my %vaccinesChildrenForeign = %$vaccinesChildrenForeign;
 <div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data
+    </div>
     % } elsif ($currentLanguage eq 'fr') {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS
+    </div>
     % } else {
 
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Introduction</h2>
+    This page renders the various data on the suspect adverse effects reported for 0-17 years old in USA & Foreign VAERS data.
+    <div class="text_separator"></div>
+    It's hard to evaluate how representative this data is. Various studies have estimated the adverse effects reported to represent between 1% to 60% of the total events occuring in the general population.
+    <div class="text_separator"></div>
+    <div class="ndt_note">
+        <ul>
+            <li><a href="https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system" target="_blank">Lazarus R. Electronic Support for Public Health - Vaccine Adverse Event Reporting System (ESP:VAERS) - Final Report. (Prepared by Harvard Pilgrim Health Care, Inc. under Grant No. R18 HS017045). Rockville, MD: Agency for Healthcare Research and Quality, 2010.</a></li>
+            <div class="text_separator"></div>
+            <li><a target="_blank" href="https://dumas.ccsd.cnrs.fr/dumas-02473574/document">CNRS - HAL Id: dumas-02473574 - Anaïs Lefort. Les médecins généralistes sous-déclarent les effets indésirables liés aux médicaments : quelles pistes pour améliorer les actions de pharmacovigilance ? Résultats d’une enquête en Aquitaine en 2018. Médecine humaine et pathologie. 2019. ffdumas-02473574f</a></li>
+            <div class="text_separator"></div>
+            <li><a href="https://pubmed.ncbi.nlm.nih.gov/33039207" target="_blank">Vaccine. 2020 Nov 3;38(47):7458-7463. doi: 10.1016/j.vaccine.2020.09.072. Epub 2020 Oct 7. - The reporting sensitivity of the Vaccine Adverse Event Reporting System (VAERS) for anaphylaxis and for Guillain-Barré syndrome</a></li>
+            <div class="text_separator"></div>
+            <li><a href="https://pubmed.ncbi.nlm.nih.gov/30739795" target="_blank">Vaccine. 2019 Mar 7;37(11):1516-1520. doi: 10.1016/j.vaccine.2019.01.052. Epub 2019 Feb 7. - Post-licensure surveillance of trivalent adjuvanted influenza vaccine (aIIV3; Fluad), Vaccine Adverse Event Reporting System (VAERS), United States, July 2016-June 2018</a></li>
+        </ul>
+    </div>
+    % } else {
+    <h2 style="margin-left: 5px;">Introduction</h2>
+    Cette page restitue les différentes données sur les effets indésirables rapportés pour les 0-1 ans aux Etats Unis et dans la base étrangère du VAERS.
+    <div class="text_separator"></div>
+    Il est difficile d'évaluer combien cette donnée est représentative. Diverses études ont estimé que les effets secondaires rapportés représentent entre 1% et 60% du total des effets qui se produit en population générale.
+    <div class="text_separator"></div>
+    <div class="ndt_note">
+        <ul>
+            <li><a href="https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system" target="_blank">Lazarus R. Electronic Support for Public Health - Vaccine Adverse Event Reporting System (ESP:VAERS) - Final Report. (Prepared by Harvard Pilgrim Health Care, Inc. under Grant No. R18 HS017045). Rockville, MD: Agency for Healthcare Research and Quality, 2010.</a></li>
+            <div class="text_separator"></div>
+            <li><a target="_blank" href="https://dumas.ccsd.cnrs.fr/dumas-02473574/document">CNRS - HAL Id: dumas-02473574 - Anaïs Lefort. Les médecins généralistes sous-déclarent les effets indésirables liés aux médicaments : quelles pistes pour améliorer les actions de pharmacovigilance ? Résultats d’une enquête en Aquitaine en 2018. Médecine humaine et pathologie. 2019. ffdumas-02473574f</a></li>
+            <div class="text_separator"></div>
+            <li><a href="https://pubmed.ncbi.nlm.nih.gov/33039207" target="_blank">Vaccine. 2020 Nov 3;38(47):7458-7463. doi: 10.1016/j.vaccine.2020.09.072. Epub 2020 Oct 7. - The reporting sensitivity of the Vaccine Adverse Event Reporting System (VAERS) for anaphylaxis and for Guillain-Barré syndrome</a></li>
+            <div class="text_separator"></div>
+            <li><a href="https://pubmed.ncbi.nlm.nih.gov/30739795" target="_blank">Vaccine. 2019 Mar 7;37(11):1516-1520. doi: 10.1016/j.vaccine.2019.01.052. Epub 2019 Feb 7. - Post-licensure surveillance of trivalent adjuvanted influenza vaccine (aIIV3; Fluad), Vaccine Adverse Event Reporting System (VAERS), United States, July 2016-June 2018</a></li>
+        </ul>
+    </div>
     % }
     % if ($currentLanguage eq 'en') {
     <h2 style="margin-left: 5px;">USA - Cumulated Weekly Deaths - 0 to 17 years old - Covid Injections / Common Vaccines</h2>
@@ -48,10 +103,10 @@
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
     <h2 style="margin-left: 5px;">USA - Covid Injections - All Weekly Serious After Effects And Doses Administered</h2>
-    This chart presents the data of administered doses for the 0-17 years old in USA, along with the Covid After Effects reported.
+    This chart presents the data of administered doses 1 & 2 for the 0-17 years old in USA, along with the Covid After Effects reported, week by week.
     % } elsif ($currentLanguage eq 'fr') {
     <h2 style="margin-left: 5px;">USA - Injections Covid - Tous effets secondaires graves hebdomadaires et doses administrées</h2>
-    Ce graphique présente les données des doses administrées aux 0-17 ans aux Etats-Unis, ainsi que les effets secondaires rapportés.
+    Ce graphique présente les données des doses 1 & 2 administrées aux 0-17 ans aux Etats-Unis, ainsi que les effets secondaires rapportés, semaine par semaine.
     % } else {
 
     % }

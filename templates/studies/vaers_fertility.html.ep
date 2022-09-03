@@ -125,8 +125,8 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	    	VAERS Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch
-		</div>
+				VAERS Domestic Data - Analyzing COVID Vaccine impact on pregnancies, as per USA's adverse effects watch
+			</div>
 		<div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
 		    Study version 1.0, last VAERS report on <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
@@ -2244,7 +2244,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	    	Données VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA
+	    	Données Domestiques VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA
 		</div>
 		<div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">

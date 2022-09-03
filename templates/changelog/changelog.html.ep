@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.27</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Fixed an issue with the total doses administered on the study "Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data".</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Réparation d'un bug lié au calcul du total de doses administrées dans l'étude "Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS".</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.26</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

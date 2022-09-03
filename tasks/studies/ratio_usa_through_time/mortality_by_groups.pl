@@ -37,6 +37,11 @@ my $populationFile   = 'raw_data/nc-est2021-syasexn.csv';  # File containing "An
 														   # taken from https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx
 														   # and converted to UTF8 ";" separated .CSV
 
+# Creating output folder.
+my %reportStats = ();
+my $outFolder = 'stats/ratio_usa_through_time';
+make_path($outFolder) unless (-d $outFolder);
+
 # Loading population data.
 my %populationByAges = ();
 my %populationByAgeGroups = ();
@@ -48,8 +53,23 @@ set_age_groups();
 prepare_population_by_age_group();
 
 # Loading vaccination data.
+my %dosesByDatesAndAges = ();
 my %dosesByDates = ();
 load_vaccination_data();
+
+# Loading states.
+my %cdcStates = ();
+cdc_states();
+
+# Loading known database entities.
+my $latestVaersSymptomId = 0;
+my %vaersDeathsSymptoms  = ();
+vaers_deaths_symptom();
+
+# Loading known database reports.
+my $latestVaersReportId = 0;
+my %vaearsDeathsReports = ();
+vaers_deaths_report();
 
 # Verifying in current .ZIP file if things have been deleted.
 my %years = ();
@@ -57,7 +77,7 @@ my %statesCodes = ();
 parse_states();
 parse_cdc_years();
 parse_yearly_data();
-parse_foreign_data();
+# parse_foreign_data();
 
 sub load_population_age {
 	open my $in, '<:utf8', $populationFile;
@@ -92,40 +112,62 @@ sub set_age_groups {
 	$ageGroups{'4'}->{'label'}  = '12 - 17 Years';
 	$ageGroups{'4'}->{'from'}   = '12';
 	$ageGroups{'4'}->{'to'}     = '17';
+	$ageGroups{'5'}->{'label'}  = '18 - 24 Years';
+	$ageGroups{'5'}->{'from'}   = '18';
+	$ageGroups{'5'}->{'to'}     = '24';
+	$ageGroups{'6'}->{'label'}  = '25 - 49 Years';
+	$ageGroups{'6'}->{'from'}   = '25';
+	$ageGroups{'6'}->{'to'}     = '49';
+	$ageGroups{'7'}->{'label'}  = '50 - 64 Years';
+	$ageGroups{'7'}->{'from'}   = '50';
+	$ageGroups{'7'}->{'to'}     = '64';
+	$ageGroups{'8'}->{'label'}  = '65+ Years';
+	$ageGroups{'8'}->{'from'}   = '65';
 }
 
 sub prepare_population_by_age_group {
-	for my $aNum (sort{$a <=> $b} keys %ageGroups) {
-		my $label = $ageGroups{$aNum}->{'label'} // die;
-		my $from  = $ageGroups{$aNum}->{'from'}  // die;
-		my $to    = $ageGroups{$aNum}->{'to'}    // die;
+	my $population2021Total = 0;
+	for my $ageGroupRef (sort{$a <=> $b} keys %ageGroups) {
+		my $label = $ageGroups{$ageGroupRef}->{'label'} // die;
+		my $from  = $ageGroups{$ageGroupRef}->{'from'}  // die;
+		my $to;
 		my ($july20Population, $july21Population) = (0, 0);
 		for my $age (sort{$a <=> $b} keys %populationByAges) {
 			next if $age < $from;
-			next if $age > $to;
+			if ($label ne '65+ Years') {
+				$to    = $ageGroups{$ageGroupRef}->{'to'}    // die;
+				next if $age > $to;
+			}
 			my $july20 = $populationByAges{$age}->{'july20Population'} // die;
 			my $july21 = $populationByAges{$age}->{'july21Population'} // die;
 			$july20Population += $july20;
 			$july21Population += $july21;
+			$population2021Total += $july21;
 		}
+		$populationByAgeGroups{$label}->{'ageGroupRef'} = $ageGroupRef;
 		$populationByAgeGroups{$label}->{'july20Population'} = $july20Population;
 		$populationByAgeGroups{$label}->{'july21Population'} = $july21Population;
 	}
 	# p%populationByAgeGroups;
+	# say "population2021Total : $population2021Total";
 	# die;
 }
 
 sub load_vaccination_data {
 	my ($highestDate, $lowestDate) = (0, 99999999);
-	my %dosesByDatesAgeGroups = ();
-	my %agesGroups = ();
+	my %vaccinesByAgeGroups = ();
 	open my $in, '<:utf8', $vaccinationFile;
 	my $agesLoaded = 0;
 	while (<$in>) {
 		chomp $_;
-		my ($date, $ageGroup, $casePer100K, $dose1Base1, $dose2Base1) = split ';', $_;
+		my ($date, $ageGroup, $casePer100K, $dose1Percent, $dose2Percent) = split ';', $_;
 		my ($month, $day, $year) = $date =~ /(..)\/(..)\/(....)/;
 		next unless $month && $day && $year;
+		$date = "$year-$month-$day";
+		my $compDate = $date;
+		$compDate =~ s/\D//g;
+		$highestDate = $compDate if $compDate > $highestDate;
+		$lowestDate  = $compDate if $compDate < $lowestDate;
 		my $referenceYear;
 		if ($year eq '2022' || $year eq '2021') {
 			$referenceYear = '21';
@@ -134,51 +176,68 @@ sub load_vaccination_data {
 		} else {
 			die "year : $year";
 		}
-		my $population = $populationByAgeGroups{$ageGroup}->{"july$referenceYear" . "Population"} // next;
-		$agesGroups{$ageGroup} = 1;
-		$date = "$year-$month-$day";
-		my $compDate = $date;
-		$compDate =~ s/\D//g;
-		$highestDate = $compDate if $compDate > $highestDate;
-		$lowestDate  = $compDate if $compDate < $lowestDate;
-		my $doses1Administered = nearest(1, $population * $dose1Base1);
-		my $doses2Administered = nearest(1, $population * $dose2Base1);
-		$dosesByDatesAgeGroups{$compDate}->{'date'} = $date;
-		$dosesByDatesAgeGroups{$compDate}->{'ageGroups'}->{$ageGroup}->{'doses1Administered'} = $doses1Administered;
-		$dosesByDatesAgeGroups{$compDate}->{'ageGroups'}->{$ageGroup}->{'doses2Administered'} = $doses2Administered;
+		my $population = $populationByAgeGroups{$ageGroup}->{"july$referenceYear" . "Population"} // die "ageGroup : $ageGroup missing";
+		my $doses1Administered = nearest(1, $population * $dose1Percent / 100);
+		my $doses2Administered = nearest(1, $population * $dose2Percent / 100);
 		next unless $doses1Administered || $doses2Administered;
+		$dosesByDatesAndAges{$ageGroup}->{$date}->{'weekNumber'}         = iso_week_number("$year-$month-$day");
+		$dosesByDatesAndAges{$ageGroup}->{$date}->{'doses1Administered'} = $doses1Administered;
+		$dosesByDatesAndAges{$ageGroup}->{$date}->{'doses2Administered'} = $doses2Administered;
+		$dosesByDatesAndAges{$ageGroup}->{$date}->{'population'}         = $population;
+		$dosesByDates{$date}->{'weekNumber'} = iso_week_number("$year-$month-$day");
+		$dosesByDates{$date}->{'doses1Administered'} += $doses1Administered;
+		$dosesByDates{$date}->{'doses2Administered'} += $doses2Administered;
 	}
 	close $in;
 	my ($hY, $hM, $hD) = $highestDate =~ /(....)(..)(..)/;
 	my ($lY, $lM, $lD) = $lowestDate  =~ /(....)(..)(..)/;
 	$highestDate = "$hY-$hM-$hD";
 	$lowestDate  = "$lY-$lM-$lD";
-	my %currentDosesByGroups = ();
-	for my $compDate (sort{$a <=> $b} keys %dosesByDatesAgeGroups) {
-		my $date = $dosesByDatesAgeGroups{$compDate}->{'date'} // die;
-		my ($year, $month, $day) = split '-', $date;
-		for my $ageGroup (sort keys %agesGroups) {
-			my ($doses1Administered, $doses2Administered);
-			if (exists $dosesByDatesAgeGroups{$compDate}->{'ageGroups'}->{$ageGroup}->{'doses1Administered'}) {
-				$doses1Administered = $dosesByDatesAgeGroups{$compDate}->{'ageGroups'}->{$ageGroup}->{'doses1Administered'} // die;
-				$doses2Administered = $dosesByDatesAgeGroups{$compDate}->{'ageGroups'}->{$ageGroup}->{'doses2Administered'} // die;
-				$currentDosesByGroups{$ageGroup}->{'doses1Administered'} = $doses1Administered;
-				$currentDosesByGroups{$ageGroup}->{'doses2Administered'} = $doses1Administered;
-			} else {
-				$doses1Administered = $currentDosesByGroups{$ageGroup}->{'doses1Administered'} // die;
-				$doses2Administered = $currentDosesByGroups{$ageGroup}->{'doses2Administered'} // die;
-			}
-			# say "$date - $ageGroup - $doses1Administered - $doses2Administered";
-			$dosesByDates{$date}->{'weekNumber'} = iso_week_number($date);
-			$dosesByDates{$date}->{'doses1Administered'} += $doses1Administered;
-			$dosesByDates{$date}->{'doses2Administered'} += $doses2Administered;
-		}
-	}
-	# delete $dosesByDates{$highestDate}; # The latest date is often truncated (having only a few age groups we care about), therefore deleted.
+	delete $dosesByDatesAndAges{$highestDate}; # The latest date is often truncated (having only a few age groups we care about), therefore deleted.
+	# p%dosesByDatesAndAges;
 	# p%dosesByDates;
-	# say "highestDate : $highestDate";
-	# say "lowestDate  : $lowestDate";
 	# die;
+}
+
+sub cdc_states {
+	my $tb = $dbh->selectall_hashref("SELECT id as cdcStateId, name as stateName FROM cdc_state", 'cdcStateId');
+	for my $cdcStateId (sort{$a <=> $b} keys %$tb) {
+		my $stateName = %$tb{$cdcStateId}->{'stateName'} // die;
+		$cdcStates{$stateName}->{'cdcStateId'} = $cdcStateId;
+	}
+}
+
+sub vaers_deaths_symptom {
+	my $tb = $dbh->selectall_hashref("SELECT id as vaersDeathsSymptomId, name as vaersDeathsSymptomName FROM vaers_deaths_symptom WHERE id > $latestVaersSymptomId", 'vaersDeathsSymptomId');
+	for my $vaersSymptomId (sort{$a <=> $b} keys %$tb) {
+		$latestVaersSymptomId = $vaersSymptomId;
+		my $vaersDeathsSymptomName = %$tb{$vaersSymptomId}->{'vaersDeathsSymptomName'} // die;
+		$vaersDeathsSymptoms{$vaersDeathsSymptomName}->{'vaersSymptomId'} = $vaersSymptomId;
+	}
+}
+
+sub vaers_deaths_report {
+	my $agesCompleted = 0;
+	open my $out, '>:utf8', 'public/doc/usa_moderna_pfizer_deaths_by_groups/arbitrations.csv';
+	say $out "vaersId;ageFixed;";
+	my $tb = $dbh->selectall_hashref("SELECT id as vaersDeathsReportId, vaersId, patientAgeConfirmationRequired, patientAgeFixed, patientAge FROM vaers_deaths_report WHERE id > $latestVaersReportId", 'vaersDeathsReportId');
+	for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
+		$latestVaersReportId = $vaersDeathsReportId;
+		my $vaersId = %$tb{$vaersDeathsReportId}->{'vaersId'} // die;
+		my $patientAgeFixed = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
+		my $patientAge = %$tb{$vaersDeathsReportId}->{'patientAge'};
+		if ($patientAgeFixed && !$patientAge) {
+			$agesCompleted++;
+			say $out "$vaersId;$patientAgeFixed;";
+		}
+		my $patientAgeConfirmationRequired    = %$tb{$vaersDeathsReportId}->{'patientAgeConfirmationRequired'}   // die;
+    	$patientAgeConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
+		$vaearsDeathsReports{$vaersId}->{'patientAgeFixed'} = $patientAgeFixed;
+		$vaearsDeathsReports{$vaersId}->{'vaersDeathsReportId'} = $vaersDeathsReportId;
+		$vaearsDeathsReports{$vaersId}->{'patientAgeConfirmationRequired'} = $patientAgeConfirmationRequired;
+	}
+	close $out;
+	$reportStats{'agesCompleted'} = $agesCompleted;
 }
 
 sub parse_states {
@@ -204,8 +263,9 @@ sub parse_cdc_years {
 
 sub parse_yearly_data {
 	my $earliestCovidDate = '99999999';
-	my %reportsByDates = ();
+	my %productsShortNames = ();
 	for my $year (sort{$a <=> $b} keys %years) {
+		next if $year < 2020;
 
 		# Configuring expected files ; dying if they aren't found.
 		my $dataFile     = "$cdcFolder/$year" . 'VAERSDATA.csv';
@@ -270,35 +330,90 @@ sub parse_yearly_data {
 					$vN++;
 				}
 				my $dose    = $values{'VAX_DOSE_SERIES'};
-				my $cdcReportInternalId = $values{'VAERS_ID'} // die;
+				my $vaersId = $values{'VAERS_ID'} // die;
 				my $cdcManufacturerName = $values{'VAX_MANU'} // die;
 				my $cdcVaccineTypeName = $values{'VAX_TYPE'} // die;
 				my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
             	my $drugName = "$cdcManufacturerName - $cdcVaccineTypeName - $cdcVaccineName";
 	        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
-	        	my ($isCovid, $isOtherVaccine) = (0, 0);
-	            if ($substanceCategory eq 'COVID-19') {
-	            	$isCovid = 1;
-					$reportsByDates{'vaccines'}->{$substanceCategory}->{$substanceShortenedName}->{$drugName} = 1;
-            		$reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'} = 1;
-	            } else {
-	            	if ($substanceCategory) {
-	            		$isOtherVaccine = 1;
-						$reportsByDates{'vaccines'}->{$substanceCategory}->{$substanceShortenedName}->{$drugName} = 1;
-	            		$reportsVaccines{$cdcReportInternalId}->{'hasOtherVaccine'} = 1;
-	            	}
-	            }
+	        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
+	        	$productsShortNames{$substanceShortenedName} = 1;
 				my %o = ();
-				$o{'substanceCategory'} = $substanceCategory;
+				$o{'substanceCategory'}      = $substanceCategory;
 				$o{'substanceShortenedName'} = $substanceShortenedName;
-				$o{'isOtherVaccine'} = $isOtherVaccine;
-				$o{'isCovid'} = $isCovid;
-				$o{'cdcVaccineName'} = $cdcVaccineName;
-				$o{'dose'} = $dose;
-				push @{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}, \%o;
+				$o{'cdcVaccineName'}         = $cdcVaccineName;
+				$o{'dose'}                   = $dose;
+				push @{$reportsVaccines{$vaersId}->{'vaccines'}}, \%o;
 			}
 		}
 		close $vaccinesIn;
+
+		# Fetching notices - symptoms relations.
+		open my $symptomsIn, '<:', $symptomsFile;
+		my $symptomsCsv = Text::CSV_XS->new ({ binary => 1 });
+		my %symptomsLabels = ();
+		$dRNum = 0;
+		my %reportsSymptoms = ();
+		while (<$symptomsIn>) {
+			$dRNum++;
+
+			# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
+			$_ =~ s/–/-/g;
+			$_ =~ s/–/-/g;
+			$_ =~ s/ –D/ -D/g;
+			$_ =~ s/\\xA0//g;
+			$_ =~ s/~/--:--/g;
+	    	$_ =~ s/ / /g;
+	    	$_ =~ s/\r//g;
+			$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
+			$_ =~ s/\x{1F}/./g;
+
+			# Verifying line.
+			my $line = $_;
+			$line = decode("ascii", $line);
+			for (/[^\n -~]/g) {
+			    printf "Bad character: %02x\n", ord $_;
+			    die;
+			}
+
+			# First row = line labels.
+			if ($dRNum == 1) {
+				my @labels = split ',', $line;
+				my $lN = 0;
+				for my $label (@labels) {
+					$symptomsLabels{$lN} = $label;
+					$lN++;
+				}
+				$expectedValues = keys %symptomsLabels;
+			} else {
+
+				# Verifying we have the expected number of values.
+				open my $fh, "<", \$_;
+				my $row = $symptomsCsv->getline ($fh);
+				my @row = @$row;
+				die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
+				my $vN  = 0;
+				my %values = ();
+				for my $value (@row) {
+					my $label = $symptomsLabels{$vN} // die;
+					$values{$label} = $value;
+					$vN++;
+				}
+				my $vaersId  = $values{'VAERS_ID'} // die;
+				my $symptom1 = $values{'SYMPTOM1'} // die;
+				my $symptom2 = $values{'SYMPTOM2'};
+				my $symptom3 = $values{'SYMPTOM3'};
+				my $symptom4 = $values{'SYMPTOM4'};
+				my $symptom5 = $values{'SYMPTOM5'};
+				my @symptoms = ($symptom1, $symptom2, $symptom3, $symptom4, $symptom5);
+				next unless exists $reportsVaccines{$vaersId}->{'vaccines'};
+				for my $symptomName (@symptoms) {
+					next unless $symptomName && length $symptomName >= 1;
+					$reportsSymptoms{$vaersId}->{$symptomName} = 1;
+				}
+			}
+		}
+		close $symptomsIn;
 
 		# Fetching notices.
 		open my $dataIn, '<:', $dataFile;
@@ -352,20 +467,22 @@ sub parse_yearly_data {
 				}
 
 				# Retrieving report data we care about.
-				my $cdcReportInternalId = $values{'VAERS_ID'}                  // die;
-				my $cdcReceptionDate    = $values{'RECVDATE'}                  // die;
+				my $vaersId             = $values{'VAERS_ID'}                  // die;
+				my $vaersReceptionDate  = $values{'RECVDATE'}                  // die;
 				my $sCode2              = $values{'STATE'}                     // die;
+				my $onsetDate           = $values{'ONSET_DATE'};
 				my $stateName           = $statesCodes{$sCode2}->{'stateName'} // "Unknown";
 				my $patientAge          = $values{'AGE_YRS'}                   // die;
-				my ($cdcAgeInternalId,
-					$cdcAgeName)        = age_to_age_group($patientAge);
 				my $cdcSexInternalId    = $values{'SEX'}                       // die;
-				my $cdcSexName;
+				my ($cdcSexName, $vaersSex);
 				if ($cdcSexInternalId eq 'F') {
+					$vaersSex   = 1;
 					$cdcSexName = 'Female';
 				} elsif ($cdcSexInternalId eq 'M') {
+					$vaersSex   = 2;
 					$cdcSexName = 'Male';
 				} elsif ($cdcSexInternalId eq 'U') {
+					$vaersSex   = 3;
 					$cdcSexName = 'Unknown';
 				} else {
 					die "cdcSexInternalId : $cdcSexInternalId";
@@ -380,7 +497,10 @@ sub parse_yearly_data {
 				my $lifeThreatning          = $values{'L_THREAT'};
 				my $patientDied             = $values{'DIED'};
 				$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
-				next if !defined $patientAge || $patientAge > 17;
+				# next if !defined $patientAge || $patientAge > 17;
+				if (exists $vaearsDeathsReports{$vaersId}->{'patientAgeFixed'}) {
+					$patientAge = $vaearsDeathsReports{$vaersId}->{'patientAgeFixed'};
+				} 
 				$hospitalized               = 0 unless defined $hospitalized        && length $hospitalized        >= 1;
 				$permanentDisability        = 0 unless defined $permanentDisability && length $permanentDisability >= 1;
 				$lifeThreatning             = 0 unless defined $lifeThreatning      && length $lifeThreatning      >= 1;
@@ -389,386 +509,189 @@ sub parse_yearly_data {
 				$hospitalized               = 1 if defined $hospitalized            && $hospitalized eq 'Y';
 				$permanentDisability        = 1 if defined $permanentDisability     && $permanentDisability eq 'Y';
 				$lifeThreatning             = 1 if defined $lifeThreatning          && $lifeThreatning eq 'Y';
-			    $cdcReceptionDate           = convert_date($cdcReceptionDate);
+			    $vaersReceptionDate         = convert_date($vaersReceptionDate);
 			    $vaccinationDate            = convert_date($vaccinationDate) if $vaccinationDate;
 			    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
-			    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $cdcReceptionDate;
+			    $onsetDate                  = convert_date($onsetDate)       if $onsetDate;
+				$onsetDate                  = undef unless defined $onsetDate       && length $onsetDate           >= 1;
+				$deceasedDate               = undef unless defined $deceasedDate    && length $deceasedDate        >= 1;
+				$vaccinationDate            = undef unless defined $vaccinationDate && length $vaccinationDate     >= 1;
+				my ($cdcAgeInternalId,
+					$cdcAgeName);
+				if (defined $patientAge) {
+					($cdcAgeInternalId,
+						$cdcAgeName) = age_to_age_group($patientAge);
+				}
+			    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $vaersReceptionDate;
 			    my $compDate = "$receptionYear$receptionMonth$receptionDay";
-
-				# Taking care of building stats.
-				next unless exists $reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'} || exists $reportsVaccines{$cdcReportInternalId}->{'hasOtherVaccine'};
-				my $doses1Administered = $dosesByDates{$cdcReceptionDate}->{'doses1Administered'} // 0;
-				my $doses2Administered = $dosesByDates{$cdcReceptionDate}->{'doses2Administered'} // 0;
-				if ($reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'}) {
+				if ($reportsVaccines{$vaersId}) {
 			    	$earliestCovidDate = $compDate if $compDate < $earliestCovidDate;
 					
 					if (
 						$patientDied
 					) {
-						$reportsByDates{'global'}->{'covid'}->{'lethal'}++;
-						$reportsByDates{'byAges'}->{$cdcAgeName}->{'covid'}->{'lethal'}++;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'doses1Administered'} = $doses1Administered;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'doses2Administered'} = $doses2Administered;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'covid'}->{'lethal'}++;
+						# Skipping the report if no Covid vaccine is associated.
+						next unless exists $reportsVaccines{$vaersId};
+
+						# Inserting the report symptoms if unknown.
+						my @symptomsListed  = ();
+						for my $symptomName (sort keys %{$reportsSymptoms{$vaersId}}) {
+							unless (exists $vaersDeathsSymptoms{$symptomName}->{'vaersSymptomId'}) {
+								my $sth = $dbh->prepare("INSERT INTO vaers_deaths_symptom (name) VALUES (?)");
+								$sth->execute($symptomName) or die $sth->err();
+								vaers_deaths_symptom();
+							}
+							my $symptomId = $vaersDeathsSymptoms{$symptomName}->{'vaersSymptomId'} // die;
+							push @symptomsListed, $symptomId;
+						}
+
+						# Fetching state id.
+						my $cdcStateId = $cdcStates{$stateName}->{'cdcStateId'} // die "stateName : $stateName";
+
+						# Inserting the vaccines data.
+						my @vaccinesListed = @{$reportsVaccines{$vaersId}->{'vaccines'}};
+						my $vaccinesListed = encode_json\@vaccinesListed;
+						# p@vaccinesListed;
 						# die;
-					} elsif (
-						$permanentDisability ||
-						$lifeThreatning      ||
-						$hospitalized
-					) {
-						$reportsByDates{'global'}->{'covid'}->{'lifeThreatningDisability'}++;
-						$reportsByDates{'byAges'}->{$cdcAgeName}->{'covid'}->{'lifeThreatningDisability'}++;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'doses1Administered'} = $doses1Administered;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'doses2Administered'} = $doses2Administered;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'covid'}->{'lifeThreatningDisability'}++;
-					}
-				} else {
-					if (
-						$patientDied
-					) {
-						$reportsByDates{'global'}->{'commonVaccines'}->{'lethal'}++;
-						$reportsByDates{'byAges'}->{$cdcAgeName}->{'commonVaccines'}->{'lethal'}++;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'commonVaccines'}->{'lethal'}++;
+
+						# Inserting the report treatment data.
+						my $symptomsListed = encode_json\@symptomsListed;
+						unless (exists $vaearsDeathsReports{$vaersId}->{'vaersDeathsReportId'}) {
+							my $sth = $dbh->prepare("
+								INSERT INTO vaers_deaths_report (
+									vaersId, aEDescription, vaccinesListed, vaersSex, vaersSexFixed,
+									patientAge, patientAgeFixed, vaersReceptionDate, vaccinationDate, vaccinationDateFixed, symptomsListed,
+									hospitalized, permanentDisability, lifeThreatning, patientDied,
+									hospitalizedFixed, permanentDisabilityFixed, lifeThreatningFixed, patientDiedFixed,
+									onsetDate, onsetDateFixed, deceasedDate, deceasedDateFixed, cdcStateId
+								) VALUES (
+									?, ?, ?, ?, ?,
+									?, ?, ?, ?, ?, ?,
+									$hospitalized, $permanentDisability, $lifeThreatning, $patientDied,
+									$hospitalized, $permanentDisability, $lifeThreatning, $patientDied,
+									?, ?, ?, ?, ?
+								)");
+							$sth->execute(
+								$vaersId, $aEDescription, $vaccinesListed, $vaersSex, $vaersSex,
+								$patientAge, $patientAge, $vaersReceptionDate, $vaccinationDate, $vaccinationDate, $symptomsListed,
+								$onsetDate, $onsetDate, $deceasedDate, $deceasedDate, $cdcStateId) or die $sth->err();
+							vaers_deaths_report();
+						}
+						my $vaersDeathsReportId = $vaearsDeathsReports{$vaersId}->{'vaersDeathsReportId'} // die;
+
+						# Fetching products involved.
+						my $vaccine;
+						for my $vaccineData (@{$reportsVaccines{$vaersId}->{'vaccines'}}) {
+							my $substanceShortenedName = %$vaccineData{'substanceShortenedName'} // die;
+							$vaccine = $substanceShortenedName;
+						}
+						next unless $vaccine eq 'COVID-19 VACCINE PFIZER-BIONTECH' || $vaccine eq 'COVID-19 VACCINE MODERNA';
+						# say "vaccine : $vaccine";
+
+						# Fetching statistics.
+						if ($cdcAgeName) {
+							$reportStats{'ages'}->{$cdcAgeInternalId} = $cdcAgeName;
+							$reportStats{'global'}->{$vaccine}->{'byAges'}->{$cdcAgeInternalId}++;
+							$reportStats{'bySexes'}->{$vaccine}->{$cdcSexName}->{'byAges'}->{$cdcAgeInternalId}++;
+						} else {
+							$reportStats{'global'}->{$vaccine}->{'noAge'}++;
+							$reportStats{'bySexes'}->{$vaccine}->{$cdcSexName}->{'noAge'}++;
+						}
+						$reportStats{'global'}->{$vaccine}->{'totalDeaths'}++;
+						$reportStats{'bySexes'}->{$vaccine}->{$cdcSexName}->{'totalDeaths'}++;
 						# die;
-					} elsif (
-						$permanentDisability ||
-						$lifeThreatning      ||
-						$hospitalized
-					) {
-						$reportsByDates{'global'}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
-						$reportsByDates{'byAges'}->{$cdcAgeName}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
-						$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
 					}
 				}
 			}
 		}
 		close $dataIn;
 	}
-	$reportsByDates{'earliestCovidDate'} = $earliestCovidDate;
-
-	# Deleting dates prior to Covid first after effect.
-	for my $year (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}}) {
-		for my $month (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}->{$year}}) {
-			for my $day (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}->{$year}->{$month}}) {
-				my $compDate = "$year$month$day";
-				if ($compDate < $earliestCovidDate) {
-					delete $reportsByDates{'byDates'}->{$year}->{$month}->{$day};
-				} else {
-
-					$reportsByDates{'byDates'}->{$year}->{$month}->{$day}->{'dayOfWeek'}  = dayofweek( $day, $month, $year );
-					$reportsByDates{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} = iso_week_number("$year-$month-$day");
-				}
-			}
-
-			unless (keys %{$reportsByDates{'byDates'}->{$year}->{$month}}) {
-				delete $reportsByDates{'byDates'}->{$year}->{$month};
-			}
-		}
-
-		unless (keys %{$reportsByDates{'byDates'}->{$year}}) {
-			delete $reportsByDates{'byDates'}->{$year};
-		}
-	}
-
 
 	# Printing dates & other stats.
-	open my $out, '>:utf8', 'stats/vaccines_children_reports_by_dates.json';
-	print $out encode_json\%reportsByDates;
+	open my $out, '>:utf8', 'stats/covid_deaths_by_ages.json';
+	print $out encode_json\%reportStats;
 	close $out;
-}
 
-sub parse_foreign_data {
-	my $earliestCovidDate = '99999999';
-	my %reportsByDates = ();
+	p%reportStats;
 
-	# Configuring expected files ; dying if they aren't found.
-	my $dataFile     = "$cdcForeignFolder/NonDomestic" . 'VAERSDATA.csv';
-	my $symptomsFile = "$cdcForeignFolder/NonDomestic" . 'VAERSSYMPTOMS.csv';
-	my $vaccinesFile = "$cdcForeignFolder/NonDomestic" . 'VAERSVAX.csv';
-	die "missing mandatory file in [$cdcForeignFolder]" if !-f $dataFile || !-f $symptomsFile || !-f $vaccinesFile;
-	say "dataFile     : $dataFile";
-	say "symptomsFile : $symptomsFile";
-	say "vaccinesFile : $vaccinesFile";
-
-	# Fetching notices - vaccines relations.
-	open my $vaccinesIn, '<:', $vaccinesFile;
-	my $expectedValues;
-	my $vaccinesCsv = Text::CSV_XS->new ({ binary => 1 });
-	my %vaccinesLabels = ();
-	my %reportsVaccines = ();
-	my $dRNum = 0;
-	while (<$vaccinesIn>) {
-		$dRNum++;
-
-		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-		$_ =~ s/–/-/g;
-		$_ =~ s/–/-/g;
-		$_ =~ s/ –D/ -D/g;
-		$_ =~ s/\\xA0//g;
-		$_ =~ s/~/--:--/g;
-    	$_ =~ s/ / /g;
-    	$_ =~ s/\r//g;
-		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-		$_ =~ s/\x{1F}/./g;
-
-		# Verifying line.
-		my $line = $_;
-		$line = decode("ascii", $line);
-		for (/[^\n -~]/g) {
-		    printf "Bad character: %02x\n", ord $_;
-		    die;
-		}
-
-		# First row = line labels.
-		if ($dRNum == 1) {
-			my @labels = split ',', $line;
-			my $lN = 0;
-			for my $label (@labels) {
-				$vaccinesLabels{$lN} = $label;
-				$lN++;
-			}
-			$expectedValues = keys %vaccinesLabels;
-		} else {
-
-			# Verifying we have the expected number of values.
-			open my $fh, "<", \$_;
-			my $row = $vaccinesCsv->getline ($fh);
-			my @row = @$row;
-			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-			my $vN  = 0;
-			my %values = ();
-			for my $value (@row) {
-				my $label = $vaccinesLabels{$vN} // die;
-				$values{$label} = $value;
-				$vN++;
-			}
-			my $dose    = $values{'VAX_DOSE_SERIES'};
-			my $cdcReportInternalId = $values{'VAERS_ID'} // die;
-			my $cdcManufacturerName = $values{'VAX_MANU'} // die;
-			my $cdcVaccineTypeName = $values{'VAX_TYPE'} // die;
-			my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
-        	my $drugName = "$cdcManufacturerName - $cdcVaccineTypeName - $cdcVaccineName";
-        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
-        	next unless $substanceCategory;
-        	my ($isCovid, $isOtherVaccine) = (0, 0);
-            if ($substanceCategory eq 'COVID-19') {
-            	$isCovid = 1;
-				$reportsByDates{'vaccines'}->{$substanceCategory}->{$substanceShortenedName}->{$drugName} = 1;
-        		$reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'} = 1;
-            } else {
-            	if ($substanceCategory) {
-            		$isOtherVaccine = 1;
-					$reportsByDates{'vaccines'}->{$substanceCategory}->{$substanceShortenedName}->{$drugName} = 1;
-            		$reportsVaccines{$cdcReportInternalId}->{'hasOtherVaccine'} = 1;
-            	}
-            }
-			my %o = ();
-			$o{'substanceCategory'} = $substanceCategory;
-			$o{'substanceShortenedName'} = $substanceShortenedName;
-			$o{'isOtherVaccine'} = $isOtherVaccine;
-			$o{'isCovid'} = $isCovid;
-			$o{'cdcVaccineName'} = $cdcVaccineName;
-			$o{'dose'} = $dose;
-			push @{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}, \%o;
-		}
-	}
-	close $vaccinesIn;
-
-	# Fetching notices.
-	open my $dataIn, '<:', $dataFile;
-	$dRNum = 0;
-	my %dataLabels = ();
-	my $dataCsv = Text::CSV_XS->new ({ binary => 1 });
-	while (<$dataIn>) {
-		$dRNum++;
-
-		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-		$_ =~ s/–/-/g;
-		$_ =~ s/–/-/g;
-		$_ =~ s/ –D/ -D/g;
-		$_ =~ s/\\xA0//g;
-		$_ =~ s/~/--:--/g;
-    	$_ =~ s/ / /g;
-    	$_ =~ s/\r//g;
-		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-		$_ =~ s/\x{1F}/./g;
-
-		# Verifying line.
-		my $line = $_;
-		$line = decode("ascii", $line);
-		for (/[^\n -~]/g) {
-		    printf "Bad character: %02x\n", ord $_;
-		    die;
-		}
-
-		# First row = line labels.
-		if ($dRNum == 1) {
-			my @labels = split ',', $line;
-			my $lN = 0;
-			for my $label (@labels) {
-				$dataLabels{$lN} = $label;
-				$lN++;
-			}
-			$expectedValues = keys %dataLabels;
-		} else {
-
-			# Verifying we have the expected number of values.
-			open my $fh, "<", \$_;
-			my $row = $dataCsv->getline ($fh);
-			my @row = @$row;
-			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-			my $vN  = 0;
-			my %values = ();
-			for my $value (@row) {
-				my $label = $dataLabels{$vN} // die;
-				$values{$label} = $value;
-				$vN++;
-			}
-
-			# Retrieving report data we care about.
-			my $cdcReportInternalId = $values{'VAERS_ID'}                  // die;
-			my $cdcReceptionDate    = $values{'RECVDATE'}                  // die;
-			my $sCode2              = $values{'STATE'}                     // die;
-			my $stateName           = $statesCodes{$sCode2}->{'stateName'} // "Unknown";
-			my $patientAge          = $values{'AGE_YRS'}                   // die;
-			my ($cdcAgeInternalId,
-				$cdcAgeName)        = age_to_age_group($patientAge);
-			my $cdcSexInternalId    = $values{'SEX'}                       // die;
-			my $cdcSexName;
-			if ($cdcSexInternalId eq 'F') {
-				$cdcSexName = 'Female';
-			} elsif ($cdcSexInternalId eq 'M') {
-				$cdcSexName = 'Male';
-			} elsif ($cdcSexInternalId eq 'U') {
-				$cdcSexName = 'Unknown';
-			} else {
-				die "cdcSexInternalId : $cdcSexInternalId";
-			}
-			my $vaccinationDate         = $values{'VAX_DATE'};
-			my $deceasedDate            = $values{'DATEDIED'};
-			my $aEDescription           = $values{'SYMPTOM_TEXT'};
-			my $cdcVaccineAdministrator = $values{'V_ADMINBY'};
-			$cdcVaccineAdministrator    = administrator_to_enum($cdcVaccineAdministrator);
-			my $hospitalized            = $values{'HOSPITAL'};
-			my $permanentDisability     = $values{'DISABLE'};
-			my $lifeThreatning          = $values{'L_THREAT'};
-			my $patientDied             = $values{'DIED'};
-			$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
-			next if !defined $patientAge || $patientAge > 17;
-			$hospitalized               = 0 unless defined $hospitalized        && length $hospitalized        >= 1;
-			$permanentDisability        = 0 unless defined $permanentDisability && length $permanentDisability >= 1;
-			$lifeThreatning             = 0 unless defined $lifeThreatning      && length $lifeThreatning      >= 1;
-			$patientDied                = 0 unless defined $patientDied         && length $patientDied         >= 1;
-			$patientDied                = 1 if defined $patientDied             && $patientDied eq 'Y';
-			$hospitalized               = 1 if defined $hospitalized            && $hospitalized eq 'Y';
-			$permanentDisability        = 1 if defined $permanentDisability     && $permanentDisability eq 'Y';
-			$lifeThreatning             = 1 if defined $lifeThreatning          && $lifeThreatning eq 'Y';
-		    $cdcReceptionDate           = convert_date($cdcReceptionDate);
-		    $vaccinationDate            = convert_date($vaccinationDate) if $vaccinationDate;
-		    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
-		    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $cdcReceptionDate;
-		    my $compDate = "$receptionYear$receptionMonth$receptionDay";
-			my $immProjectNumber        = $values{'SPLTTYPE'};
-
-			# Taking care of building stats.
-			next unless exists $reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'} || exists $reportsVaccines{$cdcReportInternalId}->{'hasOtherVaccine'};
-			if ($reportsVaccines{$cdcReportInternalId}->{'hasCovidVaccine'}) {
-		    	$earliestCovidDate = $compDate if $compDate < $earliestCovidDate;
-				if (
-					$patientDied
-				) {
-					$reportsByDates{'global'}->{'covid'}->{'lethal'}++;
-					$reportsByDates{'byAges'}->{$cdcAgeName}->{'covid'}->{'lethal'}++;
-					$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'covid'}->{'lethal'}++;
-					# die;
-				} elsif (
-					$permanentDisability ||
-					$lifeThreatning      ||
-					$hospitalized
-				) {
-					$reportsByDates{'global'}->{'covid'}->{'lifeThreatningDisability'}++;
-					$reportsByDates{'byAges'}->{$cdcAgeName}->{'covid'}->{'lifeThreatningDisability'}++;
-					$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'covid'}->{'lifeThreatningDisability'}++;
-				}
-			} else {
-				if (
-					$patientDied
-				) {
-					$reportsByDates{'global'}->{'commonVaccines'}->{'lethal'}++;
-					$reportsByDates{'byAges'}->{$cdcAgeName}->{'commonVaccines'}->{'lethal'}++;
-					$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'commonVaccines'}->{'lethal'}++;
-					# die;
-				} elsif (
-					$permanentDisability ||
-					$lifeThreatning      ||
-					$hospitalized
-				) {
-					$reportsByDates{'global'}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
-					$reportsByDates{'byAges'}->{$cdcAgeName}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
-					$reportsByDates{'byDates'}->{$receptionYear}->{$receptionMonth}->{$receptionDay}->{'commonVaccines'}->{'lifeThreatningDisability'}++;
-				}
-			}
-		}
-	}
-	close $dataIn;
-	$reportsByDates{'earliestCovidDate'} = $earliestCovidDate;
-
-	# Deleting dates prior to Covid first after effect.
-	for my $year (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}}) {
-		for my $month (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}->{$year}}) {
-			for my $day (sort{$a <=> $b} keys %{$reportsByDates{'byDates'}->{$year}->{$month}}) {
-				my $compDate = "$year$month$day";
-				if ($compDate < $earliestCovidDate) {
-					delete $reportsByDates{'byDates'}->{$year}->{$month}->{$day};
-				} else {
-
-					$reportsByDates{'byDates'}->{$year}->{$month}->{$day}->{'dayOfWeek'}  = dayofweek( $day, $month, $year );
-					$reportsByDates{'byDates'}->{$year}->{$month}->{$day}->{'weekNumber'} = iso_week_number("$year-$month-$day");
-				}
-			}
-
-			unless (keys %{$reportsByDates{'byDates'}->{$year}->{$month}}) {
-				delete $reportsByDates{'byDates'}->{$year}->{$month};
-			}
-		}
-
-		unless (keys %{$reportsByDates{'byDates'}->{$year}}) {
-			delete $reportsByDates{'byDates'}->{$year};
-		}
-	}
-
-
-	# Printing dates & other stats.
-	open my $out, '>:utf8', 'stats/foreign_vaccines_children_reports_by_dates.json';
-	print $out encode_json\%reportsByDates;
-	close $out;
+	# p%productsShortNames;
 }
 
 sub age_to_age_group {
 	my ($patientAge) = @_;
-	return (0, 'Unknown') unless defined $patientAge && length $patientAge >= 1;
 	my ($cdcAgeInternalId, $cdcAgeName);
-	if ($patientAge <= 0.16) {
+	if ($patientAge <= 0.99) {
 		$cdcAgeInternalId = '1';
-		$cdcAgeName       = '0-1 Month';
-	} elsif ($patientAge > 0.16 && $patientAge <= 2.9) {
+		$cdcAgeName       = '<1 Years';
+	} elsif ($patientAge >= 1 && $patientAge <= 5.99) {
 		$cdcAgeInternalId = '2';
-		$cdcAgeName = '2 Months - 2 Years';
-	} elsif ($patientAge > 2.9 && $patientAge <= 11.9) {
+		$cdcAgeName = '1 - 5 Years';
+	} elsif ($patientAge >= 5 && $patientAge <= 10.99) {
 		$cdcAgeInternalId = '3';
-		$cdcAgeName = '3-11 Years';
-	} elsif ($patientAge > 11.9 && $patientAge <= 17.9) {
+		$cdcAgeName = '6 - 10 Years';
+	} elsif ($patientAge >= 11 && $patientAge <= 15.99) {
 		$cdcAgeInternalId = '4';
-		$cdcAgeName = '12-17 Years';
-	} elsif ($patientAge > 17.9 && $patientAge <= 64.9) {
+		$cdcAgeName = '11 - 15 Years';
+	} elsif ($patientAge >= 16 && $patientAge <= 20.99) {
 		$cdcAgeInternalId = '5';
-		$cdcAgeName = '18-64 Years';
-	} elsif ($patientAge > 64.9 && $patientAge <= 85.9) {
+		$cdcAgeName = '16 - 20 Years';
+	} elsif ($patientAge >= 21 && $patientAge <= 25.99) {
 		$cdcAgeInternalId = '6';
-		$cdcAgeName = '65-85 Years';
-	} elsif ($patientAge > 85.9) {
+		$cdcAgeName = '21 - 25 Years';
+	} elsif ($patientAge >= 26 && $patientAge <= 30.99) {
 		$cdcAgeInternalId = '7';
-		$cdcAgeName = 'More than 85 Years';
+		$cdcAgeName = '26 - 30 Years';
+	} elsif ($patientAge >= 31 && $patientAge <= 35.99) {
+		$cdcAgeInternalId = '8';
+		$cdcAgeName = '31 - 35 Years';
+	} elsif ($patientAge >= 36 && $patientAge <= 40.99) {
+		$cdcAgeInternalId = '9';
+		$cdcAgeName = '36 - 40 Years';
+	} elsif ($patientAge >= 41 && $patientAge <= 45.99) {
+		$cdcAgeInternalId = '10';
+		$cdcAgeName = '41 - 45 Years';
+	} elsif ($patientAge >= 46 && $patientAge <= 50.99) {
+		$cdcAgeInternalId = '11';
+		$cdcAgeName = '46 - 50 Years';
+	} elsif ($patientAge >= 51 && $patientAge <= 55.99) {
+		$cdcAgeInternalId = '12';
+		$cdcAgeName = '51 - 55 Years';
+	} elsif ($patientAge >= 56 && $patientAge <= 60.99) {
+		$cdcAgeInternalId = '13';
+		$cdcAgeName = '56 - 60 Years';
+	} elsif ($patientAge >= 61 && $patientAge <= 65.99) {
+		$cdcAgeInternalId = '14';
+		$cdcAgeName = '61 - 65 Years';
+	} elsif ($patientAge >= 66 && $patientAge <= 70.99) {
+		$cdcAgeInternalId = '15';
+		$cdcAgeName = '66 - 70 Years';
+	} elsif ($patientAge >= 71 && $patientAge <= 75.99) {
+		$cdcAgeInternalId = '16';
+		$cdcAgeName = '71 - 75 Years';
+	} elsif ($patientAge >= 76 && $patientAge <= 80.99) {
+		$cdcAgeInternalId = '17';
+		$cdcAgeName = '76 - 80 Years';
+	} elsif ($patientAge >= 81 && $patientAge <= 85.99) {
+		$cdcAgeInternalId = '18';
+		$cdcAgeName = '81 - 85 Years';
+	} elsif ($patientAge >= 86 && $patientAge <= 90.99) {
+		$cdcAgeInternalId = '19';
+		$cdcAgeName = '86 - 90 Years';
+	} elsif ($patientAge >= 91 && $patientAge <= 95.99) {
+		$cdcAgeInternalId = '20';
+		$cdcAgeName = '91 - 95 Years';
+	} elsif ($patientAge >= 96 && $patientAge <= 100.99) {
+		$cdcAgeInternalId = '21';
+		$cdcAgeName = '96 - 100 Years';
+	} elsif ($patientAge >= 101 && $patientAge <= 105.99) {
+		$cdcAgeInternalId = '22';
+		$cdcAgeName = '101 - 105 Years';
+	} elsif ($patientAge >= 106 && $patientAge <= 110.99) {
+		$cdcAgeInternalId = '23';
+		$cdcAgeName = '106 - 110 Years';
+	} elsif ($patientAge >= 111) {
+		$cdcAgeInternalId = '24';
+		$cdcAgeName = '111+ Years';
 	} else {
 		die "patientAge : $patientAge";
 	}

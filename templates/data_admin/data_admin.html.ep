@@ -14,6 +14,8 @@
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; VAERS Domestic Data - Deaths - Ages Completed Data</li>
         <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_custom_export');return">&#10230; VAERS Domestic Data - Deaths - Generate a custom export</li>
+        <div class="text_separator"></div>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
     <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
@@ -24,6 +26,8 @@
         <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">Données domestiques VAERS - Décès - Assistant de complétion des âges</li>
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; Données domestiques VAERS - Décès - Données incluant les âges complétés</li>
+        <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_custom_export');return">&#10230; Données domestiques VAERS - Décès - Générer un export personnalisé</li>
         <div class="text_separator"></div>
     </ul>
     % } else {
