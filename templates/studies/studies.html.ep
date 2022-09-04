@@ -11,8 +11,8 @@
     <ul>
         % # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">VAERS Domestic Data - Analyzing the mortality ratio of Covid injections by ages groups</li>
         % # <div class="text_separator"></div>
-        % # <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">VAERS Domestic Data - Moderna & Pfizer, Deaths by groups - Published on September 3, 2022</li>
-        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">VAERS Domestic Data - Moderna & Pfizer, Deaths by groups - Published on September 4, 2022</li>
+        <div class="text_separator"></div>
         % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">VAERS Domestic Data - Analyzing miscarriages occuring within a week after the Covid Injections</li>
         % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/children_vaers');return">Adverse Effects Reported on 0-17 years old, for Covid injections & common vaccines, in USA, according to VAERS data - Published on August 17, 2022</li>
@@ -27,8 +27,8 @@
     <ul>
         % # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">Données Domestiques VAERS - Analyse du ratio de léthalité des injections Covid par groupes d'âges</li>
         % # <div class="text_separator"></div>
-        % # <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes - Publiée le 3 Septembre 2022</li>
-        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes - Publiée le 4 Septembre 2022</li>
+        <div class="text_separator"></div>
         % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">Données VAERS - Analyse des fausses-couches se produisant dans la semaine suivant les injections Covid</li>
         % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/children_vaers');return">Effets secondaires des 0-17 ans, pour les injections Covid & les vaccins communs, aux Etats-Unis, d'après la donnée VAERS - Publiée le 17 Août 2022</li>

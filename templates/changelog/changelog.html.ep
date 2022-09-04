@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.28</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Published a new data study "VAERS Domestic Data - Moderna & Pfizer, Deaths by groups".</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Publication d'une nouvelle étude de données "Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes".</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.27</h2>
     % if ($currentLanguage eq 'en') {
     <ul>
