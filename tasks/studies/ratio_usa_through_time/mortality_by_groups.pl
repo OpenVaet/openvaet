@@ -31,8 +31,10 @@ use time;
 my $statesFile       = "tasks/cdc/states.csv";             # File containing CDC's states.
 my $cdcFolder        = "raw_data/AllVAERSDataCSVS";        # Where we expect to find CDC's data folder in the project's root folder.
 my $cdcForeignFolder = "raw_data/NonDomesticVAERSData";    # Where we expect to find CDC's data folder in the project's root folder.
-my $vaccinationFile  = 'raw_data/COVID-19_Vaccination_and_Case_Trends_by_Age_Group__United_States.csv'; # File containing the current vaccination statistics by age groups,
-																										# taken from https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B
+my $vaccinationFile  = 'raw_data/COVID-19_Vaccination_and'  .
+					   '_Case_Trends_by_Age_Group__United_' .
+					   'States.csv';                       # File containing the current vaccination statistics by age groups,
+														   # taken from https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B
 my $populationFile   = 'raw_data/nc-est2021-syasexn.csv';  # File containing "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021"
 														   # taken from https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx
 														   # and converted to UTF8 ";" separated .CSV
@@ -220,13 +222,15 @@ sub vaers_deaths_report {
 	my $agesCompleted = 0;
 	open my $out, '>:utf8', 'public/doc/usa_moderna_pfizer_deaths_by_groups/arbitrations.csv';
 	say $out "vaersId;ageFixed;";
-	my $tb = $dbh->selectall_hashref("SELECT id as vaersDeathsReportId, vaersId, patientAgeConfirmationRequired, patientAgeFixed, patientAge FROM vaers_deaths_report WHERE id > $latestVaersReportId", 'vaersDeathsReportId');
+	my $tb = $dbh->selectall_hashref("SELECT id as vaersDeathsReportId, vaersId, patientAgeConfirmationRequired, patientAgeFixed, patientAge, patientDiedFixed FROM vaers_deaths_report WHERE id > $latestVaersReportId", 'vaersDeathsReportId');
 	for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
 		$latestVaersReportId = $vaersDeathsReportId;
 		my $vaersId = %$tb{$vaersDeathsReportId}->{'vaersId'} // die;
 		my $patientAgeFixed = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
 		my $patientAge = %$tb{$vaersDeathsReportId}->{'patientAge'};
-		if ($patientAgeFixed && !$patientAge) {
+		my $patientDiedFixed    = %$tb{$vaersDeathsReportId}->{'patientDiedFixed'}   // die;
+    	$patientDiedFixed       = unpack("N", pack("B32", substr("0" x 32 . $patientDiedFixed, -32)));
+		if ($patientAgeFixed && !$patientAge && $patientDiedFixed) {
 			$agesCompleted++;
 			say $out "$vaersId;$patientAgeFixed;";
 		}
@@ -596,6 +600,11 @@ sub parse_yearly_data {
 						} else {
 							$reportStats{'global'}->{$vaccine}->{'noAge'}++;
 							$reportStats{'bySexes'}->{$vaccine}->{$cdcSexName}->{'noAge'}++;
+							# Setting the age as requiring review.
+							unless ($vaearsDeathsReports{$vaersId}->{'patientAgeConfirmationRequired'}) {
+								my $sth = $dbh->prepare("UPDATE vaers_deaths_report SET patientAgeConfirmationRequired = 1 WHERE id = $vaersDeathsReportId");
+								$sth->execute() or die $sth->err();
+							}
 						}
 						$reportStats{'global'}->{$vaccine}->{'totalDeaths'}++;
 						$reportStats{'bySexes'}->{$vaccine}->{$cdcSexName}->{'totalDeaths'}++;

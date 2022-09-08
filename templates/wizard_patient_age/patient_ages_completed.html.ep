@@ -87,18 +87,18 @@
 	    				<td></td>
 	    			</tr>
 	    			% for my $patientAgeConfirmationTimestamp (sort{$b <=> $a} keys %reports) {
-	    				% for my $vaersDeathsReportId (sort{$a <=> $b} keys %{$reports{$patientAgeConfirmationTimestamp}}) {
-	    					% my $patientAgeConfirmationDatetime = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeConfirmationDatetime'} // die;
-	    					% my $patientAgeFixed = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeFixed'};
-	    					% my $vaersId = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'vaersId'} // die;
-	    					% my $userName = $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'userName'} // die;
-	    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'products'}}) {
+	    				% for my $vaersReportId (sort{$a <=> $b} keys %{$reports{$patientAgeConfirmationTimestamp}}) {
+	    					% my $patientAgeConfirmationDatetime = $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeConfirmationDatetime'} // die;
+	    					% my $patientAgeFixed = $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeFixed'};
+	    					% my $vaersId = $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'vaersId'} // die;
+	    					% my $userName = $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'userName'} // die;
+	    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'products'}}) {
 
     						% }
 			    			<tr style="border-bottom: 1px solid black;text-align: center;">
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$vaersId%></td>
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
-			    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'products'}}) {
+			    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'products'}}) {
 				    				<%=$productName%>
 				    				<br>
 		    						% }
@@ -114,7 +114,7 @@
 				    				<button disabled>Review</button>
 				    			</td>
 				    			<td style="padding-top: 10px;padding-bottom: 10px;">
-				    				<button onclick="resetReportAgeTreatment(<%=$vaersDeathsReportId%>)">Reset</button>
+				    				<button onclick="resetReportAgeTreatment(<%=$vaersReportId%>)">Reset</button>
 				    			</td>
 			    			</tr>
 	    				% }
@@ -149,7 +149,7 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 		$('#productFilter').select2({
@@ -163,22 +163,24 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 	}
-	function resetReportAgeTreatment(vaersDeathsReportId) {
-		console.log('vaersDeathsReportId : ' + vaersDeathsReportId);
+	function resetReportAgeTreatment(vaersReportId) {
+		let dataType = '<%=$dataType%>';
+		console.log('vaersReportId : ' + vaersReportId);
         let request            = $.ajax({
             url: "/wizard_patient_age/reset_report_attributes",
             type: "POST",
             data: {
-                vaersDeathsReportId : vaersDeathsReportId
+                vaersReportId : vaersReportId,
+                dataType      : dataType
             }
         });
 
         request.done(function(data) {
-        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>'; 
+        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>'; 
         });
 
         // Printing error message if case of failure

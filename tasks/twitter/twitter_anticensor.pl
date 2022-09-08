@@ -68,6 +68,7 @@ my %twitterUsersArchived = ();
 my %twitterUsers         = ();
 my $maxUserResults       = 1000;      # Defines how many users we will get by query
 my $maxTweetsResults     = 100;       # Defines how many tweets we will get by query
+my $sleepSecondsOnFail   = 10;        # Defines how long we will sleep on a failed query.
 my $sleepSeconds         = 900;       # Defines how long we will sleep on a "Too Many Requests" server reply.
 my $delayBetweenUpdates  = 3600 * 1;  # Time we wait (in seconds) between followers updates on a given profile.
 my $mainTwitterId;
@@ -450,9 +451,17 @@ sub get_user_follows {
             my $message = $res->message();
             if ($message eq 'Too Many Requests') {
                 # say "message : $message";
-                say "Sleeping $sleepSeconds seconds before to try again.";
+                say "\nSleeping $sleepSeconds seconds before to try again.";
                 for my $sleep (1 .. $sleepSeconds) {
                     STDOUT->printflush("\rSleeping [$sleep / $sleepSeconds]");
+                    sleep 1;
+                }
+                say "";
+            } elsif ($message eq 'Service Unavailable') {
+                # say "message : $message";
+                say "\nSleeping $sleepSecondsOnFail seconds before to try again.";
+                for my $sleep (1 .. $sleepSecondsOnFail) {
+                    STDOUT->printflush("\rSleeping [$sleep / $sleepSecondsOnFail]");
                     sleep 1;
                 }
                 say "";
@@ -718,6 +727,14 @@ sub get_user_tweets {
                     # p%error;
                     die "failed to get [$tweetsUrl]";
                 }
+            } elsif ($message eq 'Service Unavailable') {
+                # say "message : $message";
+                say "\nSleeping $sleepSecondsOnFail seconds before to try again.";
+                for my $sleep (1 .. $sleepSecondsOnFail) {
+                    STDOUT->printflush("\rSleeping [$sleep / $sleepSecondsOnFail]");
+                    sleep 1;
+                }
+                say "";
             } else {
                 p$res;
                 say "message : [$message]";

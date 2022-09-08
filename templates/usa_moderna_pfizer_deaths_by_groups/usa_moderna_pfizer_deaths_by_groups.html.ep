@@ -262,10 +262,10 @@
 
 		var data = google.visualization.arrayToDataTable([
 			['Age Group', 'Male', 'Female', 'Unknown', { role: 'annotation' } ],
-            % my $modernaUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'noAge'}  // die;
-            % my $modernaUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'noAge'}    // die;
-            % my $modernaUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'noAge'} // die;
-			["Unknown Age", <%=$modernaUnknownAgeH%>, <%=$modernaUnknownAgeF%>, <%=$modernaUnknownAgeU%>, ''],
+            % my $pfizerUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'noAge'}  // die;
+            % my $pfizerUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'noAge'}    // die;
+            % my $pfizerUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'noAge'} // die;
+			["Unknown Age", <%=$pfizerUnknownAgeH%>, <%=$pfizerUnknownAgeF%>, <%=$pfizerUnknownAgeU%>, ''],
             % for my $ageInternalId (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
             	% my $ageGroupName = $statistics{'ages'}->{$ageInternalId} // die;
             	% my $casesF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'byAges'}->{$ageInternalId}  // 0;

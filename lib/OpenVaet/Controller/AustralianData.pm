@@ -82,4 +82,33 @@ sub set_symptom_activity {
 	$self->render(text => 'ok');
 }
 
+sub australian_vaers_charts {
+
+    my $self = shift;
+    my $currentLanguage = $self->param('currentLanguage') // 'en';
+
+    # Loggin session if unknown.
+    session::session_from_self($self);
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+    my $statistics;
+    open my $in, '<:utf8', 'stats/foreign_covid_deaths_by_ages.json';
+    while (<$in>) {
+        $statistics .= $_;
+    }
+    close $in;
+    $statistics = decode_json($statistics);
+    my %statistics = %$statistics;
+    p%statistics;
+
+    $self->render(
+        currentLanguage => $currentLanguage,
+        languages       => \%languages,
+        statistics      => \%statistics
+    );
+}
+
 1;

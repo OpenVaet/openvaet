@@ -1116,7 +1116,6 @@ ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `isSerious`;
 ALTER TABLE `openvaet`.`cdc_report` 
 ADD COLUMN `isPublished` BIT(1) NOT NULL DEFAULT 1 AFTER `parsingTimestamp`;
 
-
 ######################### V 7 - 2022-09-01 20:10:00
 # Created vaers_deaths_symptom table.
 CREATE TABLE `vaers_deaths_symptom` (
@@ -1197,3 +1196,57 @@ ALTER TABLE `openvaet`.`vaers_deaths_report`
 ADD COLUMN `patientAgeConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `userId`;
 ALTER TABLE `openvaet`.`vaers_deaths_report` 
 ADD COLUMN `hoursBetweenVaccineAndAE` DOUBLE NULL AFTER `patientAgeConfirmationRequired`;
+
+######################### V 8 - 2022-09-06 10:05:00
+# Created vaers_foreign_report table.
+CREATE TABLE `vaers_foreign_report` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vaersId` varchar(45) NOT NULL,
+  `aEDescription` longtext NOT NULL,
+  `vaccinesListed` json NOT NULL,
+  `vaersSex` int(11) NOT NULL,
+  `vaersSexFixed` int(11) DEFAULT NULL,
+  `cdcStateId` int(11) DEFAULT NULL,
+  `onsetDate` varchar(45) DEFAULT NULL,
+  `onsetDateFixed` varchar(45) DEFAULT NULL,
+  `deceasedDate` varchar(45) DEFAULT NULL,
+  `deceasedDateFixed` varchar(45) DEFAULT NULL,
+  `vaccinationDate` varchar(45) DEFAULT NULL,
+  `vaccinationDateFixed` varchar(45) DEFAULT NULL,
+  `vaersReceptionDate` varchar(45) NOT NULL,
+  `patientAge` double DEFAULT NULL,
+  `patientAgeFixed` double DEFAULT NULL,
+  `symptomsListed` json NOT NULL,
+  `hospitalized` bit(1) NOT NULL,
+  `hospitalizedFixed` bit(1) NOT NULL,
+  `permanentDisability` bit(1) NOT NULL,
+  `permanentDisabilityFixed` bit(1) NOT NULL,
+  `lifeThreatning` bit(1) NOT NULL,
+  `lifeThreatningFixed` bit(1) NOT NULL,
+  `patientDied` bit(1) NOT NULL,
+  `patientDiedFixed` bit(1) NOT NULL,
+  `creationTimestamp` int(11) NOT NULL,
+  `patientAgeConfirmation` int(11) DEFAULT NULL,
+  `patientAgeConfirmationTimestamp` int(11) DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL,
+  `patientAgeConfirmationRequired` bit(1) NOT NULL DEFAULT b'0',
+  `hoursBetweenVaccineAndAE` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `vaers_foreign_report_unique` (`vaersId`),
+  KEY `vaers_foreign_report_to_cdc_state_idx` (`cdcStateId`),
+  KEY `vaers_foreign_report_to_user_idx` (`userId`),
+  CONSTRAINT `vaers_foreign_report_to_cdc_state` FOREIGN KEY (`cdcStateId`) REFERENCES `cdc_state` (`id`),
+  CONSTRAINT `vaers_foreign_report_to_user` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_vaers_foreign_report_insert` 
+BEFORE INSERT ON `vaers_foreign_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`vaers_foreign_report` 
+DROP FOREIGN KEY `vaers_foreign_report_to_cdc_state`;
+ALTER TABLE `openvaet`.`vaers_foreign_report` 
+DROP INDEX `vaers_foreign_report_to_cdc_state_idx` ;
+ALTER TABLE `openvaet`.`vaers_foreign_report` 
+CHANGE COLUMN `cdcStateId` `immProjectNumber` VARCHAR(45) NULL DEFAULT NULL ;

@@ -346,6 +346,7 @@
 
 <script type="text/javascript">
     function setReportAttribute(reportId, sqlValue, value) {
+        let dataType            = '<%=$dataType%>';
         console.log('Setting report ' + reportId + ', column : ' + sqlValue + ' to [' + value + ']');
         let patientAgeFixed     = $('#patientAgeFixed').val();
         console.log('patientAgeFixed : ' + patientAgeFixed);
@@ -393,6 +394,7 @@
                 reportId : reportId,
                 sqlValue : sqlValue,
                 value    : value,
+                dataType : dataType,
                 patientAgeFixed : patientAgeFixed,
                 vaersSexFixed : vaersSexFixed,
                 vaccinationYear : vaccinationYear,

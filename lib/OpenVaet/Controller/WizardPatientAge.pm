@@ -12,12 +12,21 @@ sub wizard_patient_age {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
+    my $dataType = $self->param('dataType') // die;
+    my $table;
+    if ($dataType eq 'domestic') {
+        $table = 'vaers_deaths_report';
+    } elsif ($dataType eq 'foreign') {
+        $table = 'vaers_foreign_report';
+    } else {
+        die "dataType : $dataType";
+    }
 
     # Loggin session if unknown.
     session::session_from_self($self);
 
     # Fetching total operations to perform.
-    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM vaers_deaths_report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
+    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM $table WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
     my $operationsToPerform = %$tb{'operationsToPerform'} // die;
 
     my %languages = ();
@@ -26,6 +35,7 @@ sub wizard_patient_age {
 
     $self->render(
         currentLanguage => $currentLanguage,
+        dataType => $dataType,
         operationsToPerform => $operationsToPerform,
         languages => \%languages
     );
@@ -40,6 +50,13 @@ sub load_next_report {
 
     # Setting language & lang options.
     my $currentLanguage = $self->param('currentLanguage') // die;
+    my $dataType            = $self->param('dataType')            // die;
+    my $table;
+    if ($dataType eq 'domestic') {
+        $table = 'vaers_deaths_report';
+    } elsif ($dataType eq 'foreign') {
+        $table = 'vaers_foreign_report';
+    } else { die "table : $table" }
     my %languages       = ();
     $languages{'fr'}    = 'French';
     $languages{'en'}    = 'English';
@@ -59,7 +76,7 @@ sub load_next_report {
 
     # Fetching confirmation target.
     # Fetching total operations to perform.
-    my $tbT = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM vaers_deaths_report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
+    my $tbT = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM $table WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
     my $operationsToPerform = %$tbT{'operationsToPerform'} // die;
 
     my ($hospitalized, $permanentDisability, $lifeThreatning, $patientDied, $reportId,
@@ -96,7 +113,7 @@ sub load_next_report {
                 lifeThreatning,
                 patientDied,
                 symptomsListed
-            FROM vaers_deaths_report
+            FROM $table
             WHERE
                 $sqlValue IS NULL AND
                 $sqlParam = 1 ORDER BY RAND()
@@ -173,6 +190,7 @@ sub load_next_report {
     say "reportId : $reportId";
 
     $self->render(
+        dataType                           => $dataType,
         currentLanguage                => $currentLanguage,
         sqlValue                       => $sqlValue,
         operationsToPerform            => $operationsToPerform,
@@ -218,6 +236,13 @@ sub set_report_attribute {
     my $reportId          = $self->param('reportId')        // die;
     my $sqlValue          = $self->param('sqlValue')        // die;
     my $value             = $self->param('value')           // die;
+    my $dataType              = $self->param('dataType') // die;
+    my $table;
+    if ($dataType eq 'domestic') {
+        $table = 'vaers_deaths_report';
+    } elsif ($dataType eq 'foreign') {
+        $table = 'vaers_foreign_report';
+    } else { die "table : $table" }
     my $userId            = $self->session('userId')        // die;
     my $patientAgeFixed   = $self->param('patientAgeFixed') // die;
     $patientAgeFixed      = undef unless length $patientAgeFixed    >= 1;
@@ -261,7 +286,7 @@ sub set_report_attribute {
         $hoursBetweenVaccineAndAE = nearest(0.01, ($hoursBetweenVaccineAndAE / 60));
     }
     my $sth = $self->dbh->prepare("
-        UPDATE vaers_deaths_report SET
+        UPDATE $table SET
             $sqlValue = $value,
             patientAgeFixed = ?,
             vaersSexFixed = ?,
@@ -297,6 +322,15 @@ sub patient_ages_completed {
     my $currentLanguage = $self->param('currentLanguage') // die;
     my $adminFilter     = $self->param('adminFilter');
     my $productFilter   = $self->param('productFilter');
+    my $dataType = $self->param('dataType') // die;
+    my $table;
+    if ($dataType eq 'domestic') {
+        $table = 'vaers_deaths_report';
+    } elsif ($dataType eq 'foreign') {
+        $table = 'vaers_foreign_report';
+    } else {
+        die "dataType : $dataType";
+    }
     say "productFilter : $productFilter";
 
     # Loggin session if unknown.
@@ -309,30 +343,30 @@ sub patient_ages_completed {
     my %products = ();
     my $tb = $self->dbh->selectall_hashref("
         SELECT
-            vaers_deaths_report.id as vaersDeathsReportId,
-            vaers_deaths_report.patientAgeFixed,
-            vaers_deaths_report.vaersId,
-            vaers_deaths_report.vaccinesListed,
-            vaers_deaths_report.patientAgeConfirmationTimestamp,
-            vaers_deaths_report.userId,
+            $table.id as vaersReportId,
+            $table.patientAgeFixed,
+            $table.vaersId,
+            $table.vaccinesListed,
+            $table.patientAgeConfirmationTimestamp,
+            $table.userId,
             user.email 
-        FROM vaers_deaths_report
-            LEFT JOIN user ON user.id = vaers_deaths_report.userId
+        FROM $table
+            LEFT JOIN user ON user.id = $table.userId
         WHERE patientAgeConfirmationTimestamp IS NOT NULL
-    ", 'vaersDeathsReportId');
-    for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
-        my $patientAgeFixed                 = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
-        my $patientAgeConfirmationTimestamp = %$tb{$vaersDeathsReportId}->{'patientAgeConfirmationTimestamp'} // die;
+    ", 'vaersReportId');
+    for my $vaersReportId (sort{$a <=> $b} keys %$tb) {
+        my $patientAgeFixed                 = %$tb{$vaersReportId}->{'patientAgeFixed'};
+        my $patientAgeConfirmationTimestamp = %$tb{$vaersReportId}->{'patientAgeConfirmationTimestamp'} // die;
         my $patientAgeConfirmationDatetime  = time::timestamp_to_datetime($patientAgeConfirmationTimestamp);
-        my $userId                          = %$tb{$vaersDeathsReportId}->{'userId'}                          // die;
-        my $vaersId                         = %$tb{$vaersDeathsReportId}->{'vaersId'}                         // die;
-        my $email                           = %$tb{$vaersDeathsReportId}->{'email'}                           // die;
+        my $userId                          = %$tb{$vaersReportId}->{'userId'}                          // die;
+        my $vaersId                         = %$tb{$vaersReportId}->{'vaersId'}                         // die;
+        my $email                           = %$tb{$vaersReportId}->{'email'}                           // die;
         my ($userName) = split '\@', $email;
         $admins{$userName} = 1;
         if ($adminFilter) {
             next if $userName ne $adminFilter;
         }
-        my $vaccinesListed                  = %$tb{$vaersDeathsReportId}->{'vaccinesListed'}                  // die;
+        my $vaccinesListed                  = %$tb{$vaersReportId}->{'vaccinesListed'}                  // die;
         $vaccinesListed = decode_json($vaccinesListed);
         my %vax = ();
         my $hasProduct = 0;
@@ -350,12 +384,12 @@ sub patient_ages_completed {
         $agesCompleted++ if defined $patientAgeFixed;
         $totalReports++;
         for my $substanceShortenedName (sort keys %vax) {
-            $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'products'}->{$substanceShortenedName} = 1;
+            $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'products'}->{$substanceShortenedName} = 1;
         }
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeConfirmationDatetime'} = $patientAgeConfirmationDatetime;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'patientAgeFixed'} = $patientAgeFixed;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'userName'} = $userName;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersDeathsReportId}->{'vaersId'} = $vaersId;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeConfirmationDatetime'} = $patientAgeConfirmationDatetime;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeFixed'} = $patientAgeFixed;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'userName'} = $userName;
+        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'vaersId'} = $vaersId;
     }
     my $agesCompletedPercent = 0;
     if ($totalReports) {
@@ -369,6 +403,7 @@ sub patient_ages_completed {
     $self->render(
         currentLanguage => $currentLanguage,
         adminFilter => $adminFilter,
+        dataType => $dataType,
         productFilter => $productFilter,
         agesCompleted => $agesCompleted,
         totalReports => $totalReports,
@@ -382,10 +417,19 @@ sub patient_ages_completed {
 
 sub reset_report_attributes {
     my $self = shift;
-    my $vaersDeathsReportId = $self->param('vaersDeathsReportId') // die;
+    my $vaersReportId = $self->param('vaersReportId') // die;
+    my $dataType = $self->param('dataType') // die;
+    my $table;
+    if ($dataType eq 'domestic') {
+        $table = 'vaers_deaths_report';
+    } elsif ($dataType eq 'foreign') {
+        $table = 'vaers_foreign_report';
+    } else {
+        die "dataType : $dataType";
+    }
 
-    say "vaersDeathsReportId : $vaersDeathsReportId";
-    my $sth = $self->dbh->prepare("UPDATE vaers_deaths_report SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, userId = NULL WHERE id = $vaersDeathsReportId");
+    say "vaersReportId : $vaersReportId";
+    my $sth = $self->dbh->prepare("UPDATE $table SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, userId = NULL WHERE id = $vaersReportId");
     $sth->execute() or die $sth->err();
 
     $self->render(text => 'ok');
@@ -413,6 +457,14 @@ sub patient_ages_custom_export {
         $admins{$userName} = 1;
     }
 
+    # Fetching vaers symptoms.
+    my %symptoms = ();
+    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName FROM vaers_deaths_symptom", 'symptomId');
+    for my $symptomId (sort{$a <=> $b} keys %$sTb) {
+        my $symptomName = %$sTb{$symptomId}->{'symptomName'} // die;
+        $symptoms{$symptomName}->{'symptomId'} = $symptomId;
+    }
+
     my %languages = ();
     $languages{'fr'} = 'French';
     $languages{'en'} = 'English';
@@ -424,10 +476,22 @@ sub patient_ages_custom_export {
     $products{'COVID-19 VACCINE PFIZER-BIONTECH'}      = 'PFIZER';
     $products{'COVID-19 VACCINE UNKNOWN MANUFACTURER'} = 'UNKNOWN';
 
+    my %severities = ();
+    $severities{'1'}->{'label'} = 'Died';
+    $severities{'1'}->{'value'} = 'patientDiedFixed';
+    $severities{'2'}->{'label'} = 'Permanent Disability';
+    $severities{'2'}->{'value'} = 'permanentDisabilityFixed';
+    $severities{'3'}->{'label'} = 'Life Threatening';
+    $severities{'3'}->{'value'} = 'lifeThreatningFixed';
+    $severities{'4'}->{'label'} = 'Hospitalized';
+    $severities{'4'}->{'value'} = 'hospitalizedFixed';
+
     $self->render(
         currentLanguage => $currentLanguage,
         products => \%products,
         languages => \%languages,
+        symptoms => \%symptoms,
+        severities => \%severities,
         admins => \%admins
     );
 }
@@ -461,6 +525,8 @@ sub generate_products_export {
     my %languages = ();
     $languages{'fr'} = 'French';
     $languages{'en'} = 'English';
+    my $params = $self->req->params->names;
+    p$params;
 
     my $userId           = $self->session('userId')         // die;
     my $janssen          = $self->param('janssen')          // die;
@@ -469,10 +535,23 @@ sub generate_products_export {
     my $pfizer           = $self->param('pfizer')           // die;
     my $unknown          = $self->param('unknown')          // die;
     my $adminFilter      = $self->param('adminFilter')      // die;
+    my $symptomFilter    = $self->param('symptomFilter')    // die;
+    my $severityFilter   = $self->param('severityFilter')   // die;
     my $ageErrorsOnly    = $self->param('ageErrorsOnly')    // die;
     my $ageCompletedOnly = $self->param('ageCompletedOnly') // die;
     say "ageErrorsOnly    : $ageErrorsOnly";
     say "ageCompletedOnly : $ageCompletedOnly";
+    say "symptomFilter    : $symptomFilter";
+
+    my %symptomsFiltered = ();
+    if ($symptomFilter) {
+        $symptomFilter   = decode_json($symptomFilter);
+        for my $symptomId (@$symptomFilter) {
+            next unless $symptomId;
+            $symptomsFiltered{$symptomId} = 1;
+        }
+        $symptomFilter    = undef unless keys %symptomsFiltered;
+    }
 
     # Listing products we look for.
     my %products = ();
@@ -510,7 +589,7 @@ sub generate_products_export {
     # Fetching all the reports corresponding to the selected manufacturer.
     my %reports = ();
     my $exported = 0;
-    my $tb = $self->dbh->selectall_hashref("
+    my $sql = "
         SELECT
             vaers_deaths_report.id as vaersDeathsReportId,
             vaers_deaths_report.vaersId,
@@ -535,7 +614,11 @@ sub generate_products_export {
         FROM vaers_deaths_report
             LEFT JOIN user ON user.id = vaers_deaths_report.userId
             LEFT JOIN cdc_state ON cdc_state.id = vaers_deaths_report.cdcStateId
-        ", 'vaersDeathsReportId');
+        ";
+    if ($severityFilter) {
+        $sql .= " WHERE vaers_deaths_report.$severityFilter = 1";
+    }
+    my $tb = $self->dbh->selectall_hashref($sql, 'vaersDeathsReportId');
     for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
         my $vaccinesListed = %$tb{$vaersDeathsReportId}->{'vaccinesListed'} // die;
         my $patientAgeFixed = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
@@ -588,6 +671,17 @@ sub generate_products_export {
             my $compDate = $vaersReceptionDate;
             $compDate =~ s/\D//g;
             my %o = ();
+            my $hasSymptom = 0;
+            for my $symptomId (@$symptomsListed) {
+                my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
+                $o{'symptoms'}->{$symptomName} = 1;
+                if ($symptomFilter) {
+                    $hasSymptom = 1 if exists $symptomsFiltered{$symptomId};
+                }
+            }
+            if ($symptomFilter) {
+                next unless $hasSymptom == 1;
+            }
             $o{'vaersId'} = $vaersId;
             $o{'vaersReceptionDate'} = $vaersReceptionDate;
             $o{'aEDescription'} = $aEDescription;
@@ -604,10 +698,6 @@ sub generate_products_export {
             $o{'lifeThreatning'} = $lifeThreatning;
             for my $vaccineData (@$vaccinesListed) {
                 push @{$o{'vaccines'}}, \%$vaccineData;
-            }
-            for my $symptomId (@$symptomsListed) {
-                my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
-                $o{'symptoms'}->{$symptomName} = 1;
             }
             push @{$reports{$compDate}}, \%o;
             $exported++;

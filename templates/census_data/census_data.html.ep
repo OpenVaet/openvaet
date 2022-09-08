@@ -1,0 +1,237 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - U.S. Census Bureau Data - Open questions on the data consistency';
+% } elsif ($currentLanguage eq 'fr') {
+% title 'OPENVAET - Données U.S. Census Bureau - Questions ouvertes sur la cohérence des données';
+% } else {
+% }
+% my $earliestCovidDate = 'TO DEFINE';
+% use Data::Printer;
+
+<style type="text/css">
+    .chart-selector {
+        margin-left: 15px;
+        width: 100px;
+        padding-bottom: 5px;
+        padding-top: 15px;
+        cursor: pointer;
+        text-align: center;
+        background: #002D63;
+    }
+
+    .chart-selector:hover {
+        background: #03418c;
+    }
+
+    .ndt_note {
+        display: inline-block;
+        width: calc(100% - 50px);
+        margin: auto;
+        background: #dee0e3;
+        border-radius: 5px;
+        padding: 12px 30px 12px 20px;
+        font-size: 14px;
+    }
+</style>
+% my %statistics = %$statistics;
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        U.S. Census Bureau Data - Open questions on the data consistency
+    </div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+        Données U.S. Census Bureau - Questions ouvertes sur la cohérence des données
+    </div>
+    % } else {
+
+    % }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div id="chart_div_4" style="width: 100%;"></div>
+	% if ($currentLanguage eq 'en') {
+    <h2 style="margin-left: 5px;">Introduction</h2>
+    This page has been realized in close collaboration with Geoff Pain, PHD, whom you can (and should) follow <a href="https://gettr.com/user/geoffpainphd" target="_blank">on Gettr</a> & <a href="https://www.researchgate.net/profile/Geoff-Pain" target="_blank">ResearchGate</a>.
+    <div class="text_separator"></div>
+    Having established <a href="/usa_moderna_pfizer_deaths_by_groups?currentLanguage=<%=$currentLanguage%>" target="_blank"> we had no source data allowing us to calculate accurate ratios by manufacturer</a>, our original goal was to establish - at least - accurate ratios by ages groups for the Covid-19 injections.
+    <div class="text_separator"></div>
+    The problem is that for obvious reasons, to calculate such ratios accurately, from the files provided to the CDC, you need accurate Census data.
+    <div class="text_separator"></div>
+    This data is based on a "base estimate" made every 10 years (last one being in April 2020), and is then adjusted by the CDC based on mortality, births, and immigration data.
+    <div class="text_separator"></div>
+    The said data makes, after in depth study, <b>no sense at all</b> - as it doesn't even correspond from one file to the next.
+	<h2 style="margin-left: 5px;">Source Data</h2>
+    The data relative to population estimates of July 2020 & 2021, is accessed from <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">this "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021" file</a>, accessible <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/" target="_blank">from the bottom of this U.S. Census Bureau's page</a>.
+    <div class="text_separator"></div>
+    The data regarding a first set of current Census values are taken from this other page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Primary-Series-Completion-Booster-Dose-El/3pbe-qh9z" target="_blank">COVID-19 Primary Series Completion, Booster Dose Eligibility, and Booster Dose Receipt by Age, United States</a>. This data feeds the CDC's Page <a href="https://covid.cdc.gov/covid-data-tracker/#vaccinations_vacc-people-additional-dose-totalpop" target="_blank">"Covid Data Tracker - COVID-19 Vaccinations in the United States"</a>.
+    <div class="text_separator"></div>
+    Another set of data provides only ratios (per age groups & percents of population vaccinated expressed): <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-Demographics-in-the-United-St/km4m-vcsb" target="_blank">COVID-19 Vaccination Demographics in the United States, National</a>. this data feeds the CDC's page: <a href="https://covid.cdc.gov/covid-data-tracker/#vaccination-demographics-trends" target="_blank">"Covid Data Tracker - Trends in Demographic Characteristics of People Receiving COVID-19 Vaccinations in the United States"</a>. We extrapolated the Census data which would fit from these percents in the board below.
+	% } elsif ($currentLanguage eq 'fr') {
+    <h2 style="margin-left: 5px;">Introduction</h2>
+    Cette page a été réalisée en proche collaboration avec Geoff Pain, PHD, que vous pouvez (et devriez) suivre <a href="https://gettr.com/user/geoffpainphd" target="_blank">sur Gettr</a> & <a href="https://www.researchgate.net/profile/Geoff-Pain" target="_blank">ResearchGate</a>.
+    <div class="text_separator"></div>
+    Après avoir établi <a href="/usa_moderna_pfizer_deaths_by_groups?currentLanguage=<%=$currentLanguage%>" target="_blank"> que nous n'avions pas de données sources nous permettant de calculer des ratios précis par fabricant</a>, notre but d'origine a été d'établir, au moins, des ratios par ages précis pour les injections Covid-19.
+    <div class="text_separator"></div>
+    Le problème est que pour des raisons évidentes, pour calculer ces ratios avec précision, depuis les fichiers fournis par le CDC, nous avons besoin de données "Census" précises.
+    <div class="text_separator"></div>
+    Cette donnée est établie sur la base d'une "estimation de base" établie tous les 10 ans (le dernier étant d'Avril 2020), et est ensuite ajustée par le CDC sur la base de la mortalité, des naissances, et de la donnée d'immigration.
+    <div class="text_separator"></div>
+    La donnée en question n'a, après étude approfondie, <b>aucun sens</b> - dans la mesure où elle ne correspond même pas d'un fichier à l'autre.
+    <h2 style="margin-left: 5px;">Données Sources</h2>
+    Les données relatives aux estimations de population, en Juillet 2020 et 2021, sont accessibles sur <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">cette page "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021" file</a>, accessible <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/" target="_blank">depuis le bas de cette page du U.S. Census Bureau</a>.
+    <div class="text_separator"></div>
+    Les données concernant un premier set de données "à jour" sont disponibles sur cette autre page <a href="https://data.cdc.gov/Vaccinations/COVID-19-Primary-Series-Completion-Booster-Dose-El/3pbe-qh9z" target="_blank">COVID-19 Primary Series Completion, Booster Dose Eligibility, and Booster Dose Receipt by Age, United States</a>. Cette donnée est à l'origine de cette page du CDC <a href="https://covid.cdc.gov/covid-data-tracker/#vaccinations_vacc-people-additional-dose-totalpop" target="_blank">"Covid Data Tracker - COVID-19 Vaccinations in the United States"</a>.
+    <div class="text_separator"></div>
+    Un autre set de données fourni uniquement des ratios (par groupes d'âges et pourcents de la population du groupe d'âge vacciné): <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-Demographics-in-the-United-St/km4m-vcsb" target="_blank">COVID-19 Vaccination Demographics in the United States, National</a>. Cette donnée est à l'origine de cette page du CDC: <a href="https://covid.cdc.gov/covid-data-tracker/#vaccination-demographics-trends" target="_blank">"Covid Data Tracker - Trends in Demographic Characteristics of People Receiving COVID-19 Vaccinations in the United States"</a>. Nous avons extrapolé les données Census qui correspondraient aux pourcentages exprimés dans le tableau ci-dessous.
+	% } else {
+
+	% }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Treatment</h2>
+	Data necessary for the charts featured on this page is generated by the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/census_data/analyze.pl" target="_blank">tasks/studies/census_data/analyze.pl</a>.
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 5px;">Population by ages groups according to the available census data (2020 & 2021) & CDC files</h2>
+	% } elsif ($currentLanguage eq 'fr') {
+	<h2 style="margin-left: 5px;">Traitement</h2>
+	Les données nécessaires aux graphiques présentés sur cette page sont générées par le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/census_data/analyze.pl" target="_blank">tasks/studies/census_data/analyze.pl</a>.
+	<div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <h2 style="margin-left: 5px;">Population par groupes d'âge d'après les Census disponibles (2020 & 2021) & les fichiers CDC</h2>
+	% } else {
+
+	% }
+	<div class="text_separator"></div>
+    <div style="width: 100%;overflow-x: auto;padding-left: 20px;">
+        <table style="min-width:1850px;width: 98%;max-width: 1500px;text-align: center;border: 1px solid #fff;border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid #fff;padding-top: 5px;color:white;">
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid black;"></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 40%;color: black;" colspan="3"><u><i>Source:</u> <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank">"Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021"</a></i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Source:</u> <a href="https://data.cdc.gov/Vaccinations/COVID-19-Primary-Series-Completion-Booster-Dose-El/3pbe-qh9z" target="_blank">COVID-19 Primary Series Completion, Booster Dose Eligibility, and Booster Dose Receipt by Age, United States</a></i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Source:</u> <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-Demographics-in-the-United-St/km4m-vcsb" target="_blank">COVID-19 Vaccination Demographics in the United States, National</i></a></th>
+                </tr>
+                <tr style="border-bottom: 1px solid #fff;padding-top: 5px;color:white;">
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid black;"></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 40%;color: black;" colspan="3"><u><i>Updated:</u> Static Data</a></i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> </i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> </i></th>
+                </tr>
+                <tr style="border-bottom: 1px solid #fff;padding-top: 5px;background: #002D63;color:white;">
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Age Group</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">July 2020</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">July 2021</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Offset 2021 - 2020</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Current Census</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Offset Current - 2021</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Current Census</th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Offset Current - 2021</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $ageGroupRef (sort{$a <=> $b} keys %{$statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}}) {
+                    % my $label = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'label'} // die;
+                    % my $july20Population   = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'july20PopulationFormatted'}   // die "ageGroupRef : $ageGroupRef";
+                    % my $july21Population   = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'july21PopulationFormatted'}   // die;
+                    % my $offset2120         = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'offset21-20'}                 // die;
+                    % my $offset2120Formatted = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'offset21-20Formatted'} // die;
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;"><%=$label%></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july20Population%></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july21Population%></td>
+                    % if ($offset2120 > 0) {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offset2120Formatted%></td>
+                    % } else {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offset2120Formatted%></td>
+                    % }
+                    % if ($label eq '<2 Years') {
+                        <td style="padding-top: 5px;padding-bottom: 5px;background: #f2f0f5;" rowspan="2"></td>
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;background: #f2f0f5;" rowspan="2"></td>
+                    % } elsif ($label eq '2 - 4 Years' || $label eq '25 - 49 Years') {
+
+                    % } elsif ($label eq '5 - 11 Years' || $label eq '12 - 17 Years' || $label eq '50 - 64 Years' || $label eq '65+ Years') {
+                        % my $currentCensus = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$label}->{'censusFormatted'} // die;
+                        % my $offsetCurrent21 = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$label}->{'offsetCurrent-21'} // die;
+                        % my $offsetCurrent21Formatted = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$label}->{'offsetCurrent-21Formatted'} // die;
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$currentCensus%></td>
+                        % if ($offsetCurrent21 > 0) {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offsetCurrent21Formatted%></td>
+                        % } else {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offsetCurrent21Formatted%></td>
+                        % }
+                    % } elsif ($label eq '18 - 24 Years') {
+                        % my $currentCensus = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{'18 - 49 Years'}->{'censusFormatted'} // die;
+                        % my $offsetCurrent21 = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{'18 - 49 Years'}->{'offsetCurrent-21'} // die;
+                        % my $offsetCurrent21Formatted = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{'18 - 49 Years'}->{'offsetCurrent-21Formatted'} // die;
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;" rowspan="2"><%=$currentCensus%></td>
+                        % if ($offsetCurrent21 > 0) {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;" rowspan="2">+<%=$offsetCurrent21Formatted%></td>
+                        % } else {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;" rowspan="2"><%=$offsetCurrent21Formatted%></td>
+                        % }
+                    % } else {
+                        % die "label : $label";
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july21Population%></td>
+                        % if ($offset2120 > 0) {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offset2120Formatted%></td>
+                        % } else {
+                        <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offset2120Formatted%></td>
+                        % }
+                    % }
+                    % my $currentCensus = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$label}->{'censusFormatted'} // die;
+                    % my $offsetCurrent21 = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$label}->{'offsetCurrent-21'} // die;
+                    % my $offsetCurrent21Formatted = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$label}->{'offsetCurrent-21Formatted'} // die;
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$currentCensus%></td>
+                    % if ($offsetCurrent21 > 0) {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offsetCurrent21Formatted%></td>
+                    % } else {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offsetCurrent21Formatted%></td>
+                    % }
+                </tr>
+                % }
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;"><b>Unknown</b></td>
+                    <td style="padding-top: 5px;padding-bottom: 5px;background: #f2f0f5;" colspan="3"></td>
+                    <td style="padding-top: 5px;padding-bottom: 5px;background: #f2f0f5;" colspan="2" rowspan="2"></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;background: #f2f0f5;" colspan="2"></td>
+                </tr>
+                % my $july20Total = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'july20TotalFormatted'} // die;
+                % my $july21Total = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'july21TotalFormatted'} // die;
+                % my $offsetTotal = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'offsetTotal'} // die;
+                % my $offsetTotalFormatted = $statistics{'populationByAgeGroups'}->{'populationFile'}->{'offsetTotalFormatted'} // die;
+                <tr style="border-bottom: 1px solid black;padding-top: 5px;">
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;"><b>Total</b></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july20Total%></td>
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$july21Total%></td>
+                    % if ($offsetTotal > 0) {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offsetTotalFormatted%></td>
+                    % } else {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offsetTotalFormatted%></td>
+                    % }
+                    % my $currentCensus = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{'US'}->{'censusFormatted'} // die;
+                    % my $offsetCurrent21 = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{'US'}->{'offsetCurrent-21'} // die;
+                    % my $offsetCurrent21Formatted = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{'US'}->{'offsetCurrent-21Formatted'} // die;
+                    <td style="border-right: 1px solid black;border-left: 1px solid black;padding-top: 5px;padding-bottom: 5px;"><%=$currentCensus%></td>
+                    % if ($offsetCurrent21 > 0) {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: darkgreen;">+<%=$offsetCurrent21Formatted%></td>
+                    % } else {
+                    <td style="border-right: 1px solid black;padding-top: 5px;padding-bottom: 5px;color: #ff3800;"><%=$offsetCurrent21Formatted%></td>
+                    % }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+</div>

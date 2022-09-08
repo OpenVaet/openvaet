@@ -3,36 +3,40 @@
 
 <div class="content-container" style="padding-left: 15px;">
     % if ($self->is_admin()) {
-    <div class="text_separator"></div>
-    % if ($currentLanguage eq 'en') {
-    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
-    <h3>Data Administration</h3>
-    This section allows access to our collaborative data management tools.
-    <div class="text_separator"></div>
-    <ul>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">VAERS Domestic Data - Deaths - Age Completion Wizard</li>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; VAERS Domestic Data - Deaths - Ages Completed Data</li>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
+        <h3>Data Administration</h3>
+        This section allows access to our collaborative data management tools.
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_custom_export');return">&#10230; VAERS Domestic Data - Deaths - Generate a custom export</li>
+        <a href="/data_admin/wizards/patient_age?dataType=domestic&currentLanguage=<%=$currentLanguage%>">VAERS Domestic Data - Deaths & Serious AE - Age Completion Wizard</a>
         <div class="text_separator"></div>
-    </ul>
-    % } elsif ($currentLanguage eq 'fr') {
-    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
-    <h3>Administration Données</h3>
-    Cette section permet l'accès à nos outils de gestions collaboratives des données.
-    <div class="text_separator"></div>
-    <ul>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_age');return">Données domestiques VAERS - Décès - Assistant de complétion des âges</li>
+        <a href="/data_admin/wizards/patient_ages_completed?dataType=domestic&currentLanguage=<%=$currentLanguage%>">&#10230; VAERS Domestic Data - Deaths & Serious AE - Ages Completed Data</a>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_completed');return">&#10230; Données domestiques VAERS - Décès - Données incluant les âges complétés</li>
+        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; VAERS Domestic Data - Deaths & Serious AE - Generate a custom export</a>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/data_admin/wizards/patient_ages_custom_export');return">&#10230; Données domestiques VAERS - Décès - Générer un export personnalisé</li>
+        <a href="/data_admin/wizards/patient_age?dataType=foreign&currentLanguage=<%=$currentLanguage%>">VAERS Foreign Data - Deaths & Serious AE - Age Completion Wizard</a>
         <div class="text_separator"></div>
-    </ul>
-    % } else {
+        <a href="/data_admin/wizards/patient_ages_completed?dataType=foreign&currentLanguage=<%=$currentLanguage%>">&#10230; VAERS Foreign Data - Deaths & Serious AE - Ages Completed Data</a>
+        <div class="text_separator"></div>
+        % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
+        <h3>Administration Données</h3>
+        Cette section permet l'accès à nos outils de gestions collaboratives des données.
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_age?dataType=domestic&currentLanguage=<%=$currentLanguage%>">Données domestiques VAERS - Décès & EI Sérieux - Assistant de complétion des âges</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_ages_completed?dataType=domestic&currentLanguage=<%=$currentLanguage%>">&#10230; Données domestiques VAERS - Décès & EI Sérieux - Données incluant les âges complétés</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Données domestiques VAERS - Décès & EI Sérieux - Générer un export personnalisé</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_age?dataType=foreign&currentLanguage=<%=$currentLanguage%>">Données étrangères VAERS - Décès & EI Sérieux - Assistant de complétion des âges</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_ages_completed?dataType=foreign&currentLanguage=<%=$currentLanguage%>">&#10230; Données étrangères VAERS - Décès & EI Sérieux - Données incluant les âges complétés</a>
+        <div class="text_separator"></div>
+        % } else {
 
-    % }
+        % }
     % } else {
         You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
     % }

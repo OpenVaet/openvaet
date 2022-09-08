@@ -366,10 +366,11 @@ sub startup {
     $r->get('/covid_injections_facts_and_lies/kary_mullis_pcr_fauci')->to('covid_injections_facts_and_lies#kary_mullis_pcr_fauci');
     $r->get('/australian_data')->to('australian_data#australian_data');
     $r->get('/australian_data/australian_symptoms')->to('australian_data#australian_symptoms');
+    $r->get('/australian_data/australian_vaers_charts')->to('australian_data#australian_vaers_charts');
     $r->get('/usa_moderna_pfizer_deaths_by_groups')->to('usa_moderna_pfizer_deaths_by_groups#usa_moderna_pfizer_deaths_by_groups');
     $r->post('/australian_data/australian_symptoms/set_symptom_activity')->to('australian_data#set_symptom_activity');
     $r->get('/miscarriages_within_a_week')->to('miscarriages_within_a_week#miscarriages_within_a_week');
-    $r->get('/lethality_ratio_usa')->to('lethality_ratio_usa#lethality_ratio_usa');
+    $r->get('/census_data')->to('census_data#census_data');
     $r->get('/data_admin')->to('data_admin#data_admin');
     $r->get('/data_admin/wizards/patient_age')->to('wizard_patient_age#wizard_patient_age');
     $r->post('/wizard_patient_age/load_next_report')->to('wizard_patient_age#load_next_report');

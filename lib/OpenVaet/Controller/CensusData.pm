@@ -1,4 +1,4 @@
-package OpenVaet::Controller::LethalityRatioUsa;
+package OpenVaet::Controller::CensusData;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
@@ -7,7 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
 
-sub lethality_ratio_usa {
+sub census_data {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
@@ -20,7 +20,7 @@ sub lethality_ratio_usa {
     $languages{'en'} = 'English';
 
     my $statistics;
-    open my $in, '<:utf8', 'stats/ratios_reports_by_dates.json';
+    open my $in, '<:utf8', 'stats/census_data.json';
     while (<$in>) {
         $statistics .= $_;
     }

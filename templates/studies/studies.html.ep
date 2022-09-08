@@ -9,7 +9,7 @@
     This section will gather the various analytics on the data which will be realized.
     <div class="text_separator"></div>
     <ul>
-        % # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">VAERS Domestic Data - Analyzing the mortality ratio of Covid injections by ages groups</li>
+        % # <li class="url-link" onclick="openLocation('/census_data');return">U.S. Census Bureau Data - Open questions on the data consistency</li>
         % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">VAERS Domestic Data - Moderna & Pfizer, Deaths by groups - Published on September 4, 2022</li>
         <div class="text_separator"></div>
@@ -25,7 +25,7 @@
     Cette page rassemblera les différentes analyses sur la donnée qui seront réalisées.
     <div class="text_separator"></div>
     <ul>
-        % # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">Données Domestiques VAERS - Analyse du ratio de léthalité des injections Covid par groupes d'âges</li>
+        % # <li class="url-link" onclick="openLocation('/census_data');return">Données U.S. Census Bureau - Questions ouvertes sur la cohérence des données</li>
         % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes - Publiée le 4 Septembre 2022</li>
         <div class="text_separator"></div>
@@ -41,7 +41,10 @@
 </div>
 
 
+% # <li class="url-link" onclick="openLocation('/lethality_ratio_usa');return">Données Domestiques VAERS - Analyse du ratio de léthalité des injections Covid par groupes d'âges</li>
+% # <div class="text_separator"></div>
 % # <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
 % # <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
 % # <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
 % # <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
+

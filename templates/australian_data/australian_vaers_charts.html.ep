@@ -1,0 +1,122 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - VAERS Data - Moderna & Pfizer Deaths by ages';
+% } else {
+% title 'OPENVAET - Données VAERS - Moderna & Pfizer, Décès par ages';
+% }
+% my %statistics = %$statistics;
+% my $agesCompleted = $statistics{'agesCompleted'} // die;
+% my $totalDeathsPfizer  = $statistics{'global'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'totalDeaths'} // die;
+% my $totalDeathsModerna = $statistics{'global'}->{'COVID-19 VACCINE MODERNA'}->{'totalDeaths'}         // die;
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+		VAERS Israel Data - Moderna & Pfizer, Deaths by ages
+	</div>
+    % } else {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+		Données Israel VAERS - Moderna & Pfizer, Décès par ages
+	</div>
+    % }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Israel - Deaths by sexes & ages - COVID-19 MODERNA</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Israel - Décès par sexes & âges - COVID-19 MODERNA</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="moderna_by_sex_and_age">
+
+    </div>
+	<div class="text_separator"></div>
+	Total deaths : <%=$totalDeathsModerna%>
+	<div class="text_separator"></div>
+	% if ($currentLanguage eq 'en') {
+	<h2 style="margin-left: 5px;">Israel - Deaths by sexes & ages - COVID-19 PFIZER</h2>
+	% } else {
+	<h2 style="margin-left: 5px;">Israel - Décès par de sexes & âges - COVID-19 PFIZER</h2>
+	% }
+	<div class="text_separator"></div>
+    <div id="pfizer_by_sex_and_age">
+
+    </div>
+	Total deaths : <%=$totalDeathsPfizer%>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+
+<script type="text/javascript" src="js/charts_loader.js"></script>
+
+<script type="text/javascript">
+
+    let chartWidth     = document.getElementById("moderna_by_sex_and_age").clientWidth;
+    console.log('chartWidth     : ' + chartWidth);
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawModernaByAgeSex);
+    google.charts.setOnLoadCallback(drawPfizerByAgeSex);
+
+    function drawModernaByAgeSex() {
+
+		var data = google.visualization.arrayToDataTable([
+			['Age Group', 'Male', 'Female', 'Unknown', { role: 'annotation' } ],
+            % my $modernaUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Female'}->{'noAge'}  // 0;
+            % my $modernaUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Male'}->{'noAge'}    // 0;
+            % my $modernaUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Unknown'}->{'noAge'} // 0;
+			["NA", <%=$modernaUnknownAgeH%>, <%=$modernaUnknownAgeF%>, <%=$modernaUnknownAgeU%>, ''],
+            % for my $age (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $casesF = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Female'}->{'byAges'}->{$age}  // 0;
+            	% my $casesH = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Male'}->{'byAges'}->{$age}    // 0;
+            	% my $casesU = $statistics{'bySexes'}->{'COVID-19 VACCINE MODERNA'}->{'Unknown'}->{'byAges'}->{$age} // 0;
+				["<%==$age%>", <%=$casesH%>, <%=$casesF%>, <%=$casesU%>, ''],
+        	% }
+		]);
+
+        var view = new google.visualization.DataView(data);
+
+		var options = {
+			width: chartWidth,
+			height: 550,
+			legend: { position: 'top', maxLines: 3 },
+			bar: { groupWidth: '75%' },
+			isStacked: true,
+		};
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("moderna_by_sex_and_age"));
+        chartAdvEffects.draw(view, options);
+    }
+
+    function drawPfizerByAgeSex() {
+
+		var data = google.visualization.arrayToDataTable([
+			['Age Group', 'Male', 'Female', 'Unknown', { role: 'annotation' } ],
+            % my $pfizerUnknownAgeF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'noAge'}  // 0;
+            % my $pfizerUnknownAgeH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'noAge'}    // 0;
+            % my $pfizerUnknownAgeU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'noAge'} // 0;
+			["NA", <%=$pfizerUnknownAgeH%>, <%=$pfizerUnknownAgeF%>, <%=$pfizerUnknownAgeU%>, ''],
+            % for my $age (sort{$a <=> $b} keys %{$statistics{'ages'}}) {
+            	% my $casesF = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Female'}->{'byAges'}->{$age}  // 0;
+            	% my $casesH = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Male'}->{'byAges'}->{$age}    // 0;
+            	% my $casesU = $statistics{'bySexes'}->{'COVID-19 VACCINE PFIZER-BIONTECH'}->{'Unknown'}->{'byAges'}->{$age} // 0;
+				["<%==$age%>", <%=$casesH%>, <%=$casesF%>, <%=$casesU%>, ''],
+        	% }
+		]);
+
+        var view = new google.visualization.DataView(data);
+
+		var options = {
+			width: chartWidth,
+			height: 550,
+			legend: { position: 'top', maxLines: 3 },
+			bar: { groupWidth: '75%' },
+			isStacked: true,
+		};
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("pfizer_by_sex_and_age"));
+        chartAdvEffects.draw(view, options);
+    }
+</script>

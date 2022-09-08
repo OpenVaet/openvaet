@@ -1,7 +1,9 @@
 % layout 'default';
 % title 'OPENVAET - Wizard - Patient Age';
-% my %products = %$products;
-% my %admins = %$admins;
+% my %products   = %$products;
+% my %admins     = %$admins;
+% my %severities = %$severities;
+% my %symptoms   = %$symptoms;
 <head>
   <link href="/css/select2.min.css" rel="stylesheet" />
   <script src="/js/select2.min.js"></script>
@@ -62,6 +64,7 @@
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
 	        Restrict on administrator's treatment
 	    </div>
@@ -74,6 +77,46 @@
 	  				<option value="0"></option>
 					% for my $aF (sort keys %admins) {
 	      			<option value="<%=$aF%>"><%=$aF%></option>
+	      			%}
+		        </select>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	        Restrict on AE Seriousness
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width: 100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+		        <select class="js-example-basic-single" id="severityFilter" style="width: 100%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+					% for my $sev (sort{$a <=> $b} keys %severities) {
+						% my $label = $severities{$sev}->{'label'} // die;
+						% my $value = $severities{$sev}->{'value'} // die;
+	      			<option value="<%=$value%>"><%=$label%></option>
+	      			%}
+		        </select>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	        Restrict on Symptom
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width: 100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+		        <select class="js-example-basic-single" id="symptomFilter" style="width: 100%;height: 95%;">
+	  				<option></option>
+					% for my $symptomName (sort keys %symptoms) {
+						% my $symptomId = $symptoms{$symptomName}->{'symptomId'} // die;
+	      			<option value="<%=$symptomId%>"><%=$symptomName%></option>
 	      			%}
 		        </select>
 	    	</div>
@@ -139,6 +182,7 @@
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
 	        Restrict on administrator's treatment
 	    </div>
@@ -151,6 +195,46 @@
 	  				<option value="0"></option>
 					% for my $aF (sort keys %admins) {
 	      			<option value="<%=$aF%>"><%=$aF%></option>
+	      			%}
+		        </select>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	        Restrict on AE Severity
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width: 100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+		        <select class="js-example-basic-single" id="severityFilter" style="width: 100%;height: 95%;">
+	  				<option value=""></option>
+	  				<option value="0"></option>
+					% for my $sev (sort{$a <=> $b} keys %severities) {
+						% my $label = $severities{$sev}->{'label'} // die;
+						% my $value = $severities{$sev}->{'value'} // die;
+	      			<option value="<%=$value%>"><%=$label%></option>
+	      			%}
+		        </select>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
+	        Restrict on Symptom
+	    </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width: 100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+		        <select class="js-example-basic-single" id="symptomFilter" style="width: 100%;height: 95%;">
+	  				<option></option>
+					% for my $symptomName (sort keys %symptoms) {
+						% my $symptomId = $symptoms{$symptomName}->{'symptomId'} // die;
+	      			<option value="<%=$symptomId%>"><%=$symptomName%></option>
 	      			%}
 		        </select>
 	    	</div>
@@ -181,10 +265,21 @@
 			dropdownAutoWidth : true,
 			placeholder: 'Restrict on Administrator'
 		});
+		$('#severityFilter').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Restrict on Seriousness'
+		});
+		$('#symptomFilter').select2({
+            multiple: true,
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Restrict on Symptom'
+		});
 	}
 	function generateExport() {
-        mainLoader.style.display  = "inline-block";
-        blankContainer.style.display  = "inline-block";
 		let janssen = document.getElementById('janssen').checked;
 		console.log('janssen : ' + janssen);
 		let moderna = document.getElementById('moderna').checked;
@@ -195,16 +290,23 @@
 		console.log('pfizer : ' + pfizer);
 		let unknown = document.getElementById('unknown').checked;
 		console.log('unknown : ' + unknown);
-		if (!unknown && !pfizer && !novavax && !moderna && !janssen) {
-			alert('At least one manufacturer must be selected to export the data');
-			return;
-		}
 		let ageErrorsOnly = document.getElementById('ageErrorsOnly').checked;
 		console.log('ageErrorsOnly : ' + ageErrorsOnly);
 		let ageCompletedOnly = document.getElementById('ageCompletedOnly').checked;
 		console.log('ageCompletedOnly : ' + ageCompletedOnly);
 		let adminFilter = $('#adminFilter').val();
 		console.log('adminFilter : ' + adminFilter);
+		let severityFilter = $('#severityFilter').val();
+		console.log('severityFilter : ' + severityFilter);
+		let symptomFilter = $('#symptomFilter').val();
+		symptomFilter = JSON.stringify(symptomFilter);
+		console.log('symptomFilter : ' + symptomFilter);
+		if (!unknown && !pfizer && !novavax && !moderna && !janssen) {
+			alert('At least one manufacturer must be selected to export the data');
+			return;
+		}
+        mainLoader.style.display  = "inline-block";
+        blankContainer.style.display  = "inline-block";
         let request            = $.ajax({
             url: "/wizard_patient_age/generate_products_export",
             type: "POST",
@@ -215,7 +317,9 @@
                 novavax : novavax,
                 pfizer  : pfizer,
                 unknown : unknown,
+                symptomFilter : symptomFilter,
                 adminFilter : adminFilter,
+                severityFilter : severityFilter,
                 ageErrorsOnly : ageErrorsOnly,
                 ageCompletedOnly : ageCompletedOnly
             }
