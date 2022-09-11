@@ -115,8 +115,8 @@ sub parse_foreign_data {
 				$values{$label} = $value;
 				$vN++;
 			}
-			p%values;
-			die;
+			# p%values;
+			# die;
 			my $dose    = $values{'VAX_DOSE_SERIES'};
 			my $cdcReportInternalId = $values{'VAERS_ID'} // die;
 			my $cdcManufacturerName = $values{'VAX_MANU'} // die;
@@ -127,7 +127,8 @@ sub parse_foreign_data {
         	# We verify here that the vaccine is indeed related to a COVID one.
         	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
         	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
-        	next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
+        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
+        	next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
 			my %o = ();
 			$o{'substanceCategory'} = $substanceCategory;
 			$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -306,27 +307,27 @@ sub parse_foreign_data {
 		    # 	$ageGroups = 'Undefined Age';
 		    # }
 			my $immProjectNumber        = $values{'SPLTTYPE'};
-			if ($immProjectNumber !~ /^AU.*$/) {
+			# if ($immProjectNumber !~ /^AU.*$/) {
 
 				# Taking care of building stats.
 				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
 				# if (
 				# 	$patientDied
 				# ) {
-					my $hasActiveSymptom = 0;
-					for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-						$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-						# if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-							# $hasActiveSymptom = 1;
-						# }
-						if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-							$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-							$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-							$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-							$hasActiveSymptom = 1;
-						}
-					}
-					next unless $hasActiveSymptom == 1;
+					# my $hasActiveSymptom = 0;
+					# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
+					# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
+					# 	# if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
+					# 		# $hasActiveSymptom = 1;
+					# 	# }
+					# 	if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
+					# 		$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
+					# 		$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
+					# 		$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
+					# 		$hasActiveSymptom = 1;
+					# 	}
+					# }
+					# next unless $hasActiveSymptom == 1;
 				    if (defined $patientAge) {
 				    	$definedAge++;
 				    # 	$ageGroups = age_to_age_group($patientAge);
@@ -354,10 +355,18 @@ sub parse_foreign_data {
 					for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
 						push @{$o{'vaccines'}}, \%$vaccData;
 					}
+
+				    my $normalizedDescription = lc $aEDescription;
+				    my $hasHit = 0;
+				    if ($normalizedDescription =~ /nickel/) {
+				    	$o{'hits'}->{'nickel'} = 1;
+				    	$hasHit = 1;
+				    }
+				    next unless $hasHit == 1;
 					$totalReports++;
 					push @{$reportsByDates{$compDate}}, \%o;
 				# }
-			}
+			# }
 		}
 	}
 	close $dataIn;

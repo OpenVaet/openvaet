@@ -397,6 +397,7 @@ sub finalize_stats {
 	}
 
 	# Fetching the offsets Current 1 - 2021.
+	my $vaxBoostFileUpdate;
 	for my $ageGroup (sort keys %{$statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}}) {
 		my $census = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'census'}  // die;
 		my $offset;
@@ -409,6 +410,11 @@ sub finalize_stats {
 			$offset = $census - $statistics{'populationByAgeGroups'}->{'populationFile'}->{'ageGroups'}->{$ageGroupRef}->{'july21Population'};
 		} else {
 			# No offset to calculate on unknown.
+		}
+		if ($vaxBoostFileUpdate) {
+			die unless $vaxBoostFileUpdate eq $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'updateDate'};
+		} else {
+			$vaxBoostFileUpdate = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'updateDate'};
 		}
 		$statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'offsetCurrent-21'} = $offset;
 		if (defined $offset) {
@@ -428,6 +434,7 @@ sub finalize_stats {
 	$statistics{'populationByAgeGroups'}->{'populationFile'}->{'offsetTotalFormatted'} = $de->format_number($statistics{'populationByAgeGroups'}->{'populationFile'}->{'july21Total'} - $statistics{'populationByAgeGroups'}->{'populationFile'}->{'july20Total'});
 
 	# Fetching the offsets Current 2 - 2021 & Census flat values.
+	my $altVaxBoostFileUpdate;
 	for my $ageGroup (sort keys %{$statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}}) {
 		my $doses1Administered = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'doses1Administered'} // die;
 		my $doses1AdministeredPercentAgeGroup = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'doses1AdministeredPercentAgeGroup'} // die;
@@ -451,6 +458,11 @@ sub finalize_stats {
 		} else {
 			# No offset to calculate on unknown.
 		}
+		if ($altVaxBoostFileUpdate) {
+			die unless $altVaxBoostFileUpdate eq $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'updateDate'};
+		} else {
+			$altVaxBoostFileUpdate = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'updateDate'};
+		}
 		$statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'offsetCurrent-21'} = $offset;
 		if (defined $offset) {
 			$statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'offsetCurrent-21Formatted'} = $de->format_number($offset); 
@@ -463,6 +475,11 @@ sub finalize_stats {
 			$statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'ageGroups'}->{$ageGroup}->{'censusFormatted'} = 0; 
 		}
 	}
+	die unless $vaxBoostFileUpdate && $altVaxBoostFileUpdate;
+	my ($y1, $m1, $d1) = $vaxBoostFileUpdate =~ /(....)(..)(..)/;
+	my ($y2, $m2, $d2) = $altVaxBoostFileUpdate =~ /(....)(..)(..)/;
+	$statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'update'}    = "$y1-$m1-$d1";
+	$statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'update'} = "$y2-$m2-$d2";
 
 	# Printing dates & other stats.
 	open my $out, '>:utf8', 'stats/census_data.json';

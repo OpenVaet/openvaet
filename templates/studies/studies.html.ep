@@ -9,8 +9,8 @@
     This section will gather the various analytics on the data which will be realized.
     <div class="text_separator"></div>
     <ul>
-        % # <li class="url-link" onclick="openLocation('/census_data');return">U.S. Census Bureau Data - Open questions on the data consistency</li>
-        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/census_data');return">U.S. Census Bureau Data - Open questions on the data consistency</li>
+        <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">VAERS Domestic Data - Moderna & Pfizer, Deaths by groups - Published on September 4, 2022</li>
         <div class="text_separator"></div>
         % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">VAERS Domestic Data - Analyzing miscarriages occuring within a week after the Covid Injections</li>
@@ -25,8 +25,8 @@
     Cette page rassemblera les différentes analyses sur la donnée qui seront réalisées.
     <div class="text_separator"></div>
     <ul>
-        % # <li class="url-link" onclick="openLocation('/census_data');return">Données U.S. Census Bureau - Questions ouvertes sur la cohérence des données</li>
-        % # <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/census_data');return">Données U.S. Census Bureau - Questions ouvertes sur la cohérence des données</li>
+        <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/usa_moderna_pfizer_deaths_by_groups');return">Données Domestiques VAERS - Moderna & Pfizer, Décès par groupes - Publiée le 4 Septembre 2022</li>
         <div class="text_separator"></div>
         % # <li class="url-link" onclick="openLocation('/miscarriages_within_a_week');return">Données VAERS - Analyse des fausses-couches se produisant dans la semaine suivant les injections Covid</li>

@@ -214,6 +214,7 @@ sub parse_cdc_years {
 
 sub parse_yearly_data {
 	for my $year (sort{$a <=> $b} keys %years) {
+		next unless $year > 2018;
 
 		# Configuring expected files ; dying if they aren't found.
 		my $dataFile     = "$cdcFolder/$year" . 'VAERSDATA.csv';
@@ -289,6 +290,7 @@ sub parse_yearly_data {
 	        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
 	        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
 	        	next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
+	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
 				my %o = ();
 				$o{'substanceCategory'} = $substanceCategory;
 				$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -474,20 +476,20 @@ sub parse_yearly_data {
 				# if (
 				# 	$patientDied
 				# ) {
-				my $hasActiveSymptom = 0;
-				for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-					$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-					if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-						$hasActiveSymptom = 1;
-					}
-					# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-					# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-					# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-					# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-					# 	$hasActiveSymptom = 1;
-					# }
-				}
-				next unless $hasActiveSymptom == 1;
+				# my $hasActiveSymptom = 0;
+				# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
+				# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
+				# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
+				# 		$hasActiveSymptom = 1;
+				# 	}
+				# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
+				# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
+				# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
+				# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
+				# 	# 	$hasActiveSymptom = 1;
+				# 	# }
+				# }
+				# next unless $hasActiveSymptom == 1;
 			    if (defined $patientAge) {
 			    	$definedAge++;
 			    # 	$ageGroups = age_to_age_group($patientAge);
@@ -519,16 +521,8 @@ sub parse_yearly_data {
 
 			    my $normalizedDescription = lc $aEDescription;
 			    my $hasHit = 0;
-			    if ($normalizedDescription =~ /loss of consciousness/) {
-			    	$o{'hits'}->{'loss of consciousness'} = 1;
-			    	$hasHit = 1;
-			    }
-			    if ($normalizedDescription =~ /trismus/) {
-			    	$o{'hits'}->{'trismus'} = 1;
-			    	$hasHit = 1;
-			    }
-			    if ($normalizedDescription =~ /lockjaw/) {
-			    	$o{'hits'}->{'lockjaw'} = 1;
+			    if ($normalizedDescription =~ /nickel/) {
+			    	$o{'hits'}->{'nickel'} = 1;
 			    	$hasHit = 1;
 			    }
 			    next unless $hasHit == 1;
@@ -1069,6 +1063,7 @@ sub parse_foreign_data {
         	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
         	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
         	next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
+        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
 			my %o = ();
 			$o{'substanceCategory'} = $substanceCategory;
 			$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -1254,20 +1249,20 @@ sub parse_foreign_data {
 				# if (
 				# 	$patientDied
 				# ) {
-					my $hasActiveSymptom = 0;
-					for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-						$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-						if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-							$hasActiveSymptom = 1;
-						}
-						# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-						# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-						# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-						# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-						# 	$hasActiveSymptom = 1;
-						# }
-					}
-					next unless $hasActiveSymptom == 1;
+					# my $hasActiveSymptom = 0;
+					# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
+					# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
+					# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
+					# 		$hasActiveSymptom = 1;
+					# 	}
+					# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
+					# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
+					# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
+					# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
+					# 	# 	$hasActiveSymptom = 1;
+					# 	# }
+					# }
+					# next unless $hasActiveSymptom == 1;
 				    if (defined $patientAge) {
 				    	$definedAge++;
 				    # 	$ageGroups = age_to_age_group($patientAge);
@@ -1299,16 +1294,8 @@ sub parse_foreign_data {
 
 				    my $normalizedDescription = lc $aEDescription;
 				    my $hasHit = 0;
-				    if ($normalizedDescription =~ /loss of consciousness/) {
-				    	$o{'hits'}->{'loss of consciousness'} = 1;
-				    	$hasHit = 1;
-				    }
-				    if ($normalizedDescription =~ /trismus/) {
-				    	$o{'hits'}->{'trismus'} = 1;
-				    	$hasHit = 1;
-				    }
-				    if ($normalizedDescription =~ /lockjaw/) {
-				    	$o{'hits'}->{'lockjaw'} = 1;
+				    if ($normalizedDescription =~ /nickel/) {
+				    	$o{'hits'}->{'nickel'} = 1;
 				    	$hasHit = 1;
 				    }
 				    next unless $hasHit == 1;

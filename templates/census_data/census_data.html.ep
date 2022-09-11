@@ -101,13 +101,12 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <h2 style="margin-left: 5px;">Population by ages groups according to the available census data (2020 & 2021) & CDC files</h2>
-	% } elsif ($currentLanguage eq 'fr') {
+    % } else {
 	<h2 style="margin-left: 5px;">Traitement</h2>
 	Les données nécessaires aux graphiques présentés sur cette page sont générées par le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/studies/census_data/analyze.pl" target="_blank">tasks/studies/census_data/analyze.pl</a>.
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <h2 style="margin-left: 5px;">Population par groupes d'âge d'après les Census disponibles (2020 & 2021) & les fichiers CDC</h2>
-	% } else {
 
 	% }
 	<div class="text_separator"></div>
@@ -120,11 +119,13 @@
                     <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Source:</u> <a href="https://data.cdc.gov/Vaccinations/COVID-19-Primary-Series-Completion-Booster-Dose-El/3pbe-qh9z" target="_blank">COVID-19 Primary Series Completion, Booster Dose Eligibility, and Booster Dose Receipt by Age, United States</a></i></th>
                     <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Source:</u> <a href="https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-Demographics-in-the-United-St/km4m-vcsb" target="_blank">COVID-19 Vaccination Demographics in the United States, National</i></a></th>
                 </tr>
+                % my $vaxFileUpdate = $statistics{'populationByAgeGroups'}->{'vaxBoostFile'}->{'update'} // die;
+                % my $altVaxFileUpdate = $statistics{'populationByAgeGroups'}->{'altVaxBoostFile'}->{'update'} // die;
                 <tr style="border-bottom: 1px solid #fff;padding-top: 5px;color:white;">
                     <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;border-right: 1px solid black;"></th>
                     <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 40%;color: black;" colspan="3"><u><i>Updated:</u> Static Data</a></i></th>
-                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> </i></th>
-                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> </i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> <%=$vaxFileUpdate%></i></th>
+                    <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;font-size: 11px;border-top: 1px solid black;border-right: 1px solid black;background: #E7E6E9;max-width: 25%;color: black;" colspan="2"><u><i>Updated:</u> <%=$altVaxFileUpdate%></i></th>
                 </tr>
                 <tr style="border-bottom: 1px solid #fff;padding-top: 5px;background: #002D63;color:white;">
                     <th style="border-right: 1px solid #fff;padding-top: 5px;padding-bottom: 5px;">Age Group</th>
@@ -231,6 +232,38 @@
         </table>
     </div>
     <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+        Therefore several questions for our readers (feel free to contact us <a href="https://gettr.com/user/openvaet" target="_blank">on Gettr</a> or <a href="https://gab.com/OpenVAET" target="_blank">Gab</a> if you have any insight on the topic).
+        <ul>
+            <li>Are these numbers outputed by an automated process, or are they manually completed on every update?</li>
+            <div class="text_separator"></div>
+            <li>Is there any conceavable reason for the Census data extraction <i>not to be</i> automated?</li>
+            <div class="text_separator"></div>
+            <li>Population aging absolutely doesn't explain the major offsets of the youngest populations, between 2020 and 2021. Has the Census Bureau provided any kind of valid explanation we would have missed on this major offset?</li>
+            <div class="text_separator"></div>
+            <li>On this same 2020 to 2021 data, how can we have a growing population while all active groups have had major decreases (aside for the 12-24)?</li>
+            <div class="text_separator"></div>
+            <li>How can the population disappeared in 2021 reappear in 2022 - aside for 850 000 people we loose in the "12 - 17 Years" age group?</li>
+            <div class="text_separator"></div>
+            <li>How can we gain yet another 4.5 millions additional in the 65+ group?</li>
+        </ul>
+    % } else {
+        De ces chiffres, plusieurs questions à nos lecteurs (veuillez nous contacter sur <a href="https://gettr.com/user/openvaet" target="_blank">Gettr</a> ou <a href="https://gab.com/OpenVAET" target="_blank">Gab</a> si vous avez des éclairages sur l'une de ces questions).
+        <ul>
+            <li>Est-ce que ces chiffres sont extraits manuellement ou produits par un processus automatisé?</li>
+            <div class="text_separator"></div>
+            <li>Y'a-t'il une raison valable pour qu'ils soient produits autrement que de façon automatisée?</li>
+            <div class="text_separator"></div>
+            <li>Le vieillissement de la population n'explique absolument pas les différences majeures dans les populations jeunes entre 2020 et 2021. Le Census Bureau a-t'il fourni la moindre explication valable sur ces différences majeures?</li>
+            <div class="text_separator"></div>
+            <li>Sur cette même donnée 2020 à 2021, comment peut-on avoir une population qui augmente alors que tous les groupes actifs ont connu des baisses d'effectifs majeurs (sauf les 12-24)?</li>
+            <div class="text_separator"></div>
+            <li>Comment la population disparue en 2021 peut-elle réapparaitre en 2022 - à part pour 850 000 personnes que nous perdons dans le groupe "12 - 17 Years"?</li>
+            <div class="text_separator"></div>
+            <li>Comment peut-on à nouveau gagner 4.6 millions de +65 ans, alors que l'on ne perd que 26 000 personnes dans le groupe 50-64?</li>
+        </ul>
+    % }
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>

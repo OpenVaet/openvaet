@@ -369,25 +369,18 @@ sub parse_foreign_data {
 		    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $vaersReceptionDate;
 		    my $compDate = "$receptionYear$receptionMonth$receptionDay";
 	    	$earliestCovidDate = $compDate if $compDate < $earliestCovidDate;
-	    	my ($code2, $code3);
-	    	if ($immProjectNumber && length $immProjectNumber >= 2) {
-		    	($code2) = $immProjectNumber =~ /^(..).*$/;
-		    	$countryCodes{'2'}->{$code2}++;
-		    	if (length $immProjectNumber >= 3) {
-			    	($code3) = $immProjectNumber =~ /^(...).*$/;
-			    	$countryCodes{'3'}->{$code3}++;
-			    	if ($immProjectNumber =~ /376/ || $immProjectNumber =~ /ISL/) {
-			    		$countryCodes{'matching'}++;
-			    	}
-		    	}
-	    	}
-			if ($immProjectNumber && $immProjectNumber =~ /^IL.*$/) {
+			if ($immProjectNumber && $immProjectNumber =~ /^PS.*$/) {
 				if (
 					$patientDied     #    ||
 					# $permanentDisability ||
 					# $lifeThreatning      ||
 					# $hospitalized
 				) {
+			    	my ($code2);
+			    	if ($immProjectNumber && length $immProjectNumber >= 2) {
+				    	($code2) = $immProjectNumber =~ /^(..).*$/;
+				    	$countryCodes{'2'}->{$code2}++;
+			    	}
 
 					# Inserting the report symptoms if unknown.
 					my @symptomsListed  = ();
