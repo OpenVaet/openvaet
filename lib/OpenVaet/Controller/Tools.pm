@@ -62,6 +62,12 @@ sub archive_org_twitter_followers {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
+    ($twitterUserName, $twitterUrl, $twitterUrlFormatted) = undef;
+    $twitterUserName = $self->param('search');
+    if ($twitterUserName) {
+        $twitterUserName = lc $twitterUserName;
+    }
+    say "twitterUserName : [$twitterUserName]";
 
     # Loggin session if unknown.
     session::session_from_self($self);
@@ -72,6 +78,7 @@ sub archive_org_twitter_followers {
 
     $self->render(
         currentLanguage => $currentLanguage,
+        twitterUserName => $twitterUserName,
         languages => \%languages
     );
 }

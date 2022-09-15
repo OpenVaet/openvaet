@@ -73,7 +73,11 @@
         </div>
         <div class="text_separator"></div>
         <div class="search_area">
+        % if ($twitterUserName) {
+            <input class="search_input" type="text" name="searchInput" id="searchInput" value="<%=$twitterUserName%>"\>
+        % } else {
             <input class="search_input" type="text" name="searchInput" id="searchInput">
+        % }
         </div>
         <div id="searchButton" class="button_invi" onclick="scanArchive();return;"></div>
     </div>
@@ -91,7 +95,11 @@
         </div>
         <div class="text_separator"></div>
         <div class="search_area">
+        % if ($twitterUserName) {
+            <input class="search_input" type="text" name="searchInput" id="searchInput" value="<%=$twitterUserName%>"\>
+        % } else {
             <input class="search_input" type="text" name="searchInput" id="searchInput">
+        % }
         </div>
         <div id="searchButton" class="button_invi" onclick="scanArchive();return;"></div>
     </div>
@@ -149,4 +157,9 @@
             alert("Something went wrong : " + textStatus)
         });
     }
+    % if ($twitterUserName) {
+    $( document ).ready(function() {
+        scanArchive();
+    });
+    % }
 </script>
