@@ -4,6 +4,7 @@
 	<span style="color:darkred;"><%=$errorMessage%></span>	
 % } else {
 	% if ($totalArchives) {
+		% my %followers = %$followers;
     <div class="search_area_label">
         [<%=$totalArchives%>] résultats trouvés sur archive.org.
     </div>
@@ -12,6 +13,34 @@
     <div class="search_area_label">
     	<div class="noselect" style="width:100%;font-size: 13px;text-align: right;"><a href="<%=$publicFile%>" target="_blank">Download as .CSV (";" separated)</a></div>
     </div>
+    <div id="curve_chart" style="width: 100%; height: 500px"></div>
+
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+	  google.charts.load('current', {'packages':['corechart']});
+	  google.charts.setOnLoadCallback(drawChart);
+
+	  function drawChart() {
+	    var data = google.visualization.arrayToDataTable([
+	      ['Date', 'Followers'],
+			% for my $dateHour (sort{$a <=> $b} keys %followers) {
+				% my $datetime = $followers{$dateHour}->{'datetime'} // die;
+				% my $followersCount = $followers{$dateHour}->{'followersCount'} // die;
+	      ['<%=$datetime%>',  <%=$followersCount%>],
+			% }
+	    ]);
+
+	    var options = {
+	      title: 'Followers Through Time for @<%=$twitterUserName%>',
+	      curveType: 'function',
+	      legend: { position: 'bottom' }
+	    };
+
+	    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+	    chart.draw(data, options);
+	  }
+	</script>
 	% } else {
 
 	<span style="color:darkred;">

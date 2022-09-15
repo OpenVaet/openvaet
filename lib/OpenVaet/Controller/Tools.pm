@@ -134,7 +134,10 @@ sub analyze_archive_org_twitter_followers {
         $publicFile =~ s/public//;
         for my $dateHour (sort{$a <=> $b} keys %followers) {
             my ($y, $m, $d, $h, $mn, $s) = $dateHour =~ /(....)(..)(..)(..)(..)(..)/;
-            next unless $y && $m && $d && $h && $mn && $s;
+            unless ($y && $m && $d && $h && $mn && $s) {
+                delete $followers{$dateHour};
+                next;
+            }
             $totalArchives++;
             my $datetime = "$y-$m-$d $h:$mn:$s";
             my $followersCount = $followers{$dateHour}->{'followersCount'} // die;
