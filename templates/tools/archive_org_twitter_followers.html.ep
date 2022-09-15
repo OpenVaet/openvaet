@@ -1,0 +1,152 @@
+% layout 'default';
+% title 'OPENVAET - Conflicts Of Interests';
+
+<style type="text/css">
+    .search_container {
+        margin-top: 20px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .search_area_label {
+        padding: 5px 10px;
+        width: 300px;
+        margin: auto;
+        display: block;
+        font-weight: bold;
+        padding-left: 25px;
+    }
+
+    .search_area {
+        width: 300px;
+        height: 35px;
+        margin: auto;
+        display: block;
+        background: orange;
+    }
+
+    .search_input {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        padding: 5px 10px;
+    }
+
+    .button_invi {
+        display: none;
+    }
+
+    .search_results {
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .search_result_container {
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+    }
+
+    .search_result {
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/tools');return;">&#10229; Return to tools</div>
+    <div class="text_separator"></div>
+    <div style="width:100%;max-width: 400px;margin: auto;text-align:right;font-size: 10px;">
+        Source: <a href="https://archive.org" target="_blank">archive.org</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="search_container">
+        <div class="search_area_label">
+            Enter the twitter alias you wish to analyze ...
+        </div>
+        <div class="text_separator"></div>
+        <div class="search_area">
+            <input class="search_input" type="text" name="searchInput" id="searchInput">
+        </div>
+        <div id="searchButton" class="button_invi" onclick="scanArchive();return;"></div>
+    </div>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/tools');return;">&#10229; Retour aux outils</div>
+    <div class="text_separator"></div>
+    <div style="width:100%;max-width: 400px;margin: auto;text-align:right;font-size: 10px;">
+        Source: <a href="https://archive.org" target="_blank">archive.org</a>
+    </div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="search_container">
+        <div class="search_area_label">
+            Entrez l'alias Twitter que vous souhaitez analyser ...
+        </div>
+        <div class="text_separator"></div>
+        <div class="search_area">
+            <input class="search_input" type="text" name="searchInput" id="searchInput">
+        </div>
+        <div id="searchButton" class="button_invi" onclick="scanArchive();return;"></div>
+    </div>
+    % } else {
+
+    % }
+    <div class="search_results" id="searchResults">
+        
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Get the input field
+    var input = document.getElementById("searchInput");
+
+    // Execute a function when the user presses a key on the keyboard
+    input.addEventListener("keypress", function(event) {
+      // If the user presses the "Enter" key on the keyboard
+      if (event.key === "Enter") {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("searchButton").click();
+      }
+    });
+
+    function scanArchive() {
+        let searchInput = $('#searchInput').val();
+
+        console.log('searching ' + searchInput);
+        let currentLanguage  = '<%=$currentLanguage%>';
+        $('#searchResults').html('');
+        let blankContainer = document.getElementById("blankContainer");
+        let mainLoader = document.getElementById("mainLoader");
+        blankContainer.style.display  = "inline-block";
+        mainLoader.style.display  = "inline-block";
+        let request = $.ajax({
+            url: "/tools/analyze_archive_org_twitter_followers",
+            type: "POST",
+            data: {
+                currentLanguage : currentLanguage,
+                searchInput     : searchInput
+            }
+        });
+
+        request.done(function(data) {
+            blankContainer.style.display  = "none";
+            mainLoader.style.display  = "none";
+            console.log(data);
+            $('#searchResults').html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>

@@ -1,0 +1,29 @@
+
+<div class="text_separator"></div>
+% if ($errorMessage) {
+	<span style="color:darkred;"><%=$errorMessage%></span>	
+% } else {
+	% if ($totalArchives) {
+    <div class="search_area_label">
+        [<%=$totalArchives%>] résultats trouvés sur archive.org.
+    </div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="search_area_label">
+    	<div class="noselect" style="width:100%;font-size: 13px;text-align: right;"><a href="<%=$publicFile%>" target="_blank">Download as .CSV (";" separated)</a></div>
+    </div>
+	% } else {
+
+	<span style="color:darkred;">
+	% if ($currentLanguage eq 'en') {
+		No result found on archive.org.
+		<div class="text_separator"></div>
+		Please verify your research syntax.
+	% } else {
+		Pas de résultat trouvé sur archive.org.
+		<div class="text_separator"></div>
+		Vérifiez l'orthographe de votre recherche.
+	% }
+	</span>
+	% }
+% }

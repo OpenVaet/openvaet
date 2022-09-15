@@ -387,11 +387,13 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                 <li class="divider"></li>
+                <li onclick="openLocation('/tools');return">Tools</li>
+                <li class="divider"></li>
                 % if ($self->is_admin()) {
                 <li onclick="openLocation('/data_admin');return;">Data Administration</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.29</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.30</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
                 <li class="divider"></li>
@@ -405,11 +407,13 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                 <li class="divider"></li>
+                <li onclick="openLocation('/tools');return">Outils</li>
+                <li class="divider"></li>
                 % if ($self->is_admin()) {
                 <li onclick="openLocation('/data_admin');return;">Administration Données</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.29</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.30</div></li>
             % }
         </ul>
     </label>
@@ -596,11 +600,13 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Twitter - Thought Police</li>
                 <li class="divider"></li>
+                <li onclick="openLocation('/tools');return">Tools</li>
+                <li class="divider"></li>
                 % if ($self->is_admin()) {
                 <li onclick="openLocation('/data_admin');return;">Data Administration</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.29</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.30</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
                 % # <li class="divider"></li>
@@ -614,11 +620,13 @@
                 <li class="divider"></li>
                 <li onclick="openLocation('/twitter_thought_police');return;">Police de la pensée - Twitter</li>
                 <li class="divider"></li>
+                <li onclick="openLocation('/tools');return">Outils</li>
+                <li class="divider"></li>
                 % if ($self->is_admin()) {
                 <li onclick="openLocation('/data_admin');return;">Administration Données</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.29</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.30</div></li>
             % }
         </ul>
     </label>

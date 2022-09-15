@@ -1,0 +1,19 @@
+% layout 'default';
+% title 'OPENVAET - Tools';
+
+<div class="content-container">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
+    <h3>Archive.org</h3>
+    <div class="text_separator"></div>
+    <span class="url-link" onclick="openLocation('/tools/archive_org_twitter_followers');return">Archive.org - Twitter followers evolution through time</span>
+    % } elsif ($currentLanguage eq 'fr') {
+    <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
+    <h3>Archive.org</h3>
+    <div class="text_separator"></div>
+    <span class="url-link" onclick="openLocation('/tools/archive_org_twitter_followers');return">Archive.org - Evolution des abonnés Twitter avec le temps</span>
+    % } else {
+
+    % }
+</div>

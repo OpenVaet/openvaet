@@ -502,7 +502,7 @@ sub get_user_follows {
         $nextToken = %$contentJson{'meta'}->{'next_token'} // die;
     }
     if ($nextToken) {
-        get_user_follows($dataType, $twitterId, $twitterId, $twitterUserName, $nextToken);
+        get_user_follows($dataType, $twitterId, $twitterUserName, $nextToken);
     }
 }
 

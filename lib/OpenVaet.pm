@@ -380,6 +380,9 @@ sub startup {
     $r->get('/data_admin/wizards/patient_ages_custom_export')->to('wizard_patient_age#patient_ages_custom_export');
     $r->post('/wizard_patient_age/generate_products_export')->to('wizard_patient_age#generate_products_export');
     $r->get('/data_admin/wizards/admin_custom_export')->to('wizard_patient_age#admin_custom_export');
+    $r->get('/tools')->to('tools#tools');
+    $r->get('/tools/archive_org_twitter_followers')->to('tools#archive_org_twitter_followers');
+    $r->post('/tools/analyze_archive_org_twitter_followers')->to('tools#analyze_archive_org_twitter_followers');
 }
 
 sub connect_dbi

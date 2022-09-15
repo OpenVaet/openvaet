@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.30</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Published a new tool "Archive.org - Twitter followers evolution through time" (beta).</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Publication d'un nouvel outil "Archive.org - Evolution des abonnés Twitter avec le temps" (beta).</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.29</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

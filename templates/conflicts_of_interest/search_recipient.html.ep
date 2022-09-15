@@ -57,6 +57,8 @@
 		if (results.length < 1) {
 			$('#selectionError').html('<span style="color:darkred;">Au moins une entrée doit être sélectionnée pour poursuivre.</span>');
 		} else {
+	        blankContainer.style.display  = "inline-block";
+	        mainLoader.style.display  = "inline-block";
 			let searchInput = "<%=$searchInput%>";
 			$('#selectionError').html('');
 			console.log(results);
