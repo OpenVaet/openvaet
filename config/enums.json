@@ -99,5 +99,9 @@
         "1" : "Female",
         "2" : "Male",
         "3" : "Unknown"
+    },
+    "vaersSource" : {
+        "1" : "USA",
+        "2" : "Foreign"
     }
 }

@@ -1,0 +1,121 @@
+% layout 'default';
+% title 'OPENVAET - Data Administration';
+% my %symptoms = %$symptoms;
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/data_admin/symptoms_sets');return;">&#10229; Return to data admin</div>
+        <h2><%=$symptomsSetName%> - Symptoms</h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="symptoms-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 90%;"><b>Symptom Name</b></th>
+                    <th style="width: 10%;"><b>Active</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $symptomId (sort keys %symptoms) {
+                    % my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
+                    % my $active       = $symptoms{$symptomId}->{'active'}       // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$symptomName%></b></td>
+                        <td style="width: 10%;cursor: pointer;" id="<%=$symptomId%>-activity">
+                            % if ($active) {
+                            <img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity('<%=$symptomId%>', 0);return;">
+                            % } else {
+                            <img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity('<%=$symptomId%>', 1);return;">
+                            % }
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/data_admin/symptoms_sets');return;">&#10229; Retour à l'administration des données</div>
+        <h2>Symptomes - <%=$symptomsSetName%></h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="symptoms-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 90%;"><b>Nom du Symptome</b></th>
+                    <th style="width: 10%;"><b>Actif</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $symptomId (sort keys %symptoms) {
+                    % my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
+                    % my $active       = $symptoms{$symptomId}->{'active'}       // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$symptomName%></b></td>
+                        <td style="width: 10%;" id="<%=$symptomId%>-activity">
+                            % if ($canEdit == 1) {
+                            % if ($active) {
+                            <img src="/images/valid.png" style="width:20px;display: block;margin: auto;cursor: pointer;" onclick="setSymptomActivity('<%=$symptomId%>', 0);return;">
+                            % } else {
+                            <img src="/images/invalid.png" style="width:20px;display: block;margin: auto;cursor: pointer;" onclick="setSymptomActivity('<%=$symptomId%>', 1);return;">
+                            % }
+                            % } else {
+                            % if ($active) {
+                            <img src="/images/valid.png" style="width:20px;display: block;margin: auto;">
+                            % } else {
+                            <img src="/images/invalid.png" style="width:20px;display: block;margin: auto;">
+                            % }
+                            % }
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        % } else {
+
+        % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+% if ($self->is_admin()) {
+<script type="text/javascript">
+    function setSymptomActivity(symptomId, activity) {
+        let symptomsSetId = <%=$symptomsSetId%>;
+
+        let request = $.ajax({
+            url: "/data_admin/set_symptom_activity",
+            type: "POST",
+            data: {
+                symptomId : symptomId,
+                symptomsSetId : symptomsSetId,
+                activity  : activity
+            }
+        });
+
+        request.done(function(data) {
+            if (activity == 0) {
+                $('#' + symptomId + '-activity').html('<img src="/images/invalid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity(' + symptomId + ', 1);return;">');
+            } else {
+                $('#' + symptomId + '-activity').html('<img src="/images/valid.png" style="width:20px;display: block;margin: auto;" onclick="setSymptomActivity(' + symptomId + ', 0);return;">');
+            }
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+
+    $(document).ready( function () {
+        $('#symptoms-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "order": [[ 0, "asc" ]],
+            "columnDefs": [
+                { "searchable": false, "targets": 1 }
+            ]
+        });
+    } );
+</script>
+% }

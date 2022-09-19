@@ -12,22 +12,12 @@ sub wizard_patient_age {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
-    my $dataType = $self->param('dataType') // die;
-    my $table;
-    if ($dataType eq 'domestic') {
-        $table = 'vaers_deaths_report';
-    } elsif ($dataType eq 'foreign') {
-        $table = 'vaers_foreign_report';
-    } else {
-        die "dataType : $dataType";
-    }
 
     # Loggin session if unknown.
     session::session_from_self($self);
 
-    # Fetching total operations to perform.
-    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM $table WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
-    my $operationsToPerform = %$tb{'operationsToPerform'} // die;
+    # Fetching current batch.
+    my $operationsToPerform = operations_to_perform($self);
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -35,10 +25,74 @@ sub wizard_patient_age {
 
     $self->render(
         currentLanguage => $currentLanguage,
-        dataType => $dataType,
         operationsToPerform => $operationsToPerform,
         languages => \%languages
     );
+}
+
+sub operations_to_perform {
+    my $self = shift;
+    my $operationsToPerform = 0;
+    my $wTb1 = $self->dbh->selectrow_hashref("SELECT count(id) as currentWizardTasks FROM wizard_report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmation IS NULL", undef);
+    my $wTb2 = $self->dbh->selectrow_hashref("SELECT count(id) as totalWizardTasks   FROM wizard_report WHERE patientAgeConfirmationRequired = 1", undef);
+    my $currentWizardTasks  = %$wTb1{'currentWizardTasks'} // 0;
+    my $totalWizardTasks    = %$wTb2{'totalWizardTasks'}   // 0;
+    say "currentWizardTasks : $currentWizardTasks";
+    say "totalWizardTasks   : $totalWizardTasks";
+    if (!$totalWizardTasks) {
+        $operationsToPerform = generate_batch($self);
+        say "operationsToPerform   : $operationsToPerform";
+    } else {
+        if ($totalWizardTasks && $currentWizardTasks != 0) {
+            # Nothing to do but to load the current sequence.
+            $operationsToPerform = $currentWizardTasks;
+        } else {
+
+            # Truncating wizard_report table.
+            my $sth = $self->dbh->prepare("TRUNCATE wizard_report");
+            $sth->execute() or die $sth->err();
+
+            $operationsToPerform = generate_batch($self);
+        }
+    }
+}
+
+sub generate_batch {
+    my $self = shift;
+    # Fetching total operations to perform.
+    my $treatmentLimit = 100;
+    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmation IS NULL", undef);
+    my $operationsToPerform = %$tb{'operationsToPerform'} // die;
+    if ($operationsToPerform) {
+        # Generating current treatment batch.
+        my $currentBatch = 0;
+        my $sql                 = "
+            SELECT
+                id as reportId,
+                patientAgeConfirmation,
+                patientAgeConfirmationRequired,
+                patientAgeConfirmationTimestamp
+            FROM report
+            WHERE 
+                patientAgeConfirmationRequired = 1 AND
+                patientAgeConfirmation IS NULL
+            ORDER BY RAND()
+            LIMIT $treatmentLimit";
+        say "$sql";
+        my $rTb                 = $self->dbh->selectall_hashref($sql, 'reportId'); # ORDER BY RAND()
+        for my $reportId (sort{$a <=> $b} keys %$rTb) {
+            my $patientAgeConfirmationRequired       = %$rTb{$reportId}->{'patientAgeConfirmationRequired'} // die;
+            $patientAgeConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
+            my $patientAgeConfirmation               = %$rTb{$reportId}->{'patientAgeConfirmation'};
+            # $patientAgeConfirmation                  = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmation, -32)));
+            my $patientAgeConfirmationTimestamp      = %$rTb{$reportId}->{'patientAgeConfirmationTimestamp'};
+            my $sth = $self->dbh->prepare("INSERT INTO wizard_report (reportId, patientAgeConfirmationRequired, patientAgeConfirmation, patientAgeConfirmationTimestamp) VALUES (?, $patientAgeConfirmationRequired, NULL, ?)");
+            $sth->execute($reportId, $patientAgeConfirmationTimestamp) or die $sth->err();
+            $currentBatch++;
+        }
+        $operationsToPerform = $currentBatch;
+    }
+    return $operationsToPerform;
 }
 
 sub load_next_report {
@@ -50,13 +104,6 @@ sub load_next_report {
 
     # Setting language & lang options.
     my $currentLanguage = $self->param('currentLanguage') // die;
-    my $dataType            = $self->param('dataType')            // die;
-    my $table;
-    if ($dataType eq 'domestic') {
-        $table = 'vaers_deaths_report';
-    } elsif ($dataType eq 'foreign') {
-        $table = 'vaers_foreign_report';
-    } else { die "table : $table" }
     my %languages       = ();
     $languages{'fr'}    = 'French';
     $languages{'en'}    = 'English';
@@ -65,25 +112,21 @@ sub load_next_report {
 
     # Fetching vaers symptoms.
     my %symptoms = ();
-    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName, discarded FROM vaers_deaths_symptom", 'symptomId');
+    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName FROM symptom", 'symptomId');
     for my $symptomId (sort{$a <=> $b} keys %$sTb) {
         my $symptomName = %$sTb{$symptomId}->{'symptomName'} // die;
-        my $discarded   = %$sTb{$symptomId}->{'discarded'}   // die;
-        $discarded      = unpack("N", pack("B32", substr("0" x 32 . $discarded, -32)));
         $symptoms{$symptomId}->{'symptomName'} = $symptomName;
-        $symptoms{$symptomId}->{'discarded'}   = $discarded;
     }
 
     # Fetching confirmation target.
     # Fetching total operations to perform.
-    my $tbT = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM $table WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmationTimestamp IS NULL", undef);
-    my $operationsToPerform = %$tbT{'operationsToPerform'} // die;
+    my $operationsToPerform = operations_to_perform($self);
 
     my ($hospitalized, $permanentDisability, $lifeThreatning, $patientDied, $reportId,
         $vaersId, $symptoms, $vaccinesListed, $vaersReceptionDate, $vaccinationDate,
         $vaccinationDateFixed, $vaccinationYear, $vaccinationMonth, $vaccinationDay, $onsetDate,
         $onsetDateFixed, $onsetYear, $onsetMonth, $onsetDay, $products,
-        $deceasedYear, $deceasedMonth, $deceasedDay, $deceasedDate, $vaersSexFixed,
+        $deceasedYear, $deceasedMonth, $deceasedDay, $deceasedDate, $sexFixed,
         $vaersSexName, $aEDescription, $patientAgeFixed, $creationDatetime, $hoursBetweenVaccineAndAE,
         $patientAgeConfirmation, $patientAgeConfirmationRequired);
     my $sqlParam            = 'patientAgeConfirmationRequired';
@@ -91,40 +134,42 @@ sub load_next_report {
     if ($operationsToPerform) {
         my $sql                 = "
             SELECT
-                id as reportId,
-                vaersId,
-                vaccinesListed,
-                vaersSexFixed,
-                patientAgeFixed,
-                creationTimestamp,
-                aEDescription,
-                vaersReceptionDate,
-                onsetDate,
-                deceasedDate,
-                vaccinationDateFixed,
-                onsetDateFixed,
-                vaccinationDate,
-                vaccinesListed,
-                patientAgeConfirmation,
-                patientAgeConfirmationRequired,
-                hoursBetweenVaccineAndAE,
-                hospitalized,
-                permanentDisability,
-                lifeThreatning,
-                patientDied,
-                symptomsListed
-            FROM $table
-            WHERE
-                $sqlValue IS NULL AND
-                $sqlParam = 1 ORDER BY RAND()
+                wizard_report.reportId,
+                report.vaersId,
+                report.vaccinesListed,
+                report.sexFixed,
+                report.patientAgeFixed,
+                report.creationTimestamp,
+                report.aEDescription,
+                report.vaersReceptionDate,
+                report.onsetDate,
+                report.deceasedDate,
+                report.vaccinationDateFixed,
+                report.onsetDateFixed,
+                report.vaccinationDate,
+                report.vaccinesListed,
+                report.patientAgeConfirmation,
+                report.patientAgeConfirmationRequired,
+                report.hoursBetweenVaccineAndAE,
+                report.hospitalized,
+                report.permanentDisability,
+                report.lifeThreatning,
+                report.patientDied,
+                report.symptomsListed
+            FROM wizard_report
+                LEFT JOIN report ON report.id = wizard_report.reportId
+            WHERE 
+                wizard_report.$sqlParam = 1 AND
+                wizard_report.$sqlValue IS NULL
+            ORDER BY RAND()
             LIMIT 1";
         say "$sql";
         my $rTb                 = $self->dbh->selectrow_hashref($sql, undef); # ORDER BY RAND()
         $reportId                             = %$rTb{'reportId'}                        // die;
         $vaersId                              = %$rTb{'vaersId'}                         // die;
         $vaccinesListed                       = %$rTb{'vaccinesListed'}                  // die;
-        $vaersSexFixed                        = %$rTb{'vaersSexFixed'}                   // die;
-        $vaersSexName                         = $enums{'vaersSex'}->{$vaersSexFixed}     // die;
+        $sexFixed                             = %$rTb{'sexFixed'}                        // die;
+        $vaersSexName                         = $enums{'vaersSex'}->{$sexFixed}          // die;
         $patientAgeFixed                      = %$rTb{'patientAgeFixed'};
         $hoursBetweenVaccineAndAE             = %$rTb{'hoursBetweenVaccineAndAE'};
         my $creationTimestamp                 = %$rTb{'creationTimestamp'}               // die;
@@ -170,7 +215,6 @@ sub load_next_report {
         $symptoms = '<div style="width:300px;margin:auto;"><ul>';
         for my $symptomId (@$symptomsListed) {
             my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
-            my $discarded   = $symptoms{$symptomId}->{'discarded'}   // die;
             $symptoms .= '<li><span>' . $symptomName . '</span></li>';
         }
         $symptoms .= '</ul></div>';
@@ -190,7 +234,6 @@ sub load_next_report {
     say "reportId : $reportId";
 
     $self->render(
-        dataType                           => $dataType,
         currentLanguage                => $currentLanguage,
         sqlValue                       => $sqlValue,
         operationsToPerform            => $operationsToPerform,
@@ -218,7 +261,7 @@ sub load_next_report {
         deceasedMonth                  => $deceasedMonth,
         deceasedDay                    => $deceasedDay,
         deceasedDate                   => $deceasedDate,
-        vaersSexFixed                  => $vaersSexFixed,
+        sexFixed                  => $sexFixed,
         vaersSexName                   => $vaersSexName,
         aEDescription                  => $aEDescription,
         patientAgeFixed                => $patientAgeFixed,
@@ -236,17 +279,10 @@ sub set_report_attribute {
     my $reportId          = $self->param('reportId')        // die;
     my $sqlValue          = $self->param('sqlValue')        // die;
     my $value             = $self->param('value')           // die;
-    my $dataType              = $self->param('dataType') // die;
-    my $table;
-    if ($dataType eq 'domestic') {
-        $table = 'vaers_deaths_report';
-    } elsif ($dataType eq 'foreign') {
-        $table = 'vaers_foreign_report';
-    } else { die "table : $table" }
     my $userId            = $self->session('userId')        // die;
     my $patientAgeFixed   = $self->param('patientAgeFixed') // die;
     $patientAgeFixed      = undef unless length $patientAgeFixed    >= 1;
-    my $vaersSexFixed     = $self->param('vaersSexFixed')   // die;
+    my $sexFixed     = $self->param('sexFixed')   // die;
     my $vaccinationYear   = $self->param('vaccinationYear') // die;
     $vaccinationYear      = undef unless length $vaccinationYear    >= 1;
     my $vaccinationMonth   = $self->param('vaccinationMonth') // die;
@@ -286,10 +322,10 @@ sub set_report_attribute {
         $hoursBetweenVaccineAndAE = nearest(0.01, ($hoursBetweenVaccineAndAE / 60));
     }
     my $sth = $self->dbh->prepare("
-        UPDATE $table SET
+        UPDATE report SET
             $sqlValue = $value,
             patientAgeFixed = ?,
-            vaersSexFixed = ?,
+            sexFixed = ?,
             vaccinationDateFixed = ?,
             onsetDateFixed = ?,
             deceasedDateFixed = ?,
@@ -299,17 +335,24 @@ sub set_report_attribute {
             permanentDisabilityFixed = $permanentDisability,
             hospitalizedFixed = $hospitalized,
             patientAgeConfirmationTimestamp = UNIX_TIMESTAMP(),
-            userId = ?
+            patientAgeUserId = ?
         WHERE id = $reportId");
     $sth->execute(
         $patientAgeFixed,
-        $vaersSexFixed,
+        $sexFixed,
         $vaccinationDateFixed,
         $onsetDateFixed,
         $deceasedDateFixed,
         $hoursBetweenVaccineAndAE,
         $userId
     ) or die $sth->err();
+    my $sth2 = $self->dbh->prepare("
+        UPDATE wizard_report SET
+            $sqlValue = $value,
+            patientAgeConfirmationTimestamp = UNIX_TIMESTAMP()
+        WHERE reportId = $reportId");
+    $sth2->execute(
+    ) or die $sth2->err();
 
     say "reportId : $reportId";
 
@@ -322,15 +365,6 @@ sub patient_ages_completed {
     my $currentLanguage = $self->param('currentLanguage') // die;
     my $adminFilter     = $self->param('adminFilter');
     my $productFilter   = $self->param('productFilter');
-    my $dataType = $self->param('dataType') // die;
-    my $table;
-    if ($dataType eq 'domestic') {
-        $table = 'vaers_deaths_report';
-    } elsif ($dataType eq 'foreign') {
-        $table = 'vaers_foreign_report';
-    } else {
-        die "dataType : $dataType";
-    }
     say "productFilter : $productFilter";
 
     # Loggin session if unknown.
@@ -343,22 +377,22 @@ sub patient_ages_completed {
     my %products = ();
     my $tb = $self->dbh->selectall_hashref("
         SELECT
-            $table.id as vaersReportId,
-            $table.patientAgeFixed,
-            $table.vaersId,
-            $table.vaccinesListed,
-            $table.patientAgeConfirmationTimestamp,
-            $table.userId,
+            report.id as vaersReportId,
+            report.patientAgeFixed,
+            report.vaersId,
+            report.vaccinesListed,
+            report.patientAgeConfirmationTimestamp,
+            report.patientAgeUserId,
             user.email 
-        FROM $table
-            LEFT JOIN user ON user.id = $table.userId
+        FROM report
+            LEFT JOIN user ON user.id = report.patientAgeUserId
         WHERE patientAgeConfirmationTimestamp IS NOT NULL
     ", 'vaersReportId');
     for my $vaersReportId (sort{$a <=> $b} keys %$tb) {
         my $patientAgeFixed                 = %$tb{$vaersReportId}->{'patientAgeFixed'};
         my $patientAgeConfirmationTimestamp = %$tb{$vaersReportId}->{'patientAgeConfirmationTimestamp'} // die;
         my $patientAgeConfirmationDatetime  = time::timestamp_to_datetime($patientAgeConfirmationTimestamp);
-        my $userId                          = %$tb{$vaersReportId}->{'userId'}                          // die;
+        my $patientAgeUserId                          = %$tb{$vaersReportId}->{'patientAgeUserId'}                          // die;
         my $vaersId                         = %$tb{$vaersReportId}->{'vaersId'}                         // die;
         my $email                           = %$tb{$vaersReportId}->{'email'}                           // die;
         my ($userName) = split '\@', $email;
@@ -403,7 +437,6 @@ sub patient_ages_completed {
     $self->render(
         currentLanguage => $currentLanguage,
         adminFilter => $adminFilter,
-        dataType => $dataType,
         productFilter => $productFilter,
         agesCompleted => $agesCompleted,
         totalReports => $totalReports,
@@ -418,18 +451,9 @@ sub patient_ages_completed {
 sub reset_report_attributes {
     my $self = shift;
     my $vaersReportId = $self->param('vaersReportId') // die;
-    my $dataType = $self->param('dataType') // die;
-    my $table;
-    if ($dataType eq 'domestic') {
-        $table = 'vaers_deaths_report';
-    } elsif ($dataType eq 'foreign') {
-        $table = 'vaers_foreign_report';
-    } else {
-        die "dataType : $dataType";
-    }
 
     say "vaersReportId : $vaersReportId";
-    my $sth = $self->dbh->prepare("UPDATE $table SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, userId = NULL WHERE id = $vaersReportId");
+    my $sth = $self->dbh->prepare("UPDATE report SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, patientAgeUserId = NULL WHERE id = $vaersReportId");
     $sth->execute() or die $sth->err();
 
     $self->render(text => 'ok');
@@ -448,8 +472,8 @@ sub patient_ages_custom_export {
     my $tb = $self->dbh->selectall_hashref("
         SELECT
             DISTINCT(user.email) 
-        FROM vaers_deaths_report
-            LEFT JOIN user ON user.id = vaers_deaths_report.userId
+        FROM report
+            LEFT JOIN user ON user.id = report.patientAgeUserId
         WHERE patientAgeConfirmationTimestamp IS NOT NULL
     ", 'email');
     for my $email (sort keys %$tb) {
@@ -457,12 +481,38 @@ sub patient_ages_custom_export {
         $admins{$userName} = 1;
     }
 
-    # Fetching vaers symptoms.
-    my %symptoms = ();
-    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName FROM vaers_deaths_symptom", 'symptomId');
-    for my $symptomId (sort{$a <=> $b} keys %$sTb) {
-        my $symptomName = %$sTb{$symptomId}->{'symptomName'} // die;
-        $symptoms{$symptomName}->{'symptomId'} = $symptomId;
+    # Fetching symptoms sets.
+    my %symptomsSets = ();
+    my $sTb = $self->dbh->selectall_hashref("
+        SELECT
+            symptoms_set.id as symptomSetId,
+            symptoms_set.name as symptomSetName,
+            user.email
+        FROM symptoms_set
+            LEFT JOIN user ON user.id = symptoms_set.userId
+        ", 'symptomSetId');
+    for my $symptomsSetId (sort{$a <=> $b} keys %$sTb) {
+        my $symptomSetName = %$sTb{$symptomsSetId}->{'symptomSetName'} // die;
+        my $email = %$sTb{$symptomsSetId}->{'email'} // die;
+        my ($userName) = split '\@', $email;
+        $symptomsSets{"$userName - $symptomSetName"}->{'symptomsSetId'} = $symptomsSetId;
+    }
+
+    # Fetching keywords sets.
+    my %keywordsSets = ();
+    my $kTb = $self->dbh->selectall_hashref("
+        SELECT
+            keywords_set.id as symptomSetId,
+            keywords_set.name as symptomSetName,
+            user.email
+        FROM keywords_set
+            LEFT JOIN user ON user.id = keywords_set.userId
+        ", 'symptomSetId');
+    for my $keywordsSetId (sort{$a <=> $b} keys %$kTb) {
+        my $symptomSetName = %$kTb{$keywordsSetId}->{'symptomSetName'} // die;
+        my $email = %$kTb{$keywordsSetId}->{'email'} // die;
+        my ($userName) = split '\@', $email;
+        $keywordsSets{"$userName - $symptomSetName"}->{'keywordsSetId'} = $keywordsSetId;
     }
 
     my %languages = ();
@@ -470,11 +520,13 @@ sub patient_ages_custom_export {
     $languages{'en'} = 'English';
 
     my %products = ();
-    $products{'COVID-19 VACCINE JANSSEN'}              = 'JANSSEN';
-    $products{'COVID-19 VACCINE MODERNA'}              = 'MODERNA';
-    $products{'COVID-19 VACCINE NOVAVAX'}              = 'NOVAVAX';
-    $products{'COVID-19 VACCINE PFIZER-BIONTECH'}      = 'PFIZER';
-    $products{'COVID-19 VACCINE UNKNOWN MANUFACTURER'} = 'UNKNOWN';
+    $products{'COVID-19 VACCINE JANSSEN'}                  = 'janssen';
+    $products{'COVID-19 VACCINE MODERNA'}                  = 'moderna';
+    $products{'COVID-19 VACCINE MODERNA BIVALENT'}         = 'modernaBivalent';
+    $products{'COVID-19 VACCINE NOVAVAX'}                  = 'novavax';
+    $products{'COVID-19 VACCINE PFIZER-BIONTECH'}          = 'pfizer';
+    $products{'COVID-19 VACCINE PFIZER-BIONTECH BIVALENT'} = 'pfizerBivalent';
+    $products{'COVID-19 VACCINE UNKNOWN MANUFACTURER'}     = 'unknown';
 
     my %severities = ();
     $severities{'1'}->{'label'} = 'Died';
@@ -490,7 +542,8 @@ sub patient_ages_custom_export {
         currentLanguage => $currentLanguage,
         products => \%products,
         languages => \%languages,
-        symptoms => \%symptoms,
+        symptomsSets => \%symptomsSets,
+        keywordsSets => \%keywordsSets,
         severities => \%severities,
         admins => \%admins
     );
@@ -531,27 +584,56 @@ sub generate_products_export {
     my $userId           = $self->session('userId')         // die;
     my $janssen          = $self->param('janssen')          // die;
     my $moderna          = $self->param('moderna')          // die;
-    my $novavax          = $self->param('novavax')          // die;
     my $pfizer           = $self->param('pfizer')           // die;
+    my $novavax          = $self->param('novavax')          // die;
     my $unknown          = $self->param('unknown')          // die;
     my $adminFilter      = $self->param('adminFilter')      // die;
     my $symptomFilter    = $self->param('symptomFilter')    // die;
+    my $keywordsFilter   = $self->param('keywordsFilter')   // die;
     my $severityFilter   = $self->param('severityFilter')   // die;
     my $ageErrorsOnly    = $self->param('ageErrorsOnly')    // die;
     my $ageCompletedOnly = $self->param('ageCompletedOnly') // die;
+    my $modernaBivalent  = $self->param('modernaBivalent')  // die;
+    my $pfizerBivalent   = $self->param('pfizerBivalent')   // die;
     say "ageErrorsOnly    : $ageErrorsOnly";
     say "ageCompletedOnly : $ageCompletedOnly";
     say "symptomFilter    : $symptomFilter";
+    say "keywordsFilter   : $keywordsFilter";
 
+    # Fetching symptoms.
+    my %symptoms = ();
+    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName FROM symptom", 'symptomId');
+    for my $symptomId (sort{$a <=> $b} keys %$sTb) {
+        my $symptomName = %$sTb{$symptomId}->{'symptomName'} // die;
+        $symptoms{$symptomId}->{'symptomName'} = $symptomName;
+    }
+
+    # If filtered by a set of symptoms, fetching them.
     my %symptomsFiltered = ();
     if ($symptomFilter) {
-        $symptomFilter   = decode_json($symptomFilter);
-        for my $symptomId (@$symptomFilter) {
-            next unless $symptomId;
+        my $sTb = $self->dbh->selectrow_hashref("SELECT symptoms FROM symptoms_set WHERE id = $symptomFilter", undef);
+        my $symptomsFiltered = %$sTb{'symptoms'} // die;
+        $symptomsFiltered = decode_json($symptomsFiltered);
+        for my $symptomId (@$symptomsFiltered) {
+            die unless exists $symptoms{$symptomId}->{'symptomName'};
             $symptomsFiltered{$symptomId} = 1;
         }
         $symptomFilter    = undef unless keys %symptomsFiltered;
     }
+
+    # If filtered by keywords, fetching them.
+    my %keywordsFiltered = ();
+    if ($keywordsFilter) {
+        my $sTb = $self->dbh->selectrow_hashref("SELECT keywords FROM keywords_set WHERE id = $keywordsFilter", undef);
+        my $keywordsFiltered = %$sTb{'keywords'} // die;
+        my @keywordsFiltered = split '<br \/>', $keywordsFiltered;
+        for my $keyword (@keywordsFiltered) {
+            my $lcKeyword = lc $keyword;
+            $keywordsFiltered{$lcKeyword} = 1;
+        }
+        $keywordsFilter    = undef unless keys %keywordsFiltered;
+    }
+
 
     # Listing products we look for.
     my %products = ();
@@ -563,6 +645,10 @@ sub generate_products_export {
     $products{'novavax'}->{'status'} = $novavax;
     $products{'pfizer'}->{'name'}  = 'COVID-19 VACCINE PFIZER-BIONTECH';
     $products{'pfizer'}->{'status'} = $pfizer;
+    $products{'pfizerBivalent'}->{'name'}  = 'COVID-19 VACCINE PFIZER-BIONTECH BIVALENT';
+    $products{'pfizerBivalent'}->{'status'} = $pfizerBivalent;
+    $products{'modernaBivalent'}->{'name'}  = 'COVID-19 VACCINE MODERNA BIVALENT';
+    $products{'modernaBivalent'}->{'status'} = $modernaBivalent;
     $products{'unknown'}->{'name'} = 'COVID-19 VACCINE UNKNOWN MANUFACTURER';
     $products{'unknown'}->{'status'} = $unknown;
     my %productsSearched = ();
@@ -573,17 +659,6 @@ sub generate_products_export {
             $productsSearched{$name} = 1;
         }
     }
-
-    # Fetching vaers symptoms.
-    my %symptoms = ();
-    my $sTb = $self->dbh->selectall_hashref("SELECT id as symptomId, name as symptomName, discarded FROM vaers_deaths_symptom", 'symptomId');
-    for my $symptomId (sort{$a <=> $b} keys %$sTb) {
-        my $symptomName = %$sTb{$symptomId}->{'symptomName'} // die;
-        my $discarded   = %$sTb{$symptomId}->{'discarded'}   // die;
-        $discarded      = unpack("N", pack("B32", substr("0" x 32 . $discarded, -32)));
-        $symptoms{$symptomId}->{'symptomName'} = $symptomName;
-        $symptoms{$symptomId}->{'discarded'}   = $discarded;
-    }
     p%productsSearched;
 
     # Fetching all the reports corresponding to the selected manufacturer.
@@ -591,32 +666,34 @@ sub generate_products_export {
     my $exported = 0;
     my $sql = "
         SELECT
-            vaers_deaths_report.id as vaersDeathsReportId,
-            vaers_deaths_report.vaersId,
-            vaers_deaths_report.vaccinesListed,
-            vaers_deaths_report.aEDescription,
-            vaers_deaths_report.vaersSexFixed,
-            vaers_deaths_report.cdcStateId,
-            cdc_state.name as cdcStateName,
-            vaers_deaths_report.onsetDateFixed,
-            vaers_deaths_report.deceasedDateFixed,
-            vaers_deaths_report.vaccinationDateFixed,
-            vaers_deaths_report.vaersReceptionDate,
-            vaers_deaths_report.patientAgeFixed,
-            vaers_deaths_report.patientAge,
-            vaers_deaths_report.symptomsListed,
-            vaers_deaths_report.hospitalizedFixed,
-            vaers_deaths_report.lifeThreatningFixed,
-            vaers_deaths_report.permanentDisabilityFixed,
-            vaers_deaths_report.patientDiedFixed,
-            vaers_deaths_report.patientAgeConfirmationRequired,
+            report.id as vaersDeathsReportId,
+            report.vaersId,
+            report.vaccinesListed,
+            report.aEDescription,
+            report.sexFixed,
+            report.countryStateId,
+            country.name as countryName,
+            country_state.name as countryStateName,
+            report.onsetDateFixed,
+            report.deceasedDateFixed,
+            report.vaccinationDateFixed,
+            report.vaersReceptionDate,
+            report.patientAgeFixed,
+            report.patientAge,
+            report.symptomsListed,
+            report.hospitalizedFixed,
+            report.lifeThreatningFixed,
+            report.permanentDisabilityFixed,
+            report.patientDiedFixed,
+            report.patientAgeConfirmationRequired,
             user.email 
-        FROM vaers_deaths_report
-            LEFT JOIN user ON user.id = vaers_deaths_report.userId
-            LEFT JOIN cdc_state ON cdc_state.id = vaers_deaths_report.cdcStateId
+        FROM report
+            LEFT JOIN user ON user.id = report.patientAgeUserId
+            LEFT JOIN country_state ON country_state.id = report.countryStateId
+            LEFT JOIN country ON country.id = report.countryId
         ";
     if ($severityFilter) {
-        $sql .= " WHERE vaers_deaths_report.$severityFilter = 1";
+        $sql .= " WHERE report.$severityFilter = 1";
     }
     my $tb = $self->dbh->selectall_hashref($sql, 'vaersDeathsReportId');
     for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
@@ -650,10 +727,11 @@ sub generate_products_export {
             my $vaersId = %$tb{$vaersDeathsReportId}->{'vaersId'} // die;
             my $vaersReceptionDate = %$tb{$vaersDeathsReportId}->{'vaersReceptionDate'} // die;
             my $aEDescription = %$tb{$vaersDeathsReportId}->{'aEDescription'} // die;
+            my $aEDescriptionNormalized = lc $aEDescription;
             my $immProjectNumber = %$tb{$vaersDeathsReportId}->{'immProjectNumber'};
-            my $cdcStateName = %$tb{$vaersDeathsReportId}->{'cdcStateName'} // die;
-            my $vaersSexFixed = %$tb{$vaersDeathsReportId}->{'vaersSexFixed'} // die;
-            my $vaersSexName = $enums{'vaersSex'}->{$vaersSexFixed} // die;
+            my $countryName = %$tb{$vaersDeathsReportId}->{'countryName'};
+            my $sexFixed = %$tb{$vaersDeathsReportId}->{'sexFixed'} // die;
+            my $vaersSexName = $enums{'vaersSex'}->{$sexFixed} // die;
             my $source = 'Domestic';
             my $patientAge = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
             my $vaccinationDate = %$tb{$vaersDeathsReportId}->{'vaccinationDateFixed'};
@@ -682,11 +760,21 @@ sub generate_products_export {
             if ($symptomFilter) {
                 next unless $hasSymptom == 1;
             }
+            if ($keywordsFilter) {
+                my $hasKeyword = 0;
+                for my $keyword (sort keys %keywordsFiltered) {
+                    if ($keywordsFilter) {
+                        $hasKeyword = 1 if $aEDescriptionNormalized =~ /$keyword/;
+                    }
+                }
+                next unless $hasKeyword == 1;
+            }
+
             $o{'vaersId'} = $vaersId;
             $o{'vaersReceptionDate'} = $vaersReceptionDate;
             $o{'aEDescription'} = $aEDescription;
             $o{'immProjectNumber'} = $immProjectNumber;
-            $o{'cdcStateName'} = $cdcStateName;
+            $o{'countryName'} = $countryName;
             $o{'vaersSexName'} = $vaersSexName;
             $o{'source'} = $source;
             $o{'patientAge'} = $patientAge;

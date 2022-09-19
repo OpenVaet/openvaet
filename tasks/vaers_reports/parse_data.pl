@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use 5.30.0;
+use 5.26.0;
 no autovivification;
 binmode STDOUT, ":utf8";
 use utf8;
@@ -16,195 +16,88 @@ use Encode;
 use Encode::Unicode;
 use JSON;
 use FindBin;
+use Number::Format;
 use Scalar::Util qw(looks_like_number);
 use File::stat;
-use lib "$FindBin::Bin/../../../lib";
+use lib "$FindBin::Bin/../../lib";
 
 # Project's libraries.
 use config;
 use global;
 use time;
 
-# https://api.census.gov/data.html
-
 # Basic script config.
-my $statesFile       = "tasks/cdc/states.csv";             # File containing CDC's states.
-my $cdcFolder        = "raw_data/AllVAERSDataCSVS";        # Where we expect to find CDC's data folder in the project's root folder.
-my $vaccinationFile  = 'raw_data/COVID-19_Vaccination_and_Case_Trends_by_Age_Group__United_States.csv'; # File containing the current vaccination statistics by age groups,
-																										# taken from https://data.cdc.gov/api/views/gxj9-t96f/rows.csv?accessType=DOWNLOAD&bom=true&format=true&delimiter=%3B
-my $populationFile   = 'raw_data/nc-est2021-syasexn.csv';  # File containing "Annual Estimates of the Resident Population by Single Year of Age and Sex for the United States: April 1, 2020 to July 1, 2021"
-														   # taken from https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx
-														   # and converted to UTF8 ";" separated .CSV
-my $cdcForeignFolder = "raw_data/NonDomesticVAERSData";    # Where we expect to find CDC's data folder in the project's root folder.
+my $vaersForeignFolder = "raw_data/NonDomesticVAERSData";    # Where we expect to find CDC's data folder in the project's root folder.
+my $vaersFolder        = "raw_data/AllVAERSDataCSVS";        # Where we expect to find CDC's data folder in the project's root folder.
 
-# Loading flagged symptoms.
+# Init numbers format.
+my $de = new Number::Format(-thousands_sep   => ' ',
+                            -decimal_point   => '.');
+
+# Loading states.
+my %countries = ();
+my %countryStates = ();
+
+my %symptoms = ();
 my $latestSymptomId = 0;
-my %ausSymptoms = ();
-aus_symptom();
 
-# Loading population data.
-my %populationByAges = ();
-my %populationByAgeGroups = ();
-load_population_age();
-
-# Preparing age for vaccination's age groups.
-my %ageGroups = ();
-set_age_groups();
-prepare_population_by_age_group();
-
-# Loading vaccination data.
-my %dosesByDates = ();
-load_vaccination_data();
+# Loading known database reports.
+my $latestReportId = 0;
+my %reports = ();
 
 # Verifying in current .ZIP file if things have been deleted.
+my %reportsVaccines = ();
+my %reportsSymptoms = ();
 my %years = ();
-my %statesCodes = ();
-parse_states();
-parse_cdc_years();
-my %reportsByDates = ();
-my %symptomsMet = ();
-my $totalReports = 0;
-parse_yearly_data();
+countries();
+country_states();
+symptoms();
+reports();
 parse_foreign_data();
+parse_vaers_years();
+parse_us_data();
 
-# Printing dates & other stats.
-open my $out, '>:utf8', 'usa_and_foreign_death_reports.json';
-print $out encode_json\%reportsByDates;
-close $out;
-
-# Printing symptoms encountered.
-# open my $out2, '>:utf8', 'symptoms.csv';
-for my $ausSymptomName (sort keys %symptomsMet) {
-	my $timesSeen = $symptomsMet{$ausSymptomName}->{'timesSeen'} // die;
-	unless (exists $ausSymptoms{$ausSymptomName}->{'ausSymptomId'}) {
-		my $sth = $dbh->prepare("INSERT INTO aus_symptom (name, timeSeen) VALUES (?, ?)");
-		$sth->execute($ausSymptomName, $timesSeen) or die $sth->err();
-	}
-	# say "symptomName : $symptomName";
-	# say "timesSeen : $timesSeen";
-	# say $out2 "$symptomName;$timesSeen;";
-}
-# close $out2;
-
-sub aus_symptom {
-	my $tb = $dbh->selectall_hashref("SELECT id as ausSymptomId, name as ausSymptomName, active FROM aus_symptom WHERE id > $latestSymptomId", 'ausSymptomId');
-	for my $ausSymptomId (sort{$a <=> $b} keys %$tb) {
-		$latestSymptomId = $ausSymptomId;
-		my $ausSymptomName = %$tb{$ausSymptomId}->{'ausSymptomName'} // die;
-		my $active         = %$tb{$ausSymptomId}->{'active'}         // die;
-		$active            = unpack("N", pack("B32", substr("0" x 32 . $active, -32)));
-		$ausSymptoms{$ausSymptomName}->{'ausSymptomId'} = $ausSymptomId;
-		$ausSymptoms{$ausSymptomName}->{'active'} = $active;
+sub countries {
+	my $tb = $dbh->selectall_hashref("SELECT id as countryId, isoCode2, name as countryName FROM country", 'countryId');
+	for my $countryId (sort{$a <=> $b} keys %$tb) {
+		my $isoCode2 = %$tb{$countryId}->{'isoCode2'} // next;
+		my $countryName = %$tb{$countryId}->{'countryName'} // die;
+		$countries{$isoCode2}->{'countryId'} = $countryId;
+		$countries{$isoCode2}->{'countryName'} = $countryName;
 	}
 }
 
-sub load_population_age {
-	open my $in, '<:utf8', $populationFile;
-	my $agesLoaded = 0;
-	while (<$in>) {
-		chomp $_;
-		my ($age, $april20Population, $july20Population, $july21Population) = split ';', $_;
-		next unless $age && $july21Population;
-		next unless $age =~ /\..*/;
-		$age =~ s/\.//;
-		$age =~ s/\+//;
-		$agesLoaded++;
-		$july20Population =~ s/ //g;
-		$july21Population =~ s/ //g;
-		$populationByAges{$age}->{'july20Population'} = $july20Population;
-		$populationByAges{$age}->{'july21Population'} = $july21Population;
-		last if $agesLoaded == 101;
-	}
-	close $in;
-}
-
-sub set_age_groups {
-	$ageGroups{'1'}->{'label'}  = '<2 Years';
-	$ageGroups{'1'}->{'from'}   = '0';
-	$ageGroups{'1'}->{'to'}     = '1';
-	$ageGroups{'2'}->{'label'}  = '2 - 4 Years';
-	$ageGroups{'2'}->{'from'}   = '2';
-	$ageGroups{'2'}->{'to'}     = '4';
-	$ageGroups{'3'}->{'label'}  = '5 - 11 Years';
-	$ageGroups{'3'}->{'from'}   = '5';
-	$ageGroups{'3'}->{'to'}     = '11';
-	$ageGroups{'4'}->{'label'}  = '12 - 17 Years';
-	$ageGroups{'4'}->{'from'}   = '12';
-	$ageGroups{'4'}->{'to'}     = '17';
-}
-
-sub prepare_population_by_age_group {
-	for my $aNum (sort{$a <=> $b} keys %ageGroups) {
-		my $label = $ageGroups{$aNum}->{'label'} // die;
-		my $from  = $ageGroups{$aNum}->{'from'}  // die;
-		my $to    = $ageGroups{$aNum}->{'to'}    // die;
-		my ($july20Population, $july21Population) = (0, 0);
-		for my $age (sort{$a <=> $b} keys %populationByAges) {
-			next if $age < $from;
-			next if $age > $to;
-			my $july20 = $populationByAges{$age}->{'july20Population'} // die;
-			my $july21 = $populationByAges{$age}->{'july21Population'} // die;
-			$july20Population += $july20;
-			$july21Population += $july21;
-		}
-		$populationByAgeGroups{$label}->{'july20Population'} = $july20Population;
-		$populationByAgeGroups{$label}->{'july21Population'} = $july21Population;
+sub country_states {
+	my $tb = $dbh->selectall_hashref("SELECT id as countryStateId, alphaCode2 FROM country_state", 'countryStateId');
+	for my $countryStateId (sort{$a <=> $b} keys %$tb) {
+		my $alphaCode2 = %$tb{$countryStateId}->{'alphaCode2'} // die;
+		$countryStates{$alphaCode2}->{'countryStateId'} = $countryStateId;
 	}
 }
 
-sub load_vaccination_data {
-	my ($highestDate, $lowestDate) = (0, 99999999);
-	my %vaccinesByAgeGroups = ();
-	open my $in, '<:utf8', $vaccinationFile;
-	my $agesLoaded = 0;
-	while (<$in>) {
-		chomp $_;
-		my ($date, $ageGroup, $casePer100K, $dose1Percent, $dose2Percent) = split ';', $_;
-		my ($month, $day, $year) = $date =~ /(..)\/(..)\/(....)/;
-		next unless $month && $day && $year;
-		$date = "$year-$month-$day";
-		my $compDate = $date;
-		$compDate =~ s/\D//g;
-		$highestDate = $compDate if $compDate > $highestDate;
-		$lowestDate  = $compDate if $compDate < $lowestDate;
-		my $referenceYear;
-		if ($year eq '2022' || $year eq '2021') {
-			$referenceYear = '21';
-		} elsif ($year eq '2020') {
-			$referenceYear = '20';
-		} else {
-			die "year : $year";
-		}
-		my $population = $populationByAgeGroups{$ageGroup}->{"july$referenceYear" . "Population"} // next;
-		my $doses1Administered = nearest(1, $population * $dose1Percent / 100);
-		my $doses2Administered = nearest(1, $population * $dose2Percent / 100);
-		next unless $doses1Administered || $doses2Administered;
-		$dosesByDates{$date}->{'weekNumber'} = iso_week_number("$year-$month-$day");
-		$dosesByDates{$date}->{'doses1Administered'} += $doses1Administered;
-		$dosesByDates{$date}->{'doses2Administered'} += $doses2Administered;
+sub symptoms {
+	my $tb = $dbh->selectall_hashref("SELECT id as symptomId, name as symptomName FROM symptom WHERE id > $latestSymptomId", 'symptomId');
+	for my $symptomId (sort{$a <=> $b} keys %$tb) {
+		$latestSymptomId = $symptomId;
+		my $symptomName = lc %$tb{$symptomId}->{'symptomName'} // die;
+		$symptoms{$symptomName}->{'symptomId'} = $symptomId;
 	}
-	close $in;
-	my ($hY, $hM, $hD) = $highestDate =~ /(....)(..)(..)/;
-	my ($lY, $lM, $lD) = $lowestDate  =~ /(....)(..)(..)/;
-	$highestDate = "$hY-$hM-$hD";
-	$lowestDate  = "$lY-$lM-$lD";
-	delete $dosesByDates{$highestDate}; # The latest date is often truncated (having only a few age groups we care about), therefore deleted.
 }
 
-sub parse_states {
-	open my $in, '<:utf8', $statesFile;
-	while (<$in>) {
-		chomp $_;
-		my ($sNum, $sCode2, $sName) = split ';', $_;
-		die if exists $statesCodes{$sCode2};
-		$statesCodes{$sCode2}->{'stateName'}  = $sName;
-		$statesCodes{$sCode2}->{'internalId'} = $sNum;
+sub reports {
+	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired FROM report WHERE id > $latestReportId", 'reportId');
+	for my $reportId (sort{$a <=> $b} keys %$tb) {
+		$latestReportId = $reportId;
+		my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
+		my $patientAgeConfirmationRequired    = %$tb{$reportId}->{'patientAgeConfirmationRequired'}   // die;
+    	$patientAgeConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
+		$reports{$vaersId}->{'reportId'} = $reportId;
+		$reports{$vaersId}->{'patientAgeConfirmationRequired'} = $patientAgeConfirmationRequired;
 	}
-	close $in;
 }
 
-sub parse_cdc_years {
-	for my $filePath (glob "$cdcFolder/*") {
+sub parse_vaers_years {
+	for my $filePath (glob "$vaersFolder/*") {
 		(my $file  = $filePath) =~ s/raw_data\/AllVAERSDataCSVS\///;
 		next unless $file =~ /^....VAERS.*/;
 		my ($year) = $file =~ /(....)/; 
@@ -212,353 +105,420 @@ sub parse_cdc_years {
 	}
 }
 
-sub parse_yearly_data {
+sub parse_foreign_data {
+	say "Parsing foreign file...";
+	# Configuring expected files ; dying if they aren't found.
+	my $dataFile     = "$vaersForeignFolder/NonDomesticVAERSDATA.csv";
+	my $symptomsFile = "$vaersForeignFolder/NonDomesticVAERSSYMPTOMS.csv";
+	my $vaccinesFile = "$vaersForeignFolder/NonDomesticVAERSVAX.csv";
+	die "missing mandatory file in [$vaersForeignFolder]" if !-f $dataFile || !-f $symptomsFile || !-f $vaccinesFile;
+	# say "dataFile     : $dataFile";
+	# say "symptomsFile : $symptomsFile";
+	# say "vaccinesFile : $vaccinesFile";
+	%reportsVaccines = ();
+	%reportsSymptoms = ();
+
+	parse_vaers_files(2, $dataFile, $symptomsFile, $vaccinesFile);
+}
+
+sub parse_us_data {
 	for my $year (sort{$a <=> $b} keys %years) {
 		next unless $year > 2018;
+		say "Parsing US - year [$year]";
 
 		# Configuring expected files ; dying if they aren't found.
-		my $dataFile     = "$cdcFolder/$year" . 'VAERSDATA.csv';
-		my $symptomsFile = "$cdcFolder/$year" . 'VAERSSYMPTOMS.csv';
-		my $vaccinesFile = "$cdcFolder/$year" . 'VAERSVAX.csv';
-		die "missing mandatory file for year [$year] in [$cdcFolder]" if !-f $dataFile || !-f $symptomsFile || !-f $vaccinesFile;
-		say "dataFile     : $dataFile";
-		say "symptomsFile : $symptomsFile";
-		say "vaccinesFile : $vaccinesFile";
-		say "year         : $year";
+		my $dataFile     = "$vaersFolder/$year" . 'VAERSDATA.csv';
+		my $symptomsFile = "$vaersFolder/$year" . 'VAERSSYMPTOMS.csv';
+		my $vaccinesFile = "$vaersFolder/$year" . 'VAERSVAX.csv';
+		die "missing mandatory file for year [$year] in [$vaersFolder]" if !-f $dataFile || !-f $symptomsFile || !-f $vaccinesFile;
+		%reportsVaccines = ();
+		%reportsSymptoms = ();
 
-		# Fetching notices - vaccines relations.
-		open my $vaccinesIn, '<:', $vaccinesFile;
-		my $expectedValues;
-		my $vaccinesCsv = Text::CSV_XS->new ({ binary => 1 });
-		my %vaccinesLabels = ();
-		my %reportsVaccines = ();
-		my $dRNum = 0;
-		while (<$vaccinesIn>) {
-			$dRNum++;
-
-			# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-			$_ =~ s/–/-/g;
-			$_ =~ s/–/-/g;
-			$_ =~ s/ –D/ -D/g;
-			$_ =~ s/\\xA0//g;
-			$_ =~ s/~/--:--/g;
-	    	$_ =~ s/ / /g;
-	    	$_ =~ s/\r//g;
-			$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-			$_ =~ s/\x{1F}/./g;
-
-			# Verifying line.
-			my $line = $_;
-			$line = decode("ascii", $line);
-			for (/[^\n -~]/g) {
-			    printf "Bad character: %02x\n", ord $_;
-			    die;
-			}
-
-			# First row = line labels.
-			if ($dRNum == 1) {
-				my @labels = split ',', $line;
-				my $lN = 0;
-				for my $label (@labels) {
-					$vaccinesLabels{$lN} = $label;
-					$lN++;
-				}
-				$expectedValues = keys %vaccinesLabels;
-			} else {
-
-				# Verifying we have the expected number of values.
-				open my $fh, "<", \$_;
-				my $row = $vaccinesCsv->getline ($fh);
-				my @row = @$row;
-				die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-				my $vN  = 0;
-				my %values = ();
-				for my $value (@row) {
-					my $label = $vaccinesLabels{$vN} // die;
-					$values{$label} = $value;
-					$vN++;
-				}
-				my $dose    = $values{'VAX_DOSE_SERIES'};
-				my $cdcReportInternalId = $values{'VAERS_ID'} // die;
-				my $cdcManufacturerName = $values{'VAX_MANU'} // die;
-				my $cdcVaccineTypeName = $values{'VAX_TYPE'} // die;
-				my $cdcVaccineLotNumber = $values{'VAX_LOT'} // die;
-				my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
-	        	my $drugName = "$cdcManufacturerName - $cdcVaccineTypeName - $cdcVaccineName";
-
-	        	# We verify here that the vaccine is indeed related to a COVID one.
-	        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
-	        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
-	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
-	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
-	        	next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
-				my %o = ();
-				$o{'substanceCategory'} = $substanceCategory;
-				$o{'substanceShortenedName'} = $substanceShortenedName;
-				$o{'cdcVaccineName'} = $cdcVaccineName;
-				$o{'lotNumber'} = $cdcVaccineLotNumber;
-				$o{'dose'} = $dose;
-				push @{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}, \%o;
-			}
-		}
-		close $vaccinesIn;
-
-		# Fetching notices - symptoms relations.
-		open my $symptomsIn, '<:', $symptomsFile;
-		my $symptomsCsv = Text::CSV_XS->new ({ binary => 1 });
-		my %symptomsLabels = ();
-		$dRNum = 0;
-		my %reportsSymptoms = ();
-		while (<$symptomsIn>) {
-			$dRNum++;
-
-			# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-			$_ =~ s/–/-/g;
-			$_ =~ s/–/-/g;
-			$_ =~ s/ –D/ -D/g;
-			$_ =~ s/\\xA0//g;
-			$_ =~ s/~/--:--/g;
-	    	$_ =~ s/ / /g;
-	    	$_ =~ s/\r//g;
-			$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-			$_ =~ s/\x{1F}/./g;
-
-			# Verifying line.
-			my $line = $_;
-			$line = decode("ascii", $line);
-			for (/[^\n -~]/g) {
-			    printf "Bad character: %02x\n", ord $_;
-			    die;
-			}
-
-			# First row = line labels.
-			if ($dRNum == 1) {
-				my @labels = split ',', $line;
-				my $lN = 0;
-				for my $label (@labels) {
-					$symptomsLabels{$lN} = $label;
-					$lN++;
-				}
-				$expectedValues = keys %symptomsLabels;
-			} else {
-
-				# Verifying we have the expected number of values.
-				open my $fh, "<", \$_;
-				my $row = $symptomsCsv->getline ($fh);
-				my @row = @$row;
-				die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-				my $vN  = 0;
-				my %values = ();
-				for my $value (@row) {
-					my $label = $symptomsLabels{$vN} // die;
-					$values{$label} = $value;
-					$vN++;
-				}
-				my $cdcReportInternalId  = $values{'VAERS_ID'} // die;
-				my $symptom1 = $values{'SYMPTOM1'} // die;
-				my $symptom2 = $values{'SYMPTOM2'};
-				my $symptom3 = $values{'SYMPTOM3'};
-				my $symptom4 = $values{'SYMPTOM4'};
-				my $symptom5 = $values{'SYMPTOM5'};
-				my @symptoms = ($symptom1, $symptom2, $symptom3, $symptom4, $symptom5);
-				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-				for my $symptomName (@symptoms) {
-					next unless $symptomName && length $symptomName >= 1;
-					$reportsSymptoms{$cdcReportInternalId}->{$symptomName} = 1;
-				}
-			}
-		}
-		close $symptomsIn;
-
-		# Fetching notices.
-		my $definedAge = 0;
-		open my $dataIn, '<:', $dataFile;
-		$dRNum = 0;
-		my %dataLabels = ();
-		my $dataCsv = Text::CSV_XS->new ({ binary => 1 });
-		while (<$dataIn>) {
-			$dRNum++;
-
-			# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-			$_ =~ s/–/-/g;
-			$_ =~ s/–/-/g;
-			$_ =~ s/ –D/ -D/g;
-			$_ =~ s/\\xA0//g;
-			$_ =~ s/~/--:--/g;
-	    	$_ =~ s/ / /g;
-	    	$_ =~ s/\r//g;
-			$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-			$_ =~ s/\x{1F}/./g;
-
-			# Verifying line.
-			my $line = $_;
-			$line = decode("ascii", $line);
-			for (/[^\n -~]/g) {
-			    printf "Bad character: %02x\n", ord $_;
-			    die;
-			}
-
-			# First row = line labels.
-			if ($dRNum == 1) {
-				my @labels = split ',', $line;
-				my $lN = 0;
-				for my $label (@labels) {
-					$dataLabels{$lN} = $label;
-					$lN++;
-				}
-				$expectedValues = keys %dataLabels;
-			} else {
-
-				# Verifying we have the expected number of values.
-				open my $fh, "<", \$_;
-				my $row = $dataCsv->getline ($fh);
-				my @row = @$row;
-				die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-				my $vN  = 0;
-				my %values = ();
-				for my $value (@row) {
-					my $label = $dataLabels{$vN} // die;
-					$values{$label} = $value;
-					$vN++;
-				}
-
-				# Retrieving report data we care about.
-				my $cdcReportInternalId = $values{'VAERS_ID'}                  // die;
-				my $cdcReceptionDate    = $values{'RECVDATE'}                  // die;
-				my $sCode2              = $values{'STATE'}                     // die;
-				$sCode2                 = $statesCodes{$sCode2}->{'stateName'} // $sCode2;
-				my $patientAge          = $values{'AGE_YRS'}                   // die;
-				my $cdcSexInternalId    = $values{'SEX'}                       // die;
-				my $cdcSexName;
-				if ($cdcSexInternalId eq 'F') {
-					$cdcSexName = 'Female';
-				} elsif ($cdcSexInternalId eq 'M') {
-					$cdcSexName = 'Male';
-				} elsif ($cdcSexInternalId eq 'U') {
-					$cdcSexName = 'Unknown';
-				} else {
-					die "cdcSexInternalId : $cdcSexInternalId";
-				}
-				my $vaccinationDate         = $values{'VAX_DATE'};
-				my $deceasedDate            = $values{'DATEDIED'};
-				my $aEDescription           = $values{'SYMPTOM_TEXT'};
-				my $cdcVaccineAdministrator = $values{'V_ADMINBY'};
-				$cdcVaccineAdministrator    = administrator_to_litteral($cdcVaccineAdministrator);
-				my $hospitalized            = $values{'HOSPITAL'};
-				my $permanentDisability     = $values{'DISABLE'};
-				my $lifeThreatning          = $values{'L_THREAT'};
-				my $patientDied             = $values{'DIED'};
-				$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
-				$hospitalized               = 0 unless defined $hospitalized        && length $hospitalized        >= 1;
-				$permanentDisability        = 0 unless defined $permanentDisability && length $permanentDisability >= 1;
-				$lifeThreatning             = 0 unless defined $lifeThreatning      && length $lifeThreatning      >= 1;
-				$patientDied                = 0 unless defined $patientDied         && length $patientDied         >= 1;
-				$patientDied                = 1 if defined $patientDied             && $patientDied eq 'Y';
-				$hospitalized               = 1 if defined $hospitalized            && $hospitalized eq 'Y';
-				$permanentDisability        = 1 if defined $permanentDisability     && $permanentDisability eq 'Y';
-				$lifeThreatning             = 1 if defined $lifeThreatning          && $lifeThreatning eq 'Y';
-			    $cdcReceptionDate           = convert_date($cdcReceptionDate);
-			    $vaccinationDate            = convert_date($vaccinationDate) if $vaccinationDate;
-			    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
-			    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $cdcReceptionDate;
-			    my $compDate = "$receptionYear$receptionMonth$receptionDay";
-			    # my $ageGroup;
-			    # if (defined $patientAge) {
-			    # 	$definedAge++;
-			    # # 	$ageGroups = age_to_age_group($patientAge);
-			    # }
-			    # else {
-			    # 	$ageGroups = 'Undefined Age';
-			    # }
-				my $immProjectNumber        = $values{'SPLTTYPE'};
-
-				# Taking care of building stats.
-				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-				# if (
-				# 	$patientDied
-				# ) {
-				# my $hasActiveSymptom = 0;
-				# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-				# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-				# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-				# 		$hasActiveSymptom = 1;
-				# 	}
-				# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-				# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-				# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-				# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-				# 	# 	$hasActiveSymptom = 1;
-				# 	# }
-				# }
-				# next unless $hasActiveSymptom == 1;
-			    if (defined $patientAge) {
-			    	$definedAge++;
-			    # 	$ageGroups = age_to_age_group($patientAge);
-			    }
-
-				my %o = ();
-				$o{'cdcReportInternalId'} = $cdcReportInternalId;
-				$o{'cdcReceptionDate'} = $cdcReceptionDate;
-				$o{'sCode2'}          = $sCode2;
-				$o{'source'}          = 'usa';
-				$o{'patientAge'}      = $patientAge;
-				$o{'cdcSexInternalId'} = $cdcSexInternalId;
-				$o{'cdcSexName'}      = $cdcSexName;
-				$o{'vaccinationDate'} = $vaccinationDate;
-				$o{'deceasedDate'}    = $deceasedDate;
-				$o{'aEDescription'} = $aEDescription;
-				$o{'cdcVaccineAdministrator'} = $cdcVaccineAdministrator;
-				$o{'hospitalized'}    = $hospitalized;
-				$o{'permanentDisability'} = $permanentDisability;
-				$o{'lifeThreatning'}  = $lifeThreatning;
-				$o{'patientDied'} = $patientDied;
-				$o{'immProjectNumber'} = $immProjectNumber;
-				for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-					$o{'symptoms'}->{$ausSymptomName} = 1;
-				}
-				for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
-					push @{$o{'vaccines'}}, \%$vaccData;
-				}
-
-			    my $normalizedDescription = lc $aEDescription;
-			    my $hasHit = 0;
-			    if ($normalizedDescription =~ /nickel/) {
-			    	$o{'hits'}->{'nickel'} = 1;
-			    	$hasHit = 1;
-			    }
-			    next unless $hasHit == 1;
-				$totalReports++;
-				push @{$reportsByDates{$compDate}}, \%o;
-			# }
-			}
-		}
-		close $dataIn;
-		say "totalReports : $totalReports";
-		say "definedAge : $definedAge";
-
+		parse_vaers_files(1, $dataFile, $symptomsFile, $vaccinesFile);
 	}
 }
 
-sub administrator_to_litteral {
+sub parse_vaers_files {
+	my ($vaersSource, $dataFile, $symptomsFile, $vaccinesFile) = @_;
+
+
+	# Fetching notices - vaccines relations.
+	open my $vaccinesIn, '<:', $vaccinesFile;
+	my $expectedValues;
+	my $vaccinesCsv = Text::CSV_XS->new ({ binary => 1 });
+	my %vaccinesLabels = ();
+	my $dRNum = 0;
+	while (<$vaccinesIn>) {
+		$dRNum++;
+
+		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
+		$_ =~ s/–/-/g;
+		$_ =~ s/–/-/g;
+		$_ =~ s/ –D/ -D/g;
+		$_ =~ s/\\xA0//g;
+		$_ =~ s/~/--:--/g;
+    	$_ =~ s/ / /g;
+    	$_ =~ s/\r//g;
+		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
+		$_ =~ s/\x{1F}/./g;
+
+		# Verifying line.
+		my $line = $_;
+		$line = decode("ascii", $line);
+		for (/[^\n -~]/g) {
+		    printf "Bad character: %02x\n", ord $_;
+		    die;
+		}
+
+		# First row = line labels.
+		if ($dRNum == 1) {
+			my @labels = split ',', $line;
+			my $lN = 0;
+			for my $label (@labels) {
+				$vaccinesLabels{$lN} = $label;
+				$lN++;
+			}
+			$expectedValues = keys %vaccinesLabels;
+		} else {
+
+			# Verifying we have the expected number of values.
+			open my $fh, "<", \$_;
+			my $row = $vaccinesCsv->getline ($fh);
+			my @row = @$row;
+			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
+			my $vN  = 0;
+			my %values = ();
+			for my $value (@row) {
+				my $label = $vaccinesLabels{$vN} // die;
+				$values{$label} = $value;
+				$vN++;
+			}
+			my $dose    = $values{'VAX_DOSE_SERIES'};
+			my $vaersId = $values{'VAERS_ID'} // die;
+			my $cdcManufacturerName = $values{'VAX_MANU'} // die;
+			my $cdcVaccineTypeName = $values{'VAX_TYPE'} // die;
+			my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
+        	my $drugName = "$cdcManufacturerName - $cdcVaccineTypeName - $cdcVaccineName";
+        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
+        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
+			my %o = ();
+			$o{'substanceCategory'}      = $substanceCategory;
+			$o{'substanceShortenedName'} = $substanceShortenedName;
+			$o{'cdcVaccineName'}         = $cdcVaccineName;
+			$o{'dose'}                   = $dose;
+			push @{$reportsVaccines{$vaersId}->{'vaccines'}}, \%o;
+		}
+	}
+	close $vaccinesIn;
+
+	# Fetching notices - symptoms relations.
+	open my $symptomsIn, '<:', $symptomsFile;
+	my $symptomsCsv = Text::CSV_XS->new ({ binary => 1 });
+	my %symptomsLabels = ();
+	$dRNum = 0;
+	while (<$symptomsIn>) {
+		$dRNum++;
+
+		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
+		$_ =~ s/–/-/g;
+		$_ =~ s/–/-/g;
+		$_ =~ s/ –D/ -D/g;
+		$_ =~ s/\\xA0//g;
+		$_ =~ s/~/--:--/g;
+    	$_ =~ s/ / /g;
+    	$_ =~ s/\r//g;
+		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
+		$_ =~ s/\x{1F}/./g;
+
+		# Verifying line.
+		my $line = $_;
+		$line = decode("ascii", $line);
+		for (/[^\n -~]/g) {
+		    printf "Bad character: %02x\n", ord $_;
+		    die;
+		}
+
+		# First row = line labels.
+		if ($dRNum == 1) {
+			my @labels = split ',', $line;
+			my $lN = 0;
+			for my $label (@labels) {
+				$symptomsLabels{$lN} = $label;
+				$lN++;
+			}
+			$expectedValues = keys %symptomsLabels;
+		} else {
+
+			# Verifying we have the expected number of values.
+			open my $fh, "<", \$_;
+			my $row = $symptomsCsv->getline ($fh);
+			my @row = @$row;
+			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
+			my $vN  = 0;
+			my %values = ();
+			for my $value (@row) {
+				my $label = $symptomsLabels{$vN} // die;
+				$values{$label} = $value;
+				$vN++;
+			}
+			my $vaersId  = $values{'VAERS_ID'} // die;
+			my $symptom1 = $values{'SYMPTOM1'} // die;
+			my $symptom2 = $values{'SYMPTOM2'};
+			my $symptom3 = $values{'SYMPTOM3'};
+			my $symptom4 = $values{'SYMPTOM4'};
+			my $symptom5 = $values{'SYMPTOM5'};
+			my @symptoms = ($symptom1, $symptom2, $symptom3, $symptom4, $symptom5);
+			next unless exists $reportsVaccines{$vaersId}->{'vaccines'};
+			for my $symptomName (@symptoms) {
+				next unless $symptomName && length $symptomName >= 1;
+				$reportsSymptoms{$vaersId}->{$symptomName} = 1;
+			}
+		}
+	}
+	close $symptomsIn;
+
+	# Fetching notices.
+	open my $dataIn, '<:', $dataFile;
+	$dRNum = 0;
+	my %dataLabels = ();
+	my $dataCsv = Text::CSV_XS->new ({ binary => 1 });
+	while (<$dataIn>) {
+		$dRNum++;
+
+		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
+		$_ =~ s/–/-/g;
+		$_ =~ s/–/-/g;
+		$_ =~ s/ –D/ -D/g;
+		$_ =~ s/\\xA0//g;
+		$_ =~ s/~/--:--/g;
+    	$_ =~ s/ / /g;
+    	$_ =~ s/\r//g;
+		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
+		$_ =~ s/\x{1F}/./g;
+
+		# Verifying line.
+		my $line = $_;
+		$line = decode("ascii", $line);
+		for (/[^\n -~]/g) {
+		    printf "Bad character: %02x\n", ord $_;
+		    die;
+		}
+
+		# First row = line labels.
+		if ($dRNum == 1) {
+			my @labels = split ',', $line;
+			my $lN = 0;
+			for my $label (@labels) {
+				$dataLabels{$lN} = $label;
+				$lN++;
+			}
+			$expectedValues = keys %dataLabels;
+		} else {
+
+			# Verifying we have the expected number of values.
+			open my $fh, "<", \$_;
+			my $row = $dataCsv->getline ($fh);
+			my @row = @$row;
+			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
+			my $vN  = 0;
+			my %values = ();
+			for my $value (@row) {
+				my $label = $dataLabels{$vN} // die;
+				$values{$label} = $value;
+				$vN++;
+			}
+
+			# Retrieving report data we care about.
+			my $vaersId             = $values{'VAERS_ID'}                  // die;
+			# Skipping the report if no Covid vaccine is associated.
+			next unless exists $reportsVaccines{$vaersId};
+			my $vaersReceptionDate  = $values{'RECVDATE'}                  // die;
+			my $alphaCode2            = $values{'STATE'}                     // die;
+			my $countryStateId;
+			if ($alphaCode2) {
+				$alphaCode2 = uc $alphaCode2;
+				$alphaCode2 = 'WA' if $alphaCode2 eq 'DC';
+				$countryStateId = $countryStates{$alphaCode2}->{'countryStateId'} // die "alphaCode2 : $alphaCode2";
+			}
+			my $onsetDate           = $values{'ONSET_DATE'};
+			my $stateName           = "Foreign";
+			my $patientAge          = $values{'AGE_YRS'}                   // die;
+			my $cdcSexInternalId    = $values{'SEX'}                       // die;
+			my ($sexName, $sex);
+			if ($cdcSexInternalId eq 'F') {
+				$sex   = 1;
+				$sexName = 'Female';
+			} elsif ($cdcSexInternalId eq 'M') {
+				$sex   = 2;
+				$sexName = 'Male';
+			} elsif ($cdcSexInternalId eq 'U') {
+				$sex   = 3;
+				$sexName = 'Unknown';
+			} else {
+				die "cdcSexInternalId : $cdcSexInternalId";
+			}
+			my $vaccinationDate         = $values{'VAX_DATE'};
+			my $deceasedDate            = $values{'DATEDIED'};
+			my $aEDescription           = $values{'SYMPTOM_TEXT'};
+			my $cdcVaccineAdministrator = $values{'V_ADMINBY'};
+			$cdcVaccineAdministrator    = administrator_to_enum($cdcVaccineAdministrator);
+			my $hospitalized            = $values{'HOSPITAL'};
+			my $permanentDisability     = $values{'DISABLE'};
+			my $lifeThreatning          = $values{'L_THREAT'};
+			my $immProjectNumber        = $values{'SPLTTYPE'};
+			my $patientDied             = $values{'DIED'};
+			$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
+			# next if !defined $patientAge || $patientAge > 17;
+			if (exists $reports{$vaersId}->{'patientAgeFixed'}) {
+				$patientAge = $reports{$vaersId}->{'patientAgeFixed'};
+			} 
+			$hospitalized               = 0 unless defined $hospitalized        && length $hospitalized        >= 1;
+			$permanentDisability        = 0 unless defined $permanentDisability && length $permanentDisability >= 1;
+			$lifeThreatning             = 0 unless defined $lifeThreatning      && length $lifeThreatning      >= 1;
+			$patientDied                = 0 unless defined $patientDied         && length $patientDied         >= 1;
+			$patientDied                = 1 if defined $patientDied             && $patientDied eq 'Y';
+			$hospitalized               = 1 if defined $hospitalized            && $hospitalized eq 'Y';
+			$permanentDisability        = 1 if defined $permanentDisability     && $permanentDisability eq 'Y';
+			$lifeThreatning             = 1 if defined $lifeThreatning          && $lifeThreatning eq 'Y';
+		    $vaersReceptionDate         = convert_date($vaersReceptionDate);
+		    $vaccinationDate            = convert_date($vaccinationDate) if $vaccinationDate;
+		    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
+		    $onsetDate                  = convert_date($onsetDate)       if $onsetDate;
+			$onsetDate                  = undef unless defined $onsetDate       && length $onsetDate           >= 1;
+			$deceasedDate               = undef unless defined $deceasedDate    && length $deceasedDate        >= 1;
+			$vaccinationDate            = undef unless defined $vaccinationDate && length $vaccinationDate     >= 1;
+			$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
+			my ($cdcAgeInternalId,
+				$cdcAgeName);
+			if (defined $patientAge) {
+				($cdcAgeInternalId,
+					$cdcAgeName) = age_to_age_group($patientAge);
+			}
+		    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $vaersReceptionDate;
+	    	my ($code2, $countryId);
+	    	if ($immProjectNumber && length $immProjectNumber >= 2) {
+		    	($code2) = $immProjectNumber =~ /^(..).*$/;
+		    	$countryId = $countries{$code2}->{'countryId'};
+	    	}
+
+			# Inserting the report symptoms if unknown.
+			my @symptomsListed  = ();
+			for my $symptomName (sort keys %{$reportsSymptoms{$vaersId}}) {
+				my $symptomNormalized = lc $symptomName;
+				unless (exists $symptoms{$symptomNormalized}->{'symptomId'}) {
+					my $sth = $dbh->prepare("INSERT INTO symptom (name) VALUES (?)");
+					$sth->execute($symptomName) or die $sth->err();
+					symptoms();
+				}
+				my $symptomId = $symptoms{$symptomNormalized}->{'symptomId'} // die;
+				push @symptomsListed, $symptomId;
+			}
+
+			# Inserting the vaccines data.
+			my @vaccinesListed = @{$reportsVaccines{$vaersId}->{'vaccines'}};
+			my $vaccinesListed = encode_json\@vaccinesListed;
+			# p@vaccinesListed;
+			# die;
+
+			# Inserting the report treatment data.
+			my $symptomsListed = encode_json\@symptomsListed;
+			unless (exists $reports{$vaersId}->{'reportId'}) {
+				my $sth = $dbh->prepare("
+					INSERT INTO report (
+						vaersSource, vaersId, countryId, countryStateId, aEDescription, vaccinesListed, sex, sexFixed,
+						patientAge, patientAgeFixed, vaersReceptionDate, vaccinationDate, vaccinationDateFixed, symptomsListed,
+						hospitalized, permanentDisability, lifeThreatning, patientDied,
+						hospitalizedFixed, permanentDisabilityFixed, lifeThreatningFixed, patientDiedFixed,
+						onsetDate, onsetDateFixed, deceasedDate, deceasedDateFixed, immProjectNumber
+					) VALUES (
+						$vaersSource, ?, ?, ?, ?, ?, ?, ?,
+						?, ?, ?, ?, ?, ?,
+						$hospitalized, $permanentDisability, $lifeThreatning, $patientDied,
+						$hospitalized, $permanentDisability, $lifeThreatning, $patientDied,
+						?, ?, ?, ?, ?
+					)");
+				$sth->execute(
+					$vaersId, $countryId, $countryStateId, $aEDescription, $vaccinesListed, $sex, $sex,
+					$patientAge, $patientAge, $vaersReceptionDate, $vaccinationDate, $vaccinationDate, $symptomsListed,
+					$onsetDate, $onsetDate, $deceasedDate, $deceasedDate, $immProjectNumber) or die $sth->err();
+				reports();
+			}
+			my $reportId = $reports{$vaersId}->{'reportId'} // die;
+
+			# Fetching products last involved.
+			my $vaccine;
+			for my $vaccineData (@{$reportsVaccines{$vaersId}->{'vaccines'}}) {
+				my $substanceShortenedName = %$vaccineData{'substanceShortenedName'} // die;
+				$vaccine = $substanceShortenedName;
+			}
+
+			# Fetching statistics.
+			unless ($cdcAgeName) {
+				# Setting the age as requiring review.
+				unless ($reports{$vaersId}->{'patientAgeConfirmationRequired'}) {
+					my $sth = $dbh->prepare("UPDATE report SET patientAgeConfirmationRequired = 1 WHERE id = $reportId");
+					$sth->execute() or die $sth->err();
+				}
+			}
+		}
+	}
+	close $dataIn;
+}
+
+sub age_to_age_group {
+	my ($patientAge) = @_;
+	return (0, 'Unknown') unless defined $patientAge && length $patientAge >= 1;
+	my ($cdcAgeInternalId, $cdcAgeName);
+	if ($patientAge <= 1.99) {
+		$cdcAgeInternalId = '1';
+		$cdcAgeName       = '<2 Years';
+	} elsif ($patientAge >= 2 && $patientAge <= 4.99) {
+		$cdcAgeInternalId = '2';
+		$cdcAgeName = '2 - 4 Years';
+	} elsif ($patientAge >= 5 && $patientAge <= 11.99) {
+		$cdcAgeInternalId = '3';
+		$cdcAgeName = '5 - 11 Years';
+	} elsif ($patientAge >= 12 && $patientAge <= 17.99) {
+		$cdcAgeInternalId = '4';
+		$cdcAgeName = '12 - 17 Years';
+	} elsif ($patientAge >= 18 && $patientAge <= 24.99) {
+		$cdcAgeInternalId = '5';
+		$cdcAgeName = '18 - 24 Years';
+	} elsif ($patientAge >= 25 && $patientAge <= 49.99) {
+		$cdcAgeInternalId = '6';
+		$cdcAgeName = '25 - 49 Years';
+	} elsif ($patientAge >= 50 && $patientAge <= 64.99) {
+		$cdcAgeInternalId = '6';
+		$cdcAgeName = '50 - 64 Years';
+	} elsif ($patientAge >= 65) {
+		$cdcAgeInternalId = '7';
+		$cdcAgeName = '65+ Years';
+	} else {
+		die "patientAge : $patientAge";
+	}
+	return ($cdcAgeInternalId, $cdcAgeName);
+}
+
+sub administrator_to_enum {
 	my ($cdcVaccineAdministrator) = @_;
 	if ($cdcVaccineAdministrator eq 'MIL') {
-		$cdcVaccineAdministrator = "Military";
+		$cdcVaccineAdministrator = 1;
 	} elsif ($cdcVaccineAdministrator eq 'OTH') {
-		$cdcVaccineAdministrator = "Other";
+		$cdcVaccineAdministrator = 2;
 	} elsif ($cdcVaccineAdministrator eq 'PVT') {
-		$cdcVaccineAdministrator = "Private";
+		$cdcVaccineAdministrator = 3;
 	} elsif ($cdcVaccineAdministrator eq 'PUB') {
-		$cdcVaccineAdministrator = "Public";
+		$cdcVaccineAdministrator = 4;
 	} elsif ($cdcVaccineAdministrator eq 'UNK') {
-		$cdcVaccineAdministrator = "Unknown";
+		$cdcVaccineAdministrator = 5;
 	} elsif ($cdcVaccineAdministrator eq 'PHM') {
-		$cdcVaccineAdministrator = "Pharmacy";
+		$cdcVaccineAdministrator = 6;
 	} elsif ($cdcVaccineAdministrator eq 'WRK') {
-		$cdcVaccineAdministrator = "Work";
+		$cdcVaccineAdministrator = 7;
 	} elsif ($cdcVaccineAdministrator eq 'SCH') {
-		$cdcVaccineAdministrator = "School";
+		$cdcVaccineAdministrator = 8;
 	} elsif ($cdcVaccineAdministrator eq 'SEN') {
-		$cdcVaccineAdministrator = "Senior Living";
+		$cdcVaccineAdministrator = 9;
 	} else {
 		die "cdcVaccineAdministrator : $cdcVaccineAdministrator";
 	}
@@ -770,6 +730,7 @@ sub substance_synthesis {
         $substanceName eq 'CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (FLUVAX)' ||
         $substanceName eq 'CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (NILGRIP)' ||
         $substanceName eq 'CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (FOREIGN)' ||
+        $substanceName eq 'EMERGENT BIOSOLUTIONS - SMALL - SMALLPOX (ACAM2000)' ||
         $substanceName eq 'SANOFI PASTEUR - FLU4 - INFLUENZA (SEASONAL) (FLUZONE QUADRIVALENT)' ||
         $substanceName eq 'GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLUARIX QUADRIVALENT)' ||
         $substanceName eq 'BAVARIAN NORDIC - SMALLMNK - SMALLPOX + MONKEYPOX (JYNNEOS)';
@@ -946,6 +907,14 @@ sub substance_synthesis {
     ) {
         $substanceShortenedName = 'COVID-19 VACCINE MODERNA';
     } elsif (
+        $substanceName eq 'MODERNA - COVID19-2 - COVID19 (COVID19 (MODERNA BIVALENT))'
+    ) {
+        $substanceShortenedName = 'COVID-19 VACCINE MODERNA BIVALENT';
+    } elsif (
+        $substanceName eq 'PFIZER\BIONTECH - COVID19-2 - COVID19 (COVID19 (PFIZER-BIONTECH BIVALENT))'
+    ) {
+        $substanceShortenedName = 'COVID-19 VACCINE PFIZER-BIONTECH BIVALENT';
+    } elsif (
         $substanceName eq 'PFIZER\BIONTECH - COVID19 - COVID19 (COVID19 (PFIZER-BIONTECH))'
     ) {
         $substanceShortenedName = 'COVID-19 VACCINE PFIZER-BIONTECH';
@@ -963,351 +932,4 @@ sub substance_synthesis {
         $substanceCategory = 'OTHER'
     }
     return ($substanceCategory, $substanceShortenedName);
-}
-
-sub age_to_age_group {
-	my ($patientAge) = @_;
-	return (0, 'Unknown') unless defined $patientAge && length $patientAge >= 1;
-	my ($cdcAgeName);
-	if ($patientAge <= 5) {
-		$cdcAgeName       = 'Under 5';
-	} elsif ($patientAge > 5 && $patientAge <= 11.9) {
-		$cdcAgeName = '5-11 Years';
-	} elsif ($patientAge > 12 && $patientAge <= 15.9) {
-		$cdcAgeName = '12-11 Years';
-	} elsif ($patientAge > 16 && $patientAge <= 19) {
-		$cdcAgeName = '12-17 Years';
-	} elsif ($patientAge > 17.9 && $patientAge <= 64.9) {
-		$cdcAgeName = '18-64 Years';
-	} elsif ($patientAge > 64.9 && $patientAge <= 85.9) {
-		$cdcAgeName = '65-85 Years';
-	} elsif ($patientAge > 85.9) {
-		$cdcAgeName = 'More than 85 Years';
-	} else {
-		die "patientAge : $patientAge";
-	}
-	return ($cdcAgeName);
-}
-
-sub parse_foreign_data {
-
-	# Configuring expected files ; dying if they aren't found.
-	my $dataFile     = "$cdcForeignFolder/NonDomestic" . 'VAERSDATA.csv';
-	my $symptomsFile = "$cdcForeignFolder/NonDomestic" . 'VAERSSYMPTOMS.csv';
-	my $vaccinesFile = "$cdcForeignFolder/NonDomestic" . 'VAERSVAX.csv';
-	die "missing mandatory file in [$cdcForeignFolder]" if !-f $dataFile || !-f $symptomsFile || !-f $vaccinesFile;
-	say "dataFile     : $dataFile";
-	say "symptomsFile : $symptomsFile";
-	say "vaccinesFile : $vaccinesFile";
-
-	# Fetching notices - vaccines relations.
-	open my $vaccinesIn, '<:', $vaccinesFile;
-	my $expectedValues;
-	my $vaccinesCsv = Text::CSV_XS->new ({ binary => 1 });
-	my %vaccinesLabels = ();
-	my %reportsVaccines = ();
-	my $dRNum = 0;
-	while (<$vaccinesIn>) {
-		$dRNum++;
-
-		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-		$_ =~ s/–/-/g;
-		$_ =~ s/–/-/g;
-		$_ =~ s/ –D/ -D/g;
-		$_ =~ s/\\xA0//g;
-		$_ =~ s/~/--:--/g;
-    	$_ =~ s/ / /g;
-    	$_ =~ s/\r//g;
-		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-		$_ =~ s/\x{1F}/./g;
-
-		# Verifying line.
-		my $line = $_;
-		$line = decode("ascii", $line);
-		for (/[^\n -~]/g) {
-		    printf "Bad character: %02x\n", ord $_;
-		    die;
-		}
-
-		# First row = line labels.
-		if ($dRNum == 1) {
-			my @labels = split ',', $line;
-			my $lN = 0;
-			for my $label (@labels) {
-				$vaccinesLabels{$lN} = $label;
-				$lN++;
-			}
-			$expectedValues = keys %vaccinesLabels;
-		} else {
-
-			# Verifying we have the expected number of values.
-			open my $fh, "<", \$_;
-			my $row = $vaccinesCsv->getline ($fh);
-			my @row = @$row;
-			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-			my $vN  = 0;
-			my %values = ();
-			for my $value (@row) {
-				my $label = $vaccinesLabels{$vN} // die;
-				$values{$label} = $value;
-				$vN++;
-			}
-			my $dose    = $values{'VAX_DOSE_SERIES'};
-			my $cdcReportInternalId = $values{'VAERS_ID'} // die;
-			my $cdcManufacturerName = $values{'VAX_MANU'} // die;
-			my $cdcVaccineTypeName = $values{'VAX_TYPE'} // die;
-			my $cdcVaccineLotNumber = $values{'VAX_LOT'} // die;
-			my $cdcVaccineName = $values{"VAX_NAME\n"} // die;
-        	my $drugName = "$cdcManufacturerName - $cdcVaccineTypeName - $cdcVaccineName";
-
-        	# We verify here that the vaccine is indeed related to a COVID one.
-        	my ($substanceCategory, $substanceShortenedName) = substance_synthesis($drugName);
-        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
-        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
-        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
-        	next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
-			my %o = ();
-			$o{'substanceCategory'} = $substanceCategory;
-			$o{'substanceShortenedName'} = $substanceShortenedName;
-			$o{'lotNumber'} = $cdcVaccineLotNumber;
-			$o{'cdcVaccineName'} = $cdcVaccineName;
-			$o{'dose'} = $dose;
-			push @{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}, \%o;
-		}
-	}
-	close $vaccinesIn;	
-
-	# Fetching notices - symptoms relations.
-	open my $symptomsIn, '<:', $symptomsFile;
-	my $symptomsCsv = Text::CSV_XS->new ({ binary => 1 });
-	my %symptomsLabels = ();
-	$dRNum = 0;
-	my %reportsSymptoms = ();
-	while (<$symptomsIn>) {
-		$dRNum++;
-
-		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-		$_ =~ s/–/-/g;
-		$_ =~ s/–/-/g;
-		$_ =~ s/ –D/ -D/g;
-		$_ =~ s/\\xA0//g;
-		$_ =~ s/~/--:--/g;
-    	$_ =~ s/ / /g;
-    	$_ =~ s/\r//g;
-		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-		$_ =~ s/\x{1F}/./g;
-
-		# Verifying line.
-		my $line = $_;
-		$line = decode("ascii", $line);
-		for (/[^\n -~]/g) {
-		    printf "Bad character: %02x\n", ord $_;
-		    die;
-		}
-
-		# First row = line labels.
-		if ($dRNum == 1) {
-			my @labels = split ',', $line;
-			my $lN = 0;
-			for my $label (@labels) {
-				$symptomsLabels{$lN} = $label;
-				$lN++;
-			}
-			$expectedValues = keys %symptomsLabels;
-		} else {
-
-			# Verifying we have the expected number of values.
-			open my $fh, "<", \$_;
-			my $row = $symptomsCsv->getline ($fh);
-			my @row = @$row;
-			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-			my $vN  = 0;
-			my %values = ();
-			for my $value (@row) {
-				my $label = $symptomsLabels{$vN} // die;
-				$values{$label} = $value;
-				$vN++;
-			}
-			my $cdcReportInternalId  = $values{'VAERS_ID'} // die;
-			my $symptom1 = $values{'SYMPTOM1'} // die;
-			my $symptom2 = $values{'SYMPTOM2'};
-			my $symptom3 = $values{'SYMPTOM3'};
-			my $symptom4 = $values{'SYMPTOM4'};
-			my $symptom5 = $values{'SYMPTOM5'};
-			my @symptoms = ($symptom1, $symptom2, $symptom3, $symptom4, $symptom5);
-			next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-			for my $symptomName (@symptoms) {
-				next unless $symptomName && length $symptomName >= 1;
-				$reportsSymptoms{$cdcReportInternalId}->{$symptomName} = 1;
-			}
-		}
-	}
-	close $symptomsIn;
-
-	# Fetching notices.
-	my $definedAge = 0;
-	open my $dataIn, '<:', $dataFile;
-	$dRNum = 0;
-	my %dataLabels = ();
-	my $dataCsv = Text::CSV_XS->new ({ binary => 1 });
-	while (<$dataIn>) {
-		$dRNum++;
-
-		# Fixing some poor encodings by replacing special chars by their UTF8 equivalents.
-		$_ =~ s/–/-/g;
-		$_ =~ s/–/-/g;
-		$_ =~ s/ –D/ -D/g;
-		$_ =~ s/\\xA0//g;
-		$_ =~ s/~/--:--/g;
-    	$_ =~ s/ / /g;
-    	$_ =~ s/\r//g;
-		$_ =~ s/[\x{80}-\x{FF}\x{1C}\x{02}\x{05}\x{06}\x{7F}\x{17}\x{10}]//g;
-		$_ =~ s/\x{1F}/./g;
-
-		# Verifying line.
-		my $line = $_;
-		$line = decode("ascii", $line);
-		for (/[^\n -~]/g) {
-		    printf "Bad character: %02x\n", ord $_;
-		    die;
-		}
-
-		# First row = line labels.
-		if ($dRNum == 1) {
-			my @labels = split ',', $line;
-			my $lN = 0;
-			for my $label (@labels) {
-				$dataLabels{$lN} = $label;
-				$lN++;
-			}
-			$expectedValues = keys %dataLabels;
-		} else {
-
-			# Verifying we have the expected number of values.
-			open my $fh, "<", \$_;
-			my $row = $dataCsv->getline ($fh);
-			my @row = @$row;
-			die scalar @row . " != $expectedValues" unless scalar @row == $expectedValues;
-			my $vN  = 0;
-			my %values = ();
-			for my $value (@row) {
-				my $label = $dataLabels{$vN} // die;
-				$values{$label} = $value;
-				$vN++;
-			}
-
-			# Retrieving report data we care about.
-			my $cdcReportInternalId = $values{'VAERS_ID'}                  // die;
-			my $cdcReceptionDate    = $values{'RECVDATE'}                  // die;
-			my $sCode2              = $values{'STATE'}                     // die;
-			my $patientAge          = $values{'AGE_YRS'}                   // die;
-			my $cdcSexInternalId    = $values{'SEX'}                       // die;
-			my $cdcSexName;
-			if ($cdcSexInternalId eq 'F') {
-				$cdcSexName = 'Female';
-			} elsif ($cdcSexInternalId eq 'M') {
-				$cdcSexName = 'Male';
-			} elsif ($cdcSexInternalId eq 'U') {
-				$cdcSexName = 'Unknown';
-			} else {
-				die "cdcSexInternalId : $cdcSexInternalId";
-			}
-			my $vaccinationDate         = $values{'VAX_DATE'};
-			my $deceasedDate            = $values{'DATEDIED'};
-			my $aEDescription           = $values{'SYMPTOM_TEXT'};
-			my $cdcVaccineAdministrator = $values{'V_ADMINBY'};
-			$cdcVaccineAdministrator    = administrator_to_litteral($cdcVaccineAdministrator);
-			my $hospitalized            = $values{'HOSPITAL'};
-			my $permanentDisability     = $values{'DISABLE'};
-			my $lifeThreatning          = $values{'L_THREAT'};
-			my $patientDied             = $values{'DIED'};
-			$patientAge                 = undef unless defined $patientAge      && length $patientAge          >= 1;
-			$hospitalized               = 0 unless defined $hospitalized        && length $hospitalized        >= 1;
-			$permanentDisability        = 0 unless defined $permanentDisability && length $permanentDisability >= 1;
-			$lifeThreatning             = 0 unless defined $lifeThreatning      && length $lifeThreatning      >= 1;
-			$patientDied                = 0 unless defined $patientDied         && length $patientDied         >= 1;
-			$patientDied                = 1 if defined $patientDied             && $patientDied eq 'Y';
-			$hospitalized               = 1 if defined $hospitalized            && $hospitalized eq 'Y';
-			$permanentDisability        = 1 if defined $permanentDisability     && $permanentDisability eq 'Y';
-			$lifeThreatning             = 1 if defined $lifeThreatning          && $lifeThreatning eq 'Y';
-		    $cdcReceptionDate           = convert_date($cdcReceptionDate);
-		    $vaccinationDate            = convert_date($vaccinationDate) if $vaccinationDate;
-		    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
-		    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $cdcReceptionDate;
-		    my $compDate = "$receptionYear$receptionMonth$receptionDay";
-		    # my $ageGroup;
-		    # if (defined $patientAge) {
-		    # 	$definedAge++;
-		    # # 	$ageGroups = age_to_age_group($patientAge);
-		    # }
-		    # else {
-		    # 	$ageGroups = 'Undefined Age';
-		    # }
-			my $immProjectNumber        = $values{'SPLTTYPE'};
-			if ($immProjectNumber !~ /^AU.*$/) {
-
-				# Taking care of building stats.
-				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-				# if (
-				# 	$patientDied
-				# ) {
-					# my $hasActiveSymptom = 0;
-					# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-					# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-					# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-					# 		$hasActiveSymptom = 1;
-					# 	}
-					# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-					# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-					# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-					# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-					# 	# 	$hasActiveSymptom = 1;
-					# 	# }
-					# }
-					# next unless $hasActiveSymptom == 1;
-				    if (defined $patientAge) {
-				    	$definedAge++;
-				    # 	$ageGroups = age_to_age_group($patientAge);
-				    }
-
-					my %o = ();
-					$o{'cdcReportInternalId'} = $cdcReportInternalId;
-					$o{'cdcReceptionDate'} = $cdcReceptionDate;
-					$o{'source'}          = 'foreign';
-					$o{'sCode2'}          = $sCode2;
-					$o{'patientAge'}      = $patientAge;
-					$o{'cdcSexInternalId'} = $cdcSexInternalId;
-					$o{'cdcSexName'}      = $cdcSexName;
-					$o{'vaccinationDate'} = $vaccinationDate;
-					$o{'deceasedDate'}    = $deceasedDate;
-					$o{'aEDescription'} = $aEDescription;
-					$o{'cdcVaccineAdministrator'} = $cdcVaccineAdministrator;
-					$o{'hospitalized'}    = $hospitalized;
-					$o{'permanentDisability'} = $permanentDisability;
-					$o{'lifeThreatning'}  = $lifeThreatning;
-					$o{'patientDied'} = $patientDied;
-					$o{'immProjectNumber'} = $immProjectNumber;
-					for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-						$o{'symptoms'}->{$ausSymptomName} = 1;
-					}
-					for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
-						push @{$o{'vaccines'}}, \%$vaccData;
-					}
-
-				    my $normalizedDescription = lc $aEDescription;
-				    my $hasHit = 0;
-				    if ($normalizedDescription =~ /nickel/) {
-				    	$o{'hits'}->{'nickel'} = 1;
-				    	$hasHit = 1;
-				    }
-				    next unless $hasHit == 1;
-					$totalReports++;
-					push @{$reportsByDates{$compDate}}, \%o;
-				# }
-			}
-		}
-	}
-	close $dataIn;
-	say "totalReports : $totalReports";
-	say "definedAge : $definedAge";
 }

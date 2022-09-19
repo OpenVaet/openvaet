@@ -57,10 +57,10 @@
             </div>
             <div style="width:300px;display:flex;flex-wrap: wrap;">
                 <div style="width:180px;padding-top: 3px;"><b>Sex : </b></div>
-                <select id="vaersSexFixed" style="width: 115px;margin-left: 5px;">
+                <select id="sexFixed" style="width: 115px;margin-left: 5px;">
                     % for my $sex (sort{$a <=> $b} keys %sexes) {
                         % my $sexName = $sexes{$sex}->{'sexName'} // die;
-                        % if ($sex eq $vaersSexFixed) {
+                        % if ($sex eq $sexFixed) {
                             <option value="<%=$sex%>" selected><%=$sexName%></option>
                         % } else {
                             <option value="<%=$sex%>"><%=$sexName%></option>
@@ -206,10 +206,10 @@
             </div>
             <div style="width:300px;display:flex;flex-wrap: wrap;">
                 <div style="width:180px;padding-top: 3px;"><b>Sex : </b></div>
-                <select id="vaersSexFixed" style="width: 115px;margin-left: 5px;">
+                <select id="sexFixed" style="width: 115px;margin-left: 5px;">
                     % for my $sex (sort{$a <=> $b} keys %sexes) {
                         % my $sexName = $sexes{$sex}->{'sexName'} // die;
-                        % if ($sex eq $vaersSexFixed) {
+                        % if ($sex eq $sexFixed) {
                             <option value="<%=$sex%>" selected><%=$sexName%></option>
                         % } else {
                             <option value="<%=$sex%>"><%=$sexName%></option>
@@ -339,6 +339,7 @@
 % } else {
     <script type="text/javascript">
     $(document).ready(function() {
+        // Attending to the loader.
         window.location.href = '/data_admin?currentLanguage=<%=$currentLanguage%>'; 
     });
     </script>
@@ -346,12 +347,11 @@
 
 <script type="text/javascript">
     function setReportAttribute(reportId, sqlValue, value) {
-        let dataType            = '<%=$dataType%>';
         console.log('Setting report ' + reportId + ', column : ' + sqlValue + ' to [' + value + ']');
         let patientAgeFixed     = $('#patientAgeFixed').val();
         console.log('patientAgeFixed : ' + patientAgeFixed);
-        let vaersSexFixed     = $('#vaersSexFixed').val();
-        console.log('vaersSexFixed : ' + vaersSexFixed);
+        let sexFixed     = $('#sexFixed').val();
+        console.log('sexFixed : ' + sexFixed);
         let vaccinationYear     = $('#vaccinationYear').val();
         let vaccinationMonth    = $('#vaccinationMonth').val();
         let vaccinationDay      = $('#vaccinationDay').val();
@@ -387,6 +387,8 @@
         if (daysBetweenVaccineAndAE && !hoursBetweenVaccineAndAE) {
             hoursBetweenVaccineAndAE = daysBetweenVaccineAndAE * 24;
         }
+        mainLoader.style.display  = "inline-block";
+        blankContainer.style.display  = "inline-block";
         let request            = $.ajax({
             url: "/wizard_patient_age/set_report_attribute",
             type: "POST",
@@ -394,9 +396,8 @@
                 reportId : reportId,
                 sqlValue : sqlValue,
                 value    : value,
-                dataType : dataType,
                 patientAgeFixed : patientAgeFixed,
-                vaersSexFixed : vaersSexFixed,
+                sexFixed : sexFixed,
                 vaccinationYear : vaccinationYear,
                 vaccinationMonth : vaccinationMonth,
                 vaccinationDay : vaccinationDay,
@@ -415,6 +416,8 @@
         });
 
         request.done(function(data) {
+            mainLoader.style.display  = "none";
+            blankContainer.style.display  = "none";
             let operationsToPerform = <%=$operationsToPerform%>;
             operationsToPerform = operationsToPerform - 1;
             loadNextReport(operationsToPerform);

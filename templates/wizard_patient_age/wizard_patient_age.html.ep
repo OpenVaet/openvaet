@@ -35,14 +35,12 @@
 		    });
 
 		    function loadNextReport(operationsToPerform) {
-		    	let dataType               = '<%=$dataType%>';
 		        let currentLanguage    = '<%=$currentLanguage%>';
 		        let request            = $.ajax({
 		            url: "/wizard_patient_age/load_next_report",
 		            type: "POST",
 		            data: {
 		                operationsToPerform : operationsToPerform,
-		                dataType                : dataType,
 		                currentLanguage     : currentLanguage
 		            }
 		        });

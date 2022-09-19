@@ -1,0 +1,67 @@
+% layout 'default';
+% title 'OPENVAET - New Keywords Set';
+<style type="text/css">
+    
+    .button {
+        margin-top: 10px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        border: 1px solid #696968;
+        font-size: 10px;
+        background: #e9eef0;
+        cursor: pointer;
+        width: 55px;
+    }
+    .button:hover {
+        background: #b8bfc2;
+    }
+</style>
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/data_admin/keywords_sets');return;">&#10229; Return to data admin</div>
+        <h2>Keywords Sets Creation</h2>
+        <input type="text" name="keywordsSetName" placeholder="Name" id="keywordsSetName">
+        <div class="text_separator"></div>
+        <div class="button" onclick="saveKeywordsSet();return;">Save</div>
+        <div class="text_separator"></div>
+        % } else {
+        <div class="url-link noselect" onclick="openLocation('/data_admin/keywords_sets');return;">&#10229; Retour à l'administration des données</div>
+        <h2>Création d'un set de mots clés</h2>
+        <input type="text" name="keywordsSetName" placeholder="Nom" id="keywordsSetName">
+        <div class="text_separator"></div>
+        <div class="button" onclick="saveKeywordsSet();return;">Sauvegarder</div>
+        % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+% if ($self->is_admin()) {
+<script type="text/javascript">
+    function saveKeywordsSet() {
+        let keywordsSetName = $('#keywordsSetName').val();
+        let request         = $.ajax({
+            url: "/data_admin/save_keywords_set",
+            type: "POST",
+            data: {
+                keywordsSetName : keywordsSetName,
+                currentLanguage : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            if (data.status == 'ok') {
+                window.location.href = '/data_admin/keywords_sets';
+            } else {
+                alert("Something went wrong : " + data.message);
+            }
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
+% }

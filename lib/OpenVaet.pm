@@ -372,6 +372,16 @@ sub startup {
     $r->get('/miscarriages_within_a_week')->to('miscarriages_within_a_week#miscarriages_within_a_week');
     $r->get('/census_data')->to('census_data#census_data');
     $r->get('/data_admin')->to('data_admin#data_admin');
+    $r->get('/data_admin/symptoms_sets')->to('data_admin#symptoms_sets');
+    $r->get('/data_admin/edit_symptoms_set')->to('data_admin#edit_symptoms_set');
+    $r->get('/data_admin/new_symptoms_set')->to('data_admin#new_symptoms_set');
+    $r->post('/data_admin/save_symptoms_set')->to('data_admin#save_symptoms_set');
+    $r->post('/data_admin/save_keywords')->to('data_admin#save_keywords');
+    $r->post('/data_admin/set_symptom_activity')->to('data_admin#set_symptom_activity');
+    $r->get('/data_admin/keywords_sets')->to('data_admin#keywords_sets');
+    $r->get('/data_admin/edit_keywords_set')->to('data_admin#edit_keywords_set');
+    $r->get('/data_admin/new_keywords_set')->to('data_admin#new_keywords_set');
+    $r->post('/data_admin/save_keywords_set')->to('data_admin#save_keywords_set');
     $r->get('/data_admin/wizards/patient_age')->to('wizard_patient_age#wizard_patient_age');
     $r->post('/wizard_patient_age/load_next_report')->to('wizard_patient_age#load_next_report');
     $r->post('/wizard_patient_age/set_report_attribute')->to('wizard_patient_age#set_report_attribute');

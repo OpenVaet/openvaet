@@ -149,7 +149,7 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 		$('#productFilter').select2({
@@ -163,24 +163,22 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 	}
 	function resetReportAgeTreatment(vaersReportId) {
-		let dataType = '<%=$dataType%>';
 		console.log('vaersReportId : ' + vaersReportId);
         let request            = $.ajax({
             url: "/wizard_patient_age/reset_report_attributes",
             type: "POST",
             data: {
-                vaersReportId : vaersReportId,
-                dataType      : dataType
+                vaersReportId : vaersReportId
             }
         });
 
         request.done(function(data) {
-        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&dataType=<%=$dataType%>'; 
+        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>'; 
         });
 
         // Printing error message if case of failure

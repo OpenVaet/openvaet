@@ -148,6 +148,7 @@ sub analyze_archive_org_twitter_followers {
             $totalArchives++;
             my $datetime = "$y-$m-$d $h:$mn:$s";
             my $followersCount = $followers{$dateHour}->{'followersCount'} // die;
+            $followersCount    =~ s/\,//;
             my $archiveOrgUrl  = "https://web.archive.org/web/$dateHour/$twitterUrl";
             # say "dateHour : $dateHour";
             # say "datetime : $datetime";
@@ -445,6 +446,7 @@ sub attempt_html {
         }
         $followersCount =~ s/K/$replace/;
         $followersCount =~ s/\.//;
+        $followersCount =~ s/\,//;
         return $followersCount;
     }
 }

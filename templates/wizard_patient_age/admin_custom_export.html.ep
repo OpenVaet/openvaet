@@ -17,7 +17,7 @@
 		% for my $reportData (@{$reports{$compdate}}) {
 			% my %reportData = %$reportData;
 			% my $vaersId = $reportData{'vaersId'} // die;
-			% my $cdcStateName = $reportData{'cdcStateName'} // die;
+			% my $countryName = $reportData{'countryName'} // 'Unknown';
 			% my $vaersSexName = $reportData{'vaersSexName'} // die;
 			% my $source = uc $reportData{'source'} // die;
 			% my $patientAge = $reportData{'patientAge'} // 'Unknown';
@@ -35,7 +35,7 @@
 						<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Age :</b> <%=$patientAge%>, <b>Sexe :</b> <%=$vaersSexName%></div>
 					</div>
 					<div style="width:calc(100% - 30px);display: flex;flex-wrap: wrap;height: 50px;">
-						<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>State</b> : <%=$cdcStateName%></div>
+						<div style="width: calc(45% - 15px);text-align: left;padding-left: 15px;padding-top: 15px;"><b>Country</b> : <%=$countryName%></div>
 						<div style="width: calc(55% - 15px);text-align: right;padding: 15px 0px;"><b>Source</b> : <%=$source%></div>
 					</div>
 					<div style="width:calc(100% - 30px);text-align: left;padding: 7px 15px;">
