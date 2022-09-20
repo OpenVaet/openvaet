@@ -2289,4 +2289,38 @@ ADD CONSTRAINT `report_to_pregnancyConfirmationUser`
 # Dropped obsolete wizard_report table.
 DROP TABLE `openvaet`.`wizard_report`;
 
+######################### V 11 - 2022-09-20 04:30:00
+# Created breast_milk_wizard_report table.
+CREATE TABLE `breast_milk_wizard_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reportId` int NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `breastMilkExposureConfirmationRequired` bit(1) NOT NULL DEFAULT b'0',
+  `breastMilkExposureConfirmationTimestamp` int DEFAULT NULL,
+  `breastMilkExposureConfirmation` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `breast_milk_wizard_report_to_report` (`reportId`),
+  CONSTRAINT `breast_milk_wizard_report_to_report` FOREIGN KEY (`reportId`) REFERENCES `report` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_breast_milk_wizard_report_insert` 
+BEFORE INSERT ON `breast_milk_wizard_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+# Added breastMilkExposureConfirmaton data to report.
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `breastMilkExposureConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyConfirmationUserId`,
+ADD COLUMN `breastMilkExposureConfirmationTimestamp` INT(11) NULL AFTER `breastMilkExposureConfirmationRequired`,
+ADD COLUMN `breastMilkExposureConfirmation` BIT(1) NULL AFTER `breastMilkExposureConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `breastMilkExposureConfirmationUserId` INT NULL AFTER `breastMilkExposureConfirmation`,
+ADD INDEX `report_to_breastMilkExposureConfirmationUser_idx` (`breastMilkExposureConfirmationUserId` ASC);
+ALTER TABLE `openvaet`.`report` 
+ADD CONSTRAINT `report_to_breastMilkExposureConfirmationUser`
+  FOREIGN KEY (`breastMilkExposureConfirmationUserId`)
+  REFERENCES `openvaet`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
 

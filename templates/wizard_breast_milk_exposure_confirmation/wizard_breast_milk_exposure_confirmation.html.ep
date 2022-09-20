@@ -1,5 +1,5 @@
 % layout 'default';
-% title 'OPENVAET - Wizard - Patient Pregnancies';
+% title 'OPENVAET - Wizard - Exposure via Breast Milk';
 
 <div class="content-container">
     % if ($self->is_admin()) {
@@ -9,7 +9,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Loading reports with pregnancies to confirm
+	        Loading reports with exposures via breast-milk to confirm
 	    </div>
 	    <div class="text_separator"></div>
 	    % } else {
@@ -17,7 +17,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Chargement des rapports dont les grossesses sont à confirmer
+	        Chargement des rapports dont des expositions via lait maternel sont à confirmer
 	    </div>
 	    <div class="text_separator"></div>
 	    % }
@@ -37,7 +37,7 @@
 		    function loadNextReport(operationsToPerform) {
 		        let currentLanguage    = '<%=$currentLanguage%>';
 		        let request            = $.ajax({
-		            url: "/wizard_pregnancies_confirmation/load_next_report",
+		            url: "/wizard_breast_milk_exposure_confirmation/load_next_report",
 		            type: "POST",
 		            data: {
 		                operationsToPerform : operationsToPerform,

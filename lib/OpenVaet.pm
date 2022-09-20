@@ -395,6 +395,16 @@ sub startup {
     $r->post('/wizard_pregnancies_confirmation/set_report_attribute')->to('wizard_pregnancies_confirmation#set_report_attribute');
     $r->get('/data_admin/wizards/pregnancies_confirmation_completed')->to('wizard_pregnancies_confirmation#pregnancies_confirmation_completed');
     $r->post('/wizard_pregnancies_confirmation/reset_report_attributes')->to('wizard_pregnancies_confirmation#reset_report_attributes');
+    $r->get('/data_admin/data_completion/by_countries_and_states')->to('data_completion#by_countries_and_states');
+
+    $r->get('/data_admin/wizards/breast_milk_exposure_confirmation')->to('wizard_breast_milk_exposure_confirmation#wizard_breast_milk_exposure_confirmation');
+    $r->post('/wizard_breast_milk_exposure_confirmation/load_next_report')->to('wizard_breast_milk_exposure_confirmation#load_next_report');
+    $r->post('/wizard_breast_milk_exposure_confirmation/set_report_attribute')->to('wizard_breast_milk_exposure_confirmation#set_report_attribute');
+    $r->get('/data_admin/wizards/breast_milk_exposure_confirmation_completed')->to('wizard_breast_milk_exposure_confirmation#breast_milk_exposure_confirmation_completed');
+    $r->post('/wizard_breast_milk_exposure_confirmation/reset_report_attributes')->to('wizard_breast_milk_exposure_confirmation#reset_report_attributes');
+
+
+    
     $r->get('/tools')->to('tools#tools');
     $r->get('/tools/archive_org_twitter_followers')->to('tools#archive_org_twitter_followers');
     $r->post('/tools/analyze_archive_org_twitter_followers')->to('tools#analyze_archive_org_twitter_followers');

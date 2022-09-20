@@ -41,6 +41,11 @@ my %pregnanciesSymptoms = ();
 my %pregnanciesKeywords = ();
 load_pregnancies_symptoms();
 load_pregnancies_keywords();
+my $breastMilkExposuresData     = 'Exposure Via Breast Milk';
+my %breastMilkExposuresSymptoms = ();
+my %breastMilkExposuresKeywords = ();
+load_breast_milk_exposures_symptoms();
+load_breast_milk_exposures_keywords();
 
 # Loading known database reports.
 my $latestReportId     = 0;
@@ -93,6 +98,41 @@ sub get_pregnancies_keywords_set {
 	return %$tb{'keywordsSetId'};
 }
 
+sub load_breast_milk_exposures_symptoms {
+    my $breastMilkExposuresSymptomsSetId = get_breast_milk_exposures_symptoms_set();
+    my $tb = $dbh->selectrow_hashref("SELECT symptoms FROM symptoms_set WHERE id = $breastMilkExposuresSymptomsSetId", undef);
+    die unless keys %$tb;
+    my $symptoms = %$tb{'symptoms'} // die;
+    $symptoms = decode_json($symptoms);
+    for my $symptomId (@$symptoms) {
+        $breastMilkExposuresSymptoms{$symptomId} = 1;
+    }
+}
+
+sub load_breast_milk_exposures_keywords {
+    my $breastMilkExposuresKeywordsSetId = get_breast_milk_exposures_keywords_set();
+    my $tb = $dbh->selectrow_hashref("SELECT keywords FROM keywords_set WHERE id = $breastMilkExposuresKeywordsSetId", undef);
+    die unless keys %$tb;
+    my $keywords = %$tb{'keywords'} // die;
+    my @keywordsFiltered = split '<br \/>', $keywords;
+    for my $keyword (@keywordsFiltered) {
+        my $lcKeyword = lc $keyword;
+        $breastMilkExposuresKeywords{$lcKeyword} = 1;
+    }
+}
+
+sub get_breast_milk_exposures_symptoms_set {
+    my $tb = $dbh->selectrow_hashref("SELECT id as symptomsSetId FROM symptoms_set WHERE name = ?", undef, $breastMilkExposuresData);
+    die unless keys %$tb;
+    return %$tb{'symptomsSetId'};
+}
+
+sub get_breast_milk_exposures_keywords_set {
+    my $tb = $dbh->selectrow_hashref("SELECT id as keywordsSetId FROM keywords_set WHERE name = ?", undef, $breastMilkExposuresData);
+    die unless keys %$tb;
+    return %$tb{'keywordsSetId'};
+}
+
 sub countries {
 	my $tb = $dbh->selectall_hashref("SELECT id as countryId, isoCode2, name as countryName FROM country", 'countryId');
 	for my $countryId (sort{$a <=> $b} keys %$tb) {
@@ -121,14 +161,20 @@ sub symptoms {
 }
 
 sub reports {
-	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired FROM report WHERE id > $latestReportId", 'reportId');
+	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired, pregnancyConfirmationRequired, breastMilkExposureConfirmationRequired FROM report WHERE id > $latestReportId", 'reportId');
 	for my $reportId (sort{$a <=> $b} keys %$tb) {
 		$latestReportId = $reportId;
 		my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
+		$reports{$vaersId}->{'reportId'} = $reportId;
 		my $patientAgeConfirmationRequired    = %$tb{$reportId}->{'patientAgeConfirmationRequired'}   // die;
     	$patientAgeConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
-		$reports{$vaersId}->{'reportId'} = $reportId;
 		$reports{$vaersId}->{'patientAgeConfirmationRequired'} = $patientAgeConfirmationRequired;
+		my $pregnancyConfirmationRequired    = %$tb{$reportId}->{'pregnancyConfirmationRequired'}   // die;
+    	$pregnancyConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmationRequired, -32)));
+		$reports{$vaersId}->{'pregnancyConfirmationRequired'} = $pregnancyConfirmationRequired;
+		my $breastMilkExposureConfirmationRequired    = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'}   // die;
+    	$breastMilkExposureConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
+		$reports{$vaersId}->{'breastMilkExposureConfirmationRequired'} = $breastMilkExposureConfirmationRequired;
 	}
 }
 
@@ -442,6 +488,7 @@ sub parse_vaers_files {
 			my $hasDirectPregnancySymptom = 0;
 			my $hasLikelyPregnancySymptom = 0;
 			my $likelyPregnancy    = 0;
+			my $likelyBreastMilkExposure = 0;
 			for my $symptomName (sort keys %{$reportsSymptoms{$vaersId}}) {
 				my $symptomNormalized = lc $symptomName;
 				unless (exists $symptoms{$symptomNormalized}->{'symptomId'}) {
@@ -459,6 +506,9 @@ sub parse_vaers_files {
 					$hasLikelyPregnancySymptom = 1;
 					$likelyPregnancy = 1;
 				}
+				if (exists $breastMilkExposuresSymptoms{$symptomId}) {
+					$likelyBreastMilkExposure = 1;
+				}
 			}
 
 			# Inspecting for potentials pregnancies related keywords in the description.
@@ -466,6 +516,12 @@ sub parse_vaers_files {
 			for my $keyword (sort keys %pregnanciesKeywords) {
 				if ($normalizedAEDescription =~ /$keyword/) {
 					$likelyPregnancy = 1;
+					last;
+				}
+			} 
+			for my $keyword (sort keys %breastMilkExposuresKeywords) {
+				if ($normalizedAEDescription =~ /$keyword/) {
+					$likelyBreastMilkExposure = 1;
 					last;
 				}
 			} 
@@ -516,6 +572,15 @@ sub parse_vaers_files {
 				# Settings the pregnancies requiring review.
 				unless ($reports{$vaersId}->{'pregnancyConfirmationRequired'}) {
 					my $sth = $dbh->prepare("UPDATE report SET pregnancyConfirmationRequired = 1, hasLikelyPregnancySymptom = $hasLikelyPregnancySymptom, hasDirectPregnancySymptom = $hasDirectPregnancySymptom WHERE id = $reportId");
+					$sth->execute() or die $sth->err();
+				}
+			}
+
+			# Pregnancies completion.
+			if ($likelyBreastMilkExposure) {
+				# Settings the pregnancies requiring review.
+				unless ($reports{$vaersId}->{'breastMilkExposureConfirmationRequired'}) {
+					my $sth = $dbh->prepare("UPDATE report SET breastMilkExposureConfirmationRequired = 1 WHERE id = $reportId");
 					$sth->execute() or die $sth->err();
 				}
 			}

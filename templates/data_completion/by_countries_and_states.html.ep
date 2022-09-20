@@ -1,5 +1,5 @@
 % layout 'default';
-% title 'OPENVAET - Wizard - Patient Pregnancies';
+% title 'OPENVAET - Wizard - Data Completion by Countries & States';
 
 <div class="content-container">
     % if ($self->is_admin()) {
@@ -9,7 +9,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Loading reports with pregnancies to confirm
+	        Loading data completion statistics ...
 	    </div>
 	    <div class="text_separator"></div>
 	    % } else {
@@ -17,21 +17,20 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Chargement des rapports dont les grossesses sont à confirmer
+	        Chargement des statistiques de complétion des données ...
 	    </div>
 	    <div class="text_separator"></div>
 	    % }
 	    <div style="width:100%;text-align: center;font-size: 14px;" id="reportLoaded">
 	    </div>
 		<script type="text/javascript"> 
-			let operationsToPerform = <%=$operationsToPerform%>;
 
 		    $(document).ready(function() {
-		    	if (operationsToPerform) {
-		        	loadNextReport(operationsToPerform);
-		    	} else {
-		    		window.location.href = '/data_admin';
-		    	}
+		    	// if (operationsToPerform) {
+		     //    	loadNextReport(operationsToPerform);
+		    	// } else {
+		    	// 	window.location.href = '/data_admin';
+		    	// }
 		    });
 
 		    function loadNextReport(operationsToPerform) {
@@ -40,7 +39,6 @@
 		            url: "/wizard_pregnancies_confirmation/load_next_report",
 		            type: "POST",
 		            data: {
-		                operationsToPerform : operationsToPerform,
 		                currentLanguage     : currentLanguage
 		            }
 		        });

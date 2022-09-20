@@ -10,9 +10,15 @@
         This section allows access to our collaborative data management tools.
         <h3>VAERS Data</h3>
         <div class="text_separator"></div>
+        <a href="/data_admin/data_completion/by_countries_and_states?currentLanguage=<%=$currentLanguage%>"><img src="/images/map.png" height="25px" width="25px">Data Completion By Countries & States</a>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/symptoms_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/symptoms.png" height="25px" width="25px">Analytics Symptoms Sets</a>
         <div class="text_separator"></div>
         <a href="/data_admin/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Analytics Keywords Sets</a>
+        <div class="text_separator"></div>
+        <hr>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">Ages Completion Wizard</a>
         <div class="text_separator"></div>
@@ -22,6 +28,12 @@
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Pregnancies Confirmation Data</a>
         <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>">Exposure via Breast-Milk Confirmation Wizard</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Exposure via Breast-Milk Confirmation Data</a>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Generate a custom export</a>
         <div class="text_separator"></div>
         % } elsif ($currentLanguage eq 'fr') {
@@ -30,9 +42,15 @@
         Cette section permet l'accès à nos outils de gestions collaboratives des données.
         <h3>Données VAERS</h3>
         <div class="text_separator"></div>
+        <a href="/data_admin/data_completion/by_countries_and_states?currentLanguage=<%=$currentLanguage%>"><img src="/images/map.png" height="25px" width="25px">Complétion des données par Pays & Etats</a>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/symptoms_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/symptoms.png" height="25px" width="25px">Sets de symptômes d'analyse</a>
         <div class="text_separator"></div>
         <a href="/data_admin/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Sets de mots clés</a>
+        <div class="text_separator"></div>
+        <hr>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">Assistant de complétion des âges</a>
         <div class="text_separator"></div>
@@ -41,6 +59,12 @@
         <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des grossesses</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des grossesses</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des expositions par lait maternel</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des expositions par lait maternel</a>
+        <div class="text_separator"></div>
+        <hr>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Générer un export personnalisé</a>
         <div class="text_separator"></div>
