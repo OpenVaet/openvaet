@@ -14,11 +14,15 @@
         <div class="text_separator"></div>
         <a href="/data_admin/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Analytics Keywords Sets</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">VAERS Data - Deaths & Serious AE - Age Completion Wizard</a>
+        <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">Ages Completion Wizard</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; VAERS Data - Deaths & Serious AE - Ages Completed Data</a>
+        <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Ages Completion Data</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; VAERS Data - Deaths & Serious AE - Generate a custom export</a>
+        <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Pregnancies Confirmation Wizard</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Pregnancies Confirmation Data</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Generate a custom export</a>
         <div class="text_separator"></div>
         % } elsif ($currentLanguage eq 'fr') {
         <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
@@ -30,11 +34,15 @@
         <div class="text_separator"></div>
         <a href="/data_admin/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Sets de mots clés</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">Données VAERS - Décès & EI Sérieux - Assistant de complétion des âges</a>
+        <a href="/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>">Assistant de complétion des âges</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données VAERS - Décès & EI Sérieux - Données incluant les âges complétés</a>
+        <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de complétion des âges</a>
         <div class="text_separator"></div>
-        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Données VAERS - Décès & EI Sérieux - Générer un export personnalisé</a>
+        <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des grossesses</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des grossesses</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/patient_ages_custom_export?currentLanguage=<%=$currentLanguage%>">&#10230; Générer un export personnalisé</a>
         <div class="text_separator"></div>
         % } else {
 

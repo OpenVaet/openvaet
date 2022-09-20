@@ -70,6 +70,7 @@ for my $table (@tables) {
     my $rTb                 = $dbh->selectall_hashref($sql, 'vaersId'); # ORDER BY RAND()
     my $total = keys %$rTb;
     my $current = 0;
+    my $restored = 0;
     for my $vaersId (sort{$a <=> $b} keys %$rTb) {
         my $patientDiedFixed       = %$rTb{$vaersId}->{'patientDiedFixed'} // die;
         $patientDiedFixed          = unpack("N", pack("B32", substr("0" x 32 . $patientDiedFixed, -32)));
@@ -82,7 +83,6 @@ for my $table (@tables) {
         my $patientAgeConfirmationRequired       = %$rTb{$vaersId}->{'patientAgeConfirmationRequired'} // die;
         $patientAgeConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
         my $patientAgeConfirmation               = %$rTb{$vaersId}->{'patientAgeConfirmation'};
-        $patientAgeConfirmation                  = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmation, -32)));
         my $patientAgeConfirmationTimestamp      = %$rTb{$vaersId}->{'patientAgeConfirmationTimestamp'};
         my $patientAgeFixed       = %$rTb{$vaersId}->{'patientAgeFixed'};
         my $sexFixed       = %$rTb{$vaersId}->{'sexFixed'};
@@ -92,8 +92,9 @@ for my $table (@tables) {
         my $hoursBetweenVaccineAndAE       = %$rTb{$vaersId}->{'hoursBetweenVaccineAndAE'};
         my $patientAgeUserId       = %$rTb{$vaersId}->{'patientAgeUserId'};
         $current++;
-        say "[$current / $total]";
-        if ($patientAgeConfirmation && !$reports{$vaersId}->{'patientAgeConfirmation'}) {
+        if (defined $patientAgeConfirmation && !$reports{$vaersId}->{'patientAgeConfirmation'}) {
+            $patientAgeConfirmation = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmation, -32)));
+            $restored++;
             my $reportId = $reports{$vaersId}->{'reportId'} // next;
             my $sth = $dbh->prepare("
                 UPDATE report SET
@@ -121,5 +122,6 @@ for my $table (@tables) {
                 $patientAgeUserId
             ) or die $sth->err();
         }
+        say "[$current / $total] - restored [$restored]";
     }
 }

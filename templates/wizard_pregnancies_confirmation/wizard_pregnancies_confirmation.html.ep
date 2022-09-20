@@ -1,0 +1,61 @@
+% layout 'default';
+% title 'OPENVAET - Wizard - Patient Age';
+
+<div class="content-container">
+    % if ($self->is_admin()) {
+    	<div class="text_separator"></div>
+	    % if ($currentLanguage eq 'en') {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Return to Data Administration</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+	        Loading reports with pregnancies to confirm
+	    </div>
+	    <div class="text_separator"></div>
+	    % } else {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Retour à l'administration données</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+	        Chargement des rapports dont les grossesses sont à confirmer
+	    </div>
+	    <div class="text_separator"></div>
+	    % }
+	    <div style="width:100%;text-align: center;font-size: 14px;" id="reportLoaded">
+	    </div>
+		<script type="text/javascript"> 
+			let operationsToPerform = <%=$operationsToPerform%>;
+
+		    $(document).ready(function() {
+		    	if (operationsToPerform) {
+		        	loadNextReport(operationsToPerform);
+		    	} else {
+		    		window.location.href = '/data_admin';
+		    	}
+		    });
+
+		    function loadNextReport(operationsToPerform) {
+		        let currentLanguage    = '<%=$currentLanguage%>';
+		        let request            = $.ajax({
+		            url: "/wizard_pregnancies_confirmation/load_next_report",
+		            type: "POST",
+		            data: {
+		                operationsToPerform : operationsToPerform,
+		                currentLanguage     : currentLanguage
+		            }
+		        });
+
+		        request.done(function(data) {
+		            $("#reportLoaded").html(data);
+		        });
+
+		        // Printing error message if case of failure
+		        request.fail(function(jqXHR, textStatus) {
+		            alert("Something went wrong : " + textStatus)
+		        });
+		    }
+		</script>
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>

@@ -33,7 +33,7 @@
     	% }
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-weight: bold;">
-	    	<%=$agesCompleted%> / <%=$totalReports%> ages restored (<%=$agesCompletedPercent%> %)
+	    	<%=$pregnanciesConfirmed%> / <%=$totalReports%> pregnancies confirmed (<%=$pregnanciesConfirmedPercent%> %)
 	    </div>
 	    <div class="text_separator"></div>
     	<div style="width: 100%;overflow-x: auto;">
@@ -42,7 +42,7 @@
 	    			<tr style="border-bottom: 1px solid black;">
 		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">VAERS Id</th>
 		    			<th style="min-width: 400px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Product(s)</th>
-		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Patient Age</th>
+		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Pregnancy</th>
 		    			<th style="min-width: 300px;width: 18%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Treatment On</th>
 		    			<th style="min-width: 400px;width: 30%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">By</th>
 		    			<th style="min-width: 100px;width: 6%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Review Report</th>
@@ -86,29 +86,29 @@
 	    				</td>
 	    				<td></td>
 	    			</tr>
-	    			% for my $patientAgeConfirmationTimestamp (sort{$b <=> $a} keys %reports) {
-	    				% for my $reportId (sort{$a <=> $b} keys %{$reports{$patientAgeConfirmationTimestamp}}) {
-	    					% my $patientAgeConfirmationDatetime = $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'patientAgeConfirmationDatetime'} // die;
-	    					% my $patientAgeFixed = $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'patientAgeFixed'};
-	    					% my $vaersId = $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'vaersId'} // die;
-	    					% my $userName = $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'userName'} // die;
-	    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'products'}}) {
+	    			% for my $pregnancyConfirmationTimestamp (sort{$b <=> $a} keys %reports) {
+	    				% for my $reportId (sort{$a <=> $b} keys %{$reports{$pregnancyConfirmationTimestamp}}) {
+	    					% my $pregnancyConfirmationDatetime = $reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'pregnancyConfirmationDatetime'} // die;
+	    					% my $pregnancyConfirmation = $reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'pregnancyConfirmation'};
+	    					% my $vaersId = $reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'vaersId'} // die;
+	    					% my $userName = $reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'userName'} // die;
+	    					% for my $productName (sort keys %{$reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'products'}}) {
 
     						% }
 			    			<tr style="border-bottom: 1px solid black;text-align: center;">
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$vaersId%></td>
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
-			    					% for my $productName (sort keys %{$reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'products'}}) {
+			    					% for my $productName (sort keys %{$reports{$pregnancyConfirmationTimestamp}->{$reportId}->{'products'}}) {
 				    				<%=$productName%>
 				    				<br>
 		    						% }
 				    			</td>
-				    			% if (defined $patientAgeFixed) {
-				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #addb93;"><%=$patientAgeFixed%></td>
+				    			% if ($pregnancyConfirmation) {
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #addb93;">Yes</td>
 			    				% } else {
-				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #adabaa;"><%=$patientAgeFixed%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #adabaa;">No</td>
 		    					% }
-				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$patientAgeConfirmationDatetime%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$pregnancyConfirmationDatetime%></td>
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$userName%></td>
 				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
 				    				<button disabled>Review</button>
@@ -149,7 +149,7 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 		$('#productFilter').select2({
@@ -163,14 +163,14 @@
 			console.log('adminFilter : ' + adminFilter);
 			let productFilter = $('#productFilter').val();
 			console.log('productFilter : ' + productFilter);
-			window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+			window.location.href = '/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
 		  // Do something
 		});
 	}
 	function resetReportAgeTreatment(reportId) {
 		console.log('reportId : ' + reportId);
         let request            = $.ajax({
-            url: "/wizard_patient_age/reset_report_attributes",
+            url: "/wizard_pregnancies_confirmation/reset_report_attributes",
             type: "POST",
             data: {
                 reportId : reportId
@@ -178,7 +178,7 @@
         });
 
         request.done(function(data) {
-        	window.location.href = '/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>'; 
+        	window.location.href = '/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>'; 
         });
 
         // Printing error message if case of failure

@@ -2230,9 +2230,63 @@ ADD COLUMN `patientAgeConfirmation` BIT(1) NULL AFTER `patientAgeConfirmationTim
 ALTER TABLE `openvaet`.`wizard_report` 
 CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
 
+######################### V 10 - 2022-09-19 19:50:00
+# Created age_wizard_report table.
+CREATE TABLE `age_wizard_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reportId` int NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `patientAgeConfirmationRequired` bit(1) NOT NULL DEFAULT b'0',
+  `patientAgeConfirmationTimestamp` int DEFAULT NULL,
+  `patientAgeConfirmation` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `age_wizard_report_to_report` (`reportId`),
+  CONSTRAINT `age_wizard_report_to_report` FOREIGN KEY (`reportId`) REFERENCES `report` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_age_wizard_report_insert` 
+BEFORE INSERT ON `age_wizard_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
 
+# Created pregnancy_wizard_report table.
+CREATE TABLE `pregnancy_wizard_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reportId` int NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `pregnancyConfirmationRequired` bit(1) NOT NULL DEFAULT b'0',
+  `pregnancyConfirmationTimestamp` int DEFAULT NULL,
+  `pregnancyConfirmation` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pregnancy_wizard_report_to_report` (`reportId`),
+  CONSTRAINT `pregnancy_wizard_report_to_report` FOREIGN KEY (`reportId`) REFERENCES `report` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_pregnancy_wizard_report_insert` 
+BEFORE INSERT ON `pregnancy_wizard_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
 
+# Added pregnancy basic data to the reports.
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `hasLikelyPregnancySymptom` BIT(1) NOT NULL DEFAULT 0 AFTER `hoursBetweenVaccineAndAE`,
+ADD COLUMN `hasDirectPregnancySymptom` BIT(1) NOT NULL DEFAULT 0 AFTER `hasLikelyPregnancySymptom`,
+ADD COLUMN `pregnancyConfirmation` BIT(1) NULL AFTER `hasDirectPregnancySymptom`,
+ADD COLUMN `pregnancyConfirmationTimestamp` INT NULL AFTER `pregnancyConfirmation`,
+ADD COLUMN `pregnancyConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancyConfirmationTimestamp`;
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `pregnancyConfirmationUserId` INT NULL AFTER `pregnancyConfirmationRequired`,
+ADD INDEX `report_to_pregnancyConfirmationUser_idx` (`pregnancyConfirmationUserId` ASC);
+ALTER TABLE `openvaet`.`report` 
+ADD CONSTRAINT `report_to_pregnancyConfirmationUser`
+  FOREIGN KEY (`pregnancyConfirmationUserId`)
+  REFERENCES `openvaet`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
 
-
+# Dropped obsolete wizard_report table.
+DROP TABLE `openvaet`.`wizard_report`;
 
 

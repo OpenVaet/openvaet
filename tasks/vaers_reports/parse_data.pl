@@ -16,7 +16,6 @@ use Encode;
 use Encode::Unicode;
 use JSON;
 use FindBin;
-use Number::Format;
 use Scalar::Util qw(looks_like_number);
 use File::stat;
 use lib "$FindBin::Bin/../../lib";
@@ -27,28 +26,30 @@ use global;
 use time;
 
 # Basic script config.
-my $vaersForeignFolder = "raw_data/NonDomesticVAERSData";    # Where we expect to find CDC's data folder in the project's root folder.
-my $vaersFolder        = "raw_data/AllVAERSDataCSVS";        # Where we expect to find CDC's data folder in the project's root folder.
-
-# Init numbers format.
-my $de = new Number::Format(-thousands_sep   => ' ',
-                            -decimal_point   => '.');
+my $vaersForeignFolder  = "raw_data/NonDomesticVAERSData";    # Where we expect to find CDC's data folder in the project's root folder.
+my $vaersFolder         = "raw_data/AllVAERSDataCSVS";        # Where we expect to find CDC's data folder in the project's root folder.
 
 # Loading states.
-my %countries = ();
-my %countryStates = ();
+my %countries           = ();
+my %countryStates       = ();
 
-my %symptoms = ();
-my $latestSymptomId = 0;
+my %symptoms            = ();
+my $latestSymptomId     = 0;
+
+my $pregnanciesData     = 'Pregnancy Related';
+my %pregnanciesSymptoms = ();
+my %pregnanciesKeywords = ();
+load_pregnancies_symptoms();
+load_pregnancies_keywords();
 
 # Loading known database reports.
-my $latestReportId = 0;
-my %reports = ();
+my $latestReportId     = 0;
+my %reports            = ();
 
 # Verifying in current .ZIP file if things have been deleted.
-my %reportsVaccines = ();
-my %reportsSymptoms = ();
-my %years = ();
+my %reportsVaccines    = ();
+my %reportsSymptoms    = ();
+my %years              = ();
 countries();
 country_states();
 symptoms();
@@ -56,6 +57,41 @@ reports();
 parse_foreign_data();
 parse_vaers_years();
 parse_us_data();
+
+sub load_pregnancies_symptoms {
+	my $pregnanciesSymptomsSetId = get_pregnancies_symptoms_set();
+	my $tb = $dbh->selectrow_hashref("SELECT symptoms FROM symptoms_set WHERE id = $pregnanciesSymptomsSetId", undef);
+	die unless keys %$tb;
+	my $symptoms = %$tb{'symptoms'} // die;
+    $symptoms = decode_json($symptoms);
+    for my $symptomId (@$symptoms) {
+        $pregnanciesSymptoms{$symptomId} = 1;
+    }
+}
+
+sub load_pregnancies_keywords {
+	my $pregnanciesKeywordsSetId = get_pregnancies_keywords_set();
+	my $tb = $dbh->selectrow_hashref("SELECT keywords FROM keywords_set WHERE id = $pregnanciesKeywordsSetId", undef);
+	die unless keys %$tb;
+	my $keywords = %$tb{'keywords'} // die;
+	my @keywordsFiltered = split '<br \/>', $keywords;
+	for my $keyword (@keywordsFiltered) {
+	    my $lcKeyword = lc $keyword;
+	    $pregnanciesKeywords{$lcKeyword} = 1;
+	}
+}
+
+sub get_pregnancies_symptoms_set {
+	my $tb = $dbh->selectrow_hashref("SELECT id as symptomsSetId FROM symptoms_set WHERE name = ?", undef, $pregnanciesData);
+	die unless keys %$tb;
+	return %$tb{'symptomsSetId'};
+}
+
+sub get_pregnancies_keywords_set {
+	my $tb = $dbh->selectrow_hashref("SELECT id as keywordsSetId FROM keywords_set WHERE name = ?", undef, $pregnanciesData);
+	die unless keys %$tb;
+	return %$tb{'keywordsSetId'};
+}
 
 sub countries {
 	my $tb = $dbh->selectall_hashref("SELECT id as countryId, isoCode2, name as countryName FROM country", 'countryId');
@@ -402,7 +438,10 @@ sub parse_vaers_files {
 	    	}
 
 			# Inserting the report symptoms if unknown.
-			my @symptomsListed  = ();
+			my @symptomsListed     = ();
+			my $hasDirectPregnancySymptom = 0;
+			my $hasLikelyPregnancySymptom = 0;
+			my $likelyPregnancy    = 0;
 			for my $symptomName (sort keys %{$reportsSymptoms{$vaersId}}) {
 				my $symptomNormalized = lc $symptomName;
 				unless (exists $symptoms{$symptomNormalized}->{'symptomId'}) {
@@ -412,7 +451,24 @@ sub parse_vaers_files {
 				}
 				my $symptomId = $symptoms{$symptomNormalized}->{'symptomId'} // die;
 				push @symptomsListed, $symptomId;
+				if ($symptomNormalized eq 'pregnancy' || $symptomName eq 'exposure during pregnancy' || $symptomName eq 'maternal exposure during pregnancy') {
+					$hasDirectPregnancySymptom = 1;
+					$likelyPregnancy = 1;
+				}
+				if (exists $pregnanciesSymptoms{$symptomId}) {
+					$hasLikelyPregnancySymptom = 1;
+					$likelyPregnancy = 1;
+				}
 			}
+
+			# Inspecting for potentials pregnancies related keywords in the description.
+			my $normalizedAEDescription = lc $aEDescription;
+			for my $keyword (sort keys %pregnanciesKeywords) {
+				if ($normalizedAEDescription =~ /$keyword/) {
+					$likelyPregnancy = 1;
+					last;
+				}
+			} 
 
 			# Inserting the vaccines data.
 			my @vaccinesListed = @{$reportsVaccines{$vaersId}->{'vaccines'}};
@@ -445,18 +501,21 @@ sub parse_vaers_files {
 			}
 			my $reportId = $reports{$vaersId}->{'reportId'} // die;
 
-			# Fetching products last involved.
-			my $vaccine;
-			for my $vaccineData (@{$reportsVaccines{$vaersId}->{'vaccines'}}) {
-				my $substanceShortenedName = %$vaccineData{'substanceShortenedName'} // die;
-				$vaccine = $substanceShortenedName;
-			}
-
-			# Fetching statistics.
+			# Setting required treatment attributes.
+			# Age completion.
 			unless ($cdcAgeName) {
 				# Setting the age as requiring review.
 				unless ($reports{$vaersId}->{'patientAgeConfirmationRequired'}) {
 					my $sth = $dbh->prepare("UPDATE report SET patientAgeConfirmationRequired = 1 WHERE id = $reportId");
+					$sth->execute() or die $sth->err();
+				}
+			}
+
+			# Pregnancies completion.
+			if ($likelyPregnancy) {
+				# Settings the pregnancies requiring review.
+				unless ($reports{$vaersId}->{'pregnancyConfirmationRequired'}) {
+					my $sth = $dbh->prepare("UPDATE report SET pregnancyConfirmationRequired = 1, hasLikelyPregnancySymptom = $hasLikelyPregnancySymptom, hasDirectPregnancySymptom = $hasDirectPregnancySymptom WHERE id = $reportId");
 					$sth->execute() or die $sth->err();
 				}
 			}

@@ -33,8 +33,8 @@ sub wizard_patient_age {
 sub operations_to_perform {
     my $self = shift;
     my $operationsToPerform = 0;
-    my $wTb1 = $self->dbh->selectrow_hashref("SELECT count(id) as currentWizardTasks FROM wizard_report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmation IS NULL", undef);
-    my $wTb2 = $self->dbh->selectrow_hashref("SELECT count(id) as totalWizardTasks   FROM wizard_report WHERE patientAgeConfirmationRequired = 1", undef);
+    my $wTb1 = $self->dbh->selectrow_hashref("SELECT count(id) as currentWizardTasks FROM age_wizard_report WHERE patientAgeConfirmationRequired = 1 AND patientAgeConfirmation IS NULL", undef);
+    my $wTb2 = $self->dbh->selectrow_hashref("SELECT count(id) as totalWizardTasks   FROM age_wizard_report WHERE patientAgeConfirmationRequired = 1", undef);
     my $currentWizardTasks  = %$wTb1{'currentWizardTasks'} // 0;
     my $totalWizardTasks    = %$wTb2{'totalWizardTasks'}   // 0;
     say "currentWizardTasks : $currentWizardTasks";
@@ -48,8 +48,8 @@ sub operations_to_perform {
             $operationsToPerform = $currentWizardTasks;
         } else {
 
-            # Truncating wizard_report table.
-            my $sth = $self->dbh->prepare("TRUNCATE wizard_report");
+            # Truncating age_wizard_report table.
+            my $sth = $self->dbh->prepare("TRUNCATE age_wizard_report");
             $sth->execute() or die $sth->err();
 
             $operationsToPerform = generate_batch($self);
@@ -86,7 +86,7 @@ sub generate_batch {
             my $patientAgeConfirmation               = %$rTb{$reportId}->{'patientAgeConfirmation'};
             # $patientAgeConfirmation                  = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmation, -32)));
             my $patientAgeConfirmationTimestamp      = %$rTb{$reportId}->{'patientAgeConfirmationTimestamp'};
-            my $sth = $self->dbh->prepare("INSERT INTO wizard_report (reportId, patientAgeConfirmationRequired, patientAgeConfirmation, patientAgeConfirmationTimestamp) VALUES (?, $patientAgeConfirmationRequired, NULL, ?)");
+            my $sth = $self->dbh->prepare("INSERT INTO age_wizard_report (reportId, patientAgeConfirmationRequired, patientAgeConfirmation, patientAgeConfirmationTimestamp) VALUES (?, $patientAgeConfirmationRequired, NULL, ?)");
             $sth->execute($reportId, $patientAgeConfirmationTimestamp) or die $sth->err();
             $currentBatch++;
         }
@@ -134,7 +134,7 @@ sub load_next_report {
     if ($operationsToPerform) {
         my $sql                 = "
             SELECT
-                wizard_report.reportId,
+                age_wizard_report.reportId,
                 report.vaersId,
                 report.vaccinesListed,
                 report.sexFixed,
@@ -156,11 +156,11 @@ sub load_next_report {
                 report.lifeThreatning,
                 report.patientDied,
                 report.symptomsListed
-            FROM wizard_report
-                LEFT JOIN report ON report.id = wizard_report.reportId
+            FROM age_wizard_report
+                LEFT JOIN report ON report.id = age_wizard_report.reportId
             WHERE 
-                wizard_report.$sqlParam = 1 AND
-                wizard_report.$sqlValue IS NULL
+                age_wizard_report.$sqlParam = 1 AND
+                age_wizard_report.$sqlValue IS NULL
             ORDER BY RAND()
             LIMIT 1";
         say "$sql";
@@ -347,7 +347,7 @@ sub set_report_attribute {
         $userId
     ) or die $sth->err();
     my $sth2 = $self->dbh->prepare("
-        UPDATE wizard_report SET
+        UPDATE age_wizard_report SET
             $sqlValue = $value,
             patientAgeConfirmationTimestamp = UNIX_TIMESTAMP()
         WHERE reportId = $reportId");
@@ -377,7 +377,7 @@ sub patient_ages_completed {
     my %products = ();
     my $tb = $self->dbh->selectall_hashref("
         SELECT
-            report.id as vaersReportId,
+            report.id as reportId,
             report.patientAgeFixed,
             report.vaersId,
             report.vaccinesListed,
@@ -387,20 +387,20 @@ sub patient_ages_completed {
         FROM report
             LEFT JOIN user ON user.id = report.patientAgeUserId
         WHERE patientAgeConfirmationTimestamp IS NOT NULL
-    ", 'vaersReportId');
-    for my $vaersReportId (sort{$a <=> $b} keys %$tb) {
-        my $patientAgeFixed                 = %$tb{$vaersReportId}->{'patientAgeFixed'};
-        my $patientAgeConfirmationTimestamp = %$tb{$vaersReportId}->{'patientAgeConfirmationTimestamp'} // die;
+    ", 'reportId');
+    for my $reportId (sort{$a <=> $b} keys %$tb) {
+        my $patientAgeFixed                 = %$tb{$reportId}->{'patientAgeFixed'};
+        my $patientAgeConfirmationTimestamp = %$tb{$reportId}->{'patientAgeConfirmationTimestamp'} // die;
         my $patientAgeConfirmationDatetime  = time::timestamp_to_datetime($patientAgeConfirmationTimestamp);
-        my $patientAgeUserId                          = %$tb{$vaersReportId}->{'patientAgeUserId'}                          // die;
-        my $vaersId                         = %$tb{$vaersReportId}->{'vaersId'}                         // die;
-        my $email                           = %$tb{$vaersReportId}->{'email'}                           // die;
+        my $patientAgeUserId                          = %$tb{$reportId}->{'patientAgeUserId'}                          // die;
+        my $vaersId                         = %$tb{$reportId}->{'vaersId'}                         // die;
+        my $email                           = %$tb{$reportId}->{'email'}                           // die;
         my ($userName) = split '\@', $email;
         $admins{$userName} = 1;
         if ($adminFilter) {
             next if $userName ne $adminFilter;
         }
-        my $vaccinesListed                  = %$tb{$vaersReportId}->{'vaccinesListed'}                  // die;
+        my $vaccinesListed                  = %$tb{$reportId}->{'vaccinesListed'}                  // die;
         $vaccinesListed = decode_json($vaccinesListed);
         my %vax = ();
         my $hasProduct = 0;
@@ -418,12 +418,12 @@ sub patient_ages_completed {
         $agesCompleted++ if defined $patientAgeFixed;
         $totalReports++;
         for my $substanceShortenedName (sort keys %vax) {
-            $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'products'}->{$substanceShortenedName} = 1;
+            $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'products'}->{$substanceShortenedName} = 1;
         }
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeConfirmationDatetime'} = $patientAgeConfirmationDatetime;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'patientAgeFixed'} = $patientAgeFixed;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'userName'} = $userName;
-        $reports{$patientAgeConfirmationTimestamp}->{$vaersReportId}->{'vaersId'} = $vaersId;
+        $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'patientAgeConfirmationDatetime'} = $patientAgeConfirmationDatetime;
+        $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'patientAgeFixed'} = $patientAgeFixed;
+        $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'userName'} = $userName;
+        $reports{$patientAgeConfirmationTimestamp}->{$reportId}->{'vaersId'} = $vaersId;
     }
     my $agesCompletedPercent = 0;
     if ($totalReports) {
@@ -450,10 +450,10 @@ sub patient_ages_completed {
 
 sub reset_report_attributes {
     my $self = shift;
-    my $vaersReportId = $self->param('vaersReportId') // die;
+    my $reportId = $self->param('reportId') // die;
 
-    say "vaersReportId : $vaersReportId";
-    my $sth = $self->dbh->prepare("UPDATE report SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, patientAgeUserId = NULL WHERE id = $vaersReportId");
+    say "reportId : $reportId";
+    my $sth = $self->dbh->prepare("UPDATE report SET patientAgeConfirmation = NULL, patientAgeConfirmationTimestamp = NULL, patientAgeUserId = NULL WHERE id = $reportId");
     $sth->execute() or die $sth->err();
 
     $self->render(text => 'ok');
