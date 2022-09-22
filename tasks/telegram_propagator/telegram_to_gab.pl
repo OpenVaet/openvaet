@@ -66,7 +66,8 @@ my $telegramApi = WWW::Telegram::BotAPI->new (
 # Initiates Telegram watching loop.
 my %messages = ();
 while (1) {
-
+    %messages = ();
+    
     # Gets the Telegram updates.
     get_telegram_updates();
 
