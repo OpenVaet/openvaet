@@ -36,7 +36,7 @@ sub twitter_thought_police {
         # Listing users by alternate networks.
         if (keys %{$obj{'altContacts'}}) {
             for my $contactName (sort keys %{$obj{'altContacts'}}) {
-                if ($contactName eq 'Gab' || $contactName eq 'Substack' || $contactName eq 'Gettr') {
+                if ($contactName eq 'Gab' || $contactName eq 'Substack' || $contactName eq 'Gettr' || $contactName eq 'Telegram') {
                     $altContacts{$contactName}->{'totalContacts'}++;
                 }
             }

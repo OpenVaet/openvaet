@@ -64,6 +64,24 @@
 	    	</div>
 	    </div>
 	    <div class="text_separator"></div>
+	    <div style="width:100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+			    <div style="width:100%;">
+					<input type="checkbox" id="pregnanciesOnly" style="cursor:pointer;" class="noselect">
+					<label for="pregnanciesOnly" style="cursor:pointer;" class="noselect"><b>Confirmed Pregnancies Only</b></label>
+			    </div>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+			    <div style="width:100%;">
+					<input type="checkbox" id="breastMilkExposureOnly" style="cursor:pointer;" class="noselect">
+					<label for="breastMilkExposureOnly" style="cursor:pointer;" class="noselect"><b>Breast Milk Exposures Only</b></label>
+			    </div>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
@@ -199,6 +217,24 @@
 			    <div style="width:100%;">
 					<input type="checkbox" id="ageCompletedOnly" style="cursor:pointer;" class="noselect">
 					<label for="ageCompletedOnly" style="cursor:pointer;" class="noselect"><b>Ages Completed Only</b></label>
+			    </div>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+			    <div style="width:100%;">
+					<input type="checkbox" id="pregnanciesOnly" style="cursor:pointer;" class="noselect">
+					<label for="pregnanciesOnly" style="cursor:pointer;" class="noselect"><b>Confirmed Pregnancies Only</b></label>
+			    </div>
+	    	</div>
+	    </div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;">
+	    	<div style="width:355px;display: block;margin: auto;">
+			    <div style="width:100%;">
+					<input type="checkbox" id="breastMilkExposureOnly" style="cursor:pointer;" class="noselect">
+					<label for="breastMilkExposureOnly" style="cursor:pointer;" class="noselect"><b>Breast Milk Exposures Only</b></label>
 			    </div>
 	    	</div>
 	    </div>
@@ -346,6 +382,10 @@
 		console.log('ageErrorsOnly : ' + ageErrorsOnly);
 		let ageCompletedOnly = document.getElementById('ageCompletedOnly').checked;
 		console.log('ageCompletedOnly : ' + ageCompletedOnly);
+		let breastMilkExposureOnly = document.getElementById('breastMilkExposureOnly').checked;
+		console.log('breastMilkExposureOnly : ' + breastMilkExposureOnly);
+		let pregnanciesOnly = document.getElementById('pregnanciesOnly').checked;
+		console.log('pregnanciesOnly : ' + pregnanciesOnly);
 		let adminFilter = $('#adminFilter').val();
 		console.log('adminFilter : ' + adminFilter);
 		let severityFilter = $('#severityFilter').val();
@@ -364,20 +404,22 @@
             url: "/wizard_patient_age/generate_products_export",
             type: "POST",
             data: {
-                currentLanguage  : currentLanguage,
-                janssen          : janssen,
-                moderna          : moderna,
-                novavax          : novavax,
-                pfizer           : pfizer,
-                unknown          : unknown,
-                pfizerBivalent   : pfizerBivalent,
-                modernaBivalent  : modernaBivalent,
-                symptomFilter    : symptomFilter,
-                keywordsFilter   : keywordsFilter,
-                adminFilter      : adminFilter,
-                severityFilter   : severityFilter,
-                ageErrorsOnly    : ageErrorsOnly,
-                ageCompletedOnly : ageCompletedOnly
+                currentLanguage        : currentLanguage,
+                janssen                : janssen,
+                moderna                : moderna,
+                novavax                : novavax,
+                pfizer                 : pfizer,
+                unknown                : unknown,
+                pfizerBivalent         : pfizerBivalent,
+                modernaBivalent        : modernaBivalent,
+                symptomFilter          : symptomFilter,
+                keywordsFilter         : keywordsFilter,
+                adminFilter            : adminFilter,
+                severityFilter         : severityFilter,
+                ageErrorsOnly          : ageErrorsOnly,
+                ageCompletedOnly       : ageCompletedOnly,
+                pregnanciesOnly        : pregnanciesOnly,
+                breastMilkExposureOnly : breastMilkExposureOnly
             }
         });
 

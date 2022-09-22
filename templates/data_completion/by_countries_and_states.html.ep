@@ -1,6 +1,12 @@
 % layout 'default';
 % title 'OPENVAET - Wizard - Data Completion by Countries & States';
-
+% my %wizards = %$wizards;
+<head>
+	<link href="/css/select2.min.css" rel="stylesheet" />
+	<script src="/js/select2.min.js"></script>
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+	<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
 <div class="content-container">
     % if ($self->is_admin()) {
     	<div class="text_separator"></div>
@@ -9,7 +15,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Loading data completion statistics ...
+	        Data completion statistics
 	    </div>
 	    <div class="text_separator"></div>
 	    % } else {
@@ -17,34 +23,53 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Chargement des statistiques de complétion des données ...
+	        Statistiques de complétion des données
 	    </div>
 	    <div class="text_separator"></div>
 	    % }
-	    <div style="width:100%;text-align: center;font-size: 14px;" id="reportLoaded">
+	    <div class="text_separator"></div>
+	    <div style="width:calc(100% - 240px);display: flex;flex-wrap: wrap;">
+		    <div style="width: 195px;max-width: 195px;margin-left:calc(100% - 240px);">
+		        <select class="js-example-basic-single" id="wizardSelected" style="width: 95%;height: 95%;">=
+						% for my $value (sort keys %wizards) {
+							% my $wizard = $wizards{$value} // die;
+	      			<option value="<%=$value%>"><%=$wizard%></option>
+						% }
+		        </select>
+			</div>
+		</div>
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-size: 14px;" id="dataLoaded">
 	    </div>
 		<script type="text/javascript"> 
 
 		    $(document).ready(function() {
-		    	// if (operationsToPerform) {
-		     //    	loadNextReport(operationsToPerform);
-		    	// } else {
-		    	// 	window.location.href = '/data_admin';
-		    	// }
+				$('#wizardSelected').select2({
+					width: 'element',
+					height: 'resolve',
+					dropdownAutoWidth : true,
+					placeholder: 'Select Wizard Data'
+				});
+			    $('#wizardSelected').on("select2:select select2:unselect", function(e) {
+			        loadDataCompletionByCountriesAndStates();
+			    });
+	        	loadDataCompletionByCountriesAndStates();
 		    });
 
-		    function loadNextReport(operationsToPerform) {
-		        let currentLanguage    = '<%=$currentLanguage%>';
-		        let request            = $.ajax({
-		            url: "/wizard_pregnancies_confirmation/load_next_report",
+		    function loadDataCompletionByCountriesAndStates() {
+		        let wizardSelected  = $('#wizardSelected').val();
+		        let currentLanguage = '<%=$currentLanguage%>';
+		        let request         = $.ajax({
+		            url: "/data_completion/load_countries_and_states_data",
 		            type: "POST",
 		            data: {
-		                currentLanguage     : currentLanguage
+		                wizardSelected  : wizardSelected,
+		                currentLanguage : currentLanguage
 		            }
 		        });
 
 		        request.done(function(data) {
-		            $("#reportLoaded").html(data);
+		            $("#dataLoaded").html(data);
 		        });
 
 		        // Printing error message if case of failure

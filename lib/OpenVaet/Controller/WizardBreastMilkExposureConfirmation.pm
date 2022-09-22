@@ -438,6 +438,7 @@ sub breast_milk_exposure_confirmation_completed {
             LEFT JOIN user ON user.id = report.breastMilkExposureConfirmationUserId
         WHERE breastMilkExposureConfirmationTimestamp IS NOT NULL
     ", 'reportId');
+    my $loaded = 0;
     for my $reportId (sort{$a <=> $b} keys %$tb) {
         my $breastMilkExposureConfirmation = %$tb{$reportId}->{'breastMilkExposureConfirmation'} // die;
         $breastMilkExposureConfirmation    = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmation, -32)));

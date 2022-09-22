@@ -2324,3 +2324,12 @@ ADD CONSTRAINT `report_to_breastMilkExposureConfirmationUser`
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
+######################### V 12 - 2022-09-20 05:50:00
+# Created software table.
+CREATE TABLE `openvaet`.`software` (
+  `name` VARCHAR(100) NOT NULL,
+  `latestCountriesStatsUpdateTimestamp` INT NULL,
+  `firstVaersReportDate` VARCHAR(45) NULL,
+  `lastVaersReportDate` VARCHAR(45) NULL,
+  PRIMARY KEY (`name`));
+INSERT INTO `openvaet`.`software` (`name`) VALUES ('OpenVAET');

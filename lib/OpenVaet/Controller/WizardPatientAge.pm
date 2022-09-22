@@ -581,24 +581,28 @@ sub generate_products_export {
     my $params = $self->req->params->names;
     p$params;
 
-    my $userId           = $self->session('userId')         // die;
-    my $janssen          = $self->param('janssen')          // die;
-    my $moderna          = $self->param('moderna')          // die;
-    my $pfizer           = $self->param('pfizer')           // die;
-    my $novavax          = $self->param('novavax')          // die;
-    my $unknown          = $self->param('unknown')          // die;
-    my $adminFilter      = $self->param('adminFilter')      // die;
-    my $symptomFilter    = $self->param('symptomFilter')    // die;
-    my $keywordsFilter   = $self->param('keywordsFilter')   // die;
-    my $severityFilter   = $self->param('severityFilter')   // die;
-    my $ageErrorsOnly    = $self->param('ageErrorsOnly')    // die;
-    my $ageCompletedOnly = $self->param('ageCompletedOnly') // die;
-    my $modernaBivalent  = $self->param('modernaBivalent')  // die;
-    my $pfizerBivalent   = $self->param('pfizerBivalent')   // die;
-    say "ageErrorsOnly    : $ageErrorsOnly";
-    say "ageCompletedOnly : $ageCompletedOnly";
-    say "symptomFilter    : $symptomFilter";
-    say "keywordsFilter   : $keywordsFilter";
+    my $userId                 = $self->session('userId')               // die;
+    my $janssen                = $self->param('janssen')                // die;
+    my $moderna                = $self->param('moderna')                // die;
+    my $pfizer                 = $self->param('pfizer')                 // die;
+    my $novavax                = $self->param('novavax')                // die;
+    my $unknown                = $self->param('unknown')                // die;
+    my $adminFilter            = $self->param('adminFilter')            // die;
+    my $symptomFilter          = $self->param('symptomFilter')          // die;
+    my $keywordsFilter         = $self->param('keywordsFilter')         // die;
+    my $severityFilter         = $self->param('severityFilter')         // die;
+    my $ageErrorsOnly          = $self->param('ageErrorsOnly')          // die;
+    my $ageCompletedOnly       = $self->param('ageCompletedOnly')       // die;
+    my $pregnanciesOnly        = $self->param('pregnanciesOnly')        // die;
+    my $breastMilkExposureOnly = $self->param('breastMilkExposureOnly') // die;
+    my $modernaBivalent        = $self->param('modernaBivalent')        // die;
+    my $pfizerBivalent         = $self->param('pfizerBivalent')         // die;
+    say "ageErrorsOnly          : $ageErrorsOnly";
+    say "ageCompletedOnly       : $ageCompletedOnly";
+    say "pregnanciesOnly        : $pregnanciesOnly";
+    say "breastMilkExposureOnly : $breastMilkExposureOnly";
+    say "symptomFilter          : $symptomFilter";
+    say "keywordsFilter         : $keywordsFilter";
 
     # Fetching symptoms.
     my %symptoms = ();
@@ -666,12 +670,14 @@ sub generate_products_export {
     my $exported = 0;
     my $sql = "
         SELECT
-            report.id as vaersDeathsReportId,
+            report.id as reportId,
             report.vaersId,
             report.vaccinesListed,
             report.aEDescription,
+            report.vaersSource,
             report.sexFixed,
             report.countryStateId,
+            report.countryId,
             country.name as countryName,
             country_state.name as countryStateName,
             report.onsetDateFixed,
@@ -692,14 +698,36 @@ sub generate_products_export {
             LEFT JOIN country_state ON country_state.id = report.countryStateId
             LEFT JOIN country ON country.id = report.countryId
         ";
-    if ($severityFilter) {
-        $sql .= " WHERE report.$severityFilter = 1";
+    my $hasConditional = 0;
+    if ($severityFilter || $pregnanciesOnly eq 'true' || $breastMilkExposureOnly eq 'true') {
+        $sql .= " WHERE ";
     }
-    my $tb = $self->dbh->selectall_hashref($sql, 'vaersDeathsReportId');
-    for my $vaersDeathsReportId (sort{$a <=> $b} keys %$tb) {
-        my $vaccinesListed = %$tb{$vaersDeathsReportId}->{'vaccinesListed'} // die;
-        my $patientAgeFixed = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
-        my $patientAgeConfirmationRequired = %$tb{$vaersDeathsReportId}->{'patientAgeConfirmationRequired'} // die;
+    if ($severityFilter) {
+        $hasConditional = 1;
+        $sql .= " report.$severityFilter = 1";
+    }
+    if ($pregnanciesOnly eq 'true') {
+        if ($hasConditional) {
+            $sql .= " AND report.pregnancyConfirmation = 1";
+        } else {
+            $sql .= " report.pregnancyConfirmation = 1";
+        }
+        $hasConditional = 1;
+    }
+    if ($breastMilkExposureOnly eq 'true') {
+        if ($hasConditional) {
+            $sql .= " AND report.breastMilkExposureConfirmation = 1";
+        } else {
+            $sql .= " report.breastMilkExposureConfirmation = 1";
+        }
+        $hasConditional = 1;
+    }
+    say $sql;
+    my $tb = $self->dbh->selectall_hashref($sql, 'reportId');
+    for my $reportId (sort{$a <=> $b} keys %$tb) {
+        my $vaccinesListed = %$tb{$reportId}->{'vaccinesListed'} // die;
+        my $patientAgeFixed = %$tb{$reportId}->{'patientAgeFixed'};
+        my $patientAgeConfirmationRequired = %$tb{$reportId}->{'patientAgeConfirmationRequired'} // die;
         $patientAgeConfirmationRequired    = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
         if ($ageErrorsOnly eq 'true') {
             next if $patientAgeConfirmationRequired == 0;
@@ -708,7 +736,7 @@ sub generate_products_export {
             next unless defined $patientAgeFixed;
         }
         if ($patientAgeConfirmationRequired == 1) {
-            my $email = %$tb{$vaersDeathsReportId}->{'email'} // next;
+            my $email = %$tb{$reportId}->{'email'} // next;
             my ($userName) = split '\@', $email;
             if ($adminFilter) {
                 next if $userName ne $adminFilter;
@@ -724,23 +752,29 @@ sub generate_products_export {
             }
         }
         if ($hasProduct == 1) {
-            my $vaersId = %$tb{$vaersDeathsReportId}->{'vaersId'} // die;
-            my $vaersReceptionDate = %$tb{$vaersDeathsReportId}->{'vaersReceptionDate'} // die;
-            my $aEDescription = %$tb{$vaersDeathsReportId}->{'aEDescription'} // die;
+            my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
+            my $vaersReceptionDate = %$tb{$reportId}->{'vaersReceptionDate'} // die;
+            my $aEDescription = %$tb{$reportId}->{'aEDescription'} // die;
             my $aEDescriptionNormalized = lc $aEDescription;
-            my $immProjectNumber = %$tb{$vaersDeathsReportId}->{'immProjectNumber'};
-            my $countryName = %$tb{$vaersDeathsReportId}->{'countryName'};
-            my $sexFixed = %$tb{$vaersDeathsReportId}->{'sexFixed'} // die;
+            my $immProjectNumber = %$tb{$reportId}->{'immProjectNumber'};
+            my $countryName = %$tb{$reportId}->{'countryName'};
+            my $sexFixed = %$tb{$reportId}->{'sexFixed'} // die;
             my $vaersSexName = $enums{'vaersSex'}->{$sexFixed} // die;
-            my $source = 'Domestic';
-            my $patientAge = %$tb{$vaersDeathsReportId}->{'patientAgeFixed'};
-            my $vaccinationDate = %$tb{$vaersDeathsReportId}->{'vaccinationDateFixed'};
-            my $onsetDate = %$tb{$vaersDeathsReportId}->{'onsetDateFixed'};
-            my $permanentDisability = %$tb{$vaersDeathsReportId}->{'permanentDisabilityFixed'} // die;
-            my $hospitalized = %$tb{$vaersDeathsReportId}->{'hospitalizedFixed'} // die;
-            my $patientDied = %$tb{$vaersDeathsReportId}->{'patientDiedFixed'} // die;
-            my $lifeThreatning = %$tb{$vaersDeathsReportId}->{'lifeThreatningFixed'} // die;
-            my $symptomsListed = %$tb{$vaersDeathsReportId}->{'symptomsListed'} // die;
+            my $vaersSource = %$tb{$reportId}->{'vaersSource'} // die;
+            my $source;
+            if ($vaersSource == 1) {
+                $source = 'All Years Data';
+            } else {
+                $source = 'Non-Domestic'
+            }
+            my $patientAge = %$tb{$reportId}->{'patientAgeFixed'};
+            my $vaccinationDate = %$tb{$reportId}->{'vaccinationDateFixed'};
+            my $onsetDate = %$tb{$reportId}->{'onsetDateFixed'};
+            my $permanentDisability = %$tb{$reportId}->{'permanentDisabilityFixed'} // die;
+            my $hospitalized = %$tb{$reportId}->{'hospitalizedFixed'} // die;
+            my $patientDied = %$tb{$reportId}->{'patientDiedFixed'} // die;
+            my $lifeThreatning = %$tb{$reportId}->{'lifeThreatningFixed'} // die;
+            my $symptomsListed = %$tb{$reportId}->{'symptomsListed'} // die;
             $symptomsListed = decode_json($symptomsListed);
             $hospitalized        = unpack("N", pack("B32", substr("0" x 32 . $hospitalized, -32)));
             $permanentDisability = unpack("N", pack("B32", substr("0" x 32 . $permanentDisability, -32)));
@@ -797,9 +831,7 @@ sub generate_products_export {
     say "exported : $exported";
 
     $self->render(
-        currentLanguage => $currentLanguage,
-        exported => $exported,
-        languages => \%languages
+        text => 'ok'
     );
 }
 

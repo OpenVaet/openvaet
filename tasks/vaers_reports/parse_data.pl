@@ -482,6 +482,9 @@ sub parse_vaers_files {
 		    	($code2) = $immProjectNumber =~ /^(..).*$/;
 		    	$countryId = $countries{$code2}->{'countryId'};
 	    	}
+	    	if ($vaersSource == 1) {
+	    		$countryId = 238;
+	    	}
 
 			# Inserting the report symptoms if unknown.
 			my @symptomsListed     = ();
