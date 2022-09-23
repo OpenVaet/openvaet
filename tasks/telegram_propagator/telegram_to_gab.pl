@@ -67,7 +67,7 @@ my $telegramApi = WWW::Telegram::BotAPI->new (
 my %messages = ();
 while (1) {
     %messages = ();
-    
+
     # Gets the Telegram updates.
     get_telegram_updates();
 
@@ -226,13 +226,18 @@ sub post_on_gab {
     $json = decode_json($json);
     print_log("Retrieved Telegram message ...");
 
-    # If we have a document attachment, we verify its a video, and proceed with uploading.
+    # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
     my @mediaIds;
     if (%$json{'documents'}) {
         for my $file (@{%$json{'documents'}}) {
             my @elems = split '\.', $file;
             my $ext   = $elems[scalar @elems - 1] // die;
-            if ($ext eq 'mp4' || $ext eq 'jpg') {
+            if ($ext eq 'mp4'        || $ext eq 'jpg'            || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
+                $ext eq 'webp'       || $ext eq 'jfif'           || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov' ||
+                $ext eq 'image/jpeg' || $ext eq 'image/png'      || $ext eq 'image/gif' ||
+                $ext eq 'image/webp' || $ext eq 'image/webm'     || $ext eq 'image/mp4' ||
+                $ext eq 'image/quicktime' || $ext eq 'image/ogg' || $ext eq 'image/3gpp'
+            ) {
                 my $mediaId = upload_gab_media($file);
                 push @mediaIds, $mediaId;
             } else {
