@@ -25,9 +25,7 @@ use JSON;
     1. Get to https://t.me/BotFather
     2. Type /newbot and register a name & username for the bot in order to get a Telegram Token.
     3. Put your Telegram Token in the .cfg file.
-    4. Back to BotFather, type /setprivacy, and enter your bot alias (@bot_name).
-    5. Choose "Disable" so the bot can read group messages.
-    6. Invite your Bot to your channel as Administrator.
+    4. Invite your Bot to your channel as Administrator.
 
 
     ----------------------------------------
