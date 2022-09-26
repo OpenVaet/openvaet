@@ -25,6 +25,7 @@
 	    </div>
 		<script type="text/javascript"> 
 			let operationsToPerform = <%=$operationsToPerform%>;
+			console.log('operationsToPerform : ' + operationsToPerform);
 
 		    $(document).ready(function() {
 		    	if (operationsToPerform) {

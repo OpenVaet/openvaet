@@ -24,13 +24,21 @@
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Ages Completion Data</a>
         <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Pregnancies Confirmation Wizard</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Pregnancies Confirmation Data</a>
         <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>">Exposure via Breast-Milk Confirmation Wizard</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/breast_milk_exposure_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Exposure via Breast-Milk Confirmation Data</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_post_treatment?currentLanguage=<%=$currentLanguage%>">&#9135;&#10230; Exposure via Breast-Milk Post Treatments Wizard</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_post_treatment_completed?currentLanguage=<%=$currentLanguage%>">&#9135;&#9135;&#10230; Exposure via Breast-Milk Post Treatments Data</a>
         <div class="text_separator"></div>
         <hr>
         <div class="text_separator"></div>
@@ -56,13 +64,21 @@
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/patient_ages_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de complétion des âges</a>
         <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des grossesses</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des grossesses</a>
         <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
         <a href="/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des expositions par lait maternel</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/breast_milk_exposure_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des expositions par lait maternel</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_post_treatment?currentLanguage=<%=$currentLanguage%>">&#9135;&#10230; Expositions par Lait maternel - Assistant de Post Traitements</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/breast_milk_exposure_post_treatment_completed?currentLanguage=<%=$currentLanguage%>">&#9135;&#9135;&#10230; Données de post-traitement des expositions par lait maternel</a>
         <div class="text_separator"></div>
         <hr>
         <div class="text_separator"></div>

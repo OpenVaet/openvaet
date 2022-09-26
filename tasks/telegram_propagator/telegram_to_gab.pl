@@ -206,7 +206,13 @@ sub get_gab_token {
     my $initSet  = $tree->look_down(id=>"initial-state");
     my $asHTML   = $tree->as_HTML('<>&', "\t");
     my ($json)   = $asHTML =~ /<script id="initial-state" type="application\/json">(.*)<\/script>/;
-    $json        = decode_json($json);
+    # Priting an intermediary JSON file to bypass barbaric encodings.
+    my $tmpFile  = 'profile_' .  generate_random_number(5) . '.json';
+    open my $out, '>:utf8', $tmpFile;
+    print $out $json;
+    close $out;
+    $json        = json_from_file($tmpFile);
+    unlink $tmpFile or die "failed to remove temporary file";
     my $gabToken = %$json{'meta'}->{'access_token'} // die;
     return $gabToken;
 }
@@ -226,6 +232,7 @@ sub post_on_gab {
 
     # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
     my @mediaIds;
+    my $hasIncompatibleMedia = 0;
     if (%$json{'documents'}) {
         for my $file (@{%$json{'documents'}}) {
             my @elems = split '\.', $file;
@@ -239,11 +246,14 @@ sub post_on_gab {
                 my $mediaId = upload_gab_media($file);
                 push @mediaIds, $mediaId;
             } else {
-                die "File type to review : [$ext]";
+                $hasIncompatibleMedia = 1;
             }
         }
     }
-    my $text = %$json{'text'};
+    my $text   = %$json{'text'};
+    if ($hasIncompatibleMedia == 1) {
+        # Prettifying the format here.
+    }
     my @headers = (
         ':Authority'                => 'gab.com',
         ':Method'                   => 'POST',
@@ -295,8 +305,7 @@ sub post_on_gab {
 sub upload_gab_media {
     my ($file) = @_;
     print_log("Uploading file [$file] to Gab ...");
-    my @int = ('0' ..'9');
-    my $randString30 = join '' => map $int[rand @int], 1 .. 30;
+    my $randString30 = generate_random_number(30);
     my @headers = (
         'Accept'                    => 'application/json, text/plain, */*',
         'Accept-Encoding'           => 'gzip, deflate',
@@ -331,6 +340,12 @@ sub upload_gab_media {
     }
     print_log("Success uploading [$file] to Gab ...");
     return %$json{'id'};
+}
+
+sub generate_random_number {
+    my $length = shift;
+    my @int = ('0' ..'9');
+    return join '' => map $int[rand @int], 1 .. $length;
 }
 
 sub get_telegram_updates {

@@ -2333,3 +2333,44 @@ CREATE TABLE `openvaet`.`software` (
   `lastVaersReportDate` VARCHAR(45) NULL,
   PRIMARY KEY (`name`));
 INSERT INTO `openvaet`.`software` (`name`) VALUES ('OpenVAET');
+
+######################### V 13 - 2022-09-24 15:20:00
+# Created breast_milk_post_treatment_wizard_report table.
+CREATE TABLE `breast_milk_post_treatment_wizard_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reportId` int NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `breastMilkExposurePostTreatmentRequired` bit(1) NOT NULL DEFAULT b'0',
+  `breastMilkExposurePostTreatmentTimestamp` int DEFAULT NULL,
+  `breastMilkExposurePostTreatment` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `breast_milk_post_treatment_wizard_report_to_report` (`reportId`),
+  CONSTRAINT `breast_milk_post_treatment_wizard_report_to_report` FOREIGN KEY (`reportId`) REFERENCES `report` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_breast_milk_post_treatment_wizard_report_insert` 
+BEFORE INSERT ON `breast_milk_post_treatment_wizard_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `breastMilkExposurePostTreatmentRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `breastMilkExposureConfirmationUserId`,
+ADD COLUMN `breastMilkExposurePostTreatmentTimestamp` INT(11) NULL AFTER `breastMilkExposurePostTreatmentRequired`,
+ADD COLUMN `breastMilkExposurePostTreatment` BIT(1) NULL AFTER `breastMilkExposurePostTreatmentTimestamp`,
+ADD COLUMN `breastMilkExposurePostTreatmentUserId` INT(11) NULL AFTER `breastMilkExposurePostTreatment`,
+ADD COLUMN `notes` JSON NULL AFTER `breastMilkExposurePostTreatmentUserId`,
+ADD INDEX `report_to_breastMilkExposurePostTreatmentUser_idx` (`breastMilkExposurePostTreatmentUserId` ASC);
+ALTER TABLE `openvaet`.`report` 
+ADD CONSTRAINT `report_to_breastMilkExposurePostTreatmentUser`
+  FOREIGN KEY (`breastMilkExposurePostTreatmentUserId`)
+  REFERENCES `openvaet`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+ALTER TABLE `openvaet`.`report` 
+CHANGE COLUMN `notes` `notes` LONGTEXT NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`report` 
+CHANGE COLUMN `breastMilkExposurePostTreatment` `breastMilkExposurePostTreatment` INT(11) NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`breast_milk_wizard_report` 
+CHANGE COLUMN `breastMilkExposureConfirmation` `breastMilkExposureConfirmation` INT(11) NULL DEFAULT NULL ;
+ALTER TABLE `openvaet`.`breast_milk_post_treatment_wizard_report` 
+CHANGE COLUMN `breastMilkExposurePostTreatment` `breastMilkExposurePostTreatment` INT(11) NULL DEFAULT NULL ;

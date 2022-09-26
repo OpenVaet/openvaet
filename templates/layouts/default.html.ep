@@ -252,61 +252,61 @@
 
               </div>
             </div>
+
+            <script type="text/javascript">
+                var currentLanguage = '<%=$currentLanguage%>';
+                var mainWidth       = document.getElementById('menu').offsetWidth;
+                var mainHeight      = document.getElementById('menu').offsetHeight;
+
+                $( document ).ready(function() {
+                    mainLoader      = document.getElementById("mainLoader");
+                    mainLoader.style.display  = "none";
+                    blankContainer  = document.getElementById("blankContainer");
+                    blankContainer.style.display  = "none";
+
+                    // Loads top bar.
+                    loadTopBar();
+
+                });
+
+                function loadTopBar() {
+
+                    console.log('currentLanguage : ' + currentLanguage);
+                    let request = $.ajax({
+                        url: "/top_bar",
+                        type: "POST",
+                        data: {
+                            mainWidth       : mainWidth,
+                            mainHeight      : mainHeight,
+                            currentLanguage : currentLanguage
+                       }
+                    });
+
+                    request.done(function(data) {
+                        $("#menuContainer").html(data);
+                    });
+
+                    // Printing error message if case of failure
+                    request.fail(function(jqXHR, textStatus) {
+                        alert("Something went wrong : " + textStatus)
+                    });
+                }
+
+                function openLocation(dest) {
+                    mainLoader = document.getElementById("mainLoader");
+                    mainLoader.style.display  = "inline-block";
+                    blankContainer = document.getElementById("blankContainer");
+                    blankContainer.style.display  = "inline-block";
+                    window.location.href = dest + '?currentLanguage=' + currentLanguage;
+                }
+                
+                function openInNewTab(url) {
+                    window.open(url, '_blank').focus();
+                }
+            </script>
             <div class="content" id="content">
                 <%= content %> 
             </div>
         </div>
     </body>
 </html>
-
-<script type="text/javascript">
-    var currentLanguage = '<%=$currentLanguage%>';
-    let mainWidth       = document.getElementById('content').offsetWidth;
-    let mainHeight      = document.getElementById('content').offsetHeight;
-
-    $( document ).ready(function() {
-        mainLoader      = document.getElementById("mainLoader");
-        mainLoader.style.display  = "none";
-        blankContainer  = document.getElementById("blankContainer");
-        blankContainer.style.display  = "none";
-
-        // Loads top bar.
-        loadTopBar();
-
-    });
-
-    function loadTopBar() {
-
-        console.log('currentLanguage : ' + currentLanguage);
-        let request = $.ajax({
-            url: "/top_bar",
-            type: "POST",
-            data: {
-                mainWidth       : mainWidth,
-                mainHeight      : mainHeight,
-                currentLanguage : currentLanguage
-           }
-        });
-
-        request.done(function(data) {
-            $("#menuContainer").html(data);
-        });
-
-        // Printing error message if case of failure
-        request.fail(function(jqXHR, textStatus) {
-            alert("Something went wrong : " + textStatus)
-        });
-    }
-
-    function openLocation(dest) {
-        mainLoader = document.getElementById("mainLoader");
-        mainLoader.style.display  = "inline-block";
-        blankContainer = document.getElementById("blankContainer");
-        blankContainer.style.display  = "inline-block";
-        window.location.href = dest + '?currentLanguage=' + currentLanguage;
-    }
-    
-    function openInNewTab(url) {
-        window.open(url, '_blank').focus();
-    }
-</script>

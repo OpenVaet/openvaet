@@ -55,6 +55,7 @@ sub operations_to_perform {
             $operationsToPerform = generate_batch($self);
         }
     }
+    return $operationsToPerform;
 }
 
 sub generate_batch {
@@ -735,7 +736,7 @@ sub generate_products_export {
         if ($ageCompletedOnly eq 'true') {
             next unless defined $patientAgeFixed;
         }
-        if ($patientAgeConfirmationRequired == 1) {
+        if ($adminFilter && ($adminFilter == 1)) {
             my $email = %$tb{$reportId}->{'email'} // next;
             my ($userName) = split '\@', $email;
             if ($adminFilter) {

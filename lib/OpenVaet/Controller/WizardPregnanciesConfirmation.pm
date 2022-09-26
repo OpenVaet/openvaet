@@ -60,6 +60,7 @@ sub operations_to_perform {
             $operationsToPerform = generate_batch($self);
         }
     }
+    return $operationsToPerform;
 }
 
 sub generate_batch {

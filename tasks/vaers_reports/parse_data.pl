@@ -161,7 +161,7 @@ sub symptoms {
 }
 
 sub reports {
-	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired, pregnancyConfirmationRequired, breastMilkExposureConfirmationRequired FROM report WHERE id > $latestReportId", 'reportId');
+	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired, pregnancyConfirmationRequired, breastMilkExposureConfirmationRequired, breastMilkExposurePostTreatmentRequired, breastMilkExposureConfirmation FROM report WHERE id > $latestReportId", 'reportId');
 	for my $reportId (sort{$a <=> $b} keys %$tb) {
 		$latestReportId = $reportId;
 		my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
@@ -175,6 +175,14 @@ sub reports {
 		my $breastMilkExposureConfirmationRequired    = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'}   // die;
     	$breastMilkExposureConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
 		$reports{$vaersId}->{'breastMilkExposureConfirmationRequired'} = $breastMilkExposureConfirmationRequired;
+		my $breastMilkExposurePostTreatmentRequired    = %$tb{$reportId}->{'breastMilkExposurePostTreatmentRequired'}   // die;
+    	$breastMilkExposurePostTreatmentRequired       = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
+		$reports{$vaersId}->{'breastMilkExposurePostTreatmentRequired'} = $breastMilkExposurePostTreatmentRequired;
+		my $breastMilkExposureConfirmation    = %$tb{$reportId}->{'breastMilkExposureConfirmation'};
+		if ($breastMilkExposureConfirmation) {
+	    	$breastMilkExposureConfirmation   = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmation, -32)));
+			$reports{$vaersId}->{'breastMilkExposureConfirmation'} = $breastMilkExposureConfirmation;
+		}
 	}
 }
 
@@ -581,9 +589,17 @@ sub parse_vaers_files {
 
 			# Pregnancies completion.
 			if ($likelyBreastMilkExposure) {
-				# Settings the pregnancies requiring review.
+				# Settings the breast milk exposures requiring review.
 				unless ($reports{$vaersId}->{'breastMilkExposureConfirmationRequired'}) {
 					my $sth = $dbh->prepare("UPDATE report SET breastMilkExposureConfirmationRequired = 1 WHERE id = $reportId");
+					$sth->execute() or die $sth->err();
+				}
+			}
+
+			if ($reports{$vaersId}->{'breastMilkExposureConfirmation'}) {
+				# Settings the breast milk exposures requiring review.
+				unless ($reports{$vaersId}->{'breastMilkExposurePostTreatmentRequired'}) {
+					my $sth = $dbh->prepare("UPDATE report SET breastMilkExposurePostTreatmentRequired = 1 WHERE id = $reportId");
 					$sth->execute() or die $sth->err();
 				}
 			}

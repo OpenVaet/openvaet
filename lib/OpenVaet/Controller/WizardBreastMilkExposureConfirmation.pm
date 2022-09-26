@@ -60,6 +60,7 @@ sub operations_to_perform {
             $operationsToPerform = generate_batch($self);
         }
     }
+    return $operationsToPerform;
 }
 
 sub generate_batch {
@@ -425,7 +426,7 @@ sub breast_milk_exposure_confirmation_completed {
     my ($breastMilkExposuresConfirmed, $totalReports) = (0, 0);
     my %admins = ();
     my %products = ();
-    my $tb = $self->dbh->selectall_hashref("
+    my $sql = "
         SELECT
             report.id as reportId,
             report.breastMilkExposureConfirmation,
@@ -437,7 +438,9 @@ sub breast_milk_exposure_confirmation_completed {
         FROM report
             LEFT JOIN user ON user.id = report.breastMilkExposureConfirmationUserId
         WHERE breastMilkExposureConfirmationTimestamp IS NOT NULL
-    ", 'reportId');
+    ";
+    say $sql;
+    my $tb = $self->dbh->selectall_hashref($sql, 'reportId');
     my $loaded = 0;
     for my $reportId (sort{$a <=> $b} keys %$tb) {
         my $breastMilkExposureConfirmation = %$tb{$reportId}->{'breastMilkExposureConfirmation'} // die;
