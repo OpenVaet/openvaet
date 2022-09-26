@@ -29,19 +29,23 @@ use JSON;
 
 
     ----------------------------------------
-    CONFIGURATION FOR Gab Posting
+    CONFIGURATION FOR Gab POSTING
     ________________________________________
     1. Put your credentials in the tasks/telegram_propagator/config.cfg file.
 =cut
 
 # Fetches config data from file.
-my $configurationFile = 'tasks/telegram_propagator/config.cfg';
-my %config            = ();
+my $configurationFile          = 'tasks/telegram_propagator/config.cfg';
+my %config                     = ();
+my @gabGroups;
 get_config();
-my $telegramToken     = $config{'telegramToken'}   // die;
-my $gabAlias          = $config{'gabAlias'}        // die;
-my $gabUserName       = $config{'gabUserName'}     // die;
-my $gabUserPassword   = $config{'gabUserPassword'} // die;
+my $sleepSecondsBetweenUpdates = $config{'sleepSecondsBetweenUpdates'} // die; # Time we wait until to pull the new messages on Telegram.
+my $replicateTgToGabFeed       = $config{'replicateTgToGabFeed'}       // die; # Either 0 or 1. Will publish on Gab's user feed if set to 1.
+my $replicateTgToGabGroups     = $config{'replicateTgToGabGroups'}     // die; # Either 0 or 1. Will publish on every Gab Groups configured in the .cfg file if set to 1.
+my $telegramToken              = $config{'telegramToken'}              // die;
+my $gabAlias                   = $config{'gabAlias'}                   // die;
+my $gabUserName                = $config{'gabUserName'}                // die;
+my $gabUserPassword            = $config{'gabUserPassword'}            // die;
 
 # Initiates UserAgent.
 my $cookie = HTTP::Cookies->new();
@@ -71,13 +75,21 @@ while (1) {
 
     # Prints the posts content (mainly for debug purposes in this early version).
     print_telegram_updates();
-    sleep 5;
+    sleep $sleepSecondsBetweenUpdates;
 }
 
 sub get_config {
     die "missing file [$configurationFile]" unless -f $configurationFile;
     my $json = json_from_file($configurationFile);
     %config  = %$json;
+    die "Missing setting [replicateTgToGabFeed]"   unless exists $config{'replicateTgToGabFeed'}   && ($config{'replicateTgToGabFeed'}   == 0 || $config{'replicateTgToGabFeed'}   == 1);
+    die "Missing setting [replicateTgToGabGroups]" unless exists $config{'replicateTgToGabGroups'} && ($config{'replicateTgToGabGroups'} == 0 || $config{'replicateTgToGabGroups'} == 1);
+    if ($config{'replicateTgToGabGroups'} == 1) {
+        die "Missing array [gabGroups]" unless exists $config{'gabGroups'};
+        for my $gabGroupId (@{$config{'gabGroups'}}) {
+            push @gabGroups, $gabGroupId;
+        }
+    }
 }
 
 sub json_from_file {
@@ -218,9 +230,13 @@ sub get_gab_token {
 }
 
 sub post_on_gab {
-    my ($channelId, $messageId) = @_;
-    print_log("Re-posting on Gab Telegram message [$channelId -> $messageId] ...");
-    my $file = "telegram_data/$channelId/$messageId/message.json";
+    my ($channelName, $messageId, $groupId) = @_;
+    if ($groupId) {
+        print_log("Re-posting on Gab's Group [$groupId] Telegram message [$channelName -> $messageId] ...");
+    } else {
+        print_log("Re-posting on Gab Telegram message [$channelName -> $messageId] ...");
+    }
+    my $file = "telegram_data/$channelName/$messageId/message.json";
     open my $in, '<:utf8', $file;
     my $json;
     while (<$in>) {
@@ -237,11 +253,11 @@ sub post_on_gab {
         for my $file (@{%$json{'documents'}}) {
             my @elems = split '\.', $file;
             my $ext   = $elems[scalar @elems - 1] // die;
-            if ($ext eq 'mp4'        || $ext eq 'jpg'            || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
-                $ext eq 'webp'       || $ext eq 'jfif'           || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov' ||
-                $ext eq 'image/jpeg' || $ext eq 'image/png'      || $ext eq 'image/gif' ||
-                $ext eq 'image/webp' || $ext eq 'image/webm'     || $ext eq 'image/mp4' ||
-                $ext eq 'image/quicktime' || $ext eq 'image/ogg' || $ext eq 'image/3gpp'
+            if ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
+                $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov' ||
+                $ext eq 'image/jpeg'      || $ext eq 'image/png'  || $ext eq 'image/gif' ||
+                $ext eq 'image/webp'      || $ext eq 'image/webm' || $ext eq 'image/mp4' ||
+                $ext eq 'image/quicktime' || $ext eq 'image/ogg'  || $ext eq 'image/3gpp'
             ) {
                 my $mediaId = upload_gab_media($file);
                 push @mediaIds, $mediaId;
@@ -253,6 +269,7 @@ sub post_on_gab {
     my $text   = %$json{'text'};
     if ($hasIncompatibleMedia == 1) {
         # Prettifying the format here.
+        $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
     }
     my @headers = (
         ':Authority'                => 'gab.com',
@@ -260,7 +277,7 @@ sub post_on_gab {
         ':Path'                     => '/auth/sign_in',
         ':Scheme'                   => 'https',
         'Accept'                    => 'application/json, text/plain, */*',
-        'Accept-Encoding'           => 'gzip, deflate, br',
+        'Accept-Encoding'           => 'gzip, deflate',
         'Accept-Language'           => 'en-US,en;q=0.9',
         'Authorization'             => "Bearer $gabToken",
         'Cache-Control'             => 'max-age=0',
@@ -283,7 +300,13 @@ sub post_on_gab {
     my $request = new HTTP::Request( 'POST', $url);
     my %params  = ();
     $params{'expires_at'}     = undef;
-    $params{'group_id'}       = undef;
+    if ($groupId) {
+        $params{'group_id'}   = $groupId;
+        $params{'visibility'} = 'unlisted';
+    } else {
+        $params{'group_id'}   = undef;
+        $params{'visibility'} = 'public';
+    }
     $params{'in_reply_to_id'} = undef;
     $params{'markdown'}       = $text;
     $params{'media_ids'}      = \@mediaIds;
@@ -293,7 +316,6 @@ sub post_on_gab {
     $params{'sensitive'}      = 'false';
     $params{'spoiler_text'}   = '';
     $params{'status'}         = $text;
-    $params{'visibility'}     = 'public';
     my $params = encode_json\%params;
     $request->header(@headers);
     $request->content($params);
@@ -350,32 +372,34 @@ sub generate_random_number {
 
 sub get_telegram_updates {
     print_log("Getting Telegram Channels Last Updates ...");
-    my $offset      = -30;
+    my $offset      = "-$sleepSecondsBetweenUpdates";
     my $updates     = $telegramApi->getUpdates ({
-        timeout => 10,
+        timeout => 0,
         $offset ? (offset => $offset) : ()
     });
+    my %attachments = ();
     if (%$updates{'result'}) {
         for my $result (@{%$updates{'result'}}) {
             if (%$result{'channel_post'}) {
-                my $channelId = %$result{'channel_post'}->{'chat'}->{'id'} // die;
-                $channelId    =~ s/\-//;
-                my $uts       = %$result{'channel_post'}->{'date'} // die;
-                my $messageId = %$result{'channel_post'}->{'message_id'} // die;
-                my $text      = %$result{'channel_post'}->{'text'} // %$result{'channel_post'}->{'caption'};
+                my $channelId    = %$result{'channel_post'}->{'chat'}->{'id'}    // die;
+                $channelId       =~ s/\-//;
+                my $channelName  = %$result{'channel_post'}->{'chat'}->{'title'} // die;
+                my $uts          = %$result{'channel_post'}->{'date'} // die;
+                my $messageId    = %$result{'channel_post'}->{'message_id'} // die;
+                my $text         = %$result{'channel_post'}->{'text'} // %$result{'channel_post'}->{'caption'};
                 my $mediaGroupId = %$result{'channel_post'}->{'media_group_id'};
                 if ($mediaGroupId) {
-                    $messageId = $mediaGroupId;
+                    $messageId   = $mediaGroupId;
                 }
-                $messages{$channelId}->{$messageId}->{'uts'}       = $uts;
-                $messages{$channelId}->{$messageId}->{'text'}      = $text if $text;
+                $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
+                $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
                 if (%$result{'channel_post'}->{'document'}) {
                     my $fileId   = %$result{'channel_post'}->{'document'}->{'file_id'}   // die;
                     my $fileName = %$result{'channel_post'}->{'document'}->{'file_name'} // die;
                     my $fileDetails = $telegramApi->getFile({file_id => $fileId});
                     my $filePath  = %$fileDetails{'result'}->{'file_path'} // die;   
                     my $fileUrl   = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my $localFolder = "telegram_data/$channelId/$messageId/documents";
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
                     make_path($localFolder) unless (-d $localFolder);
                     my $localFile = "$localFolder/$fileName";
                     unless (-f $localFile) {
@@ -384,13 +408,13 @@ sub get_telegram_updates {
                             die "getstore of <$fileUrl> failed with $rc";
                         }
                     }
-                    push @{$messages{$channelId}->{$messageId}->{'documents'}}, $localFile;
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                 }
                 if (%$result{'channel_post'}->{'photo'}) {
-                    my $localFolder = "telegram_data/$channelId/$messageId/documents";
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
                     make_path($localFolder) unless (-d $localFolder);
-                    $messages{$channelId}->{$messageId}->{'fNum'}++;
-                    my $fNum = $messages{$channelId}->{$messageId}->{'fNum'} // die;
+                    $attachments{$channelName}->{$messageId}->{'fNum'}++;
+                    my $fNum = $attachments{$channelName}->{$messageId}->{'fNum'} // die;
                     my $fileId;
                     for my $photo (@{%$result{'channel_post'}->{'photo'}}) {
                         $fileId   = %$photo{'file_id'}   // die;
@@ -401,7 +425,7 @@ sub get_telegram_updates {
                     my @elems = split '\.', $fileUrl;
                     my $ext = $elems[(scalar @elems - 1)] // die;
                     my $localFile = "$localFolder/$fNum.$ext";
-                    push @{$messages{$channelId}->{$messageId}->{'documents'}}, $localFile;
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                     unless (-f $localFile) {
                         my $rc = getstore($fileUrl, $localFile);
                         if (is_error($rc)) {
@@ -418,16 +442,23 @@ sub get_telegram_updates {
 }
 
 sub print_telegram_updates {
-    for my $channelId (sort{$a <=> $b} keys %messages) {
-        for my $messageId (sort{$a <=> $b} keys %{$messages{$channelId}}) {
-            my $localFolder = "telegram_data/$channelId/$messageId";
+    for my $channelName (sort keys %messages) {
+        for my $messageId (sort{$a <=> $b} keys %{$messages{$channelName}}) {
+            my $localFolder = "telegram_data/$channelName/$messageId";
             make_path($localFolder) unless (-d $localFolder);
             unless (-f "$localFolder/message.json") {
-                my %obj = %{$messages{$channelId}->{$messageId}};
+                my %obj = %{$messages{$channelName}->{$messageId}};
                 open my $out, '>:utf8', "$localFolder/message.json";
                 print $out encode_json\%obj;
                 close $out;
-                post_on_gab($channelId, $messageId);
+                if ($replicateTgToGabFeed == 1) {
+                    post_on_gab($channelName, $messageId);
+                }
+                if ($replicateTgToGabGroups == 1) {
+                    for my $gabGroupId (@gabGroups) {
+                        post_on_gab($channelName, $messageId, $gabGroupId);
+                    }
+                }
             }
         }
     }
