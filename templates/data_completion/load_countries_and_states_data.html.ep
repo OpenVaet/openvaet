@@ -1,0 +1,145 @@
+% my %statistics = %$statistics;
+% my $totalReviewed = $statistics{'reviewed'} // 0;
+% my $totalConfirmed = $statistics{'confirmed'} // 0;
+% my $totalEntries   = $statistics{'total'}     // 0;
+<div class="text_separator"></div>
+<div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+    <%=$totalConfirmed%> confirmed, <%=$totalReviewed%> reviewed, <%=$totalEntries%> total
+</div>
+<div class="text_separator"></div>
+<table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="geographical-table">
+    <thead>
+        <tr style="width: 100%;">
+            <th></th>
+            <th colspan=3><b>Deaths</b></th>
+            <th colspan=3><b>Serious</b></th>
+            <th colspan=3><b>Total</b></th>
+        </tr>
+        <tr style="width: 100%;">
+            <th style="width: 30%;"><b>Geographical Origin</b></th>
+            <th style="width: 5%;"><b>Confirmed or Completed</b></th>
+            <th style="width: 5%;"><b>Reviewed</b></th>
+            <th style="width: 5%;"><b>Total</b></th>
+            <th style="width: 5%;"><b>Confirmed or Completed</b></th>
+            <th style="width: 5%;"><b>Reviewed</b></th>
+            <th style="width: 5%;"><b>Total</b></th>
+            <th style="width: 5%;"><b>Confirmed or Completed</b></th>
+            <th style="width: 5%;"><b>Reviewed</b></th>
+            <th style="width: 5%;"><b>Total</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        % for my $countryName (sort keys %{$statistics{'byCountries'}}) {
+            % my $deathsConfirmed = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'confirmed'} // 0;
+            % my $deathsReviewed  = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'reviewed'}  // 0;
+            % my $deathsTotal     = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'total'}     // 0;
+            % my $seriousConfirmed = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'confirmed'} // 0;
+            % my $seriousReviewed  = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'reviewed'}  // 0;
+            % my $seriousTotal     = $statistics{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'total'}     // 0;
+            % my $confirmed = $statistics{'byCountries'}->{$countryName}->{'confirmed'} // 0;
+            % my $reviewed  = $statistics{'byCountries'}->{$countryName}->{'reviewed'}  // 0;
+            % my $total     = $statistics{'byCountries'}->{$countryName}->{'total'}     // 0;
+	        <tr>
+	            <td style="width: 30%;"><b><%=$countryName%></b></td>
+	            <td style="width: 5%;">
+	            	<%=$deathsConfirmed%>
+	            </td>
+	            <td style="width: 5%;">
+	            	<%=$deathsReviewed%>
+	            </td>
+	            % if ($deathsReviewed == $deathsTotal) {
+	            <td style="width: 5%;background: #7dba7d;">
+	            	<%=$deathsTotal%>
+	            </td>
+            	% } else {
+	            <td style="width: 5%;background: #eba998;cursor: pointer;" onclick="loadWizardReports('deaths', '<%=$countryName%>');return;">
+	            	<%=$deathsTotal%>
+	            </td>
+        		% }
+	            <td style="width: 5%;">
+	            	<%=$seriousConfirmed%>
+	            </td>
+	            <td style="width: 5%;">
+	            	<%=$seriousReviewed%>
+	            </td>
+	            % if ($seriousReviewed == $seriousTotal) {
+	            <td style="width: 5%;background: #7dba7d;">
+	            	<%=$seriousTotal%>
+	            </td>
+            	% } else {
+	            <td style="width: 5%;background: #eba998;cursor: pointer;" onclick="loadWizardReports('serious', '<%=$countryName%>');return;">
+	            	<%=$seriousTotal%>
+	            </td>
+        		% }
+	            <td style="width: 5%;">
+	            	<%=$confirmed%>
+	            </td>
+	            <td style="width: 5%;">
+	            	<%=$reviewed%>
+	            </td>
+	            % if ($reviewed == $total) {
+	            <td style="width: 5%;background: #7dba7d;">
+	            	<%=$total%>
+	            </td>
+            	% } else {
+	            <td style="width: 5%;background: #eba998;cursor: pointer;" onclick="loadWizardReports('all', '<%=$countryName%>');return;">
+	            	<%=$total%>
+	            </td>
+        		% }
+	        </tr>
+        % }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+	
+    $(document).ready( function () {
+        $('#geographical-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "order": [[ 0, "asc" ]],
+            "columnDefs": [
+                { "searchable": false, "targets": 1 },
+                { "searchable": false, "targets": 2 },
+                { "searchable": false, "targets": 3 }
+            ]
+        });
+    } );
+
+    function loadWizardReports(scope, countryName) {
+        mainLoader.style.display  = "inline-block";
+        blankContainer.style.display  = "inline-block";
+    	console.log('scope : ' + scope);
+    	console.log('countryName : ' + countryName);
+        let wizardSelected  = $('#wizardSelected').val();
+        let request         = $.ajax({
+            url: "/data_completion/load_wizard_scope",
+            type: "POST",
+            data: {
+                wizardSelected  : wizardSelected,
+                scope           : scope,
+                countryName     : countryName,
+                currentLanguage : currentLanguage
+            }
+        });
+
+        request.done(function(data) {
+            mainLoader.style.display  = "none";
+            blankContainer.style.display  = "none";
+        	if (wizardSelected == 'patientAgesConfirmations') {
+        		window.location.href = '/data_admin/wizards/patient_age?currentLanguage=<%=$currentLanguage%>';
+        	} else if (wizardSelected == 'pregnanciesConfirmations') {
+        		window.location.href = '/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>';
+        	} else if (wizardSelected == 'breastMilkExposuresConfirmations') {
+        		window.location.href = '/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>';
+        	} else {
+        		alert(wizardSelected);
+        	}
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>

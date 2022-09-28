@@ -380,28 +380,36 @@ sub get_telegram_updates {
     my %attachments = ();
     if (%$updates{'result'}) {
         for my $result (@{%$updates{'result'}}) {
-            if (%$result{'channel_post'}) {
-                my $channelId    = %$result{'channel_post'}->{'chat'}->{'id'}    // die;
+            if (%$result{'channel_post'} || %$result{'edited_channel_post'}) {
+                my $channelLabel;
+                if (%$result{'channel_post'}) {
+                    $channelLabel = 'channel_post';
+                } elsif (%$result{'edited_channel_post'}) {
+                    $channelLabel = 'edited_channel_post';
+                } else {
+                    die "Option to code";
+                }
+                my $channelId    = %$result{$channelLabel}->{'chat'}->{'id'}    // die;
                 $channelId       =~ s/\-//;
-                my $channelName  = %$result{'channel_post'}->{'chat'}->{'title'} // die;
-                my $uts          = %$result{'channel_post'}->{'date'} // die;
-                my $messageId    = %$result{'channel_post'}->{'message_id'} // die;
-                my $text         = %$result{'channel_post'}->{'text'} // %$result{'channel_post'}->{'caption'};
-                my $mediaGroupId = %$result{'channel_post'}->{'media_group_id'};
+                my $channelName  = %$result{$channelLabel}->{'chat'}->{'title'} // die;
+                my $uts          = %$result{$channelLabel}->{'date'} // die;
+                my $messageId    = %$result{$channelLabel}->{'message_id'} // die;
+                my $text         = %$result{$channelLabel}->{'text'} // %$result{$channelLabel}->{'caption'};
+                my $mediaGroupId = %$result{$channelLabel}->{'media_group_id'};
                 if ($mediaGroupId) {
                     $messageId   = $mediaGroupId;
                 }
                 $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
                 $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
-                if (%$result{'channel_post'}->{'document'}) {
-                    my $fileId   = %$result{'channel_post'}->{'document'}->{'file_id'}   // die;
-                    my $fileName = %$result{'channel_post'}->{'document'}->{'file_name'} // die;
+                if (%$result{$channelLabel}->{'document'}) {
+                    my $fileId      = %$result{$channelLabel}->{'document'}->{'file_id'}   // die;
+                    my $fileName    = %$result{$channelLabel}->{'document'}->{'file_name'} // die;
                     my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath  = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl   = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
                     my $localFolder = "telegram_data/$channelName/$messageId/documents";
                     make_path($localFolder) unless (-d $localFolder);
-                    my $localFile = "$localFolder/$fileName";
+                    my $localFile   = "$localFolder/$fileName";
                     unless (-f $localFile) {
                         my $rc = getstore($fileUrl, $localFile);
                         if (is_error($rc)) {
@@ -410,21 +418,21 @@ sub get_telegram_updates {
                     }
                     push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                 }
-                if (%$result{'channel_post'}->{'photo'}) {
+                if (%$result{$channelLabel}->{'photo'}) {
                     my $localFolder = "telegram_data/$channelName/$messageId/documents";
                     make_path($localFolder) unless (-d $localFolder);
                     $attachments{$channelName}->{$messageId}->{'fNum'}++;
                     my $fNum = $attachments{$channelName}->{$messageId}->{'fNum'} // die;
                     my $fileId;
-                    for my $photo (@{%$result{'channel_post'}->{'photo'}}) {
+                    for my $photo (@{%$result{$channelLabel}->{'photo'}}) {
                         $fileId   = %$photo{'file_id'}   // die;
                     }
                     my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl  = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my @elems = split '\.', $fileUrl;
-                    my $ext = $elems[(scalar @elems - 1)] // die;
-                    my $localFile = "$localFolder/$fNum.$ext";
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my @elems       = split '\.', $fileUrl;
+                    my $ext         = $elems[(scalar @elems - 1)] // die;
+                    my $localFile   = "$localFolder/$fNum.$ext";
                     push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                     unless (-f $localFile) {
                         my $rc = getstore($fileUrl, $localFile);

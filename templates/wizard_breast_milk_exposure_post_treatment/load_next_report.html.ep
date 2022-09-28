@@ -1,0 +1,367 @@
+<style type="text/css">
+    .report-confirmation-1-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        font-weight: bold;
+        height: 22px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#91e398;
+    }
+    .report-confirmation-1-button:hover {
+        background: #5dc966;
+    }
+    .report-confirmation-2-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        font-weight: bold;
+        height: 22px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#85C78B;
+    }
+    .report-confirmation-2-button:hover {
+        background: #5dc966;
+    }
+    .report-confirmation-3-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        font-weight: bold;
+        height: 22px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#68A86E;
+    }
+    .report-confirmation-3-button:hover {
+        background: #5dc966;
+    }
+    .report-infirmation-button {
+        border: 1px solid black;
+        border-radius: 5px;
+        width: 280px;
+        height: 22px;
+        padding-top: 10px;
+        font-weight: bold;
+        padding-bottom: 10px;
+        padding-left: 15px;
+        margin: auto;
+        cursor: pointer;
+        background:#fc9a7e;
+    }
+    .report-infirmation-button:hover {
+        background: #f07856;
+    }
+</style>
+
+% my %sexes = %$sexes;
+
+<div class="text_separator"></div>
+% if ($operationsToPerform) {
+    <hr>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 15px;font-weight: bold;">
+        Report Data (<%=$operationsToPerform%> left)
+    </div>
+    <div class="text_separator"></div>
+    <hr>
+    % if ($mainWidth >= 1000) {
+    <div style="width:100%;display:flex;flex-wrap: wrap;overflow-x: hidden;overflow-y: hidden;">
+    % } else {
+    <div style="width:100%;display:flex;flex-wrap: wrap;">
+    % }
+        % if ($mainWidth >= 1000) {
+        <div style="width:30%;overflow-x: auto;overflow-y: auto;">
+        % }
+            <div class="text_separator"></div>
+            <b>VAERS ID :</b> <%=$vaersId%>
+            <div class="text_separator"></div>
+            <b>Product(s) :</b>
+            <div class="text_separator"></div>
+            <%==$products%>
+            <div class="text_separator"></div>
+            <div style="width:100%;display:flex;flex-wrap: wrap;">
+                <div style="width: calc(50% - 150px);">
+                </div>
+                <div style="width:300px;display:flex;flex-wrap: wrap;">
+                    <div style="width:180px;padding-top: 3px;"><b>Sex : </b></div>
+                    <select id="sexFixed" style="width: 115px;margin-left: 5px;">
+                        % for my $sex (sort{$a <=> $b} keys %sexes) {
+                            % my $sexName = $sexes{$sex}->{'sexName'} // die;
+                            % if ($sex eq $sexFixed) {
+                                <option value="<%=$sex%>" selected><%=$sexName%></option>
+                            % } else {
+                                <option value="<%=$sex%>"><%=$sexName%></option>
+                            % }
+                        % }
+                    </select>
+                </div>
+                <div style="width: calc(50% - 150px);">
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div style="width:100%;display:flex;flex-wrap: wrap;">
+                <div style="width: calc(50% - 150px);">
+                </div>
+                <div style="width:300px;display:flex;flex-wrap: wrap;">
+                    <div style="width:180px;padding-top: 3px;"><b>Age : </b></div>
+                    <input type="text" placeholder="Patient's age" id="patientAgeFixed"  name="patientAgeFixed"  style="width: 107px;margin-left: 5px;" value="<%=$patientAgeFixed%>">
+                </div>
+                <div style="width: calc(50% - 150px);">
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div style="width:100%;display:flex;flex-wrap: wrap;">
+                <div style="width: calc(50% - 150px);">
+                </div>
+                <div style="width:300px;display:flex;flex-wrap: wrap;">
+                    <div style="width:180px;padding-top: 3px;"><b>Vaccination Date :</b></div>
+                    <input type="text" placeholder="YYYY" id="vaccinationYear"  name="vaccinationYear"  style="width: 40px;margin-left: 5px;" value="<%=$vaccinationYear%>">
+                    <input type="text" placeholder="MM" id="vaccinationMonth" name="vaccinationMonth" style="width: 20px;margin-left: 5px;" value="<%=$vaccinationMonth%>">
+                    <input type="text" placeholder="DD" id="vaccinationDay"   name="vaccinationDay"   style="width: 20px;margin-left: 5px;" value="<%=$vaccinationDay%>">
+                </div>
+                <div style="width: calc(50% - 150px);">
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div style="width:100%;display:flex;flex-wrap: wrap;">
+                <div style="width: calc(50% - 150px);">
+                </div>
+                <div style="width:300px;display:flex;flex-wrap: wrap;">
+                    <div style="width:180px;padding-top: 3px;"><b>Onset Date :</b></div>
+                    <input type="text" placeholder="YYYY" id="onsetYear"  name="onsetYear"  style="width: 40px;margin-left: 5px;" value="<%=$onsetYear%>">
+                    <input type="text" placeholder="MM" id="onsetMonth" name="onsetMonth" style="width: 20px;margin-left: 5px;" value="<%=$onsetMonth%>">
+                    <input type="text" placeholder="DD" id="onsetDay"   name="onsetDay"   style="width: 20px;margin-left: 5px;" value="<%=$onsetDay%>">
+                </div>
+                <div style="width: calc(50% - 150px);">
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <div style="width:100%;display:flex;flex-wrap: wrap;">
+                <div style="width: calc(50% - 150px);">
+                </div>
+                <div style="width:300px;display:flex;flex-wrap: wrap;">
+                    <div style="width:180px;padding-top: 3px;"><b>Deceased Date : </b></div>
+                    <input type="text" placeholder="YYYY" id="deceasedYear"  name="deceasedYear"  style="width: 40px;margin-left: 5px;" value="<%=$deceasedYear%>">
+                    <input type="text" placeholder="MM"   id="deceasedMonth" name="deceasedMonth" style="width: 20px;margin-left: 5px;" value="<%=$deceasedMonth%>">
+                    <input type="text" placeholder="DD"   id="deceasedDay"   name="deceasedDay"   style="width: 20px;margin-left: 5px;" value="<%=$deceasedDay%>">
+                </div>
+                <div style="width: calc(50% - 150px);">
+                </div>
+            </div>
+            <div class="text_separator"></div>
+            <b>VAERS Reception Date :</b> <%=$vaersReceptionDate%>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="patientDied"><b>Patient Died</b></label>
+                % if ($patientDied) {
+                <input type="checkbox" id="patientDied" checked>
+                % } else {
+                <input type="checkbox" id="patientDied">
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="lifeThreatning"><b>Life Threatning</b></label>
+                % if ($lifeThreatning) {
+                <input type="checkbox" id="lifeThreatning" checked>
+                % } else {
+                <input type="checkbox" id="lifeThreatning">
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="permanentDisability"><b>Permanent Disability</b></label>
+                % if ($permanentDisability) {
+                <input type="checkbox" id="permanentDisability" checked>
+                % } else {
+                <input type="checkbox" id="permanentDisability">
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="hospitalized"><b>Hospitalized</b></label>
+                % if ($hospitalized) {
+                <input type="checkbox" id="hospitalized" checked>
+                % } else {
+                <input type="checkbox" id="hospitalized">
+                % }
+            </div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="hoursBetweenVaccineAndAE"><b>Hours Between Vaccine & AE </b></label>
+                <input type="text" id="hoursBetweenVaccineAndAE" value="<%=$hoursBetweenVaccineAndAE%>">
+            </div>
+            <div class="text_separator"></div>
+            <div style="width: 100%;text-align: center;">
+                <label for="daysBetweenVaccineAndAE"><b>Days Between Vaccine & AE </b></label>
+                <input type="text" id="daysBetweenVaccineAndAE">
+            </div>
+            <div class="text_separator"></div>
+        % if ($mainWidth >= 1000) {
+        </div>
+        % }
+        % if ($mainWidth >= 1000) {
+        <div style="width:50%;overflow-x: auto;overflow-y: auto;">
+        % }
+            <b>Notes :</b>
+            <div class="text_separator"></div>
+            <textarea style="width: 95%;height: 100px;" id="notes"><%==$notes%></textarea>
+            <div class="text_separator"></div>
+            <b>Symptoms :</b>
+            <%==$symptoms%>
+            <div class="text_separator"></div>
+            <div class="text_separator"></div>
+            <b>Description :</b> <%==$aEDescription%>
+        % if ($mainWidth < 1000) {
+            <hr>
+        % }
+        % if ($mainWidth >= 1000) {
+        </div>
+        % }
+        % if ($mainWidth >= 1000) {
+        <div style="width:20%;overflow-x: auto;overflow-y: auto;">
+        % }
+            <div class="text_separator"></div>
+            <div class="report-confirmation-1-button noselect" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 1)">
+                Confirm mother's exposure
+            </div>
+            <div class="text_separator"></div>
+            <div class="report-confirmation-2-button noselect" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 2)">
+                Confirm child's exposure
+            </div>
+            <div class="text_separator"></div>
+            <div class="report-confirmation-3-button noselect" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 3)">
+                Confirm child & mother's exposures
+            </div>
+            <div class="text_separator"></div>
+            <div class="report-infirmation-button noselect" onclick="setReportAttribute('<%=$reportId%>', '<%=$sqlValue%>', 0)">
+                No exposure in this report
+            </div>
+            <div class="text_separator"></div>
+        % if ($mainWidth >= 1000) {
+        </div>
+        % }
+    </div>
+% } else {
+    <script type="text/javascript">
+    $(document).ready(function() {
+        // Attending to the loader.
+        window.location.href = '/data_admin?currentLanguage=<%=$currentLanguage%>'; 
+    });
+    </script>
+% }
+
+<script type="text/javascript">
+    $(document).ready( function () {
+        formatNotes();
+    })
+
+    function formatNotes() {
+        let content = document.getElementById('notes').value;
+        content = content.replace(/\<br \/\>/g, '&#13;');
+        document.getElementById('notes').innerHTML = content;
+    }
+
+    function setReportAttribute(reportId, sqlValue, value) {
+        console.log('Setting report ' + reportId + ', column : ' + sqlValue + ' to [' + value + ']');
+        let patientAgeFixed     = $('#patientAgeFixed').val();
+        console.log('patientAgeFixed : ' + patientAgeFixed);
+        let sexFixed     = $('#sexFixed').val();
+        console.log('sexFixed : ' + sexFixed);
+        let vaccinationYear     = $('#vaccinationYear').val();
+        let vaccinationMonth    = $('#vaccinationMonth').val();
+        let vaccinationDay      = $('#vaccinationDay').val();
+        console.log('vaccinationYear : ' + vaccinationYear);
+        console.log('vaccinationMonth : ' + vaccinationMonth);
+        console.log('vaccinationDay : ' + vaccinationDay);
+        let deceasedYear             = $('#deceasedYear').val();
+        let deceasedMonth            = $('#deceasedMonth').val();
+        let deceasedDay              = $('#deceasedDay').val();
+        console.log('deceasedYear : ' + deceasedYear);
+        console.log('deceasedMonth : ' + deceasedMonth);
+        console.log('deceasedDay : ' + deceasedDay);
+        let onsetYear           = $('#onsetYear').val();
+        let onsetMonth          = $('#onsetMonth').val();
+        let onsetDay            = $('#onsetDay').val();
+        console.log('onsetYear : ' + onsetYear);
+        console.log('onsetMonth : ' + onsetMonth);
+        console.log('onsetDay : ' + onsetDay);
+        let patientDied         = document.getElementById('patientDied');
+        patientDied             = patientDied.checked;
+        let lifeThreatning      = document.getElementById('lifeThreatning');
+        lifeThreatning          = lifeThreatning.checked;
+        let permanentDisability = document.getElementById('permanentDisability');
+        permanentDisability     = permanentDisability.checked;
+        let hospitalized        = document.getElementById('hospitalized');
+        hospitalized            = hospitalized.checked;
+        console.log('patientDied : ' + patientDied);
+        console.log('lifeThreatning : ' + lifeThreatning);
+        console.log('permanentDisability : ' + permanentDisability);
+        console.log('hospitalized : ' + hospitalized);
+        let hoursBetweenVaccineAndAE = $('#hoursBetweenVaccineAndAE').val();
+        let daysBetweenVaccineAndAE  = $('#daysBetweenVaccineAndAE').val();
+        if (daysBetweenVaccineAndAE && !hoursBetweenVaccineAndAE) {
+            hoursBetweenVaccineAndAE = daysBetweenVaccineAndAE * 24;
+        }
+        let notes = $('#notes').val();
+        notes     = notes.replace(/\r?\n/g, '<br />');
+        mainLoader.style.display  = "inline-block";
+        blankContainer.style.display  = "inline-block";
+        let request            = $.ajax({
+            url: "/wizard_breast_milk_exposure_post_treatment/set_report_attribute",
+            type: "POST",
+            data: {
+                reportId : reportId,
+                sqlValue : sqlValue,
+                value    : value,
+                notes    : notes,
+                patientAgeFixed : patientAgeFixed,
+                sexFixed : sexFixed,
+                vaccinationYear : vaccinationYear,
+                vaccinationMonth : vaccinationMonth,
+                vaccinationDay : vaccinationDay,
+                deceasedYear : deceasedYear,
+                deceasedMonth : deceasedMonth,
+                deceasedDay : deceasedDay,
+                onsetYear : onsetYear,
+                onsetMonth : onsetMonth,
+                onsetDay : onsetDay,
+                patientDied : patientDied,
+                lifeThreatning : lifeThreatning,
+                permanentDisability : permanentDisability,
+                hospitalized : hospitalized,
+                hoursBetweenVaccineAndAE : hoursBetweenVaccineAndAE
+            }
+        });
+
+        request.done(function(data) {
+            mainLoader.style.display  = "none";
+            blankContainer.style.display  = "none";
+            let operationsToPerform = <%=$operationsToPerform%>;
+            operationsToPerform = operationsToPerform - 1;
+            reportId = null;
+            % if ($comesFromDirectReport) {
+            window.location.href = '/data_admin/wizards/breast_milk_exposure_post_treatment?currentLanguage=<%=$currentLanguage%>';
+            % } else {
+            loadNextReport(operationsToPerform);
+            % }
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>
