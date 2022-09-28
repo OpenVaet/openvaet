@@ -46,6 +46,7 @@ my $telegramToken              = $config{'telegramToken'}              // die;
 my $gabAlias                   = $config{'gabAlias'}                   // die;
 my $gabUserName                = $config{'gabUserName'}                // die;
 my $gabUserPassword            = $config{'gabUserPassword'}            // die;
+my $gabGroupsPostingVisibility = 'public'; # Either "public" or "unlisted". To adjust if the behavior varies on your Gab account.
 
 # Initiates UserAgent.
 my $cookie = HTTP::Cookies->new();
@@ -389,9 +390,9 @@ sub get_telegram_updates {
                 } else {
                     die "Option to code";
                 }
-                my $channelId    = %$result{$channelLabel}->{'chat'}->{'id'}    // die;
+                my $channelId    = %$result{$channelLabel}->{'chat'}->{'id'}       // die;
                 $channelId       =~ s/\-//;
-                my $channelName  = %$result{$channelLabel}->{'chat'}->{'title'} // die;
+                my $channelName  = %$result{$channelLabel}->{'chat'}->{'username'} // %$result{$channelLabel}->{'chat'}->{'title'} // die;
                 my $uts          = %$result{$channelLabel}->{'date'} // die;
                 my $messageId    = %$result{$channelLabel}->{'message_id'} // die;
                 my $text         = %$result{$channelLabel}->{'text'} // %$result{$channelLabel}->{'caption'};
