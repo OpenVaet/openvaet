@@ -403,11 +403,17 @@ sub startup {
     $r->get('/data_admin/data_completion/by_countries_and_states')->to('data_completion#by_countries_and_states');
     $r->post('/data_completion/load_countries_and_states_data')->to('data_completion#load_countries_and_states_data');
     $r->post('/data_completion/load_wizard_scope')->to('data_completion#load_wizard_scope');
+    $r->get('/data_completion/query_stats_refresh')->to('data_completion#query_stats_refresh');
     $r->get('/data_admin/wizards/breast_milk_exposure_post_treatment')->to('wizard_breast_milk_exposure_post_treatment#wizard_breast_milk_exposure_post_treatment');
     $r->post('/wizard_breast_milk_exposure_post_treatment/load_next_report')->to('wizard_breast_milk_exposure_post_treatment#load_next_report');
     $r->post('/wizard_breast_milk_exposure_post_treatment/set_report_attribute')->to('wizard_breast_milk_exposure_post_treatment#set_report_attribute');
     $r->get('/data_admin/wizards/breast_milk_exposure_post_treatment_completed')->to('wizard_breast_milk_exposure_post_treatment#breast_milk_exposure_post_treatment_completed');
     $r->post('/wizard_breast_milk_exposure_post_treatment/reset_report_attributes')->to('wizard_breast_milk_exposure_post_treatment#reset_report_attributes');
+    $r->get('/data_admin/wizards/pregnancies_seriousness_confirmation')->to('wizard_pregnancies_seriousness_confirmation#wizard_pregnancies_seriousness_confirmation');
+    $r->post('/wizard_pregnancies_seriousness_confirmation/load_next_report')->to('wizard_pregnancies_seriousness_confirmation#load_next_report');
+    $r->post('/wizard_pregnancies_seriousness_confirmation/set_report_attribute')->to('wizard_pregnancies_seriousness_confirmation#set_report_attribute');
+    $r->get('/data_admin/wizards/pregnancies_seriousness_confirmation_completed')->to('wizard_pregnancies_seriousness_confirmation#pregnancies_seriousness_confirmation_completed');
+    $r->post('/wizard_pregnancies_seriousness_confirmation/reset_report_attributes')->to('wizard_pregnancies_seriousness_confirmation#reset_report_attributes');
 
 
 

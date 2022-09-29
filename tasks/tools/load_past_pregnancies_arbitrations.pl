@@ -33,13 +33,18 @@ reports();
 
 sub reports {
     say "loading cache ...";
-    my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, pregnancyConfirmation FROM report", 'reportId');
+    my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, pregnancyConfirmation, pregnancySeriousnessConfirmation FROM report", 'reportId');
     for my $reportId (sort{$a <=> $b} keys %$tb) {
-        my $vaersId                = %$tb{$reportId}->{'vaersId'};
-        my $pregnancyConfirmation  = %$tb{$reportId}->{'pregnancyConfirmation'};
-        if ($pregnancyConfirmation) {
+        my $vaersId                 = %$tb{$reportId}->{'vaersId'};
+        my $pregnancyConfirmation   = %$tb{$reportId}->{'pregnancyConfirmation'};
+        my $pregnancySeriousnessConfirmation = %$tb{$reportId}->{'pregnancySeriousnessConfirmation'};
+        if (defined $pregnancyConfirmation) {
             $pregnancyConfirmation = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmation, -32)));
             $reports{$vaersId}->{'pregnancyConfirmation'} = $pregnancyConfirmation;
+        }
+        if (defined $pregnancySeriousnessConfirmation) {
+            $pregnancySeriousnessConfirmation = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmation, -32)));
+            $reports{$vaersId}->{'pregnancySeriousnessConfirmation'} = $pregnancySeriousnessConfirmation;
         }
         $reports{$vaersId}->{'reportId'} = $reportId;
     }
@@ -51,6 +56,9 @@ my $sql = "
         pregnancyConfirmation,
         pregnancyConfirmationRequired,
         pregnancyConfirmationTimestamp,
+        seriousnessConfirmation,
+        seriousnessConfirmationRequired,
+        seriousnessConfirmationTimestamp,
         aEDescription,
         childDied,
         childSeriousAE,
@@ -61,18 +69,27 @@ my $sql = "
     FROM vaers_fertility_report WHERE pregnancyConfirmationRequired = 1";
 say "$sql";
 my $rTb                 = $dbh->selectall_hashref($sql, 'vaersId'); # ORDER BY RAND()
-my $total    = keys %$rTb;
-my $current  = 0;
-my $restored = 0;
-my $missing  = 0;
+my $total     = keys %$rTb;
+my $current   = 0;
+my $restored  = 0;
+my $sRestored = 0;
+my $missing   = 0;
 my $missingDeath   = 0;
 my $missingSerious = 0;
 my @deletedReports = ();
 for my $vaersId (sort{$a <=> $b} keys %$rTb) {
-    my $pregnancyConfirmationRequired       = %$rTb{$vaersId}->{'pregnancyConfirmationRequired'} // die;
+    my $pregnancyConfirmationRequired       = %$rTb{$vaersId}->{'pregnancyConfirmationRequired'}   // die;
     $pregnancyConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmationRequired, -32)));
     my $pregnancyConfirmation               = %$rTb{$vaersId}->{'pregnancyConfirmation'};
     my $pregnancyConfirmationTimestamp      = %$rTb{$vaersId}->{'pregnancyConfirmationTimestamp'};
+    my $seriousnessConfirmationRequired     = %$rTb{$vaersId}->{'seriousnessConfirmationRequired'} // die;
+    $seriousnessConfirmationRequired        = unpack("N", pack("B32", substr("0" x 32 . $seriousnessConfirmationRequired, -32)));
+    my $seriousnessConfirmation             = %$rTb{$vaersId}->{'seriousnessConfirmation'};
+    my $seriousnessConfirmationTimestamp    = %$rTb{$vaersId}->{'seriousnessConfirmationTimestamp'};
+    my $childDied                           = %$rTb{$vaersId}->{'childDied'}                       // die;
+    $childDied                              = unpack("N", pack("B32", substr("0" x 32 . $childDied, -32)));
+    my $childSeriousAE                      = %$rTb{$vaersId}->{'childSeriousAE'}                  // die;
+    $childSeriousAE                         = unpack("N", pack("B32", substr("0" x 32 . $childSeriousAE, -32)));
     $current++;
     if (defined $pregnancyConfirmation && !exists $reports{$vaersId}->{'pregnancyConfirmation'}) {
         $pregnancyConfirmation = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmation, -32)));
@@ -81,10 +98,6 @@ for my $vaersId (sort{$a <=> $b} keys %$rTb) {
         unless ($reportId) {
             $missing++;
             my $aEDescription   = %$rTb{$vaersId}->{'aEDescription'}  // die;
-            my $childDied       = %$rTb{$vaersId}->{'childDied'}      // die;
-            $childDied          = unpack("N", pack("B32", substr("0" x 32 . $childDied, -32)));
-            my $childSeriousAE  = %$rTb{$vaersId}->{'childSeriousAE'} // die;
-            $childSeriousAE     = unpack("N", pack("B32", substr("0" x 32 . $childSeriousAE, -32)));
             $missingDeath++    if $childDied;
             $missingSerious++  if $childSeriousAE;
             if ($childDied) {
@@ -107,15 +120,34 @@ for my $vaersId (sort{$a <=> $b} keys %$rTb) {
         $restored++;
         my $sth = $dbh->prepare("
             UPDATE report SET
-                pregnancyConfirmation = $pregnancyConfirmation,
+                pregnancyConfirmation          = $pregnancyConfirmation,
                 pregnancyConfirmationTimestamp = $pregnancyConfirmationTimestamp,
-                pregnancyConfirmationUserId = 1
+                pregnancyConfirmationUserId    = 1,
+                childDied                      = $childDied,
+                childSeriousAE                 = $childSeriousAE
             WHERE id = $reportId");
         $sth->execute(
         ) or die $sth->err();
     }
-    say "[$current / $total] - restored [$restored] - missing [$missing] ($missingDeath | $missingSerious)";
+    if (defined $seriousnessConfirmation && !exists $reports{$vaersId}->{'pregnancySeriousnessConfirmation'}) {
+        $seriousnessConfirmation = unpack("N", pack("B32", substr("0" x 32 . $seriousnessConfirmation, -32)));
+        $seriousnessConfirmationTimestamp = 'UNIX_TIMESTAMP()' unless defined $seriousnessConfirmationTimestamp;
+        my $reportId = $reports{$vaersId}->{'reportId'};
+        $sRestored++;
+        my $sth = $dbh->prepare("
+            UPDATE report SET
+                pregnancySeriousnessConfirmation          = $seriousnessConfirmation,
+                pregnancySeriousnessConfirmationTimestamp = $seriousnessConfirmationTimestamp,
+                childDied                                 = $childDied,
+                childSeriousAE                            = $childSeriousAE,
+                pregnancySeriousnessConfirmationUserId    = 1
+            WHERE id = $reportId");
+        $sth->execute(
+        ) or die $sth->err();
+    }
+    # say "[$current / $total] - restored [$restored] - seriousness restored [$sRestored] - missing [$missing] ($missingDeath | $missingSerious)";
 }
+say "[$current / $total] - restored [$restored] - seriousness restored [$sRestored] - missing [$missing] ($missingDeath | $missingSerious)";
 open my $out, '>:utf8', 'deleted_reports.json';
 say $out encode_json\@deletedReports;
 close $out;

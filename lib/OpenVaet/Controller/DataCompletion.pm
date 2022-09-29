@@ -29,6 +29,7 @@ sub by_countries_and_states {
 	my %wizards = ();
 	$wizards{'patientAgesConfirmations'} = 'Patient Ages Confirmations';
 	$wizards{'pregnanciesConfirmations'} = 'Pregnancies Confirmations';
+	$wizards{'pregnanciesSeriousnessConfirmations'} = 'Pregnancies Seriousness Confirmations';
 	$wizards{'breastMilkExposuresConfirmations'} = 'Breast Milk Exposures Confirmations';
 
     # Fetching latest update ; generating stats if required.
@@ -36,7 +37,7 @@ sub by_countries_and_states {
     die unless keys %$sTb;
     my $latestCountriesStatsUpdateTimestamp = %$sTb{'latestCountriesStatsUpdateTimestamp'};
     my $currentTimestamp = time::current_timestamp();
-    if (!$latestCountriesStatsUpdateTimestamp || (($latestCountriesStatsUpdateTimestamp + 60) < $currentTimestamp)) {
+    if (!$latestCountriesStatsUpdateTimestamp || (($latestCountriesStatsUpdateTimestamp + 1800) < $currentTimestamp)) {
     	update_stats($self, $currentTimestamp);
     	say "Stats update required";
     }
@@ -46,6 +47,13 @@ sub by_countries_and_states {
         languages => \%languages,
         wizards => \%wizards
     );
+}
+
+sub query_stats_refresh {
+    my $self = shift;
+    my $currentTimestamp = time::current_timestamp();
+	update_stats($self, $currentTimestamp);
+	$self->render(text => 'ok');
 }
 
 sub update_stats {
@@ -63,6 +71,8 @@ sub update_stats {
 			patientAgeFixed,
 			pregnancyConfirmationRequired,
 			pregnancyConfirmation,
+			pregnancySeriousnessConfirmationRequired,
+			pregnancySeriousnessConfirmation,
 			breastMilkExposureConfirmationRequired,
 			breastMilkExposureConfirmation,
 			hospitalizedFixed,
@@ -82,8 +92,10 @@ sub update_stats {
         $patientAgeConfirmationRequired         = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
 		my $pregnancyConfirmationRequired = %$tb{$reportId}->{'pregnancyConfirmationRequired'} // die;
         $pregnancyConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmationRequired, -32)));
-		my $breastMilkExposureConfirmationRequired = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'} // die;
-        $breastMilkExposureConfirmationRequired = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
+		my $pregnancySeriousnessConfirmationRequired = %$tb{$reportId}->{'pregnancySeriousnessConfirmationRequired'} // die;
+        $pregnancySeriousnessConfirmationRequired    = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
+		my $breastMilkExposureConfirmationRequired   = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'} // die;
+        $breastMilkExposureConfirmationRequired      = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
 		my $hospitalizedFixed = %$tb{$reportId}->{'hospitalizedFixed'} // die;
         $hospitalizedFixed = unpack("N", pack("B32", substr("0" x 32 . $hospitalizedFixed, -32)));
 		my $patientDiedFixed = %$tb{$reportId}->{'patientDiedFixed'} // die;
@@ -293,6 +305,106 @@ sub update_stats {
 			}
 		}
 
+		# Pregnancies seriousness confirmations.
+		if ($pregnancySeriousnessConfirmationRequired) {
+			$statistics{'pregnanciesSeriousnessConfirmations'}->{'total'}++;
+			if ($patientDiedFixed) {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+			} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'serious'}->{'total'}++;
+			} else {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+			}
+			$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'total'}++;
+			if ($patientDiedFixed) {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+			} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'total'}++;
+			} else {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+			}
+			if ($countryName eq 'United States of America') {
+				unless ($countryStateName) {
+					$countryStateName = 'Unknown';
+					$countryStateId = 19;
+				}
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'total'}++;
+				if ($patientDiedFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'total'}++;
+				} else {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+				}
+			}
+			my $pregnancySeriousnessConfirmation = %$tb{$reportId}->{'pregnancySeriousnessConfirmation'};
+			if (defined $pregnancySeriousnessConfirmation) {
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'reviewed'}++;
+				if ($patientDiedFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+				} else {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+				}
+				$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'reviewed'}++;
+				if ($patientDiedFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+				} else {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+				}
+				if ($countryName eq 'United States of America') {
+					unless ($countryStateName) {
+						$countryStateName = 'Unknown';
+						$countryStateId = 19;
+					}
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'reviewed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+					} else {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+					}
+				}
+	        	$pregnancySeriousnessConfirmation = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmation, -32)));
+	        	if ($pregnancySeriousnessConfirmation) {
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'confirmed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+					} else {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+					}
+					$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'confirmed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+					} else {
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+					}
+					if ($countryName eq 'United States of America') {
+						unless ($countryStateName) {
+							$countryStateName = 'Unknown';
+							$countryStateId = 19;
+						}
+						$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'confirmed'}++;
+						if ($patientDiedFixed) {
+							$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+						} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+							$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+						} else {
+							$statistics{'pregnanciesSeriousnessConfirmations'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+						}
+					}
+	        	}
+			}
+		}
+
 		# Breaks milk exposures confirmation
 		if ($breastMilkExposureConfirmationRequired) {
 			$statistics{'breastMilkExposuresConfirmations'}->{'total'}++;
@@ -471,6 +583,12 @@ sub load_wizard_scope {
         my $sth = $self->dbh->prepare("TRUNCATE breast_milk_wizard_report");
         $sth->execute() or die $sth->err();
         generate_breast_milk_batch($self, $countryId, $scope);
+	} elsif ($wizardSelected eq 'pregnanciesSeriousnessConfirmations') {
+
+        # Truncating breast_milk_wizard_report table.
+        my $sth = $self->dbh->prepare("TRUNCATE pregnancy_seriousness_wizard_report");
+        $sth->execute() or die $sth->err();
+        generate_pregnancies_seriousness_batch($self, $countryId, $scope);
 	} else {
 		die "wizardSelected : [$wizardSelected]";
 	}
@@ -650,6 +768,65 @@ sub generate_pregnancies_batch {
             my $pregnancyConfirmationTimestamp      = %$rTb{$reportId}->{'pregnancyConfirmationTimestamp'};
             my $sth = $self->dbh->prepare("INSERT INTO pregnancy_wizard_report (reportId, pregnancyConfirmationRequired, pregnancyConfirmation, pregnancyConfirmationTimestamp) VALUES (?, $pregnancyConfirmationRequired, NULL, ?)");
             $sth->execute($reportId, $pregnancyConfirmationTimestamp) or die $sth->err();
+            $currentBatch++;
+        }
+        $operationsToPerform = $currentBatch;
+    }
+    return $operationsToPerform;
+}
+
+sub generate_pregnancies_seriousness_batch {
+    my ($self, $countryId, $scope) = @_;
+    # Fetching total operations to perform.
+    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM report WHERE pregnancySeriousnessConfirmationRequired = 1 AND pregnancySeriousnessConfirmation IS NULL", undef);
+    my $operationsToPerform = %$tb{'operationsToPerform'} // die;
+    if ($operationsToPerform) {
+        # Generating current treatment batch.
+        my $currentBatch = 0;
+        my $sql;
+        if ($countryId) {
+	        $sql                 = "
+            SELECT
+                id as reportId,
+                pregnancySeriousnessConfirmation,
+                pregnancySeriousnessConfirmationRequired,
+                pregnancySeriousnessConfirmationTimestamp
+            FROM report
+            WHERE 
+                pregnancySeriousnessConfirmationRequired = 1 AND
+                pregnancySeriousnessConfirmation IS NULL AND
+                countryId = $countryId";
+    	} else {
+	        $sql                 = "
+            SELECT
+                id as reportId,
+                pregnancySeriousnessConfirmation,
+                pregnancySeriousnessConfirmationRequired,
+                pregnancySeriousnessConfirmationTimestamp
+            FROM report
+            WHERE 
+                pregnancySeriousnessConfirmationRequired = 1 AND
+                pregnancySeriousnessConfirmation IS NULL AND
+                countryId IS NULL";
+    	}
+    	if ($scope eq 'deaths') {
+    		$sql .= " AND patientDiedFixed = 1";
+		} elsif ($scope eq 'serious') {
+    		$sql .= " AND (patientDiedFixed = 1 OR permanentDisabilityFixed = 1 OR hospitalizedFixed = 1)";
+		}
+    	$sql .= "
+	            ORDER BY RAND()
+	            LIMIT $treatmentLimit";
+        say "$sql";
+        my $rTb                 = $self->dbh->selectall_hashref($sql, 'reportId'); # ORDER BY RAND()
+        for my $reportId (sort{$a <=> $b} keys %$rTb) {
+            my $pregnancySeriousnessConfirmationRequired       = %$rTb{$reportId}->{'pregnancySeriousnessConfirmationRequired'} // die;
+            $pregnancySeriousnessConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
+            my $pregnancySeriousnessConfirmation               = %$rTb{$reportId}->{'pregnancySeriousnessConfirmation'};
+            # $pregnancySeriousnessConfirmation                  = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmation, -32)));
+            my $pregnancySeriousnessConfirmationTimestamp      = %$rTb{$reportId}->{'pregnancySeriousnessConfirmationTimestamp'};
+            my $sth = $self->dbh->prepare("INSERT INTO pregnancy_seriousness_wizard_report (reportId, pregnancySeriousnessConfirmationRequired, pregnancySeriousnessConfirmation, pregnancySeriousnessConfirmationTimestamp) VALUES (?, $pregnancySeriousnessConfirmationRequired, NULL, ?)");
+            $sth->execute($reportId, $pregnancySeriousnessConfirmationTimestamp) or die $sth->err();
             $currentBatch++;
         }
         $operationsToPerform = $currentBatch;

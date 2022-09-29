@@ -1,0 +1,192 @@
+% layout 'default';
+% title 'OPENVAET - Wizard - Breast Milk Exposures Confirmation Completed';
+<head>
+  <link href="/css/select2.min.css" rel="stylesheet" />
+  <script src="/js/select2.min.js"></script>
+</head>
+<style type="text/css">
+	
+	.select2-selection__rendered {
+	    line-height: 31px !important;
+	}
+	.select2-container .select2-selection--single {
+	    height: 35px !important;
+	}
+	.select2-selection__arrow {
+	    height: 34px !important;
+	}
+</style>
+% my %products = %$products;
+% my %reports = %$reports;
+% my %admins = %$admins;
+<div class="content-container">
+    % if ($self->is_admin()) {
+    	<div class="text_separator"></div>
+	    % if ($currentLanguage eq 'en') {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Return to Data Administration</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    % } else {
+	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Retour à l'administration données</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+    	% }
+	    <div class="text_separator"></div>
+	    <div style="width:100%;text-align: center;font-weight: bold;">
+	    	<%=$pregnancySeriousnessConfirmed%> / <%=$totalReports%> reports' seriousness confirmed (<%=$pregnancySeriousnessConfirmedPercent%> %)
+	    </div>
+	    <div class="text_separator"></div>
+    	<div style="width: 100%;overflow-x: auto;">
+	    	<table style="min-width: 1850px;width:100%;border: 1px solid black;border-collapse: collapse; ">
+	    		<thead>
+	    			<tr style="border-bottom: 1px solid black;">
+		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">VAERS Id</th>
+		    			<th style="min-width: 400px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Product(s)</th>
+		    			<th style="min-width: 200px;width: 12%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Breast Milk Exposure</th>
+		    			<th style="min-width: 300px;width: 18%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Treatment On</th>
+		    			<th style="min-width: 400px;width: 30%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">By</th>
+		    			<th style="min-width: 100px;width: 6%;border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">Review Report</th>
+		    			<th style="min-width: 100px;width: 6%;padding-top: 10px;padding-bottom: 10px;">Reset Treatment</th>
+	    			</tr>
+	    		</thead>
+	    		<tbody>
+	    			<tr style="border-bottom: 1px solid black;">
+	    				<td></td>
+	    				<td style="padding-top: 10px;padding-bottom: 10px;">
+	    					<div style="margin: auto;margin-left: 10px;display: block;">
+						        <select class="js-example-basic-single" id="productFilter" style="width: 100%;height: 95%;">
+					  				<option value=""></option>
+					  				<option value="0">Any</option>
+										% for my $pD (sort keys %products) {
+											% if ($productFilter && $pD eq $productFilter) {
+					      			<option value="<%=$pD%>" selected><%=$pD%></option>
+					      					% } else {
+					      			<option value="<%=$pD%>"><%=$pD%></option>
+											% }
+					      				%}
+						        </select>
+						    </div>
+	    				</td>
+	    				<td></td>
+	    				<td></td>
+	    				<td style="padding-top: 10px;padding-bottom: 10px;">
+	    					<div style="margin: auto;margin-left: 10px;display: block;">
+						        <select class="js-example-basic-single" id="adminFilter" style="width: 100%;height: 95%;">
+					  				<option value=""></option>
+					  				<option value="0">Any</option>
+										% for my $aF (sort keys %admins) {
+											% if ($adminFilter && $aF eq $adminFilter) {
+					      			<option value="<%=$aF%>" selected><%=$aF%></option>
+					      					% } else {
+					      			<option value="<%=$aF%>"><%=$aF%></option>
+											% }
+					      				%}
+						        </select>
+						    </div>
+	    				</td>
+	    				<td></td>
+	    			</tr>
+	    			% for my $pregnancySeriousnessConfirmationTimestamp (sort{$b <=> $a} keys %reports) {
+	    				% for my $reportId (sort{$a <=> $b} keys %{$reports{$pregnancySeriousnessConfirmationTimestamp}}) {
+	    					% my $pregnancySeriousnessConfirmationDatetime = $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'pregnancySeriousnessConfirmationDatetime'} // die;
+	    					% my $pregnancySeriousnessConfirmation = $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'pregnancySeriousnessConfirmation'};
+	    					% my $vaersId = $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'vaersId'} // die;
+	    					% my $userName = $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'userName'} // die;
+	    					% for my $productName (sort keys %{$reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'products'}}) {
+
+    						% }
+			    			<tr style="border-bottom: 1px solid black;text-align: center;">
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$vaersId%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
+			    					% for my $productName (sort keys %{$reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'products'}}) {
+				    				<%=$productName%>
+				    				<br>
+		    						% }
+				    			</td>
+				    			% if ($pregnancySeriousnessConfirmation == 1) {
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #addb93;">Confirmed</td>
+			    				% } else {
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;background: #adabaa;">No</td>
+		    					% }
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$pregnancySeriousnessConfirmationDatetime%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;"><%=$userName%></td>
+				    			<td style="border-right: 1px solid black;padding-top: 10px;padding-bottom: 10px;">
+				    				<button onclick="reviewReportData(<%=$reportId%>);return;">Review</button>
+				    			</td>
+				    			<td style="padding-top: 10px;padding-bottom: 10px;">
+				    				<button onclick="resetReportAgeTreatment(<%=$reportId%>)">Reset</button>
+				    			</td>
+			    			</tr>
+	    				% }
+    				% }
+	    		</tbody>
+	    	</table>
+    	</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		initDropdowns();
+	});
+
+	function initDropdowns() {
+		$('#adminFilter').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Administrator'
+		});
+		$('#adminFilter').on('select2:select', function (e) {
+			let adminFilter = $('#adminFilter').val();
+			console.log('adminFilter : ' + adminFilter);
+			let productFilter = $('#productFilter').val();
+			console.log('productFilter : ' + productFilter);
+			window.location.href = '/data_admin/wizards/pregnancies_seriousness_confirmation_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+		  // Do something
+		});
+		$('#productFilter').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Filter By Product'
+		});
+		$('#productFilter').on('select2:select', function (e) {
+			let adminFilter = $('#adminFilter').val();
+			console.log('adminFilter : ' + adminFilter);
+			let productFilter = $('#productFilter').val();
+			console.log('productFilter : ' + productFilter);
+			window.location.href = '/data_admin/wizards/pregnancies_seriousness_confirmation_completed?currentLanguage=<%=$currentLanguage%>&productFilter=' + productFilter + '&adminFilter=' + adminFilter;
+		  // Do something
+		});
+	}
+	function resetReportAgeTreatment(reportId) {
+		console.log('reportId : ' + reportId);
+        let request            = $.ajax({
+            url: "/wizard_pregnancies_seriousness_confirmation/reset_report_attributes",
+            type: "POST",
+            data: {
+                reportId : reportId
+            }
+        });
+
+        request.done(function(data) {
+        	window.location.href = '/data_admin/wizards/pregnancies_seriousness_confirmation_completed?currentLanguage=<%=$currentLanguage%>'; 
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+	}
+	function reviewReportData(reportId) {
+		window.location.href = '/data_admin/wizards/pregnancies_seriousness_confirmation?currentLanguage=<%=$currentLanguage%>&reportId=' + reportId;
+	}
+</script>

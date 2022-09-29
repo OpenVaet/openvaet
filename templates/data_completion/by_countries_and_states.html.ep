@@ -39,6 +39,10 @@
 			</div>
 		</div>
 	    <div class="text_separator"></div>
+	    <div style="width: 98%;text-align: right;">
+	    	<span style="color:darkblue;cursor: pointer;" onclick="refreshStats();return;"><u>Refresh Stats</u></span>
+	    </div>
+	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 14px;" id="dataLoaded">
 	    </div>
 		<script type="text/javascript"> 
@@ -70,6 +74,26 @@
 
 		        request.done(function(data) {
 		            $("#dataLoaded").html(data);
+		        });
+
+		        // Printing error message if case of failure
+		        request.fail(function(jqXHR, textStatus) {
+		            alert("Something went wrong : " + textStatus)
+		        });
+		    }
+
+		    function refreshStats() {
+		        mainLoader.style.display  = "inline-block";
+		        blankContainer.style.display  = "inline-block";
+		        let request         = $.ajax({
+		            url: "/data_completion/query_stats_refresh",
+		            type: "GET"
+		        });
+
+		        request.done(function(data) {
+		            mainLoader.style.display  = "none";
+		            blankContainer.style.display  = "none";
+		            window.location.href = '/data_admin/data_completion/by_countries_and_states?currentLanguage=<%=$currentLanguage%>';
 		        });
 
 		        // Printing error message if case of failure

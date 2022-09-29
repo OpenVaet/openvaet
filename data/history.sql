@@ -2374,3 +2374,42 @@ ALTER TABLE `openvaet`.`breast_milk_wizard_report`
 CHANGE COLUMN `breastMilkExposureConfirmation` `breastMilkExposureConfirmation` INT(11) NULL DEFAULT NULL ;
 ALTER TABLE `openvaet`.`breast_milk_post_treatment_wizard_report` 
 CHANGE COLUMN `breastMilkExposurePostTreatment` `breastMilkExposurePostTreatment` INT(11) NULL DEFAULT NULL ;
+
+# Added pregnancySeriousnessConfirmation to report
+ALTER TABLE `openvaet`.`report` 
+ADD COLUMN `pregnancySeriousnessConfirmation` BIT(1) NULL AFTER `breastMilkExposurePostTreatmentUserId`,
+ADD COLUMN `pregnancySeriousnessConfirmationTimestamp` INT NULL AFTER `pregnancySeriousnessConfirmation`,
+ADD COLUMN `pregnancySeriousnessConfirmationRequired` BIT(1) NOT NULL DEFAULT 0 AFTER `pregnancySeriousnessConfirmationTimestamp`,
+ADD COLUMN `childDied` BIT(1) NULL DEFAULT 0 AFTER `pregnancySeriousnessConfirmationRequired`,
+ADD COLUMN `childSeriousAE` BIT(1) NULL DEFAULT 0 AFTER `childDied`,
+ADD COLUMN `pregnancySeriousnessConfirmationUserId` INT NULL AFTER `pregnancySeriousnessConfirmationRequired`,
+ADD INDEX `report_to_pregnancySeriousnessConfirmationUser_idx` (`pregnancySeriousnessConfirmationUserId` ASC);
+ALTER TABLE `openvaet`.`report` 
+ADD CONSTRAINT `report_to_pregnancySeriousnessConfirmationUser`
+  FOREIGN KEY (`pregnancySeriousnessConfirmationUserId`)
+  REFERENCES `openvaet`.`user` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+# Created pregnancy_seriousness_wizard_report table.
+CREATE TABLE `pregnancy_seriousness_wizard_report` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reportId` int NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `pregnancySeriousnessConfirmationRequired` bit(1) NOT NULL DEFAULT b'0',
+  `pregnancySeriousnessConfirmationTimestamp` int DEFAULT NULL,
+  `pregnancySeriousnessConfirmation` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pregnancy_seriousness_wizard_report_to_report` (`reportId`),
+  CONSTRAINT `pregnancy_seriousness_wizard_report_to_report` FOREIGN KEY (`reportId`) REFERENCES `report` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_pregnancy_seriousness_wizard_report_insert` 
+BEFORE INSERT ON `pregnancy_seriousness_wizard_report` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
+
+
+
+

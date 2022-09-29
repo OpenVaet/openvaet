@@ -1,4 +1,4 @@
-package OpenVaet::Controller::WizardBreastMilkExposurePostTreatment;
+package OpenVaet::Controller::WizardPregnanciesSeriousnessConfirmation;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
@@ -8,11 +8,11 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
 
-my $breastMilkExposuresData     = 'Exposure Via Breast Milk';
-my %breastMilkExposuresSymptoms = ();
-my %breastMilkExposuresKeywords = ();
+my $pregnancySeriousnessData     = 'Pregnancy Complications Related';
+my %pregnancySeriousnessSymptoms = ();
+my %pregnancySeriousnessKeywords = ();
 
-sub wizard_breast_milk_exposure_post_treatment {
+sub wizard_pregnancies_seriousness_confirmation {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
@@ -45,8 +45,8 @@ sub wizard_breast_milk_exposure_post_treatment {
 sub operations_to_perform {
     my $self = shift;
     my $operationsToPerform = 0;
-    my $wTb1 = $self->dbh->selectrow_hashref("SELECT count(id) as currentWizardTasks FROM breast_milk_post_treatment_wizard_report WHERE breastMilkExposurePostTreatmentRequired = 1 AND breastMilkExposurePostTreatment IS NULL", undef);
-    my $wTb2 = $self->dbh->selectrow_hashref("SELECT count(id) as totalWizardTasks   FROM breast_milk_post_treatment_wizard_report WHERE breastMilkExposurePostTreatmentRequired = 1", undef);
+    my $wTb1 = $self->dbh->selectrow_hashref("SELECT count(id) as currentWizardTasks FROM pregnancy_seriousness_wizard_report WHERE pregnancySeriousnessConfirmationRequired = 1 AND pregnancySeriousnessConfirmation IS NULL", undef);
+    my $wTb2 = $self->dbh->selectrow_hashref("SELECT count(id) as totalWizardTasks   FROM pregnancy_seriousness_wizard_report WHERE pregnancySeriousnessConfirmationRequired = 1", undef);
     my $currentWizardTasks  = %$wTb1{'currentWizardTasks'} // 0;
     my $totalWizardTasks    = %$wTb2{'totalWizardTasks'}   // 0;
     say "currentWizardTasks : $currentWizardTasks";
@@ -60,8 +60,8 @@ sub operations_to_perform {
             $operationsToPerform = $currentWizardTasks;
         } else {
 
-            # Truncating breast_milk_post_treatment_wizard_report table.
-            my $sth = $self->dbh->prepare("TRUNCATE breast_milk_post_treatment_wizard_report");
+            # Truncating pregnancy_seriousness_wizard_report table.
+            my $sth = $self->dbh->prepare("TRUNCATE pregnancy_seriousness_wizard_report");
             $sth->execute() or die $sth->err();
 
             $operationsToPerform = generate_batch($self);
@@ -74,7 +74,7 @@ sub generate_batch {
     my $self = shift;
     # Fetching total operations to perform.
     my $treatmentLimit = 100;
-    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM report WHERE breastMilkExposurePostTreatmentRequired = 1 AND breastMilkExposurePostTreatment IS NULL", undef);
+    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM report WHERE pregnancySeriousnessConfirmationRequired = 1 AND pregnancySeriousnessConfirmation IS NULL", undef);
     my $operationsToPerform = %$tb{'operationsToPerform'} // die;
     if ($operationsToPerform) {
         # Generating current treatment batch.
@@ -82,25 +82,25 @@ sub generate_batch {
         my $sql                 = "
             SELECT
                 id as reportId,
-                breastMilkExposurePostTreatment,
-                breastMilkExposurePostTreatmentRequired,
-                breastMilkExposurePostTreatmentTimestamp
+                pregnancySeriousnessConfirmation,
+                pregnancySeriousnessConfirmationRequired,
+                pregnancySeriousnessConfirmationTimestamp
             FROM report
             WHERE 
-                breastMilkExposurePostTreatmentRequired = 1 AND
-                breastMilkExposurePostTreatment IS NULL
+                pregnancySeriousnessConfirmationRequired = 1 AND
+                pregnancySeriousnessConfirmation IS NULL
             ORDER BY RAND()
             LIMIT $treatmentLimit";
         say "$sql";
         my $rTb                 = $self->dbh->selectall_hashref($sql, 'reportId'); # ORDER BY RAND()
         for my $reportId (sort{$a <=> $b} keys %$rTb) {
-            my $breastMilkExposurePostTreatmentRequired       = %$rTb{$reportId}->{'breastMilkExposurePostTreatmentRequired'} // die;
-            $breastMilkExposurePostTreatmentRequired          = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
-            my $breastMilkExposurePostTreatment               = %$rTb{$reportId}->{'breastMilkExposurePostTreatment'};
-            # $breastMilkExposurePostTreatment                  = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatment, -32)));
-            my $breastMilkExposurePostTreatmentTimestamp      = %$rTb{$reportId}->{'breastMilkExposurePostTreatmentTimestamp'};
-            my $sth = $self->dbh->prepare("INSERT INTO breast_milk_post_treatment_wizard_report (reportId, breastMilkExposurePostTreatmentRequired, breastMilkExposurePostTreatment, breastMilkExposurePostTreatmentTimestamp) VALUES (?, $breastMilkExposurePostTreatmentRequired, NULL, ?)");
-            $sth->execute($reportId, $breastMilkExposurePostTreatmentTimestamp) or die $sth->err();
+            my $pregnancySeriousnessConfirmationRequired       = %$rTb{$reportId}->{'pregnancySeriousnessConfirmationRequired'} // die;
+            $pregnancySeriousnessConfirmationRequired          = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
+            my $pregnancySeriousnessConfirmation               = %$rTb{$reportId}->{'pregnancySeriousnessConfirmation'};
+            # $pregnancySeriousnessConfirmation                  = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmation, -32)));
+            my $pregnancySeriousnessConfirmationTimestamp      = %$rTb{$reportId}->{'pregnancySeriousnessConfirmationTimestamp'};
+            my $sth = $self->dbh->prepare("INSERT INTO pregnancy_seriousness_wizard_report (reportId, pregnancySeriousnessConfirmationRequired, pregnancySeriousnessConfirmation, pregnancySeriousnessConfirmationTimestamp) VALUES (?, $pregnancySeriousnessConfirmationRequired, NULL, ?)");
+            $sth->execute($reportId, $pregnancySeriousnessConfirmationTimestamp) or die $sth->err();
             $currentBatch++;
         }
         $operationsToPerform = $currentBatch;
@@ -133,8 +133,8 @@ sub load_next_report {
         $symptoms{$symptomId}->{'symptomName'} = $symptomName;
     }
 
-    load_breast_milk_exposures_symptoms($self);
-    load_breast_milk_exposures_keywords($self);
+    load_pregnancy_seriousness_symptoms($self);
+    load_pregnancy_seriousness_keywords($self);
 
     # Fetching post_treatment target.
     # Fetching total operations to perform.
@@ -146,9 +146,9 @@ sub load_next_report {
         $onsetDateFixed, $onsetYear, $onsetMonth, $onsetDay, $products,
         $deceasedYear, $deceasedMonth, $deceasedDay, $deceasedDate, $sexFixed,
         $vaersSexName, $aEDescription, $patientAgeFixed, $creationDatetime, $hoursBetweenVaccineAndAE,
-        $breastMilkExposurePostTreatment, $breastMilkExposurePostTreatmentRequired, $notes);
-    my $sqlParam            = 'breastMilkExposurePostTreatmentRequired';
-    my $sqlValue            = 'breastMilkExposurePostTreatment';
+        $pregnancySeriousnessConfirmation, $pregnancySeriousnessConfirmationRequired, $notes, $childDied, $childSeriousAE);
+    my $sqlParam            = 'pregnancySeriousnessConfirmationRequired';
+    my $sqlValue            = 'pregnancySeriousnessConfirmation';
     my $comesFromDirectReport = 0;
     if ($operationsToPerform) {
         my $sql;
@@ -156,7 +156,7 @@ sub load_next_report {
             $comesFromDirectReport = 1;
             $sql                   = "
                 SELECT
-                    breast_milk_post_treatment_wizard_report.reportId,
+                    pregnancy_seriousness_wizard_report.reportId,
                     report.vaersId,
                     report.vaccinesListed,
                     report.sexFixed,
@@ -171,16 +171,18 @@ sub load_next_report {
                     report.onsetDateFixed,
                     report.vaccinationDate,
                     report.vaccinesListed,
-                    report.breastMilkExposurePostTreatment,
-                    report.breastMilkExposurePostTreatmentRequired,
+                    report.pregnancySeriousnessConfirmation,
+                    report.pregnancySeriousnessConfirmationRequired,
                     report.hoursBetweenVaccineAndAE,
-                    report.hospitalized,
-                    report.permanentDisability,
-                    report.lifeThreatning,
-                    report.patientDied,
+                    report.childDied,
+                    report.childSeriousAE,
+                    report.hospitalizedFixed as hospitalized,
+                    report.permanentDisabilityFixed as permanentDisability,
+                    report.lifeThreatningFixed as lifeThreatning,
+                    report.patientDiedFixed as patientDied,
                     report.symptomsListed
-                FROM breast_milk_post_treatment_wizard_report
-                    LEFT JOIN report ON report.id = breast_milk_post_treatment_wizard_report.reportId
+                FROM pregnancy_seriousness_wizard_report
+                    LEFT JOIN report ON report.id = pregnancy_seriousness_wizard_report.reportId
                 WHERE 
                     report.id = $reportId
                 ORDER BY RAND()
@@ -188,7 +190,7 @@ sub load_next_report {
         } else {
             $sql                 = "
                 SELECT
-                    breast_milk_post_treatment_wizard_report.reportId,
+                    pregnancy_seriousness_wizard_report.reportId,
                     report.vaersId,
                     report.vaccinesListed,
                     report.sexFixed,
@@ -203,19 +205,21 @@ sub load_next_report {
                     report.onsetDateFixed,
                     report.vaccinationDate,
                     report.vaccinesListed,
-                    report.breastMilkExposurePostTreatment,
-                    report.breastMilkExposurePostTreatmentRequired,
+                    report.pregnancySeriousnessConfirmation,
+                    report.pregnancySeriousnessConfirmationRequired,
                     report.hoursBetweenVaccineAndAE,
-                    report.hospitalized,
-                    report.permanentDisability,
-                    report.lifeThreatning,
-                    report.patientDied,
+                    report.childDied,
+                    report.childSeriousAE,
+                    report.hospitalizedFixed as hospitalized,
+                    report.permanentDisabilityFixed as permanentDisability,
+                    report.lifeThreatningFixed as lifeThreatning,
+                    report.patientDiedFixed as patientDied,
                     report.symptomsListed
-                FROM breast_milk_post_treatment_wizard_report
-                    LEFT JOIN report ON report.id = breast_milk_post_treatment_wizard_report.reportId
+                FROM pregnancy_seriousness_wizard_report
+                    LEFT JOIN report ON report.id = pregnancy_seriousness_wizard_report.reportId
                 WHERE 
-                    breast_milk_post_treatment_wizard_report.$sqlParam = 1 AND
-                    breast_milk_post_treatment_wizard_report.$sqlValue IS NULL
+                    pregnancy_seriousness_wizard_report.$sqlParam = 1 AND
+                    pregnancy_seriousness_wizard_report.$sqlValue IS NULL
                 ORDER BY RAND()
                 LIMIT 1";
         }
@@ -232,8 +236,8 @@ sub load_next_report {
         $creationDatetime                        = time::timestamp_to_datetime($creationTimestamp);
         $aEDescription                           = %$rTb{'aEDescription'}                   // die;
         $vaersReceptionDate                      = %$rTb{'vaersReceptionDate'}              // die;
-        $breastMilkExposurePostTreatmentRequired = %$rTb{'breastMilkExposurePostTreatmentRequired'} // die;
-        $breastMilkExposurePostTreatmentRequired = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
+        $pregnancySeriousnessConfirmationRequired = %$rTb{'pregnancySeriousnessConfirmationRequired'} // die;
+        $pregnancySeriousnessConfirmationRequired = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
         $hospitalized                            = %$rTb{'hospitalized'}        // die;
         $hospitalized                            = unpack("N", pack("B32", substr("0" x 32 . $hospitalized, -32)));
         $permanentDisability                     = %$rTb{'permanentDisability'} // die;
@@ -242,11 +246,15 @@ sub load_next_report {
         $lifeThreatning                          = unpack("N", pack("B32", substr("0" x 32 . $lifeThreatning, -32)));
         $patientDied                             = %$rTb{'patientDied'}         // die;
         $patientDied                             = unpack("N", pack("B32", substr("0" x 32 . $patientDied, -32)));
+        $childDied                               = %$rTb{'childDied'}      // die;
+        $childDied                               = unpack("N", pack("B32", substr("0" x 32 . $childDied, -32)));
+        $childSeriousAE                          = %$rTb{'childSeriousAE'}         // die;
+        $childSeriousAE                          = unpack("N", pack("B32", substr("0" x 32 . $childSeriousAE, -32)));
         $vaccinationDate                         = %$rTb{'vaccinationDate'};
         $onsetDate                               = %$rTb{'onsetDate'};
         $vaccinationDateFixed                    = %$rTb{'vaccinationDateFixed'};
         $onsetDateFixed                          = %$rTb{'onsetDateFixed'};
-        $breastMilkExposurePostTreatment         = %$rTb{'breastMilkExposurePostTreatment'};
+        $pregnancySeriousnessConfirmation         = %$rTb{'pregnancySeriousnessConfirmation'};
         $deceasedDate                            = %$rTb{'deceasedDate'};
         if ($deceasedDate) {
             ($deceasedYear, $deceasedMonth, $deceasedDay) = split '-', $deceasedDate;
@@ -259,7 +267,7 @@ sub load_next_report {
             $products .= "<li><span>$substanceShortenedName (dose $dose)</span></li>";
         }
 
-        for my $hl (sort keys %breastMilkExposuresKeywords) {
+        for my $hl (sort keys %pregnancySeriousnessKeywords) {
             my $ucf = ucfirst $hl;
             my $uc = uc $hl;
             $aEDescription =~ s/$hl/\<span style=\"background:yellow;\"\>$hl\<\/span\>/g;
@@ -271,7 +279,7 @@ sub load_next_report {
         $symptoms = '<div style="width:300px;margin:auto;"><ul>';
         for my $symptomId (@$symptomsListed) {
             my $symptomName = $symptoms{$symptomId}->{'symptomName'} // die;
-            if (exists $breastMilkExposuresSymptoms{$symptomId}) {
+            if (exists $pregnancySeriousnessSymptoms{$symptomId}) {
                 $symptoms .= '<li><span style="background:yellow;">' . $symptomName . '</span></li>';
             } else {
                 $symptoms .= '<li><span>' . $symptomName . '</span></li>';
@@ -302,6 +310,8 @@ sub load_next_report {
         permanentDisability                     => $permanentDisability,
         lifeThreatning                          => $lifeThreatning,
         patientDied                             => $patientDied,
+        childDied                               => $childDied,
+        childSeriousAE                          => $childSeriousAE,
         reportId                                => $reportId,
         vaersId                                 => $vaersId,
         symptoms                                => $symptoms,
@@ -330,48 +340,48 @@ sub load_next_report {
         patientAgeFixed                         => $patientAgeFixed,
         creationDatetime                        => $creationDatetime,
         hoursBetweenVaccineAndAE                => $hoursBetweenVaccineAndAE,
-        breastMilkExposurePostTreatment         => $breastMilkExposurePostTreatment,
-        breastMilkExposurePostTreatmentRequired => $breastMilkExposurePostTreatmentRequired,
+        pregnancySeriousnessConfirmation         => $pregnancySeriousnessConfirmation,
+        pregnancySeriousnessConfirmationRequired => $pregnancySeriousnessConfirmationRequired,
         sexes                                   => \%sexes,
         languages                               => \%languages
     );
 }
 
-sub load_breast_milk_exposures_symptoms {
+sub load_pregnancy_seriousness_symptoms {
     my $self = shift;
-    my $breastMilkExposuresSymptomsSetId = get_breast_milk_exposures_symptoms_set($self);
-    my $tb = $self->dbh->selectrow_hashref("SELECT symptoms FROM symptoms_set WHERE id = $breastMilkExposuresSymptomsSetId", undef);
+    my $pregnancySeriousnessSymptomsSetId = get_pregnancy_seriousness_symptoms_set($self);
+    my $tb = $self->dbh->selectrow_hashref("SELECT symptoms FROM symptoms_set WHERE id = $pregnancySeriousnessSymptomsSetId", undef);
     die unless keys %$tb;
     my $symptoms = %$tb{'symptoms'} // die;
     $symptoms = decode_json($symptoms);
     for my $symptomId (@$symptoms) {
-        $breastMilkExposuresSymptoms{$symptomId} = 1;
+        $pregnancySeriousnessSymptoms{$symptomId} = 1;
     }
 }
 
-sub load_breast_milk_exposures_keywords {
+sub load_pregnancy_seriousness_keywords {
     my $self = shift;
-    my $breastMilkExposuresKeywordsSetId = get_breast_milk_exposures_keywords_set($self);
-    my $tb = $self->dbh->selectrow_hashref("SELECT keywords FROM keywords_set WHERE id = $breastMilkExposuresKeywordsSetId", undef);
+    my $pregnancySeriousnessKeywordsSetId = get_pregnancy_seriousness_keywords_set($self);
+    my $tb = $self->dbh->selectrow_hashref("SELECT keywords FROM keywords_set WHERE id = $pregnancySeriousnessKeywordsSetId", undef);
     die unless keys %$tb;
     my $keywords = %$tb{'keywords'} // die;
     my @keywordsFiltered = split '<br \/>', $keywords;
     for my $keyword (@keywordsFiltered) {
         my $lcKeyword = lc $keyword;
-        $breastMilkExposuresKeywords{$lcKeyword} = 1;
+        $pregnancySeriousnessKeywords{$lcKeyword} = 1;
     }
 }
 
-sub get_breast_milk_exposures_symptoms_set {
+sub get_pregnancy_seriousness_symptoms_set {
     my $self = shift;
-    my $tb = $self->dbh->selectrow_hashref("SELECT id as symptomsSetId FROM symptoms_set WHERE name = ?", undef, $breastMilkExposuresData);
+    my $tb = $self->dbh->selectrow_hashref("SELECT id as symptomsSetId FROM symptoms_set WHERE name = ?", undef, $pregnancySeriousnessData);
     die unless keys %$tb;
     return %$tb{'symptomsSetId'};
 }
 
-sub get_breast_milk_exposures_keywords_set {
+sub get_pregnancy_seriousness_keywords_set {
     my $self = shift;
-    my $tb = $self->dbh->selectrow_hashref("SELECT id as keywordsSetId FROM keywords_set WHERE name = ?", undef, $breastMilkExposuresData);
+    my $tb = $self->dbh->selectrow_hashref("SELECT id as keywordsSetId FROM keywords_set WHERE name = ?", undef, $pregnancySeriousnessData);
     die unless keys %$tb;
     return %$tb{'keywordsSetId'};
 }
@@ -382,6 +392,8 @@ sub set_report_attribute {
     my $sqlValue          = $self->param('sqlValue')        // die;
     my $value             = $self->param('value')           // die;
     my $userId            = $self->session('userId')        // die;
+    my $childDied         = $self->param('childDied')       // die;
+    my $childSeriousAE    = $self->param('childSeriousAE')  // die;
     my $patientAgeFixed   = $self->param('patientAgeFixed') // die;
     $patientAgeFixed      = undef unless length $patientAgeFixed    >= 1;
     my $sexFixed     = $self->param('sexFixed')   // die;
@@ -430,6 +442,8 @@ sub set_report_attribute {
         UPDATE report SET
             $sqlValue = $value,
             notes = ?,
+            childDied = $childDied,
+            childSeriousAE = $childSeriousAE,
             patientAgeFixed = ?,
             sexFixed = ?,
             vaccinationDateFixed = ?,
@@ -440,8 +454,8 @@ sub set_report_attribute {
             lifeThreatningFixed = $lifeThreatning,
             permanentDisabilityFixed = $permanentDisability,
             hospitalizedFixed = $hospitalized,
-            breastMilkExposurePostTreatmentTimestamp = UNIX_TIMESTAMP(),
-            breastMilkExposurePostTreatmentUserId = ?
+            pregnancySeriousnessConfirmationTimestamp = UNIX_TIMESTAMP(),
+            pregnancySeriousnessConfirmationUserId = ?
         WHERE id = $reportId");
     $sth->execute(
         $notes,
@@ -454,9 +468,9 @@ sub set_report_attribute {
         $userId
     ) or die $sth->err();
     my $sth2 = $self->dbh->prepare("
-        UPDATE breast_milk_post_treatment_wizard_report SET
+        UPDATE pregnancy_seriousness_wizard_report SET
             $sqlValue = $value,
-            breastMilkExposurePostTreatmentTimestamp = UNIX_TIMESTAMP()
+            pregnancySeriousnessConfirmationTimestamp = UNIX_TIMESTAMP()
         WHERE reportId = $reportId");
     $sth2->execute(
     ) or die $sth2->err();
@@ -466,7 +480,7 @@ sub set_report_attribute {
     $self->render(text => 'ok');
 }
 
-sub breast_milk_exposure_post_treatment_completed {
+sub pregnancies_seriousness_confirmation_completed {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // die;
@@ -479,31 +493,31 @@ sub breast_milk_exposure_post_treatment_completed {
 
     # Fetching total operations to perform.
     my %reports = ();
-    my ($breastMilkExposuresConfirmed, $totalReports) = (0, 0);
+    my ($pregnancySeriousnessConfirmed, $totalReports) = (0, 0);
     my %admins = ();
     my %products = ();
     my $sql = "
         SELECT
             report.id as reportId,
-            report.breastMilkExposurePostTreatment,
+            report.pregnancySeriousnessConfirmation,
             report.vaersId,
             report.vaccinesListed,
-            report.breastMilkExposurePostTreatmentTimestamp,
-            report.breastMilkExposurePostTreatmentUserId,
+            report.pregnancySeriousnessConfirmationTimestamp,
+            report.pregnancySeriousnessConfirmationUserId,
             user.email 
         FROM report
-            LEFT JOIN user ON user.id = report.breastMilkExposurePostTreatmentUserId
-        WHERE breastMilkExposurePostTreatmentTimestamp IS NOT NULL
+            LEFT JOIN user ON user.id = report.pregnancySeriousnessConfirmationUserId
+        WHERE pregnancySeriousnessConfirmationTimestamp IS NOT NULL
     ";
     say $sql;
     my $tb = $self->dbh->selectall_hashref($sql, 'reportId');
     my $loaded = 0;
     for my $reportId (sort{$a <=> $b} keys %$tb) {
-        my $breastMilkExposurePostTreatment = %$tb{$reportId}->{'breastMilkExposurePostTreatment'} // die;
-        $breastMilkExposurePostTreatment     = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatment, -32)));
-        my $breastMilkExposurePostTreatmentTimestamp = %$tb{$reportId}->{'breastMilkExposurePostTreatmentTimestamp'} // die;
-        my $breastMilkExposurePostTreatmentDatetime  = time::timestamp_to_datetime($breastMilkExposurePostTreatmentTimestamp);
-        my $breastMilkExposurePostTreatmentUserId                          = %$tb{$reportId}->{'breastMilkExposurePostTreatmentUserId'}                          // die;
+        my $pregnancySeriousnessConfirmation = %$tb{$reportId}->{'pregnancySeriousnessConfirmation'} // die;
+        $pregnancySeriousnessConfirmation    = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmation, -32)));
+        my $pregnancySeriousnessConfirmationTimestamp = %$tb{$reportId}->{'pregnancySeriousnessConfirmationTimestamp'} // die;
+        my $pregnancySeriousnessConfirmationDatetime  = time::timestamp_to_datetime($pregnancySeriousnessConfirmationTimestamp);
+        my $pregnancySeriousnessConfirmationUserId                          = %$tb{$reportId}->{'pregnancySeriousnessConfirmationUserId'}                          // die;
         my $vaersId                         = %$tb{$reportId}->{'vaersId'}                         // die;
         my $email                           = %$tb{$reportId}->{'email'}                           // die;
         my ($userName) = split '\@', $email;
@@ -526,19 +540,19 @@ sub breast_milk_exposure_post_treatment_completed {
         if ($productFilter) {
             next unless $hasProduct;
         }
-        $breastMilkExposuresConfirmed++ if $breastMilkExposurePostTreatment;
+        $pregnancySeriousnessConfirmed++ if $pregnancySeriousnessConfirmation;
         $totalReports++;
         for my $substanceShortenedName (sort keys %vax) {
-            $reports{$breastMilkExposurePostTreatmentTimestamp}->{$reportId}->{'products'}->{$substanceShortenedName} = 1;
+            $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'products'}->{$substanceShortenedName} = 1;
         }
-        $reports{$breastMilkExposurePostTreatmentTimestamp}->{$reportId}->{'breastMilkExposurePostTreatmentDatetime'} = $breastMilkExposurePostTreatmentDatetime;
-        $reports{$breastMilkExposurePostTreatmentTimestamp}->{$reportId}->{'breastMilkExposurePostTreatment'} = $breastMilkExposurePostTreatment;
-        $reports{$breastMilkExposurePostTreatmentTimestamp}->{$reportId}->{'userName'} = $userName;
-        $reports{$breastMilkExposurePostTreatmentTimestamp}->{$reportId}->{'vaersId'} = $vaersId;
+        $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'pregnancySeriousnessConfirmationDatetime'} = $pregnancySeriousnessConfirmationDatetime;
+        $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'pregnancySeriousnessConfirmation'} = $pregnancySeriousnessConfirmation;
+        $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'userName'} = $userName;
+        $reports{$pregnancySeriousnessConfirmationTimestamp}->{$reportId}->{'vaersId'} = $vaersId;
     }
-    my $breastMilkExposuresConfirmedPercent = 0;
+    my $pregnancySeriousnessConfirmedPercent = 0;
     if ($totalReports) {
-        $breastMilkExposuresConfirmedPercent = nearest(0.01, $breastMilkExposuresConfirmed * 100 / $totalReports);
+        $pregnancySeriousnessConfirmedPercent = nearest(0.01, $pregnancySeriousnessConfirmed * 100 / $totalReports);
     }
 
     my %languages = ();
@@ -549,9 +563,9 @@ sub breast_milk_exposure_post_treatment_completed {
         currentLanguage => $currentLanguage,
         adminFilter => $adminFilter,
         productFilter => $productFilter,
-        breastMilkExposuresConfirmed => $breastMilkExposuresConfirmed,
+        pregnancySeriousnessConfirmed => $pregnancySeriousnessConfirmed,
         totalReports => $totalReports,
-        breastMilkExposuresConfirmedPercent => $breastMilkExposuresConfirmedPercent,
+        pregnancySeriousnessConfirmedPercent => $pregnancySeriousnessConfirmedPercent,
         admins => \%admins,
         products => \%products,
         languages => \%languages,
@@ -564,7 +578,7 @@ sub reset_report_attributes {
     my $reportId = $self->param('reportId') // die;
 
     say "reportId : $reportId";
-    my $sth = $self->dbh->prepare("UPDATE report SET breastMilkExposurePostTreatment = NULL, breastMilkExposurePostTreatmentTimestamp = NULL, breastMilkExposurePostTreatmentUserId = NULL WHERE id = $reportId");
+    my $sth = $self->dbh->prepare("UPDATE report SET pregnancySeriousnessConfirmation = NULL, pregnancySeriousnessConfirmationTimestamp = NULL, pregnancySeriousnessConfirmationUserId = NULL WHERE id = $reportId");
     $sth->execute() or die $sth->err();
 
     $self->render(text => 'ok');

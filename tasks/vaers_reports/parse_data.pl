@@ -161,7 +161,18 @@ sub symptoms {
 }
 
 sub reports {
-	my $tb = $dbh->selectall_hashref("SELECT id as reportId, vaersId, patientAgeConfirmationRequired, pregnancyConfirmationRequired, breastMilkExposureConfirmationRequired, breastMilkExposurePostTreatmentRequired, breastMilkExposureConfirmation FROM report WHERE id > $latestReportId", 'reportId');
+	my $tb = $dbh->selectall_hashref("
+		SELECT
+			id as reportId,
+			vaersId,
+			patientAgeConfirmationRequired,
+			pregnancyConfirmationRequired,
+			breastMilkExposureConfirmationRequired,
+			breastMilkExposurePostTreatmentRequired,
+			breastMilkExposureConfirmation,
+			pregnancyConfirmation,
+			pregnancySeriousnessConfirmationRequired
+		FROM report WHERE id > $latestReportId", 'reportId');
 	for my $reportId (sort{$a <=> $b} keys %$tb) {
 		$latestReportId = $reportId;
 		my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
@@ -172,16 +183,24 @@ sub reports {
 		my $pregnancyConfirmationRequired    = %$tb{$reportId}->{'pregnancyConfirmationRequired'}   // die;
     	$pregnancyConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmationRequired, -32)));
 		$reports{$vaersId}->{'pregnancyConfirmationRequired'} = $pregnancyConfirmationRequired;
-		my $breastMilkExposureConfirmationRequired    = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'}   // die;
-    	$breastMilkExposureConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
+		my $breastMilkExposureConfirmationRequired   = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'}   // die;
+    	$breastMilkExposureConfirmationRequired      = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
 		$reports{$vaersId}->{'breastMilkExposureConfirmationRequired'} = $breastMilkExposureConfirmationRequired;
-		my $breastMilkExposurePostTreatmentRequired    = %$tb{$reportId}->{'breastMilkExposurePostTreatmentRequired'}   // die;
-    	$breastMilkExposurePostTreatmentRequired       = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
+		my $breastMilkExposurePostTreatmentRequired  = %$tb{$reportId}->{'breastMilkExposurePostTreatmentRequired'}  // die;
+    	$breastMilkExposurePostTreatmentRequired     = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
 		$reports{$vaersId}->{'breastMilkExposurePostTreatmentRequired'} = $breastMilkExposurePostTreatmentRequired;
+		my $pregnancySeriousnessConfirmationRequired = %$tb{$reportId}->{'pregnancySeriousnessConfirmationRequired'} // die;
+    	$pregnancySeriousnessConfirmationRequired    = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
+		$reports{$vaersId}->{'pregnancySeriousnessConfirmationRequired'} = $pregnancySeriousnessConfirmationRequired;
 		my $breastMilkExposureConfirmation    = %$tb{$reportId}->{'breastMilkExposureConfirmation'};
 		if ($breastMilkExposureConfirmation) {
 	    	$breastMilkExposureConfirmation   = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmation, -32)));
 			$reports{$vaersId}->{'breastMilkExposureConfirmation'} = $breastMilkExposureConfirmation;
+		}
+		my $pregnancyConfirmation    = %$tb{$reportId}->{'pregnancyConfirmation'};
+		if ($pregnancyConfirmation) {
+	    	$pregnancyConfirmation   = unpack("N", pack("B32", substr("0" x 32 . $pregnancyConfirmation, -32)));
+			$reports{$vaersId}->{'pregnancyConfirmation'} = $pregnancyConfirmation;
 		}
 	}
 }
@@ -600,6 +619,14 @@ sub parse_vaers_files {
 				# Settings the breast milk exposures requiring review.
 				unless ($reports{$vaersId}->{'breastMilkExposurePostTreatmentRequired'}) {
 					my $sth = $dbh->prepare("UPDATE report SET breastMilkExposurePostTreatmentRequired = 1 WHERE id = $reportId");
+					$sth->execute() or die $sth->err();
+				}
+			}
+
+			if ($reports{$vaersId}->{'pregnancyConfirmation'}) {
+				# Settings the breast milk exposures requiring review.
+				unless ($reports{$vaersId}->{'pregnancySeriousnessConfirmationRequired'}) {
+					my $sth = $dbh->prepare("UPDATE report SET pregnancySeriousnessConfirmationRequired = 1 WHERE id = $reportId");
 					$sth->execute() or die $sth->err();
 				}
 			}

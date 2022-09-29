@@ -30,6 +30,10 @@
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Pregnancies Confirmation Data</a>
         <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_seriousness_confirmation?currentLanguage=<%=$currentLanguage%>">&#9135;&#10230; Pregnancies AE Seriousness Confirmation Wizard</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_seriousness_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#9135;&#9135;&#10230; Pregnancies AE Seriousness Confirmation Data</a>
+        <div class="text_separator"></div>
         <hr>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>">Exposure via Breast-Milk Confirmation Wizard</a>
@@ -69,6 +73,10 @@
         <a href="/data_admin/wizards/pregnancies_confirmation?currentLanguage=<%=$currentLanguage%>">Assistant de confirmation des grossesses</a>
         <div class="text_separator"></div>
         <a href="/data_admin/wizards/pregnancies_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#10230; Données de confirmation des grossesses</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_seriousness_confirmation?currentLanguage=<%=$currentLanguage%>">&#9135;&#10230; Assistant de caractérisations des incidents durant les grossesses</a>
+        <div class="text_separator"></div>
+        <a href="/data_admin/wizards/pregnancies_seriousness_confirmation_completed?currentLanguage=<%=$currentLanguage%>">&#9135;&#9135;&#10230; Données de caractérisations des incidents durant les grossesses</a>
         <div class="text_separator"></div>
         <hr>
         <div class="text_separator"></div>
