@@ -165,6 +165,7 @@ sub reports {
 		SELECT
 			id as reportId,
 			vaersId,
+			patientAgeFixed,
 			patientAgeConfirmationRequired,
 			pregnancyConfirmationRequired,
 			breastMilkExposureConfirmationRequired,
@@ -176,6 +177,8 @@ sub reports {
 	for my $reportId (sort{$a <=> $b} keys %$tb) {
 		$latestReportId = $reportId;
 		my $vaersId = %$tb{$reportId}->{'vaersId'} // die;
+		my $patientAgeFixed = %$tb{$reportId}->{'patientAgeFixed'};
+		$reports{$vaersId}->{'patientAgeFixed'} = $patientAgeFixed;
 		$reports{$vaersId}->{'reportId'} = $reportId;
 		my $patientAgeConfirmationRequired    = %$tb{$reportId}->{'patientAgeConfirmationRequired'}   // die;
     	$patientAgeConfirmationRequired       = unpack("N", pack("B32", substr("0" x 32 . $patientAgeConfirmationRequired, -32)));
@@ -503,6 +506,7 @@ sub parse_vaers_files {
 				($cdcAgeInternalId,
 					$cdcAgeName) = age_to_age_group($patientAge);
 			}
+			$patientAge  = $reports{$vaersId}->{'patientAgeFixed'} if $reports{$vaersId}->{'patientAgeFixed'};
 		    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $vaersReceptionDate;
 	    	my ($code2, $countryId);
 	    	if ($immProjectNumber && length $immProjectNumber >= 2) {
@@ -532,7 +536,7 @@ sub parse_vaers_files {
 					$hasDirectPregnancySymptom = 1;
 					$likelyPregnancy = 1;
 				}
-				if (exists $pregnanciesSymptoms{$symptomId}) {
+				if (exists $pregnanciesSymptoms{$symptomId} && (!defined $patientAge || (defined $patientAge && $patientAge < 65))) {
 					$hasLikelyPregnancySymptom = 1;
 					$likelyPregnancy = 1;
 				}
@@ -543,12 +547,14 @@ sub parse_vaers_files {
 
 			# Inspecting for potentials pregnancies related keywords in the description.
 			my $normalizedAEDescription = lc $aEDescription;
-			for my $keyword (sort keys %pregnanciesKeywords) {
-				if ($normalizedAEDescription =~ /$keyword/) {
-					$likelyPregnancy = 1;
-					last;
-				}
-			} 
+			if (!defined $patientAge || (defined $patientAge && $patientAge < 65)) {
+				for my $keyword (sort keys %pregnanciesKeywords) {
+					if ($normalizedAEDescription =~ /$keyword/) {
+						$likelyPregnancy = 1;
+						last;
+					}
+				} 
+			}
 			for my $keyword (sort keys %breastMilkExposuresKeywords) {
 				if ($normalizedAEDescription =~ /$keyword/) {
 					$likelyBreastMilkExposure = 1;

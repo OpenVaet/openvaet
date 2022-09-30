@@ -31,6 +31,7 @@ sub by_countries_and_states {
 	$wizards{'pregnanciesConfirmations'} = 'Pregnancies Confirmations';
 	$wizards{'pregnanciesSeriousnessConfirmations'} = 'Pregnancies Seriousness Confirmations';
 	$wizards{'breastMilkExposuresConfirmations'} = 'Breast Milk Exposures Confirmations';
+	$wizards{'breastMilkExposuresPostTreatments'} = 'Exposure via Breast-Milk Post Treatments';
 
     # Fetching latest update ; generating stats if required.
     my $sTb = $self->dbh->selectrow_hashref("SELECT latestCountriesStatsUpdateTimestamp FROM software WHERE name = ?", undef, $softwareName);
@@ -75,6 +76,8 @@ sub update_stats {
 			pregnancySeriousnessConfirmation,
 			breastMilkExposureConfirmationRequired,
 			breastMilkExposureConfirmation,
+			breastMilkExposurePostTreatmentRequired,
+			breastMilkExposurePostTreatment,
 			hospitalizedFixed,
 			patientDiedFixed,
 			permanentDisabilityFixed,
@@ -96,6 +99,8 @@ sub update_stats {
         $pregnancySeriousnessConfirmationRequired    = unpack("N", pack("B32", substr("0" x 32 . $pregnancySeriousnessConfirmationRequired, -32)));
 		my $breastMilkExposureConfirmationRequired   = %$tb{$reportId}->{'breastMilkExposureConfirmationRequired'} // die;
         $breastMilkExposureConfirmationRequired      = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposureConfirmationRequired, -32)));
+		my $breastMilkExposurePostTreatmentRequired   = %$tb{$reportId}->{'breastMilkExposurePostTreatmentRequired'} // die;
+        $breastMilkExposurePostTreatmentRequired      = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
 		my $hospitalizedFixed = %$tb{$reportId}->{'hospitalizedFixed'} // die;
         $hospitalizedFixed = unpack("N", pack("B32", substr("0" x 32 . $hospitalizedFixed, -32)));
 		my $patientDiedFixed = %$tb{$reportId}->{'patientDiedFixed'} // die;
@@ -405,7 +410,7 @@ sub update_stats {
 			}
 		}
 
-		# Breaks milk exposures confirmation
+		# Breast milk exposures confirmation
 		if ($breastMilkExposureConfirmationRequired) {
 			$statistics{'breastMilkExposuresConfirmations'}->{'total'}++;
 			if ($patientDiedFixed) {
@@ -504,6 +509,106 @@ sub update_stats {
 	        	}
 			}
 		}
+
+		# Breast milk exposures post treatments.
+		if ($breastMilkExposurePostTreatmentRequired) {
+			$statistics{'breastMilkExposuresPostTreatments'}->{'total'}++;
+			if ($patientDiedFixed) {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+			} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'serious'}->{'total'}++;
+			} else {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+			}
+			$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'total'}++;
+			if ($patientDiedFixed) {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+			} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'total'}++;
+			} else {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+			}
+			if ($countryName eq 'United States of America') {
+				unless ($countryStateName) {
+					$countryStateName = 'Unknown';
+					$countryStateId = 19;
+				}
+				$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'total'}++;
+				if ($patientDiedFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'total'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'total'}++;
+				} else {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'total'}++;
+				}
+			}
+			my $breastMilkExposurePostTreatment = %$tb{$reportId}->{'breastMilkExposurePostTreatment'};
+			if (defined $breastMilkExposurePostTreatment) {
+				$statistics{'breastMilkExposuresPostTreatments'}->{'reviewed'}++;
+				if ($patientDiedFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+				} else {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+				}
+				$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'reviewed'}++;
+				if ($patientDiedFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+				} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+				} else {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+				}
+				if ($countryName eq 'United States of America') {
+					unless ($countryStateName) {
+						$countryStateName = 'Unknown';
+						$countryStateId = 19;
+					}
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'reviewed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'reviewed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'reviewed'}++;
+					} else {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'reviewed'}++;
+					}
+				}
+	        	$breastMilkExposurePostTreatment = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatment, -32)));
+	        	if ($breastMilkExposurePostTreatment) {
+					$statistics{'breastMilkExposuresPostTreatments'}->{'confirmed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+					} else {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+					}
+					$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'confirmed'}++;
+					if ($patientDiedFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+					} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+					} else {
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+					}
+					if ($countryName eq 'United States of America') {
+						unless ($countryStateName) {
+							$countryStateName = 'Unknown';
+							$countryStateId = 19;
+						}
+						$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'confirmed'}++;
+						if ($patientDiedFixed) {
+							$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'deaths'}->{'confirmed'}++;
+						} elsif ($hospitalizedFixed || $lifeThreatningFixed || $permanentDisabilityFixed) {
+							$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'serious'}->{'confirmed'}++;
+						} else {
+							$statistics{'breastMilkExposuresPostTreatments'}->{'byCountries'}->{$countryName}->{'byStates'}->{$countryStateName}->{'bySeriousness'}->{'nonSerious'}->{'confirmed'}++;
+						}
+					}
+	        	}
+			}
+		}
 	}
 
 	open my $out, '>:utf8', $completionStatsFile;
@@ -540,7 +645,7 @@ sub load_countries_and_states_data {
     $json = decode_json($json);
     my %statistics = %$json;
     %statistics = %{$statistics{$wizardSelected}};
-    p%statistics;
+    # p%statistics;
 
     $self->render(
         currentLanguage => $currentLanguage,
@@ -589,6 +694,12 @@ sub load_wizard_scope {
         my $sth = $self->dbh->prepare("TRUNCATE pregnancy_seriousness_wizard_report");
         $sth->execute() or die $sth->err();
         generate_pregnancies_seriousness_batch($self, $countryId, $scope);
+	} elsif ($wizardSelected eq 'breastMilkExposuresPostTreatments') {
+
+        # Truncating breast_milk_wizard_report table.
+        my $sth = $self->dbh->prepare("TRUNCATE breast_milk_post_treatment_wizard_report");
+        $sth->execute() or die $sth->err();
+        generate_breast_milk_post_treatment_batch($self, $countryId, $scope);
 	} else {
 		die "wizardSelected : [$wizardSelected]";
 	}
@@ -651,6 +762,65 @@ sub generate_breast_milk_batch {
             my $breastMilkExposureConfirmationTimestamp      = %$rTb{$reportId}->{'breastMilkExposureConfirmationTimestamp'};
             my $sth = $self->dbh->prepare("INSERT INTO breast_milk_wizard_report (reportId, breastMilkExposureConfirmationRequired, breastMilkExposureConfirmation, breastMilkExposureConfirmationTimestamp) VALUES (?, $breastMilkExposureConfirmationRequired, NULL, ?)");
             $sth->execute($reportId, $breastMilkExposureConfirmationTimestamp) or die $sth->err();
+            $currentBatch++;
+        }
+        $operationsToPerform = $currentBatch;
+    }
+    return $operationsToPerform;
+}
+
+sub generate_breast_milk_post_treatment_batch {
+    my ($self, $countryId, $scope) = @_;
+    # Fetching total operations to perform.
+    my $tb = $self->dbh->selectrow_hashref("SELECT count(id) as operationsToPerform FROM report WHERE breastMilkExposurePostTreatmentRequired = 1 AND breastMilkExposurePostTreatment IS NULL", undef);
+    my $operationsToPerform = %$tb{'operationsToPerform'} // die;
+    if ($operationsToPerform) {
+        # Generating current treatment batch.
+        my $currentBatch = 0;
+        my $sql;
+        if ($countryId) {
+	        $sql                 = "
+	            SELECT
+	                id as reportId,
+	                breastMilkExposurePostTreatment,
+	                breastMilkExposurePostTreatmentRequired,
+	                breastMilkExposurePostTreatmentTimestamp
+	            FROM report
+	            WHERE 
+	                breastMilkExposurePostTreatmentRequired = 1 AND
+	                breastMilkExposurePostTreatment IS NULL AND
+	                countryId = $countryId";
+    	} else {
+	        $sql                 = "
+	            SELECT
+	                id as reportId,
+	                breastMilkExposurePostTreatment,
+	                breastMilkExposurePostTreatmentRequired,
+	                breastMilkExposurePostTreatmentTimestamp
+	            FROM report
+	            WHERE 
+	                breastMilkExposurePostTreatmentRequired = 1 AND
+	                breastMilkExposurePostTreatment IS NULL AND
+	                countryId IS NULL";
+    	}
+    	if ($scope eq 'deaths') {
+    		$sql .= " AND patientDiedFixed = 1";
+		} elsif ($scope eq 'serious') {
+    		$sql .= " AND (patientDiedFixed = 1 OR permanentDisabilityFixed = 1 OR hospitalizedFixed = 1)";
+		}
+    	$sql .= "
+	            ORDER BY RAND()
+	            LIMIT $treatmentLimit";
+        say "$sql";
+        my $rTb                 = $self->dbh->selectall_hashref($sql, 'reportId'); # ORDER BY RAND()
+        for my $reportId (sort{$a <=> $b} keys %$rTb) {
+            my $breastMilkExposurePostTreatmentRequired  = %$rTb{$reportId}->{'breastMilkExposurePostTreatmentRequired'} // die;
+            $breastMilkExposurePostTreatmentRequired     = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatmentRequired, -32)));
+            my $breastMilkExposurePostTreatment          = %$rTb{$reportId}->{'breastMilkExposurePostTreatment'};
+            # $breastMilkExposurePostTreatment             = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatment, -32)));
+            my $breastMilkExposurePostTreatmentTimestamp = %$rTb{$reportId}->{'breastMilkExposurePostTreatmentTimestamp'};
+            my $sth = $self->dbh->prepare("INSERT INTO breast_milk_post_treatment_wizard_report (reportId, breastMilkExposurePostTreatmentRequired, breastMilkExposurePostTreatment, breastMilkExposurePostTreatmentTimestamp) VALUES (?, $breastMilkExposurePostTreatmentRequired, NULL, ?)");
+            $sth->execute($reportId, $breastMilkExposurePostTreatmentTimestamp) or die $sth->err();
             $currentBatch++;
         }
         $operationsToPerform = $currentBatch;
@@ -770,6 +940,7 @@ sub generate_pregnancies_batch {
             $sth->execute($reportId, $pregnancyConfirmationTimestamp) or die $sth->err();
             $currentBatch++;
         }
+        say "currentBatch : $currentBatch";
         $operationsToPerform = $currentBatch;
     }
     return $operationsToPerform;

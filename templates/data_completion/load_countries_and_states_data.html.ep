@@ -134,6 +134,8 @@
                 window.location.href = '/data_admin/wizards/breast_milk_exposure_confirmation?currentLanguage=<%=$currentLanguage%>';
             } else if (wizardSelected == 'pregnanciesSeriousnessConfirmations') {
                 window.location.href = '/data_admin/wizards/pregnancies_seriousness_confirmation?currentLanguage=<%=$currentLanguage%>';
+            } else if (wizardSelected == 'breastMilkExposuresPostTreatments') {
+                window.location.href = '/data_admin/wizards/breast_milk_exposure_post_treatment?currentLanguage=<%=$currentLanguage%>';
             } else {
         		alert(wizardSelected);
         	}

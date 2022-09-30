@@ -129,7 +129,7 @@
 			</div>
 		<div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-		    Study version 1.0, last VAERS report on <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
+		    Study version 1.1, last VAERS report on <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -144,35 +144,16 @@
 	    		</div>
 	    	</div>
 		</div>
-
 	    <div id="global-analysis" style="width:calc(100% - 2px);position: top;">
 		    <div class="text_separator"></div>
 		    <h2>Introduction to the study</h2>
-		    We decided to update the data of interesting studies realized by Christine Cotton, in August 2021, on the COVID substances after-effects.
-		    <div class="text_separator"></div>
-		    Christine Cotton is an experimented biostatistician, <a href="https://christine-cotton.1ere-page.fr" target="_blank">whose website can be found here</a>, and who appeared to us as defending a reasonnable position since the begining of the COVID-19 health & political crysis.
-		    <div class="text_separator"></div>
-		    The two presentations which we tackled are the following :
-		    <ul>
-		    	<li>A first <b>Analyzing the american pharmacovigilance data (VAERS)</b> (<a href="https://crowdbunker.com/v/sNGBDEcpDZ" target="_blank">original here</a>) <a href="https://crowdbunker.com/@CSI" target="_blank">in front of the Independent Scientific Council</a> (ISC) which seemed to us interesting & detailed.</li>
-		    	<div class="text_separator"></div>
-		    	<li>A similar presentation of her work while interviewed by the <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a> media.</li>
-		    </ul>
+		    We shall use in this study the VAERS data only, and no data from the European EudraVigilance (whose total lack of details prevents us from any serious treatment).
 		    <div class="text_separator"></div>
 		    The "Center for Disease Control" (CDC) and the Food & Drug Administration (FDA) are USA's organism in charge of - among other things - collecting & surveying data relative to authorized or tested medicines safety in the United States. They communicate the reported incidents through their VAERS platform.
 		    <div class="text_separator"></div>
-		    We shall use in this study the VAERS data only, and no data from the European EudraVigilance (whose total lack of details prevents us from any serious treatment).
+		    This page aims at a clear view on VAERS reports impacting pregnant women, and to <b>provide researchers with a precise identification of the incidents, missing from the current VAERS report treatments.</b>
 		    <div class="text_separator"></div>
-		    <b>Christine Cotton, the author of the original study, hasn't addressed us any direct request, nor has link with us</b> ; we are simply quoting her by curtesy & as a mark of respect for her work.
-		    <div class="text_separator"></div>
-		    <b>The responsability for any error in the algorithms we have written (<a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire Github" target="_blank">and for which the source codes are available here</a>), would be ours exclusively (and as usual, any potential <a href="/contact_us">reported bug</a> would be fixed in the shortest possible delays).</b>
-		    <div class="text_separator"></div>
-		    <div class="text_separator"></div>
-		    <h2>Problematic</h2>
-		    <div class="text_separator"></div>
-	    	Christine Cotton underlines (France Soir's video above, 44:53 & following) the first real issue we faced while inventorizing the statistics to establish : <b>no clear and non-critizable identification of the pregnancies is available in the VAERS reports</b>.
-		    <div class="text_separator"></div>
-		    The problems that the analyst who would wish to target the reports concerning pregnant women will face are the following :
+		    The problems that the analyst who would wish to target the VAERS reports concerning pregnant women will face are the following :
 		    <div class="text_separator"></div>
 	    	<div style="width:100%;display: flex;flex-wrap: wrap;">
 		    	<ul>
@@ -180,13 +161,16 @@
 		    		<div class="text_separator"></div>
 		    		<li>Symptoms which should allow a clear identification of the pregnancy aren't always defined and/or exhaustively identified</li>
 		    		<div class="text_separator"></div>
-		    		<li>We find false positives in the data (reports which are flagged as pregnancies by their symptoms while the clinical description explicitely precises the patient is'nt pregnant)</li>
+		    		<li>We find false positives in the data (reports which are flagged as pregnancies by their symptoms while the clinical description explicitely precises the patient isn't pregnant)</li>
 		    		<div class="text_separator"></div>
 		    		<li>Some pregnancies aren't identified at all, and a cautious reading of the clinical description is the only way to fix these mistakes</li>
 		    		<div class="text_separator"></div>
 		    	</ul>
 			</div>
-	    	It quickly became obvious to us that <b>dedicated tools</b> would be required to process some of the data of these studies, and to ensure that they would be swiftly updated on further data releases. These tools are extensively detailed in the "Data" tab, and are directly accessible from this tab is you're running the project localy.
+		    <div class="text_separator"></div>
+		    The boards below have been derived in terms of presentation from a <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a> presentation by Christine Cotton, <a href="https://christine-cotton.1ere-page.fr" target="_blank">whose website can be found here</a>. Data arbitrations, code & processes have been completely reworked by our team.
+		    <div class="text_separator"></div>
+	    	It quickly became obvious to us that <b>dedicated tools</b> would be required to process some of the data of these studies, and to ensure that they would be swiftly updated on further data releases. These tools are extensively detailed in the "Data" tab, and are directly accessible from this tab is you're running the project locally.
 		    <div class="text_separator"></div>
 		    The first issues related to "precisely identifying pregnancies" having been solved, we are releasing this first study (which shall be deepened later), with the goal to ease the access of the interested users on the arbitrations we performed. These arbitrations can be downloaded <a href="#" onclick="openGlobalTab('global-data');return;">in the "Data" section.</a>
 		    <div class="text_separator"></div>
@@ -200,7 +184,7 @@
 		    <div class="text_separator"></div>
 		    <div class="text_separator"></div>
 		    <h2>Assessing a priori how representative of the "real life after-effects" the VAERS data is</h2>
-	    	It's quite delicate to assess what is the represenativity of the VAERS data, toward the "total after-effects which are really happening in the general population".
+	    	It's quite delicate to assess what is the representativity of the VAERS data, toward the "total after-effects which are really happening in the general population".
 		    <div class="text_separator"></div>
 		    For various reasons (difficulty to access healthcare based on the geographical position, cost, lack of patient information, health care professional reluctant to report an adverse effect, etc), we can legitimately consider that after-effects are generally speaking under-reported.
 		    <div class="text_separator"></div>
@@ -216,7 +200,7 @@
 			    </ul>
 			</div>
 		    <div class="text_separator"></div>
-		    We had, on our end, identified two studies - a first evaluating the reporting rate to the VAERS to a more pessimistic 1% ; and a second underlining how unefficient the French adverse effects collection was :
+		    We had, on our end, identified two studies - a first evaluating the reporting rate to the VAERS to a more pessimistic 1% ; and a second underlining how inefficient the French adverse effects collection was :
 		    <div class="text_separator"></div>
 			<div class="ndt_note">
 			    <ul>
@@ -233,7 +217,7 @@
 		    <div class="text_separator"></div>
 		    <h2>Refining the Data - Isolating reports concerning pregnancies</h2>
 			<div class="text_separator"></div>
-			If we wish to focus on pregnant women, we intuitively would reffer, in the VAERS reports, to the symptoms "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" and "<b>Maternal exposure during pregnancy</b>", which are theoricaly set by the VAERS agents when a pregnant woman is exposed, during her pregnancy, to a recent vaccination.
+			If we wish to focus on pregnant women, we intuitively would refer, in the VAERS reports, to the symptoms "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" and "<b>Maternal exposure during pregnancy</b>", which are theoricaly set by the VAERS agents when a pregnant woman is exposed, during her pregnancy, to a recent vaccination.
 			<div class="text_separator"></div>
 			% my $pregnanciesCompletelyMissed   = $vaersStatistics{'arbitrations'}->{'pregnanciesCompletelyMissed'}   // 0;
 			% my $pregnanciesImproperlyTagged   = $vaersStatistics{'arbitrations'}->{'pregnanciesImproperlyTagged'}   // 0;
@@ -443,7 +427,7 @@
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
 			The <b><%=$pregnanciesCompletelyMissed%> reports</b> which aren't qualified by the VAERS, and which we requalified, can be consulted directly <a href="#" onclick="openReports('requalifiedAsPregnancies', 1);return;">by clicking here</a>.
-			The <b><%=$pregnanciesImproperlyTagged%> reports</b> concerning partialy identified pregnancies can be consulted <a href="#" onclick="openReports('improperlyTaggedAsPregnancy', 1);return;">by clicking here</a>. 
+			The <b><%=$pregnanciesImproperlyTagged%> reports</b> concerning partially identified pregnancies can be consulted <a href="#" onclick="openReports('improperlyTaggedAsPregnancy', 1);return;">by clicking here</a>. 
 			<div class="text_separator"></div>
 			% my $falsePositivePregnancies = $vaersStatistics{'arbitrations'}->{'falsePositivePregnancies'}   // 0;
 			The <b><%=$falsePositivePregnancies%> false positive reports</b> which are qualified by the VAERS as involving pregnancy-related symptoms, and which we invalidated, can be consulted directly <a href="#" onclick="openReports('requalifiedAsNonPregnancies', 1);return;">by clicking here</a>.
@@ -642,7 +626,7 @@
 			    </div>
 			    <div style="width: 100%;min-width: 840px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;">
 			    	<div style="width:calc(25% - 1px);min-width: 200px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
-			    		<b>Life threatning event</b>
+			    		<b>Life threatening event</b>
 			    	</div>
 			    	<div style="width:15%;min-width: 125px;padding-top: 5px;padding-bottom: 5px;background: #E7E6E9;border-right: 1px solid #fff;">
 			    		<%=$totalVaersLifeThreats%> (<%=$totalVaersLifeThreatsPercent%> %)
@@ -843,23 +827,23 @@
 			<div class="text_separator"></div>
 		    <h2>Refining the Data - In depth cross-exam of the seriousness of the incidents having impacted the mother or the child</h2>
 			<div class="text_separator"></div>
-			It appeared to us, during our many review of reports, that numerous cases occured where the VAERS analyst didn't qualify properly the symptoms described by the reporter.
+			It appeared to us, during our many reviews of reports, that numerous cases occured where the VAERS analyst didn't qualify properly the symptoms described by the reporter.
 			<div class="text_separator"></div>
-			For example, one could find only a headache or reddness for symptoms, while the clinical description reports a missed abortion.
+			For example, one could find only a headache or redness for symptoms, while the clinical description reports a missed abortion.
 			<div class="text_separator"></div>
-			We performed the review of the <b><%=$totalFixedCases%> rapports</b> which we had identified, and, through a wizard designed to this end, systematicaly verified the seriousness caracterization of the adverse effects suffered by the mother or the foetus..
+			We performed the review of the <b><%=$totalFixedCases%> rapports</b> which we had identified, and, through a wizard designed to this end, systematicaly verified the seriousness characterization of the adverse effects suffered by the mother or the foetus..
 			<div class="text_separator"></div>
 			We also took care of identifying & rectifying when required the key elements : last vaccination date, onset date, time interval between the vaccination & the after effects observed.
 			<div class="text_separator"></div>
 			The section <a href="#" onclick="openGlobalTab('global-data');return;"><b>Refining the Data - In depth cross-exam of the seriousness of the incidents having impacted the mother or the child</b></a> precises the various operations realized at this step of the data processing.
 			<div class="text_separator"></div>
-			Despite the numerous measures we took to safeguard an exhaustive caracterization of the symptoms, we don't escape ourselves the risk of human error, and therefore strongly encourage the reader to review in depth the many arbitrations we detailed in the above section, and to <a href="/contact_us">contact us to report any error you may identify</a>.
+			Despite the numerous measures we took to safeguard an exhaustive characterization of the symptoms, we don't escape ourselves the risk of human error, and therefore strongly encourage the reader to review in depth the many arbitrations we detailed in the above section, and to <a href="/contact_us">contact us to report any error you may identify</a>.
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
 		    <h2>After-effects having affected the mother, according to the verified data</h2>
-		    The after-effects which impacted pregnant women are, after these verifications, synthetized in the board below.
+		    The after-effects which impacted pregnant women are, after these verifications, synthesized in the board below.
 			<div class="text_separator"></div>
-			The gap between parenthesis allows to appreciate how many of these events haven't been properly caracterized by the VAERS (confere to the boards above). If no gap is present, then the numbers are the same.
+			The gap between parenthesis allows to appreciate how many of these events haven't been properly caracterized by the VAERS (refer to the boards above). If no gap is present, then the numbers are the same.
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
@@ -1256,7 +1240,7 @@
 	    		<div class="text_separator"></div>
 				<li>A significant amount of permanent disabilities aren't properly qualified</li>
 	    		<div class="text_separator"></div>
-				<li>Numerous hospitalizations or prolonged hospitalizations aren't catacterized</li>
+				<li>Numerous hospitalizations or prolonged hospitalizations aren't characterized</li>
 			</ul>
 			The <b><%=$totalVaersDeathsArbitrated%> reports</b> on events having led to the death of the mother can be consulted directly <a href="#" onclick="openReports('motherDiedInPregnancy', 1);return;">by clicking here</a>.
 			<div class="text_separator"></div>
@@ -1264,7 +1248,7 @@
 	    	<div class="text_separator"></div>
 	    	<div class="text_separator"></div>
 		    <h2>After Effects which impacted the foetus, according to the data verified</h2>
-		    Reports which are confirmed incidents having impacted the foetus or the new born are synthetized below.
+		    Reports which are confirmed incidents having impacted the foetus or the new born are synthesized below.
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
 		    <div style="width: 100%;overflow-x: auto;overflow-y: hidden;text-align: center;">
@@ -1457,7 +1441,7 @@
 			<div class="text_separator"></div>
 			% my $nonFlaggedChildDeaths = $vaersStatistics{'seriousesPregnanciesStatistics'}->{'TOTALS'}->{'nonFlaggedChildDeaths'} // die;
 			<div class="text_separator"></div>
-			Again, numerous events haven't been qualified properly by the VAERS, including <b><%=$nonFlaggedChildDeaths%> of the <%=$totalVaersChildDeathsArbitrated%></b> cases where the child didn't survived.
+			Again, numerous events haven't been qualified properly by the VAERS, including <b><%=$nonFlaggedChildDeaths%> of the <%=$totalVaersChildDeathsArbitrated%></b> cases where the child didn't survive.
 			<div class="text_separator"></div>
 			These <b><%=$nonFlaggedChildDeaths%> reports</b> for which the death of the foetus or child hasn't been properly identified through <a href="#" onclick="openSymptoms('foetalDeathRelated');return;">one of the expected symptoms</a> can be consulted directly <a href="#" onclick="openReports('childDiedButIsntFlagged', 1);return;">by clicking here</a> (the number is different of the offset due to the (rare) false positives which we also requalified).
 			<div class="text_separator"></div>
@@ -1951,7 +1935,7 @@
 			</div>
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
-			There isn't much to comment here ; aside for the fact that the spread between Texas & California doesn't explain itself through the number of doses administered <a href="https://covid.cdc.gov/covid-data-tracker/#vaccinations_vacc-total-admin-rate-total" target="_blank">communicated by the CDC</a> - and that a lot of states are unknown.
+			There isn't much to comment here ; aside from the fact that the spread between Texas & California doesn't explain itself through the number of doses administered <a href="https://covid.cdc.gov/covid-data-tracker/#vaccinations_vacc-total-admin-rate-total" target="_blank">communicated by the CDC</a> - and that a lot of states are unknown.
 			<div class="text_separator"></div>
 			<div class="text_separator"></div>
 		    <h2>Current study limits and refinements to come</h2>
@@ -2080,7 +2064,7 @@
 			<div class="text_separator"></div>
 		    <h2>Refining the Data - Isolating reports concerning pregnancies</h2>
 			<div class="text_separator"></div>
-			If one wishes to care about the pregnant women subject, he will refer, intuitively, to the symptoms "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" and "<b>Maternal exposure during pregnancy</b>", which are theoricaly defined by the VAERS operators when a pregnant woman is exposed to a recent vaccination.
+			If one wishes to care about the pregnant women subject, he will refer, intuitively, to the symptoms "<b>Pregnancy</b>", "<b>Exposure during pregnancy</b>" and "<b>Maternal exposure during pregnancy</b>", which are theoretically defined by the VAERS operators when a pregnant woman is exposed to a recent vaccination.
 			<div class="text_separator"></div>
 			Reports concerning the pregnancies are selected using two methods.
 		    <ul>
@@ -2170,7 +2154,7 @@
 			<div class="text_separator"></div>
 			<div class="ndt_note">
 			    <ul>
-			    	<li>This wizard allows (without altering the original data so we can compare the results) to requalify the criterions of seriousness for the report if one of these (Hospitalization, life threatning event, etc.) has been obviously poorly qualified by the VAERS operator.</li>
+			    	<li>This wizard allows (without altering the original data so we can compare the results) to requalify the criteria of seriousness for the report if one of these (Hospitalization, life threatning event, etc.) has been obviously poorly qualified by the VAERS operator.</li>
 			    	<div class="text_separator"></div>
 			    	<li>Symptoms & elements of the clinical description which have been identified to a pregnancy issue are highlighted.</li>
 			    	<div class="text_separator"></div>
@@ -2248,7 +2232,7 @@
 		</div>
 		<div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-		    Etude version 1.0, dernier rapport VAERS mis à jour le <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
+		    Etude version 1.1, dernier rapport VAERS mis à jour le <%=$vaersReceptionLastDate%> <span style="font-size: 12px;">(YYYY-MM-DD)</span>
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -2267,29 +2251,11 @@
 	    <div id="global-analysis" style="width:calc(100% - 2px);position: top;">
 		    <div class="text_separator"></div>
 		    <h2>Présentation de l'étude</h2>
-		    Nous avons décidé de mettre à jour les données d'intéressantes études, effectuées par Christine Cotton, en août 2021, sur les effets des substances COVID.
-		    <div class="text_separator"></div>
-		    Christine Cotton est une bio-statisticienne expérimentée, <a href="https://christine-cotton.1ere-page.fr" target="_blank">dont le site peut être trouvé ici</a>, et qui nous a semblé défendre une position de raison, depuis le début de la crise politique et sanitaire du COVID-19.
-		    <div class="text_separator"></div>
-		    Les deux présentations auxquelles nous nous sommes attelés sont les suivantes :
-		    <ul>
-		    	<li>Une <b>Analyse des données de pharmacovigilance américaine (VAERS)</b> (<a href="https://crowdbunker.com/v/sNGBDEcpDZ" target="_blank">original ici</a>) <a href="https://crowdbunker.com/@CSI" target="_blank">devant le Conseil scientifique indépendant</a> (CSI) qui nous a semblé intéressante et détaillée.</li>
-		    	<div class="text_separator"></div>
-		    	<li>Une présentation de ses travaux similaires auprès de <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a>.</li>
-		    </ul>
+		    Nous utiliserons ici uniquement la donnée VAERS, et non la donnée européenne EudraVigilance (dont l'absence totale de détails empêche tout traitement sérieux).
 		    <div class="text_separator"></div>
 		    Le "Center for Disease Control" (CDC) et la Food & Drug Administration (FDA) sont les organismes des Etats-Unis en charge - entre autres choses - de collecter et surveiller les données relatives à la sécurité des médicaments autorisés ou testés aux Etats-Unis. Ils communiquent les incidents répertoriés via leur plateforme VAERS.
 		    <div class="text_separator"></div>
-		    Nous utiliserons ici uniquement la donnée VAERS, et non la donnée européenne EudraVigilance (dont l'absence totale de détails empêche tout traitement sérieux).
-		    <div class="text_separator"></div>
-		    <b>Christine Cotton, l'autrice de l'étude originale, ne nous a pas adressé de demande directe, ni n'entretient de liens avec nous</b> ; nous la citons simplement par courtoisie et respect pour son travail.
-		    <div class="text_separator"></div>
-		    <b>La responsabilité de toute erreur dans les algorithmes écrits par nous (<a href="https://github.com/OpenVaet/openvaet" title="Ouvrir le répertoire Github" target="_blank">dont les codes sources sont disponibles ici</a>), nous reviendrait exclusivement (et comme d'habitude, tout éventuel <a href="/contact_us">bug signalé</a> serait corrigé dans les délais les plus brefs).</b>
-		    <div class="text_separator"></div>
-		    <div class="text_separator"></div>
-		    <h2>Problématique</h2>
-		    <div class="text_separator"></div>
-	    	Christine Cotton souligne (vidéo France Soir ci-dessus, 44:53 & suivantes) la première problématique complexe que nous avons rencontrée alors que nous inventoriions les statistiques à établir : <b>aucune authentification claire et non criticable des cas de grossesse n'est disponible dans les rapports VAERS</b>.
+		    Cette page vise à établir une vue claire sur les rapports VAERS ayant impacté des femmes enceintes, et <b>à fournir aux chercheurs une identification précise des incidents, absente des traitements de données actuelles du VAERS.</b>
 		    <div class="text_separator"></div>
 		    Les problèmes que rencontre l'analyste qui désire cibler les rapports impliquant les femmes enceintes sont les suivants :
 		    <div class="text_separator"></div>
@@ -2305,6 +2271,8 @@
 		    		<div class="text_separator"></div>
 		    	</ul>
 			</div>
+				Les tableaux ci-dessous ont été dérivés en terme de présentation d'une présentation <a href="https://www.francesoir.fr/videos-les-debriefings/christine-cotton-vaers" target="_blank">France Soir</a> par Christine Cotton, dont le site internet <a href="https://christine-cotton.1ere-page.fr" target="_blank">peut être trouvé ici</a>.
+		    <div class="text_separator"></div>
 	    	Il nous est rapidement apparu que <b>des outils dédiés</b> étaient nécessaires pour traiter efficacement certaines des données mentionnées dans l'étude pré-citée, et pour garantir leurs mises à jour ultérieures. Ces outils sont détaillés dans la section "Données", et accessibles depuis celle-ci - si l'on exécute le projet localement.
 		    <div class="text_separator"></div>
 		    Les premiers problèmes d'identification précise des grossesses ayant été résolus en procédant à une revue détaillée manuelle de chaque rapport, nous publions cette première étude (qui sera approfondie davantage), afin de mettre à disposition des utilisateurs les arbitrages effectués. Ceux-ci peuvent être téléchargés <a href="#" onclick="openGlobalTab('global-data');return;">dans la section "Données".</a>

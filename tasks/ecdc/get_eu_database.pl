@@ -1204,7 +1204,7 @@ sub browse_years_seriousness {
 			select_year($year);
 
 			my $totalCases;
-			if ($ecdcDrugYearSeriousnesses{$ecdcDrugId}->{$ecdcYearId}->{$ecdcSeriousness}->{'totalCases'} && ($ecdcDrugYearSeriousnesses{$ecdcDrugId}->{$ecdcYearId}->{$ecdcSeriousness}->{'totalCases'} > 249000)) {
+			if ($ecdcDrugYearSeriousnesses{$ecdcDrugId}->{$ecdcYearId}->{$ecdcSeriousness}->{'totalCases'} && ($ecdcDrugYearSeriousnesses{$ecdcDrugId}->{$ecdcYearId}->{$ecdcSeriousness}->{'totalCases'} > 232000)) {
 				$totalCases = browse_year_seriousness_by_age_groups($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel);
 			} else {
 				select_serious_dropdown();
@@ -1215,7 +1215,7 @@ sub browse_years_seriousness {
 				die unless defined $totalCases;
 
 				# If we have more than the limit of cases we browse the seriousness by age group.
-				if ($totalCases > 249000) {
+				if ($totalCases > 232000) {
 					$totalCases = browse_year_seriousness_by_age_groups($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel);
 				}
 			}
@@ -1314,7 +1314,7 @@ sub browse_year_seriousness_by_age_groups {
 		run_line_report();
 		my $totalCases = parse_line_report($ecdcDrugId, $ecdcYearId, $ecdcSeriousness, $currentDrugs, $totalDrugs, $ecdcAgeGroup);
 		die unless defined $totalCases;
-		if ($totalCases > 249000) {
+		if ($totalCases > 232000) {
 			$totalCases = browse_year_seriousness_age_group_by_sexes($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel, $ageGroup, $ecdcAgeGroup);
 		}
 		$cumulatedTotal += $totalCases;
@@ -1815,7 +1815,7 @@ sub browse_year_seriousness_age_group_by_sexes {
 		run_line_report();
 		my $totalCases = parse_line_report($ecdcDrugId, $ecdcYearId, $ecdcSeriousness, $currentDrugs, $totalDrugs, $ecdcAgeGroup, $ecdcSexGroup);
 		die unless defined $totalCases;
-		if ($totalCases > 249000) {
+		if ($totalCases > 232000) {
 			$totalCases = browse_year_seriousness_age_group_sex_by_geographical_origin($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel, $ageGroup, $ecdcAgeGroup, $sexGroup, $ecdcSexGroup);
 		}
 		$cumulatedTotal += $totalCases;
@@ -1971,7 +1971,7 @@ sub browse_year_seriousness_age_group_sex_by_geographical_origin {
 		run_line_report();
 		my $totalCases = parse_line_report($ecdcDrugId, $ecdcYearId, $ecdcSeriousness, $currentDrugs, $totalDrugs, $ecdcAgeGroup, $ecdcSexGroup, $ecdcGeoOriginGroup);
 		die unless defined $totalCases;
-		if ($totalCases > 249000) {
+		if ($totalCases > 232000) {
 			$totalCases = browse_year_seriousness_age_group_sex_geographical_origin_by_reporter_type($url, $ecdcDrugId, $ecdcDrugName, $aeFromEcdcYearId, $hasNullGateYear, $currentDrugs, $totalDrugs, $year, $ecdcYearId, $ecdcSeriousness, $ecdcSeriousnessLabel, $ageGroup, $ecdcAgeGroup, $sexGroup, $ecdcSexGroup, $geoGroup, $ecdcGeoOriginGroup);
 		}
 		$cumulatedTotal += $totalCases;
@@ -2132,7 +2132,7 @@ sub browse_year_seriousness_age_group_sex_geographical_origin_by_reporter_type {
 		run_line_report();
 		my $totalCases = parse_line_report($ecdcDrugId, $ecdcYearId, $ecdcSeriousness, $currentDrugs, $totalDrugs, $ecdcAgeGroup, $ecdcSexGroup, $ecdcGeoOriginGroup, $ecdcReporterTypeGroup);
 		die unless defined $totalCases;
-		if ($totalCases > 249000) {
+		if ($totalCases > 232000) {
 			die;
 		}
 		$cumulatedTotal += $totalCases;
