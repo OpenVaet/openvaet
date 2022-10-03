@@ -516,10 +516,26 @@ sub patient_ages_custom_export {
         $keywordsSets{"$userName - $symptomSetName"}->{'keywordsSetId'} = $keywordsSetId;
     }
 
+    # Fetching countries.
+    my %countries = ();
+    my $cTb = $self->dbh->selectall_hashref("SELECT id as countryId, name as countryName FROM country", 'countryId');
+    for my $countryId (sort{$a <=> $b} keys %$cTb) {
+        my $countryName = %$cTb{$countryId}->{'countryName'} // die;
+        $countries{$countryName}->{'countryId'} = $countryId;
+    }
+
+
     my %languages = ();
     $languages{'fr'} = 'French';
     $languages{'en'} = 'English';
 
+    # Setting breast milk exposures post-treatments.
+    my %breastMilkExposurePostTreatments = ();
+    $breastMilkExposurePostTreatments{'1'} = 'Mother Exposure Only';
+    $breastMilkExposurePostTreatments{'2'} = 'Child Exposure Only';
+    $breastMilkExposurePostTreatments{'3'} = 'Mother & Child Exposures Only';
+
+    # Setting products.
     my %products = ();
     $products{'COVID-19 VACCINE JANSSEN'}                  = 'janssen';
     $products{'COVID-19 VACCINE MODERNA'}                  = 'moderna';
@@ -546,6 +562,8 @@ sub patient_ages_custom_export {
         symptomsSets => \%symptomsSets,
         keywordsSets => \%keywordsSets,
         severities => \%severities,
+        countries => \%countries,
+        breastMilkExposurePostTreatments => \%breastMilkExposurePostTreatments,
         admins => \%admins
     );
 }
@@ -588,8 +606,9 @@ sub generate_products_export {
     my $pfizer                 = $self->param('pfizer')                 // die;
     my $novavax                = $self->param('novavax')                // die;
     my $unknown                = $self->param('unknown')                // die;
-    my $adminFilter            = $self->param('adminFilter')            // die;
+    my $breastMilkExposurePostTreatmentFilter = $self->param('breastMilkExposurePostTreatmentFilter') // die;
     my $symptomFilter          = $self->param('symptomFilter')          // die;
+    my $countryFilter          = $self->param('countryFilter')          // die;
     my $keywordsFilter         = $self->param('keywordsFilter')         // die;
     my $severityFilter         = $self->param('severityFilter')         // die;
     my $ageErrorsOnly          = $self->param('ageErrorsOnly')          // die;
@@ -604,6 +623,7 @@ sub generate_products_export {
     say "breastMilkExposureOnly : $breastMilkExposureOnly";
     say "symptomFilter          : $symptomFilter";
     say "keywordsFilter         : $keywordsFilter";
+    say "countryFilter          : $countryFilter";
 
     # Fetching symptoms.
     my %symptoms = ();
@@ -700,12 +720,20 @@ sub generate_products_export {
             LEFT JOIN country ON country.id = report.countryId
         ";
     my $hasConditional = 0;
-    if ($severityFilter || $pregnanciesOnly eq 'true' || $breastMilkExposureOnly eq 'true') {
+    if ($severityFilter || $pregnanciesOnly eq 'true' || $breastMilkExposureOnly eq 'true' || $countryFilter || $breastMilkExposurePostTreatmentFilter) {
         $sql .= " WHERE ";
     }
     if ($severityFilter) {
         $hasConditional = 1;
         $sql .= " report.$severityFilter = 1";
+    }
+    if ($countryFilter) {
+        $hasConditional = 1;
+        $sql .= " report.countryId = $countryFilter";
+    }
+    if ($breastMilkExposurePostTreatmentFilter) {
+        $hasConditional = 1;
+        $sql .= " report.breastMilkExposurePostTreatment = $breastMilkExposurePostTreatmentFilter";
     }
     if ($pregnanciesOnly eq 'true') {
         if ($hasConditional) {
@@ -735,13 +763,6 @@ sub generate_products_export {
         }
         if ($ageCompletedOnly eq 'true') {
             next unless defined $patientAgeFixed;
-        }
-        if ($adminFilter && ($adminFilter == 1)) {
-            my $email = %$tb{$reportId}->{'email'} // next;
-            my ($userName) = split '\@', $email;
-            if ($adminFilter) {
-                next if $userName ne $adminFilter;
-            }
         }
         $vaccinesListed = decode_json($vaccinesListed);
         my $hasProduct  = 0;

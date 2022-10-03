@@ -5,6 +5,8 @@
 % my %severities = %$severities;
 % my %symptomsSets   = %$symptomsSets;
 % my %keywordsSets   = %$keywordsSets;
+% my %countries = %$countries;
+% my %breastMilkExposurePostTreatments = %$breastMilkExposurePostTreatments;
 <head>
   <link href="/css/select2.min.css" rel="stylesheet" />
   <script src="/js/select2.min.js"></script>
@@ -12,7 +14,6 @@
 <div class="content-container">
     % if ($self->is_admin()) {
     	<div class="text_separator"></div>
-	    % if ($currentLanguage eq 'en') {
 	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Return to Data Administration</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -85,17 +86,18 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Restrict on administrator's age treatment
+	        Restrict on Breast Milk Exposure Post Treatment
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width: 100%;">
 	    	<div style="width:355px;display: block;margin: auto;">
-		        <select class="js-example-basic-single" id="adminFilter" style="width: 100%;height: 95%;">
+		        <select class="js-example-basic-single" id="breastMilkExposurePostTreatmentFilter" style="width: 100%;height: 95%;">
 	  				<option value=""></option>
 	  				<option value="0"></option>
-					% for my $aF (sort keys %admins) {
-	      			<option value="<%=$aF%>"><%=$aF%></option>
+					% for my $breastMilkExposurePostTreatment (sort keys %breastMilkExposurePostTreatments) {
+						% my $breastMilkExposurePostTreatmentName = $breastMilkExposurePostTreatments{$breastMilkExposurePostTreatment} // die;
+	      			<option value="<%=$breastMilkExposurePostTreatment%>"><%=$breastMilkExposurePostTreatmentName%></option>
 	      			%}
 		        </select>
 	    	</div>
@@ -163,157 +165,20 @@
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-    	<div style="width:355px;display: block;margin: auto;text-align: right;">
-	        <span style="cursor:pointer;" class="noselect" onclick="generateExport();return;">Generate export &#10236;</span>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    % } else {
-	    <div class="url-link noselect" onclick="openLocation('/data_admin');return;">&#10229; Retour à l'administration données</div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
-	        Data Export - Step 1
-	    </div>
-	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Select one or several vaccines to include.
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-	    		% for my $productName (sort keys %products) {
-	    			% my $label = $products{$productName} // die;
-				    <div style="width:100%;">
-						<input type="checkbox" id="<%=$label%>" style="cursor:pointer;" class="noselect">
-						<label for="<%=$label%>" style="cursor:pointer;" class="noselect"><b><%=$productName%></b></label>
-				    </div>
-	    			<div class="text_separator"></div>
-    			% }
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Optional Restrictions
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-			    <div style="width:100%;">
-					<input type="checkbox" id="ageErrorsOnly" style="cursor:pointer;" class="noselect">
-					<label for="ageErrorsOnly" style="cursor:pointer;" class="noselect"><b>Ages Errors Only</b></label>
-			    </div>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-			    <div style="width:100%;">
-					<input type="checkbox" id="ageCompletedOnly" style="cursor:pointer;" class="noselect">
-					<label for="ageCompletedOnly" style="cursor:pointer;" class="noselect"><b>Ages Completed Only</b></label>
-			    </div>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-			    <div style="width:100%;">
-					<input type="checkbox" id="pregnanciesOnly" style="cursor:pointer;" class="noselect">
-					<label for="pregnanciesOnly" style="cursor:pointer;" class="noselect"><b>Confirmed Pregnancies Only</b></label>
-			    </div>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-			    <div style="width:100%;">
-					<input type="checkbox" id="breastMilkExposureOnly" style="cursor:pointer;" class="noselect">
-					<label for="breastMilkExposureOnly" style="cursor:pointer;" class="noselect"><b>Breast Milk Exposures Only</b></label>
-			    </div>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Restrict on administrator's age treatment
+	        Restrict on Country
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width: 100%;">
 	    	<div style="width:355px;display: block;margin: auto;">
-		        <select class="js-example-basic-single" id="adminFilter" style="width: 100%;height: 95%;">
+		        <select class="js-example-basic-single" id="countryFilter" style="width: 100%;height: 95%;">
 	  				<option value=""></option>
 	  				<option value="0"></option>
-					% for my $aF (sort keys %admins) {
-	      			<option value="<%=$aF%>"><%=$aF%></option>
-	      			%}
-		        </select>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Restrict on AE Severity
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-		<div style="width: 100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-		        <select class="js-example-basic-single" id="severityFilter" style="width: 100%;height: 95%;">
-	  				<option value=""></option>
-	  				<option value="0"></option>
-					% for my $sev (sort{$a <=> $b} keys %severities) {
-						% my $label = $severities{$sev}->{'label'} // die;
-						% my $value = $severities{$sev}->{'value'} // die;
-	      			<option value="<%=$value%>"><%=$label%></option>
-	      			%}
-		        </select>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Restrict on Symptoms Set
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-		<div style="width: 100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-		        <select class="js-example-basic-single" id="symptomFilter" style="width: 100%;height: 95%;">
-	  				<option value=""></option>
-	  				<option value="0"></option>
-					% for my $symptomsSetName (sort keys %symptomsSets) {
-						% my $symptomsSetId = $symptomsSets{$symptomsSetName}->{'symptomsSetId'} // die;
-	      			<option value="<%=$symptomsSetId%>"><%=$symptomsSetName%></option>
-	      			%}
-		        </select>
-	    	</div>
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-	    <div style="width:100%;text-align: center;font-size: 18px;font-weight: bold;">
-	        Restrict on Keywords Set
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
-		<div style="width: 100%;">
-	    	<div style="width:355px;display: block;margin: auto;">
-		        <select class="js-example-basic-single" id="keywordsFilter" style="width: 100%;height: 95%;">
-	  				<option value=""></option>
-	  				<option value="0"></option>
-					% for my $keywordsSetName (sort keys %keywordsSets) {
-						% my $keywordsSetId = $keywordsSets{$keywordsSetName}->{'keywordsSetId'} // die;
-	      			<option value="<%=$keywordsSetId%>"><%=$keywordsSetName%></option>
+					% for my $countryName (sort keys %countries) {
+						% my $countryId = $countries{$countryName}->{'countryId'} // die;
+	      			<option value="<%=$countryId%>"><%=$countryName%></option>
 	      			%}
 		        </select>
 	    	</div>
@@ -326,7 +191,6 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    % }
     % } else {
         You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
     % }
@@ -338,11 +202,11 @@
 	});
 
 	function initDropdowns() {
-		$('#adminFilter').select2({
+		$('#breastMilkExposurePostTreatmentFilter').select2({
 			width: 'element',
 			height: 'resolve',
 			dropdownAutoWidth : true,
-			placeholder: 'Restrict on Administrator'
+			placeholder: 'Restrict on Breast Milk Exposure Post-Treated'
 		});
 		$('#severityFilter').select2({
 			width: 'element',
@@ -361,6 +225,12 @@
 			height: 'resolve',
 			dropdownAutoWidth : true,
 			placeholder: 'Restrict on Keywords Set'
+		});
+		$('#countryFilter').select2({
+			width: 'element',
+			height: 'resolve',
+			dropdownAutoWidth : true,
+			placeholder: 'Restrict on Country'
 		});
 	}
 	function generateExport() {
@@ -386,12 +256,13 @@
 		console.log('breastMilkExposureOnly : ' + breastMilkExposureOnly);
 		let pregnanciesOnly = document.getElementById('pregnanciesOnly').checked;
 		console.log('pregnanciesOnly : ' + pregnanciesOnly);
-		let adminFilter = $('#adminFilter').val();
-		console.log('adminFilter : ' + adminFilter);
+		let breastMilkExposurePostTreatmentFilter = $('#breastMilkExposurePostTreatmentFilter').val();
+		console.log('breastMilkExposurePostTreatmentFilter : ' + breastMilkExposurePostTreatmentFilter);
 		let severityFilter = $('#severityFilter').val();
 		console.log('severityFilter : ' + severityFilter);
 		let symptomFilter = $('#symptomFilter').val();
 		let keywordsFilter = $('#keywordsFilter').val();
+		let countryFilter = $('#countryFilter').val();
 		// symptomFilter = JSON.stringify(symptomFilter);
 		console.log('symptomFilter : ' + symptomFilter);
 		if (!unknown && !pfizer && !novavax && !moderna && !janssen && !pfizerBivalent && !modernaBivalent) {
@@ -413,8 +284,9 @@
                 pfizerBivalent         : pfizerBivalent,
                 modernaBivalent        : modernaBivalent,
                 symptomFilter          : symptomFilter,
+                countryFilter          : countryFilter,
                 keywordsFilter         : keywordsFilter,
-                adminFilter            : adminFilter,
+                breastMilkExposurePostTreatmentFilter : breastMilkExposurePostTreatmentFilter,
                 severityFilter         : severityFilter,
                 ageErrorsOnly          : ageErrorsOnly,
                 ageCompletedOnly       : ageCompletedOnly,

@@ -56,7 +56,7 @@ sub search_recipient {
             $searchExtension = '(identite,prenom,ville,%27' . $elem . '%27)' if !$searchExtension;
         }
         $url = $url . $searchExtension;
-        $url = $url . '&rows=20&dataset=beneficiaires&timezone=Europe%2FBerlin&lang=fr';
+        $url = $url . '&rows=20&dataset=beneficiaires-prod&timezone=Europe%2FBerlin&lang=fr';
         say $url;
 
         my $ua                        = LWP::UserAgent->new

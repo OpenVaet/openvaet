@@ -500,7 +500,6 @@ sub breast_milk_exposure_post_treatment_completed {
     my $loaded = 0;
     for my $reportId (sort{$a <=> $b} keys %$tb) {
         my $breastMilkExposurePostTreatment = %$tb{$reportId}->{'breastMilkExposurePostTreatment'} // die;
-        $breastMilkExposurePostTreatment     = unpack("N", pack("B32", substr("0" x 32 . $breastMilkExposurePostTreatment, -32)));
         my $breastMilkExposurePostTreatmentTimestamp = %$tb{$reportId}->{'breastMilkExposurePostTreatmentTimestamp'} // die;
         my $breastMilkExposurePostTreatmentDatetime  = time::timestamp_to_datetime($breastMilkExposurePostTreatmentTimestamp);
         my $breastMilkExposurePostTreatmentUserId                          = %$tb{$reportId}->{'breastMilkExposurePostTreatmentUserId'}                          // die;
