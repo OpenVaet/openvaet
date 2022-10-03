@@ -322,7 +322,7 @@ sub post_on_gab {
     $params{'expires_at'}     = undef;
     if ($groupId) {
         $params{'group_id'}   = $groupId;
-        $params{'visibility'} = 'public';
+        $params{'visibility'} = $gabGroupsPostingVisibility;
     } else {
         $params{'group_id'}   = undef;
         $params{'visibility'} = 'public';
