@@ -16,6 +16,7 @@ use LWP::Simple;
 use Data::Printer;
 use Data::Dumper;
 use File::Path qw(make_path);
+use Time::Local;
 use WWW::Telegram::BotAPI;
 use JSON;
 use File::stat;
@@ -59,6 +60,8 @@ my $gabUserPassword            = $config{'gabUserPassword'}            // die;
 my $gettrUserName              = $config{'gettrUserName'}              // die;
 my $gettrUserPassword          = $config{'gettrUserPassword'}          // die;
 my $gabGroupsPostingVisibility = 'public'; # Either "public" or "unlisted". To adjust if the behavior varies on your Gab account.
+my $skipCurrentHistory         = 0;        # Either 0 or 1. If 1, the bot will catch up on every existing message without actually posting.
+                                           # Must be 0 on production mod.
 
 # Initiates UserAgent.
 my $cookie = HTTP::Cookies->new();
@@ -148,6 +151,15 @@ sub current_datetime
 {
     my $currentDatetime = strftime "%Y-%m-%d %H:%M:%S", localtime time;
     return $currentDatetime;
+}
+
+sub datetime_to_timestamp
+{
+    my ($datetime) = @_;
+    my ($year, $mon, $mday, $hour, $min, $sec) = $datetime =~ /(....)-(..)-(..) (..):(..):(..)/;
+    die "wut : [$datetime]" unless $sec;
+    my $timestamp  = timelocal($sec, $min, $hour, $mday, $mon-1, $year);
+    return $timestamp;
 }
 
 sub print_log {
@@ -250,7 +262,7 @@ sub get_gab_token {
 }
 
 sub post_on_gab {
-    my ($channelName, $messageId, $groupId) = @_;
+    my ($cacheFile, $channelName, $messageId, $groupId) = @_;
     if ($groupId) {
         print_log("Re-posting on Gab's Group [$groupId] Telegram message [$channelName -> $messageId] ...");
     } else {
@@ -268,80 +280,91 @@ sub post_on_gab {
 
     # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
     my @mediaIds;
-    my $hasIncompatibleMedia = 0;
-    if (%$json{'documents'}) {
-        for my $file (@{%$json{'documents'}}) {
-            my @elems = split '\.', $file;
-            my $ext   = $elems[scalar @elems - 1] // die;
-            if ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
-                $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov' ||
-                $ext eq 'image/jpeg'      || $ext eq 'image/png'  || $ext eq 'image/gif' ||
-                $ext eq 'image/webp'      || $ext eq 'image/webm' || $ext eq 'image/mp4' ||
-                $ext eq 'image/quicktime' || $ext eq 'image/ogg'  || $ext eq 'image/3gpp'
-            ) {
-                my $mediaId = upload_gab_media($file);
-                push @mediaIds, $mediaId;
-            } else {
-                $hasIncompatibleMedia = 1;
+    my %params  = ();
+    my $postId;
+    if ($skipCurrentHistory == 0 ) {
+        my $hasIncompatibleMedia = 0;
+        if (%$json{'documents'}) {
+            for my $file (@{%$json{'documents'}}) {
+                my @elems = split '\.', $file;
+                my $ext   = $elems[scalar @elems - 1] // die;
+                if ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
+                    $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov'
+                ) {
+                    my $mediaId = upload_gab_media($file);
+                    push @mediaIds, $mediaId;
+                } else {
+                    $hasIncompatibleMedia = 1;
+                }
             }
         }
+        my $text   = %$json{'text'};
+        if ($hasIncompatibleMedia == 1) {
+            # Prettifying the format here.
+            $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+        }
+        my @headers = (
+            ':Authority'                => 'gab.com',
+            ':Method'                   => 'POST',
+            ':Path'                     => '/auth/sign_in',
+            ':Scheme'                   => 'https',
+            'Accept'                    => 'application/json, text/plain, */*',
+            'Accept-Encoding'           => 'gzip, deflate',
+            'Accept-Language'           => 'en-US,en;q=0.9',
+            'Authorization'             => "Bearer $gabToken",
+            'Cache-Control'             => 'max-age=0',
+            'Connection'                => 'keep-alive',
+            'Content-Type'              => 'application/json;charset=utf-8',
+            'Origin'                    => 'https://gab.com',
+            'Referer'                   => "https://gab.com",
+            'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
+            'Sec-Fetch-Dest'            => 'empty',
+            'Sec-Fetch-Mode'            => 'cors',
+            'Sec-Fetch-Site'            => 'same-origin',
+            'Sec-Fetch-User'            => '?1',
+            'Sec-GPC'                   => 1,
+            'TE'                        => 'trailers',
+            'Upgrade-Insecure-Requests' => 1,
+            'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+            'X-CSRF-Token'              => $gabAuthToken
+        );
+        my $url     = "https://gab.com/api/v1/statuses";
+        my $request = new HTTP::Request( 'POST', $url);
+        $params{'expires_at'}     = undef;
+        if ($groupId) {
+            $params{'group_id'}   = $groupId;
+            $params{'visibility'} = $gabGroupsPostingVisibility;
+        } else {
+            $params{'group_id'}   = undef;
+            $params{'visibility'} = 'public';
+        }
+        $params{'in_reply_to_id'} = undef;
+        $params{'markdown'}       = $text;
+        $params{'media_ids'}      = \@mediaIds;
+        $params{'poll'}           = undef;
+        $params{'quote_of_id'}    = undef;
+        $params{'scheduled_at'}   = undef;
+        $params{'sensitive'}      = 'false';
+        $params{'spoiler_text'}   = '';
+        $params{'status'}         = $text;
+        my $params = encode_json\%params;
+        $request->header(@headers);
+        $request->content($params);
+        my $res     = $ua->request($request);
+        my $content = $res->decoded_content;
+        print_log("Successfully Posted Message to Gab ...");
+        my $cJson   = decode_json($content);
+        $postId     = %$cJson{'id'} // die "Failed posting to Gab";
     }
-    my $text   = %$json{'text'};
-    if ($hasIncompatibleMedia == 1) {
-        # Prettifying the format here.
-        $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
-    }
-    my @headers = (
-        ':Authority'                => 'gab.com',
-        ':Method'                   => 'POST',
-        ':Path'                     => '/auth/sign_in',
-        ':Scheme'                   => 'https',
-        'Accept'                    => 'application/json, text/plain, */*',
-        'Accept-Encoding'           => 'gzip, deflate',
-        'Accept-Language'           => 'en-US,en;q=0.9',
-        'Authorization'             => "Bearer $gabToken",
-        'Cache-Control'             => 'max-age=0',
-        'Connection'                => 'keep-alive',
-        'Content-Type'              => 'application/json;charset=utf-8',
-        'Origin'                    => 'https://gab.com',
-        'Referer'                   => "https://gab.com",
-        'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
-        'Sec-Fetch-Dest'            => 'empty',
-        'Sec-Fetch-Mode'            => 'cors',
-        'Sec-Fetch-Site'            => 'same-origin',
-        'Sec-Fetch-User'            => '?1',
-        'Sec-GPC'                   => 1,
-        'TE'                        => 'trailers',
-        'Upgrade-Insecure-Requests' => 1,
-        'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
-        'X-CSRF-Token'              => $gabAuthToken
-    );
-    my $url     = "https://gab.com/api/v1/statuses";
-    my $request = new HTTP::Request( 'POST', $url);
-    my %params  = ();
-    $params{'expires_at'}     = undef;
-    if ($groupId) {
-        $params{'group_id'}   = $groupId;
-        $params{'visibility'} = $gabGroupsPostingVisibility;
-    } else {
-        $params{'group_id'}   = undef;
-        $params{'visibility'} = 'public';
-    }
-    $params{'in_reply_to_id'} = undef;
-    $params{'markdown'}       = $text;
-    $params{'media_ids'}      = \@mediaIds;
-    $params{'poll'}           = undef;
-    $params{'quote_of_id'}    = undef;
-    $params{'scheduled_at'}   = undef;
-    $params{'sensitive'}      = 'false';
-    $params{'spoiler_text'}   = '';
-    $params{'status'}         = $text;
-    my $params = encode_json\%params;
-    $request->header(@headers);
-    $request->content($params);
-    my $res     = $ua->request($request);
-    my $content = $res->decoded_content;
-    print_log("Successfully Posted Message to Gab ...");
+
+    # Printing cache file.
+    my $dt  = current_datetime();
+    my $uts = datetime_to_timestamp($dt);
+    $params{'postId'}  = $postId;
+    $params{'postUts'} = $uts;
+    open my $out, '>:utf8', $cacheFile;
+    print $out encode_json\%params;
+    close $out;
 }
 
 sub upload_gab_media {
@@ -384,107 +407,12 @@ sub upload_gab_media {
     return %$json{'id'};
 }
 
-sub get_telegram_updates {
-    print_log("Getting Telegram Channels Last Updates ...");
-    my $offset      = "-$sleepSecondsBetweenUpdates";
-    my $updates     = $telegramApi->getUpdates ({
-        timeout => 0,
-        $offset ? (offset => $offset) : ()
-    });
-    my %attachments = ();
-    if (%$updates{'result'}) {
-        for my $result (@{%$updates{'result'}}) {
-            if (%$result{'channel_post'} || %$result{'edited_channel_post'}) {
-                my $channelLabel;
-                if (%$result{'channel_post'}) {
-                    $channelLabel = 'channel_post';
-                } elsif (%$result{'edited_channel_post'}) {
-                    $channelLabel = 'edited_channel_post';
-                } else {
-                    die "Option to code";
-                }
-                my $channelId    = %$result{$channelLabel}->{'chat'}->{'id'}       // die;
-                $channelId       =~ s/\-//;
-                my $channelName  = %$result{$channelLabel}->{'chat'}->{'username'} // %$result{$channelLabel}->{'chat'}->{'title'} // die;
-                my $uts          = %$result{$channelLabel}->{'date'} // die;
-                my $messageId    = %$result{$channelLabel}->{'message_id'} // die;
-                my $text         = %$result{$channelLabel}->{'text'} // %$result{$channelLabel}->{'caption'};
-                my $mediaGroupId = %$result{$channelLabel}->{'media_group_id'};
-                if ($mediaGroupId) {
-                    $messageId   = $mediaGroupId;
-                }
-                $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
-                $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
-                if (%$result{$channelLabel}->{'document'}) {
-                    my $fileId      = %$result{$channelLabel}->{'document'}->{'file_id'}   // die;
-                    my $fileName    = %$result{$channelLabel}->{'document'}->{'file_name'} // die;
-                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
-                    make_path($localFolder) unless (-d $localFolder);
-                    my $localFile   = "$localFolder/$fileName";
-                    unless (-f $localFile) {
-                        my $rc = getstore($fileUrl, $localFile);
-                        if (is_error($rc)) {
-                            die "getstore of <$fileUrl> failed with $rc";
-                        }
-                    }
-                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
-                }
-                if (%$result{$channelLabel}->{'photo'}) {
-                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
-                    make_path($localFolder) unless (-d $localFolder);
-                    $attachments{$channelName}->{$messageId}->{'fNum'}++;
-                    my $fNum = $attachments{$channelName}->{$messageId}->{'fNum'} // die;
-                    my $fileId;
-                    for my $photo (@{%$result{$channelLabel}->{'photo'}}) {
-                        $fileId   = %$photo{'file_id'}   // die;
-                    }
-                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my @elems       = split '\.', $fileUrl;
-                    my $ext         = $elems[(scalar @elems - 1)] // die;
-                    my $localFile   = "$localFolder/$fNum.$ext";
-                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
-                    unless (-f $localFile) {
-                        my $rc = getstore($fileUrl, $localFile);
-                        if (is_error($rc)) {
-                            die "getstore of <$fileUrl> failed with $rc";
-                        }
-                    }
-                }
-                if (%$result{$channelLabel}->{'video'}) {
-                    my $fileId      = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
-                    my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // die;
-                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
-                    make_path($localFolder) unless (-d $localFolder);
-                    my $localFile   = "$localFolder/$fileName";
-                    unless (-f $localFile) {
-                        my $rc = getstore($fileUrl, $localFile);
-                        if (is_error($rc)) {
-                            die "getstore of <$fileUrl> failed with $rc";
-                        }
-                    }
-                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
-                }
-            } else {
-                say "Unknown result type";
-                p$result;
-            }
-        }
-    }
-}
-
 sub init_gettr_session {
     ($gettrId, $gettrToken, $gettrRToken, $gettrCDate, $gettrUDate) = login_gettr();
 }
 
 sub login_gettr {
+    print_log("Initiating Gettr session ...");
     my @headers = (
         ':Authority'                => 'api.gettr.com',
         ':Method'                   => 'POST',
@@ -531,7 +459,7 @@ sub login_gettr {
 }
 
 sub post_on_gettr {
-    my ($channelName, $messageId) = @_;
+    my ($cacheFile, $channelName, $messageId) = @_;
     print_log("Re-posting on Gettr Telegram message [$channelName -> $messageId] ...");
     my $file = "telegram_data/$channelName/$messageId/message.json";
     open my $in, '<:utf8', $file;
@@ -544,122 +472,133 @@ sub post_on_gettr {
     print_log("Retrieved Telegram message ...");
 
     # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
-    my %fileDetails;
-    my @filesDetails = ();
-    my $attachmentType;
-    my $hasIncompatibleMedia = 0;
-    if (%$json{'documents'}) {
-        for my $file (@{%$json{'documents'}}) {
-            my @elems = split '\.', $file;
-            my $ext   = $elems[scalar @elems - 1] // die;
-            if ($ext eq 'mp4'  || $ext eq 'gif'  ||
-                $ext eq 'webp' || $ext eq 'webm' || $ext eq 'm4v' || $ext eq 'mov'
-            ) {
-                $attachmentType = 'Video';
-                %fileDetails = upload_gettr_media($file, $ext);
-            } elsif (
-                $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' ||
-                $ext eq 'jfif'
-            ) {
-                $attachmentType = 'Picture';
-                my %fileDetails = upload_gettr_media($file, $ext);
-                push @filesDetails, \%fileDetails;
-            } else {
-                $hasIncompatibleMedia = 1;
-            }
-        }
-    }
-    my $text   = %$json{'text'};
-    if ($hasIncompatibleMedia == 1) {
-        # Prettifying the format here.
-        $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
-    }
-    if (length $text > 750) {
-        $text = substr($text, 0, 600);
-        $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
-    }
-    my %xAppAuth = ();
-    $xAppAuth{'user'}  = $gettrId;
-    $xAppAuth{'token'} = $gettrToken;
-    my $xAppAuth = encode_json\%xAppAuth;
-    my $randString30 = generate_random_number(30);
-    my @headers  = (
-        ':Authority'                => 'gettr.com',
-        ':Method'                   => 'POST',
-        ':Path'                     => '/auth/sign_in',
-        ':Scheme'                   => 'https',
-        'Accept'                    => 'application/json, text/plain, */*',
-        'Accept-Encoding'           => 'gzip, deflate',
-        'Accept-Language'           => 'en-US,en;q=0.9',
-        'Content-Type'              => "multipart/form-data; boundary=---------------------------$randString30",
-        'enctype'                   => 'multipart/form-data',
-        'Host'                      => 'api.gettr.com',
-        'Origin'                    => 'https://gettr.com',
-        'Referer'                   => "https://gettr.com",
-        'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
-        'Sec-Fetch-Dest'            => 'empty',
-        'Sec-Fetch-Mode'            => 'cors',
-        'Sec-Fetch-Site'            => 'same-site',
-        'Sec-Fetch-User'            => '?1',
-        'Sec-GPC'                   => 1,
-        'TE'                        => 'trailers',
-        'ver'                       => '2.7.0',
-        'Upgrade-Insecure-Requests' => 1,
-        'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
-        'x-app-auth'                => $xAppAuth
-    );
-    my $url     = "https://api.gettr.com/u/post";
+    my $postId;
     my %params  = ();
-    if ($attachmentType) {
-        if ($attachmentType eq 'Video') {
-            p%fileDetails;
-            my $screen = $fileDetails{'screen'} // die;
-            my $ori = $fileDetails{'ori'} // die;
-            my $m3u8 = $fileDetails{'m3u8'} // die;
-            my $duration = $fileDetails{'duration'} // die;
-            my $vHght = $fileDetails{'height'} // die;
-            my $vWid  = $fileDetails{'width'} // die;
-            $params{'data'}->{'main'}    = $screen;
-            $params{'data'}->{'nmvid'}   = $ori;
-            $params{'data'}->{'ovid'}    = $ori;
-            $params{'data'}->{'pvid'}    = $m3u8;
-            $params{'data'}->{'vid'}     = $m3u8;
-            $params{'data'}->{'vid_dur'} = $duration;
-            $params{'data'}->{'vid_hgt'} = $vHght;
-            $params{'data'}->{'vid_wid'} = $vWid;
-        } elsif ($attachmentType eq 'Picture') {
-            for my $fileData (@filesDetails) {
-                my $ori = %$fileData{'ori'} // die;
-                push @{$params{'data'}->{'imgs'}}, $ori;
-                push @{$params{'data'}->{'meta'}}, {};
+    if ($skipCurrentHistory == 0 ) {
+        my %fileDetails;
+        my @filesDetails = ();
+        my $attachmentType;
+        my $hasIncompatibleMedia = 0;
+        if (%$json{'documents'}) {
+            for my $file (@{%$json{'documents'}}) {
+                my @elems = split '\.', $file;
+                my $ext   = $elems[scalar @elems - 1] // die;
+                if ($ext eq 'mp4'  || $ext eq 'gif'  ||
+                    $ext eq 'webp' || $ext eq 'webm' || $ext eq 'm4v' || $ext eq 'mov'
+                ) {
+                    $attachmentType = 'Video';
+                    %fileDetails = upload_gettr_media($file, $ext);
+                } elsif (
+                    $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' ||
+                    $ext eq 'jfif'
+                ) {
+                    $attachmentType = 'Picture';
+                    my %fileDetails = upload_gettr_media($file, $ext);
+                    push @filesDetails, \%fileDetails;
+                } else {
+                    $hasIncompatibleMedia = 1;
+                }
             }
-            $params{'data'}->{'vid_hgt'} = 1024;
-            $params{'data'}->{'vid_wid'} = 1024;
-        } else {
-            die "Attachment Type : $attachmentType"
         }
+        my $text   = %$json{'text'};
+        if ($hasIncompatibleMedia == 1) {
+            # Prettifying the format here.
+            $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+        }
+        if (length $text > 750) {
+            $text = substr($text, 0, 600);
+            $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+        }
+        my %xAppAuth = ();
+        $xAppAuth{'user'}  = $gettrId;
+        $xAppAuth{'token'} = $gettrToken;
+        my $xAppAuth = encode_json\%xAppAuth;
+        my $randString30 = generate_random_number(30);
+        my @headers  = (
+            ':Authority'                => 'gettr.com',
+            ':Method'                   => 'POST',
+            ':Path'                     => '/auth/sign_in',
+            ':Scheme'                   => 'https',
+            'Accept'                    => 'application/json, text/plain, */*',
+            'Accept-Encoding'           => 'gzip, deflate',
+            'Accept-Language'           => 'en-US,en;q=0.9',
+            'Content-Type'              => "multipart/form-data; boundary=---------------------------$randString30",
+            'enctype'                   => 'multipart/form-data',
+            'Host'                      => 'api.gettr.com',
+            'Origin'                    => 'https://gettr.com',
+            'Referer'                   => "https://gettr.com",
+            'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
+            'Sec-Fetch-Dest'            => 'empty',
+            'Sec-Fetch-Mode'            => 'cors',
+            'Sec-Fetch-Site'            => 'same-site',
+            'Sec-Fetch-User'            => '?1',
+            'Sec-GPC'                   => 1,
+            'TE'                        => 'trailers',
+            'ver'                       => '2.7.0',
+            'Upgrade-Insecure-Requests' => 1,
+            'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+            'x-app-auth'                => $xAppAuth
+        );
+        my $url     = "https://api.gettr.com/u/post";
+        if ($attachmentType) {
+            if ($attachmentType eq 'Video') {
+                my $screen = $fileDetails{'screen'} // die;
+                my $ori = $fileDetails{'ori'} // die;
+                my $m3u8 = $fileDetails{'m3u8'} // die;
+                my $duration = $fileDetails{'duration'} // die;
+                my $vHght = $fileDetails{'height'} // die;
+                my $vWid  = $fileDetails{'width'} // die;
+                $params{'data'}->{'main'}    = $screen;
+                $params{'data'}->{'nmvid'}   = $ori;
+                $params{'data'}->{'ovid'}    = $ori;
+                $params{'data'}->{'pvid'}    = $m3u8;
+                $params{'data'}->{'vid'}     = $m3u8;
+                $params{'data'}->{'vid_dur'} = $duration;
+                $params{'data'}->{'vid_hgt'} = $vHght;
+                $params{'data'}->{'vid_wid'} = $vWid;
+            } elsif ($attachmentType eq 'Picture') {
+                for my $fileData (@filesDetails) {
+                    my $ori = %$fileData{'ori'} // die;
+                    push @{$params{'data'}->{'imgs'}}, $ori;
+                    push @{$params{'data'}->{'meta'}}, {};
+                }
+                $params{'data'}->{'vid_hgt'} = 1024;
+                $params{'data'}->{'vid_wid'} = 1024;
+            } else {
+                die "Attachment Type : $attachmentType"
+            }
+        }
+        $params{'aux'}                   = undef;
+        $params{'serial'}                = 'post';
+        $params{'data'}->{'_t'}          = 'post';
+        $params{'data'}->{'acl'}->{'_t'} = 'acl';
+        $params{'data'}->{'cdate'}       = $gettrCDate;
+        $params{'data'}->{'txt'}         = $text;
+        $params{'data'}->{'udate'}       = $gettrUDate;
+        $params{'data'}->{'uid'}         = $gettrId;
+        # p%params;
+        my $params = encode_json\%params;
+        # p$params;
+        my $request = HTTP::Request::Common::POST(
+          $url, @headers,
+          Content   => { content => $params }
+        );
+        my $res     = $ua->request($request);
+        my $content = $res->decoded_content;
+        my $cJson   = decode_json($content);
+        die "Failed to post on Gettr" unless %$cJson{'rc'} eq 'OK';
+        $postId     = %$cJson{'result'}->{'data'}->{'_id'} // die;
     }
-    $params{'aux'}                   = undef;
-    $params{'serial'}                = 'post';
-    $params{'data'}->{'_t'}          = 'post';
-    $params{'data'}->{'acl'}->{'_t'} = 'acl';
-    $params{'data'}->{'cdate'}       = $gettrCDate;
-    $params{'data'}->{'txt'}         = $text;
-    $params{'data'}->{'udate'}       = $gettrUDate;
-    $params{'data'}->{'uid'}         = $gettrId;
-    # p%params;
-    my $params = encode_json\%params;
-    # p$params;
-    my $request = HTTP::Request::Common::POST(
-      $url, @headers,
-      Content   => { content => $params }
-    );
-    my $res     = $ua->request($request);
-    my $content = $res->decoded_content;
-    my $cJson   = decode_json($content);
-    # p$cJson;
-    die "Failed to post on Gettr" unless %$cJson{'rc'} eq 'OK';
-    print_log("Successfully Posted Message to Getr ...");
+
+    # Printing cache file.
+    my $dt  = current_datetime();
+    my $uts = datetime_to_timestamp($dt);
+    $params{'postId'}  = $postId;
+    $params{'postUts'} = $uts;
+    open my $out, '>:utf8', $cacheFile;
+    print $out encode_json\%params;
+    close $out;
+    print_log("Successfully Posted Message to Gettr ...");
 }
 
 sub generate_random_number {
@@ -799,26 +738,400 @@ sub file_type_from_ext {
     return $fileType;
 }
 
+sub edit_gettr_post {
+    my ($localFolder, $cacheFile, $channelName, $messageId, %obj) = @_;
+    my $postFile = "$localFolder/gettr_feed.json";
+    die unless  -f $postFile;
+    my $pJson    = json_from_file($postFile);
+    my %params   = ();
+    my $postId;
+    if ($skipCurrentHistory == 0 ) {
+        $postId      = %$pJson{'postId'} // die;
+        my $text     = $obj{'text'};
+        if (length $text > 750) {
+            $text = substr($text, 0, 600);
+            $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+        } else {
+            # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
+            my @mediaIds;
+            my $hasIncompatibleMedia = 0;
+            if ($obj{'documents'}) {
+                for my $file (@{$obj{'documents'}}) {
+                    my @elems = split '\.', $file;
+                    my $ext   = $elems[scalar @elems - 1] // die;
+                    unless ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
+                        $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov'
+                    ) {
+                        $hasIncompatibleMedia = 1;
+                    }
+                }
+            }
+            if ($hasIncompatibleMedia == 1) {
+                # Prettifying the format here.
+                $text = substr($text, 0, 600);
+                $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+            }
+        }
+        my %xAppAuth = ();
+        $xAppAuth{'user'}  = $gettrId;
+        $xAppAuth{'token'} = $gettrToken;
+        my $xAppAuth = encode_json\%xAppAuth;
+        my $randString30 = generate_random_number(30);
+        my @headers  = (
+            'Accept'                    => 'application/json, text/plain, */*',
+            'Accept-Encoding'           => 'gzip, deflate',
+            'Accept-Language'           => 'en-US,en;q=0.9',
+            'Content-Type'              => "application/json",
+            'Host'                      => 'api.gettr.com',
+            'Origin'                    => 'https://gettr.com',
+            'Referer'                   => "https://gettr.com/",
+            'Sec-Fetch-Dest'            => 'empty',
+            'Sec-Fetch-Mode'            => 'cors',
+            'Sec-Fetch-Site'            => 'same-site',
+            'Sec-GPC'                   => 1,
+            'TE'                        => 'trailers',
+            'ver'                       => '2.7.0',
+            'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+            'x-app-auth'                => $xAppAuth
+        );
+        my $url     = "https://api.gettr.com/u/post/v2/change/text";
+        $params{'content'}->{'dsc'}     = "";
+        $params{'content'}->{'ttl'}     = "";
+        @{$params{'content'}->{'htgs'}} = ();
+        $params{'content'}->{'postId'}  = $postId;
+        $params{'content'}->{'previmg'} = undef;
+        $params{'content'}->{'prevsrc'} = undef;
+        $params{'content'}->{'txt'}     = $text;
+        @{$params{'content'}->{'utgs'}} = ();
+        my $params = encode_json\%params;
+        # p$params;
+        my $request = HTTP::Request::Common::POST(
+            $url, @headers
+        );
+        $request->content($params);
+        my $res     = $ua->request($request);
+        my $content = $res->decoded_content;
+        my $cJson   = decode_json($content);
+        die "Failed to edit on Gettr" unless %$cJson{'rc'} eq 'OK';
+    }
+
+    # Printing cache file.
+    my $dt  = current_datetime();
+    my $uts = datetime_to_timestamp($dt);
+    $params{'postId'}  = $postId;
+    $params{'postUts'} = $uts;
+    open my $out, '>:utf8', $cacheFile;
+    print $out encode_json\%params;
+    close $out;
+    print_log("Successfully Edited Message on Gettr ...");
+}
+
+sub edit_gab_post {
+    my ($localFolder, $cacheFile, $channelName, $messageId, $gabGroupId, %obj) = @_;
+    my $postFile  = "$localFolder/gab_feed.json";
+    if ($gabGroupId) {
+        $postFile = "$localFolder/gab_group_$gabGroupId.json";
+    }
+    die unless  -f $postFile;
+    my $pJson     = json_from_file($postFile);
+    my %params   = ();
+    my $postId;
+    if ($skipCurrentHistory == 0 ) {
+
+        $postId       = %$pJson{'postId'} // die;
+        %params       = %$pJson;
+        delete $params{'postId'};
+        delete $params{'postUts'};
+
+        # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
+        my @mediaIds;
+        my $hasIncompatibleMedia = 0;
+        if ($obj{'documents'}) {
+            for my $file (@{$obj{'documents'}}) {
+                my @elems = split '\.', $file;
+                my $ext   = $elems[scalar @elems - 1] // die;
+                unless ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
+                    $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov'
+                ) {
+                    $hasIncompatibleMedia = 1;
+                }
+            }
+        }
+        my $text   = $obj{'text'};
+        if ($hasIncompatibleMedia == 1) {
+            # Prettifying the format here.
+            $text .= "\n\nThis message was automatically copied from this Telegram post : https://t.me/$channelName/$messageId";
+        }
+        my @headers = (
+            'Alt-Used'                  => 'gab.com',
+            'Accept'                    => 'application/json, text/plain, */*',
+            'Accept-Encoding'           => 'gzip, deflate',
+            'Accept-Language'           => 'en-US,en;q=0.9',
+            'Authorization'             => "Bearer $gabToken",
+            'Connection'                => 'keep-alive',
+            'Content-Type'              => 'application/json;charset=utf-8',
+            'Origin'                    => 'https://gab.com',
+            'Referer'                   => "https://gab.com",
+            'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
+            'Sec-Fetch-Dest'            => 'empty',
+            'Sec-Fetch-Mode'            => 'cors',
+            'Sec-Fetch-Site'            => 'same-origin',
+            'Sec-Fetch-User'            => '?1',
+            'Sec-GPC'                   => 1,
+            'TE'                        => 'trailers',
+            'Upgrade-Insecure-Requests' => 1,
+            'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+            'X-CSRF-Token'              => $gabAuthToken
+        );
+        my $url             = "https://gab.com/api/v1/statuses/$postId";
+        my $request         = new HTTP::Request( 'PUT', $url);
+        $params{'markdown'} = $text;
+        $params{'status'}   = $text;
+        # say "url : $url";
+        # p%params;
+        my $params        = encode_json\%params;
+        # say $params;
+        $request->header(@headers);
+        $request->content($params);
+        my $res           = $ua->request($request);
+        my $content       = $res->decoded_content;
+        my $cJson         = decode_json($content);
+        die "Failed editing text on Gab" unless $postId eq %$cJson{'id'};
+        if ($params{'media_ids'}) {
+            for my $mediaId (@{$params{'media_ids'}}) {
+                put_gab_media($mediaId);
+            }
+        }
+    }
+
+    # Printing cache file.
+    my $dt  = current_datetime();
+    my $uts = datetime_to_timestamp($dt);
+    $params{'postId'}  = $postId;
+    $params{'postUts'} = $uts;
+    open my $out, '>:utf8', $cacheFile;
+    print $out encode_json\%params;
+    close $out;
+    print_log("Successfully Edited Message on Gab ...");
+}
+
+sub put_gab_media {
+    my $mediaId = shift;
+    my @headers = (
+        'Alt-Used'                  => 'gab.com',
+        'Accept'                    => 'application/json, text/plain, */*',
+        'Accept-Encoding'           => 'gzip, deflate',
+        'Accept-Language'           => 'en-US,en;q=0.9',
+        'Authorization'             => "Bearer $gabToken",
+        'Connection'                => 'keep-alive',
+        'Content-Type'              => 'application/json;charset=utf-8',
+        'Origin'                    => 'https://gab.com',
+        'Referer'                   => "https://gab.com",
+        'sec-ch-ua'                 => 'Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"',
+        'Sec-Fetch-Dest'            => 'empty',
+        'Sec-Fetch-Mode'            => 'cors',
+        'Sec-Fetch-Site'            => 'same-origin',
+        'Sec-Fetch-User'            => '?1',
+        'Sec-GPC'                   => 1,
+        'TE'                        => 'trailers',
+        'Upgrade-Insecure-Requests' => 1,
+        'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36',
+        'X-CSRF-Token'              => $gabAuthToken
+    );
+    my $url             = "https://gab.com/api/v1/media/$mediaId";
+    my $request         = new HTTP::Request( 'PUT', $url);
+    my %params          = ();
+    $params{'description'} = undef;
+    my $params        = encode_json\%params;
+    $request->header(@headers);
+    $request->content($params);
+    my $res           = $ua->request($request);
+    my $content       = $res->decoded_content;
+    my $cJson         = decode_json($content);
+    die "Failed editing text on Gab" unless $mediaId eq %$cJson{'id'};
+}
+
+sub get_telegram_updates {
+    print_log("Getting Telegram Channels Last Updates ...");
+    my $offset      = -10;
+    my $updates     = $telegramApi->getUpdates ({
+        timeout => 0,
+        $offset ? (offset => $offset) : ()
+    });
+    my %editedMessages = ();
+    my %attachments    = ();
+    if (%$updates{'result'}) {
+        for my $result (@{%$updates{'result'}}) {
+            if (%$result{'edited_channel_post'}) {
+                my $channelId    = %$result{'edited_channel_post'}->{'chat'}->{'id'} // die;
+                $channelId       =~ s/\-//;
+                my $messageId    = %$result{'edited_channel_post'}->{'message_id'}   // die;
+                my $mediaGroupId = %$result{'edited_channel_post'}->{'media_group_id'};
+                if ($mediaGroupId) {
+                    $messageId   = $mediaGroupId;
+                }
+                $editedMessages{$channelId}->{$messageId} = 1;
+            }
+        }
+        for my $result (@{%$updates{'result'}}) {
+            if (%$result{'channel_post'} || %$result{'edited_channel_post'}) {
+                my $channelLabel;
+                if (%$result{'channel_post'}) {
+                    $channelLabel = 'channel_post';
+                } elsif (%$result{'edited_channel_post'}) {
+                    $channelLabel = 'edited_channel_post';
+                } else {
+                    die "Option to code";
+                }
+                my $channelId    = %$result{$channelLabel}->{'chat'}->{'id'}       // die;
+                $channelId       =~ s/\-//;
+                my $channelName  = %$result{$channelLabel}->{'chat'}->{'username'} // %$result{$channelLabel}->{'chat'}->{'title'} // die;
+                my $editUts      = %$result{$channelLabel}->{'edit_date'};
+                my $uts          = %$result{$channelLabel}->{'date'} // die;
+                my $text         = %$result{$channelLabel}->{'text'} // %$result{$channelLabel}->{'caption'};
+                my $messageId    = %$result{$channelLabel}->{'message_id'} // die;
+                my $mediaGroupId = %$result{$channelLabel}->{'media_group_id'};
+                if ($mediaGroupId) {
+                    $messageId   = $mediaGroupId;
+                }
+                next if exists $editedMessages{$channelId}->{$messageId} && %$result{'channel_post'};
+                $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
+                $messages{$channelName}->{$messageId}->{'editUts'}   = $editUts if $editUts;
+                $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
+                if (%$result{$channelLabel}->{'document'}) {
+                    my $fileId      = %$result{$channelLabel}->{'document'}->{'file_id'}   // die;
+                    my $fileName    = %$result{$channelLabel}->{'document'}->{'file_name'} // die;
+                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
+                    make_path($localFolder) unless (-d $localFolder);
+                    my $localFile   = "$localFolder/$fileName";
+                    unless (-f $localFile) {
+                        my $rc = getstore($fileUrl, $localFile);
+                        if (is_error($rc)) {
+                            die "getstore of <$fileUrl> failed with $rc";
+                        }
+                    }
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
+                }
+                if (%$result{$channelLabel}->{'photo'}) {
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
+                    make_path($localFolder) unless (-d $localFolder);
+                    $attachments{$channelName}->{$messageId}->{'fNum'}++;
+                    my $fNum = $attachments{$channelName}->{$messageId}->{'fNum'} // die;
+                    my $fileId;
+                    for my $photo (@{%$result{$channelLabel}->{'photo'}}) {
+                        $fileId     = %$photo{'file_id'}   // die;
+                    }
+                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my @elems       = split '\.', $fileUrl;
+                    my $ext         = $elems[(scalar @elems - 1)] // die;
+                    my $localFile   = "$localFolder/$fNum.$ext";
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
+                    unless (-f $localFile) {
+                        my $rc = getstore($fileUrl, $localFile);
+                        if (is_error($rc)) {
+                            die "getstore of <$fileUrl> failed with $rc";
+                        }
+                    }
+                }
+                if (%$result{$channelLabel}->{'video'}) {
+                    my $fileId      = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
+                    my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // die;
+                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
+                    make_path($localFolder) unless (-d $localFolder);
+                    my $localFile   = "$localFolder/$fileName";
+                    unless (-f $localFile) {
+                        my $rc = getstore($fileUrl, $localFile);
+                        if (is_error($rc)) {
+                            die "getstore of <$fileUrl> failed with $rc";
+                        }
+                    }
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
+                }
+            } else {
+                say "Unknown result type";
+                p$result;
+            }
+        }
+    }
+}
+
 sub print_telegram_updates {
     for my $channelName (sort keys %messages) {
         for my $messageId (sort{$a <=> $b} keys %{$messages{$channelName}}) {
             my $localFolder = "telegram_data/$channelName/$messageId";
             make_path($localFolder) unless (-d $localFolder);
-            unless (-f "$localFolder/message.json") {
+            my $messageFile = "$localFolder/message.json";
+            unless (-f $messageFile) {
                 my %obj = %{$messages{$channelName}->{$messageId}};
-                open my $out, '>:utf8', "$localFolder/message.json";
+                open my $out, '>:utf8', $messageFile;
                 print $out encode_json\%obj;
                 close $out;
-                if ($replicateTgToGabFeed == 1) {
-                    post_on_gab($channelName, $messageId);
+            }
+            if ($replicateTgToGabFeed == 1) {
+                my $cacheFile = "$localFolder/gab_feed.json";
+                unless (-f $cacheFile) {
+                    post_on_gab($cacheFile, $channelName, $messageId);
                 }
-                if ($replicateTgToGettrFeed == 1) {
-                    post_on_gettr($channelName, $messageId);
+            }
+            if ($replicateTgToGettrFeed == 1) {
+                my $cacheFile = "$localFolder/gettr_feed.json";
+                unless (-f $cacheFile) {
+                    post_on_gettr($cacheFile, $channelName, $messageId);
                 }
-                if ($replicateTgToGabGroups == 1) {
-                    for my $gabGroupId (@gabGroups) {
-                        post_on_gab($channelName, $messageId, $gabGroupId);
+            }
+            if ($replicateTgToGabGroups == 1) {
+                for my $gabGroupId (@gabGroups) {
+                    my $cacheFile = "$localFolder/gab_group_$gabGroupId.json";
+                    unless (-f $cacheFile) {
+                        post_on_gab($cacheFile, $channelName, $messageId, $gabGroupId);
                     }
+                }
+            }
+            if (exists $messages{$channelName}->{$messageId}->{'editUts'}) {
+                
+                # If the message has been edited since we last printed it, editing the networks where it has been broadcasted.
+                my $editUts    = $messages{$channelName}->{$messageId}->{'editUts'} // die;
+                my $json       = json_from_file($messageFile);
+                my $currentUts = %$json{'editUts'} // %$json{'uts'} // die;
+                my %obj        = %{$messages{$channelName}->{$messageId}};
+                if ($editUts > $currentUts) {
+
+                    # Gettr post can be edited up to one hour after posting.
+                    if ($editUts - $currentUts < 3600) {
+                        if ($replicateTgToGettrFeed == 1) {
+                            my $cacheFile = "$localFolder/gettr_edit_$editUts.json";
+                            unless (-f $cacheFile) {
+                                edit_gettr_post($localFolder, $cacheFile, $channelName, $messageId, %obj);
+                            }
+                        }
+                    }
+
+                    # Gab posts can be edited at any time.
+                    if ($replicateTgToGabFeed == 1) {
+                        my $cacheFile = "$localFolder/gab_edit_$editUts.json";
+                        unless (-f $cacheFile) {
+                            edit_gab_post($localFolder, $cacheFile, $channelName, $messageId, undef, %obj);
+                        }
+                    }
+                    if ($replicateTgToGabGroups == 1) {
+                        for my $gabGroupId (@gabGroups) {
+                            my $cacheFile = "$localFolder/gab_group_edit_$editUts.json";
+                            unless (-f $cacheFile) {
+                                edit_gab_post($localFolder, $cacheFile, $channelName, $messageId, $gabGroupId, %obj);
+                            }
+                        }
+                    }
+                    # open my $out, '>:utf8', $messageFile;
+                    # print $out encode_json\%obj;
+                    # close $out;
                 }
             }
         }
