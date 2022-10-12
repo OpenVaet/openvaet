@@ -340,6 +340,8 @@ sub startup {
     $r->post('/conflicts_of_interest/search_recipient')->to('conflicts_of_interest#search_recipient');
     $r->post('/conflicts_of_interest/confirm_recipients')->to('conflicts_of_interest#confirm_recipients');
     $r->get('/studies/french_insee_deathes_data')->to('french_insee_deathes_data#french_insee_deathes_data');
+    $r->get('/studies/pfizer_trial_cases_mapping')->to('pfizer_trial_cases_mapping#pfizer_trial_cases_mapping');
+    $r->post('/pfizer_trial_cases_mapping/load_pfizer_trial_cases_mapping')->to('pfizer_trial_cases_mapping#load_pfizer_trial_cases_mapping');
     $r->get('/pfizearch')->to('pfizearch#index');
     $r->get('/pfizearch/search')->to('pfizearch#search');
     $r->get('/pfizearch/documentation')->to('pfizearch#documentation');

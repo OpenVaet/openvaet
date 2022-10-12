@@ -735,6 +735,13 @@ sub get_user_tweets {
                     sleep 1;
                 }
                 say "";
+            } elsif ($message eq 'read timeout') {
+                say "\nSleeping 5 seconds before to try again.";
+                for my $sleep (1 .. 5) {
+                    STDOUT->printflush("\rSleeping [$sleep / 5]");
+                    sleep 1;
+                }
+                say "";
             } else {
                 p$res;
                 say "message : [$message]";
@@ -750,7 +757,8 @@ sub get_user_tweets {
         $contentJson = decode_json($content);
     };
     if ($@) {
-        die "Failed to get a proper response from Twitter. Please verify your API configuration file : [$configurationFile]";
+        say "Failed to get a proper response from Twitter. Please verify your API configuration file : [$configurationFile]";
+        return;
     }
 
     # Fetching account's followers.

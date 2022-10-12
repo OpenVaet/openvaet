@@ -10,6 +10,24 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.31</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Published a visualization tool for the Pfizer trials cases.</li>
+        <li>Multiple new data management tools in the data administration area (user.isAdmin = 1 only).</li>
+        <li>Telegram to Gab & Gettr bot v1.3.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Publication d'une visualisation géographique des cas retenus lors de l'essai Pfizer.</li>
+        <li>Nombreux outils de gestion des données dans la zone de Data Administration (uniquement si user.isAdmin = 1).</li>
+        <li>Telegram vers Gab & Gettr bot v1.3.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.30</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

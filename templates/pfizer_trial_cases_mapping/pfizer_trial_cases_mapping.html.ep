@@ -1,0 +1,114 @@
+% layout 'default';
+% title 'OPENVAET - OMS Data';
+% my %sites = %$sites;
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.css">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+</head>
+<div class="content-container" style="padding-left:15px;padding-right: 15px;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <h2>Source Data</h2>
+    The list of the 170 patients comes from the article <a target="_blank" href="http://www.vigiaccess.org">Report 42: Pfizer’s EUA Granted Based on Fewer Than 0.4% of Clinical Trial Participants. FDA Ignored Disqualifying Protocol Deviations to Grant EUA</a>, by the Daily Clout's team 3, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. We encourage you to read this article if you haven't yet.
+    <div class="text_separator"></div>
+    This data can be directly accessed on .xlsx format <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">on this direct URL</a>.
+    <div class="text_separator"></div>
+    We merged the site codes in this .xlsx file with the sites data available thanks to PHMPT, taken from <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en" target="_blank">pd-production-111721 | 5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a>. 
+    <div class="text_separator"></div>
+    The data used to produce this view can be downloaded here <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.json" download>on JSON format</a>, and here on <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.csv" download>.CSV format</a>.
+    <div class="text_separator"></div>
+    Site 4444 and its 5 cases aren't identified accurately, and therefore don't appear on this map.
+    <h2>Sites Geolocations & Total Cases</h2>
+    % } else {
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
+    <h2>Données Sources</h2>
+    La liste des 170 patients est extraite de l'article <a target="_blank" href="http://www.vigiaccess.org">Rapport 42: l'autorisation d'urgence de Pfizer accordée sur la base de moins de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocol disqualifiantes pour accorder l'EUA</a>, par l'équipe 3 du Daily Clout, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. Nous vous encourageons à lire cet article si vous ne l'avez pas encore fait.
+    <div class="text_separator"></div>
+    Cette donnée peut être accédée directement au format .xlsx <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">sur ce lien direct</a>.
+    <div class="text_separator"></div>
+    Nous avons unifié les codes des sites avec les données disponibles grâce à PHMPT, prise sur <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en" target="_blank">pd-production-111721 | 5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a>. 
+    <div class="text_separator"></div>
+    La donnée utilisée pour produire ces visualisations peut être téléchargée <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.json" >ici au format JSON</a>, et <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.csv" >ici au format .CSV</a>.
+    <div class="text_separator"></div>
+    Le site 4444 et ses 5 cas ne sont pas identifiés avec précision et ne figurent donc pas sur cette carte.
+    <h2>Geolocations des Sites & Cas Totaux</h2>
+    % }
+    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
+        <select class="js-example-basic-single" id="siteTarget" style="width: 95%;height: 95%;">
+        <option value="0" selected>All Sites</option>
+        % for my $totalCases (sort{$b <=> $a} keys %sites) {
+            % for my $siteCode (sort{$a <=> $b} keys %{$sites{$totalCases}}) {
+                % my $siteName = $sites{$totalCases}->{$siteCode}->{'siteName'} // die;
+                % my $postalCode = $sites{$totalCases}->{$siteCode}->{'postalCode'} // die;
+                % if ($currentLanguage eq 'en') {
+                <option value="<%=$siteCode%>"><%=$siteName%>, <%=$postalCode%> | <%=$totalCases%> cases</option>
+                % } else {
+                <option value="<%=$siteCode%>"><%=$siteName%>, <%=$postalCode%> | <%=$totalCases%> cas</option>
+                % }
+            % }
+        % }
+        </select>
+    </div>
+    <div class="text_separator"></div>
+    <div style="width:100%;word-break: break-word;" id="mapContainer">
+    </div>
+</div>
+<script type="text/javascript">
+
+    var lat = 14.974135;
+    var lng = -79.404801;
+
+    // center of the map
+    var center    = [lat, lng];
+    var zoomLevel = 2;
+
+    $( document ).ready(function() {
+
+        // Loads top bar.
+        setDropDowns();
+        loadMapping();
+    });
+
+    function setDropDowns() {
+
+        $('#siteTarget').select2({
+            width: 'element',
+            height: 'resolve',
+            dropdownAutoWidth : true
+        });
+        $('#siteTarget').on("select2:select select2:unselect", function(e) {
+            loadMapping();
+        });
+    }
+
+    function loadMapping() {
+        $("#mapContainer").html("");
+        let siteTarget = $('#siteTarget').val();
+        let request = $.ajax({
+            url: "/pfizer_trial_cases_mapping/load_pfizer_trial_cases_mapping",
+            type: "POST",
+            data: {
+                siteTarget      : siteTarget,
+                mainWidth       : mainWidth,
+                mainHeight      : mainHeight,
+                currentLanguage : currentLanguage
+           }
+        });
+
+        request.done(function(data) {
+            $("#mapContainer").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>

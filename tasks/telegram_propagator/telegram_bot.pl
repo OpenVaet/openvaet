@@ -87,6 +87,8 @@ if ($replicateTgToGabFeed || $replicateTgToGabGroups) {
 my $telegramApi = WWW::Telegram::BotAPI->new (
     token => $telegramToken
 );
+my $telegramBotName = $telegramApi->getMe->{result}{username};
+print_log("Initiated Telegram Bot [$telegramBotName] ...");
 
 # Initiates Telegram watching loop.
 my %messages = ();
@@ -1129,9 +1131,9 @@ sub print_telegram_updates {
                             }
                         }
                     }
-                    # open my $out, '>:utf8', $messageFile;
-                    # print $out encode_json\%obj;
-                    # close $out;
+                    open my $out, '>:utf8', $messageFile;
+                    print $out encode_json\%obj;
+                    close $out;
                 }
             }
         }
