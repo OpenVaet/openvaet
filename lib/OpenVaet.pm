@@ -416,6 +416,14 @@ sub startup {
     $r->post('/wizard_pregnancies_seriousness_confirmation/set_report_attribute')->to('wizard_pregnancies_seriousness_confirmation#set_report_attribute');
     $r->get('/data_admin/wizards/pregnancies_seriousness_confirmation_completed')->to('wizard_pregnancies_seriousness_confirmation#pregnancies_seriousness_confirmation_completed');
     $r->post('/wizard_pregnancies_seriousness_confirmation/reset_report_attributes')->to('wizard_pregnancies_seriousness_confirmation#reset_report_attributes');
+    $r->get('/social_networks')->to('social_networks#social_networks');
+    $r->get('/social_networks/keywords_sets')->to('social_networks#keywords_sets');
+    $r->get('/social_networks/edit_keywords_set')->to('social_networks#edit_keywords_set');
+    $r->get('/social_networks/new_keywords_set')->to('social_networks#new_keywords_set');
+    $r->post('/social_networks/save_keywords_set')->to('social_networks#save_keywords_set');
+    $r->post('/social_networks/save_keywords')->to('social_networks#save_keywords');
+    $r->get('/social_networks/review_network_posts')->to('social_networks#review_network_posts');
+    $r->post('/social_networks/finalize_network_review')->to('social_networks#finalize_network_review');
 
 
 

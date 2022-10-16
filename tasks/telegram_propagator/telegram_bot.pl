@@ -997,6 +997,25 @@ sub get_telegram_updates {
                     $messageId   = $mediaGroupId;
                 }
                 next if exists $editedMessages{$channelId}->{$messageId} && %$result{'channel_post'};
+
+                # Reformatting text to insert URLS if required.
+                if (%$result{$channelLabel}->{'entities'}) {
+                    for my $entityData (@{%$result{$channelLabel}->{'entities'}}) {
+                        my $type = %$entityData{'type'} // die;
+                        if ($type eq 'text_link') {
+                            my $url        = %$entityData{'url'}    // die;
+                            my $length     = %$entityData{'length'} // die;
+                            my $offset     = %$entityData{'offset'} // die;
+                            my $textLength = length $text;
+                            my $postOffset = $length + $offset;
+
+                            # Places the url after the determined offset.
+                            my $textBefore = substr($text, 0, $postOffset);
+                            my $textBeforeReplaced = "$textBefore [$url]";
+                            $text =~ s/$textBefore/$textBeforeReplaced/;
+                        }
+                    }
+                }
                 $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
                 $messages{$channelName}->{$messageId}->{'editUts'}   = $editUts if $editUts;
                 $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;

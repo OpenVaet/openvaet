@@ -1,5 +1,9 @@
 % layout 'default';
-% title 'OPENVAET - OMS Data';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer Trial Cases Locations';
+% } else {
+% title 'OPENVAET - Localisation des cas lors des essais Pfizer';
+% }
 % my %sites = %$sites;
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
@@ -16,7 +20,7 @@
     % if ($currentLanguage eq 'en') {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
     <h2>Source Data</h2>
-    The list of the 170 patients comes from the article <a target="_blank" href="http://www.vigiaccess.org">Report 42: Pfizer’s EUA Granted Based on Fewer Than 0.4% of Clinical Trial Participants. FDA Ignored Disqualifying Protocol Deviations to Grant EUA</a>, by the Daily Clout's team 3, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. We encourage you to read this article if you haven't yet.
+    The list of the 170 patients comes from the article <a target="_blank" href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/">Report 42: Pfizer’s EUA Granted Based on Fewer Than 0.4% of Clinical Trial Participants. FDA Ignored Disqualifying Protocol Deviations to Grant EUA</a>, by the Daily Clout's team 3, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. We encourage you to read this article if you haven't yet.
     <div class="text_separator"></div>
     This data can be directly accessed on .xlsx format <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">on this direct URL</a>.
     <div class="text_separator"></div>
@@ -29,7 +33,7 @@
     % } else {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
     <h2>Données Sources</h2>
-    La liste des 170 patients est extraite de l'article <a target="_blank" href="http://www.vigiaccess.org">Rapport 42: l'autorisation d'urgence de Pfizer accordée sur la base de moins de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocol disqualifiantes pour accorder l'EUA</a>, par l'équipe 3 du Daily Clout, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. Nous vous encourageons à lire cet article si vous ne l'avez pas encore fait.
+    La liste des 170 patients est extraite de l'article <a target="_blank" href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/">Rapport 42: l'autorisation d'urgence de Pfizer accordée sur la base de moins de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocol disqualifiantes pour accorder l'EUA</a>, par l'équipe 3 du Daily Clout, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. Nous vous encourageons à lire cet article si vous ne l'avez pas encore fait.
     <div class="text_separator"></div>
     Cette donnée peut être accédée directement au format .xlsx <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">sur ce lien direct</a>.
     <div class="text_separator"></div>

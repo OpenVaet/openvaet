@@ -2410,6 +2410,24 @@ BEFORE INSERT ON `pregnancy_seriousness_wizard_report`
 FOR EACH ROW  
 SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
 
+# Created rs_keywords_set table.
+CREATE TABLE `rs_keywords_set` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  `creationTimestamp` int NOT NULL,
+  `keywords` longtext,
+  `userId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `keyword_unique_name` (`name`),
+  KEY `rs_keywords_set_to_user_idx` (`userId`),
+  CONSTRAINT `rs_keywords_set_to_user` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB;
+USE `openvaet`$$
+DELIMITER ;
+CREATE TRIGGER `before_rs_keywords_set_insert` 
+BEFORE INSERT ON `rs_keywords_set` 
+FOR EACH ROW  
+SET NEW.`creationTimestamp` = UNIX_TIMESTAMP();
 
 
 
