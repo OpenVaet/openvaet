@@ -1000,19 +1000,25 @@ sub get_telegram_updates {
 
                 # Reformatting text to insert URLS if required.
                 if (%$result{$channelLabel}->{'entities'}) {
+                    my $additionalOffset = 0;
                     for my $entityData (@{%$result{$channelLabel}->{'entities'}}) {
                         my $type = %$entityData{'type'} // die;
                         if ($type eq 'text_link') {
                             my $url        = %$entityData{'url'}    // die;
                             my $length     = %$entityData{'length'} // die;
                             my $offset     = %$entityData{'offset'} // die;
-                            my $textLength = length $text;
-                            my $postOffset = $length + $offset;
-
+                            my $postOffset = $length + $offset + $additionalOffset;
+                            my $urlLength  = length $url;
                             # Places the url after the determined offset.
                             my $textBefore = substr($text, 0, $postOffset);
+                            if ($textBefore =~ /\n$/) {
+                                $postOffset = $length + $offset + $additionalOffset - 1;
+                                $textBefore = substr($text, 0, $postOffset);
+                            }
+                            $additionalOffset += $urlLength;
+                            $additionalOffset += 3;
                             my $textBeforeReplaced = "$textBefore [$url]";
-                            $text =~ s/$textBefore/$textBeforeReplaced/;
+                            $text =~ s/\Q$textBefore\E/$textBeforeReplaced/;
                         }
                     }
                 }

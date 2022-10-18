@@ -55,19 +55,31 @@
 		font-size: 1.2rem;
 	}
 
-	.ws-article-comic-green {
+	.ws-article-arial-green {
 		margin-top: 15px;
 		padding-top: 5px;
 		padding-left: 15px;
 		padding-right: 15px;
 		padding-bottom: 20px;
 		width: 95%;
-		color: #00B050;
+		font-weight: bold;
+		color: #007e39;
 		font-size: 1.3rem;
-        font-family: "Comic Sans MS", "OpenSans-Regular";
 	}
 
-	.ws-article-comic-blue {
+	.ws-article-arial-green-comment {
+		margin-top: 5px;
+		padding-top: 5px;
+		padding-left: 0px;
+		padding-right: 15px;
+		padding-bottom: 5px;
+		width: 95%;
+		font-weight: bold;
+		color: #007e39;
+		font-size: 1.1rem;
+	}
+
+	.ws-article-arial-blue {
 		padding-top: 5px;
 		padding-left: 15px;
 		padding-right: 15px;
@@ -75,7 +87,6 @@
 		width: 95%;
 		color: #0070C0;
 		font-size: 1.3rem;
-        font-family: "Comic Sans MS", "OpenSans-Regular";
 	}
 
 	.ws-article-arial-red {
@@ -161,24 +172,32 @@
     	<div class="text_separator"></div>
 		<a href="https://doi.org/10.1136/bmj.m4037" target="_blank">https://doi.org/10.1136/bmj.m4037</a>
     </div>
-    <div class="ws-article-comic-green">
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+	    	Our comment
+	    </div>
 		Surely the trial was designed to find out if the injection prevented you catching the disease (transmission) and if it prevented you from getting seriously ill with it....???
     </div>
-    <div class="ws-article-comic-blue">
+    <div class="ws-article-arial-blue">
 		“Peter Hotez, dean of the National School of Tropical Medicine at Baylor College of Medicine in Houston, said, “Ideally, you want an antiviral vaccine to do two things . . . first, reduce the likelihood you will get severely ill and go to the hospital, and two, prevent infection and therefore interrupt disease transmission.”
     </div>
     <div class="ws-article-arial-red">
 		The trial was not designed to test if the vaccine prevented death or serious disease. It had an early end point.
-    </div>
-    <div class="ws-article-arial-black">
-		“Yet the current phase III trials are <b>not actually set up to prove either...</b> None of the trials currently under way are designed to detect a reduction in any serious outcome such as hospital admissions, use of intensive care, or deaths. Nor are the vaccines being studied to determine whether they can interrupt transmission of the virus...
+		“Yet the current phase III trials are <b>not actually set up to prove either...</b>
 		<div class="text_separator"></div>
+		None of the trials currently under way are designed to detect a reduction in any serious outcome such as hospital admissions, use of intensive care, or deaths. Nor are the vaccines being studied to determine whether they can interrupt transmission of the virus...
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
 		In all the ongoing phase III trials for which details have been released, laboratory confirmed infections even with only mild symptoms qualify as meeting the primary endpoint definition... In Pfizer and Moderna’s trials, for example, people with only a cough and positive laboratory test would bring those trials one event closer to their completion. (If AstraZeneca’s ongoing UK trial is designed similarly to its “paused” US trial for which the company has released details, a cough and fever with positive PCR test would suffice.)”
     </div>
-    <div class="ws-article-arial-red">
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+	    	Our comment
+	    </div>
 		The chosen range of participants is also questionable... and method for disease diagnostics
     </div>
-    <div class="ws-article-arial-black">
+    <div class="ws-article-arial-red">
 		<div class="text_separator"></div>
 		The trial omitted  those immunocompromised, pregnant & breastfeeding.
 		<div class="text_separator"></div>
@@ -250,7 +269,7 @@
     	<b>Video</b> Interview Extracts</b>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<i>IAMJOHNCULLEN - (Duration 35.18 mins)</i>
+		<i>IAMJOHNCULLEN - (Duration 35.20mins)</i>
 		<div class="text_separator"></div>
 		<a href="https://rumble.com/v1fxiob-heroes-of-the-pandemic-brook-jackson-joins-hypothetically-speaking.html" target="_blank">Heroes of the Pandemic: Brook Jackson joins Hypothetically Speaking (rumble.com)</a>
     </div>
@@ -296,24 +315,32 @@
     	<div class="text_separator"></div>
 		<a href="https://doi.org/10.1136/bmj.m4037" target="_blank">https://doi.org/10.1136/bmj.m4037</a>
     </div>
-    <div class="ws-article-comic-green">
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+	    	Notre commentaire
+	    </div>
     	A coup sûr, les essais cliniques ont été conçus pour déterminer si l'injection vous empêchait d'attraper la maladie (transmission) et si elles prévenaient de tomber gravement malade si vous l'attrapiez tout de même ...???
     </div>
-    <div class="ws-article-comic-blue">
+    <div class="ws-article-arial-blue">
 		“Peter Hotez, doyen de l'Ecole nationale de médecine tropicale du Baylor College of Medicine à Houston, a déclaré: « Idéalement, vous voulez qu'un vaccin antiviral fasse deux choses. . . premièrement, réduire la probabilité que vous tombiez gravement malade et que vous vous rendiez à l'hôpital, et deuxièmement, prévenir l'infection et donc interrompre la transmission de la maladie”.
     </div>
     <div class="ws-article-arial-red">
     	L'essai clinique n'a pas été conçu pour vérifier si le vaccin prévenait la mort ou les formes sérieuses de la maladie. Il se terminait trop tôt.
-    </div>
-    <div class="ws-article-arial-black">
-		“Pourtant, les essais de phase III actuels ne sont <b>pas réellement mis en place pour prouver ça non plus...</b> Aucun des essais actuellement en cours n'est conçu pour détecter une réduction des résultats graves tels que les hospitalisations, le recours aux soins intensifs ou les décès. Les vaccins ne sont pas non plus étudiés pour déterminer s'ils peuvent interrompre la transmission du virus...
+		“Pourtant, les essais de phase III actuels ne sont <b>pas réellement mis en place pour prouver ça non plus...</b>
 		<div class="text_separator"></div>
+		Aucun des essais actuellement en cours n'est conçu pour détecter une réduction des résultats graves tels que les hospitalisations, le recours aux soins intensifs ou les décès. Les vaccins ne sont pas non plus étudiés pour déterminer s'ils peuvent interrompre la transmission du virus...
+    </div>
+	<div class="text_separator"></div>
+    <div class="ws-article-arial-black">
 		Dans tous les essais de phase III en cours pour lesquels des détails ont été publiés, les infections confirmées en laboratoire, même avec seulement des symptômes légers, sont considérées comme répondant à la définition du critère d'évaluation principal... Dans les essais de Pfizer et Moderna, par exemple, les personnes souffrant uniquement de toux et d'un test de laboratoire positif rapprocherait ces essais de leur achèvement d'un événement. (Si l'essai britannique en cours d'AstraZeneca est conçu de la même manière que son essai américain "en pause" pour lequel la société a publié des détails, une toux et de la fièvre avec un test PCR positif suffiraient.)"
     </div>
-    <div class="ws-article-arial-red">
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+	    	Notre commentaire
+	    </div>
 		La gamme de participants choisie est également discutable... et la méthode de diagnostic des maladies l'est de même.
     </div>
-    <div class="ws-article-arial-black">
+    <div class="ws-article-arial-red">
 		<div class="text_separator"></div>
 		L'essai a omis les personnes immunodéprimées, enceintes et allaitantes.
 		<div class="text_separator"></div>
@@ -385,7 +412,7 @@
     	<b>Video</b> Extraits et interviews (en anglais)</b>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<i>IAMJOHNCULLEN - (Duration 35.18 mins)</i>
+		<i>IAMJOHNCULLEN - (Duration 35.20mins)</i>
 		<div class="text_separator"></div>
 		<a href="https://rumble.com/v1fxiob-heroes-of-the-pandemic-brook-jackson-joins-hypothetically-speaking.html" target="_blank">Heroes of the Pandemic: Brook Jackson joins Hypothetically Speaking (rumble.com)</a>
     </div>
