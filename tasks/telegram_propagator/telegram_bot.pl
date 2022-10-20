@@ -294,6 +294,10 @@ sub post_on_gab {
                     $ext eq 'webp'            || $ext eq 'jfif'       || $ext eq 'webm'      || $ext eq 'm4v' || $ext eq 'mov'
                 ) {
                     my $mediaId = upload_gab_media($file);
+                    unless ($mediaId) {
+                        $hasIncompatibleMedia = 1;
+                        next;
+                    }
                     push @mediaIds, $mediaId;
                 } else {
                     $hasIncompatibleMedia = 1;
@@ -399,7 +403,13 @@ sub upload_gab_media {
     );
     my $res     = $ua->request($request);
     my $content = $res->decoded_content;
-    my $json    = decode_json($content);
+    my $json;
+    eval {
+        $json    = decode_json($content);
+    };
+    if ($@) {
+        return 0;
+    }
     my $type    = %$json{'type'};
     unless ($type) {
         print_log("Failed uploading file [$file] to Gab ...");
