@@ -16,22 +16,22 @@ use lib "$FindBin::Bin/../../../lib";
 # Project's libraries.
 use time;
 
-my $deathesFolder = "tasks/studies/insee/deaths_data";
+my $deathesFolder = "raw_data/insee/deaths_data";
 
 my %statistics    = ();
-
+my %rawStats      = ();
 my %dataLabels    = ();
 
 parse_files();
 
 # p%statistics;
 open my $out, '>:utf8', 'stats/insee_deathes_data.json' or die $!;
-print $out encode_json\%statistics;
+print $out encode_json\%rawStats;
 close $out;
 
 sub parse_files {
 	for my $file (glob "$deathesFolder/*") {
-		# next if $file ne 'tasks/studies/insee/deaths_data/Deces_2022_M06.csv';
+		# next if $file ne "$deathesFolder/Deces_2022_M07.csv";
 		my $year;
 		if ($file =~ /.*_.*_.*_.*/) {
 			(undef, undef, $year, undef) = split '_', $file;
@@ -121,18 +121,28 @@ sub parse_files {
 				) = values_from_line($line);
 				next unless $sexName;
 				my ($ageGroup5Name, $ageGroup10Name, $childFocusedAgeGroup) = age_group_from_age($ageInDays, $ageInYears);
-				next unless defined $childFocusedAgeGroup; ###### Debug, required for Helene's analytics.
+				# next unless defined $childFocusedAgeGroup; ###### Debug, required for Helene's analytics.
+				my ($quarter) = quarter_from_date($deathDate);
 				# say "year           : $year";
 				# say "name           : $name";
 				# say "sexName        : $sexName";
+				# say "firstName      : $firstName";
+				# say "lastName       : $lastName";
+				# say "birthDate      : $birthDate";
+				# say "deathDate      : $deathDate";
+				# say "quarter        : $quarter";
 				# say "ageInDays      : $ageInDays";
 				# say "ageInYears     : $ageInYears";
 				# say "ageGroup5Name  : $ageGroup5Name";
 				# say "ageGroup10Name : $ageGroup10Name";
 				# die;
-				# $statistics{$deathYear}->{$sexName}->{$ageGroupName}++;
-				$statistics{$childFocusedAgeGroup}->{$deathYear}->{'anySex'}++;
-				$statistics{$childFocusedAgeGroup}->{$deathYear}->{$sexName}++;
+				# die if $firstName eq 'VIRGINIE' && $lastName eq 'COLOMB';
+				$rawStats{$quarter}->{$deathYear}->{'total'}++;
+				# $statistics{$deathYear}->{$quarter}->{'byAges'}->{$ageGroup10Name}++;
+				# $statistics{$deathYear}->{$quarter}->{'bySexes'}->{'All Sexes'}->{$ageGroup10Name}++;
+				# $statistics{$deathYear}->{$quarter}->{'bySexes'}->{$sexName}->{$ageGroup10Name}++;
+				# $statistics{$childFocusedAgeGroup}->{$deathYear}->{'anySex'}++;
+				# $statistics{$childFocusedAgeGroup}->{$deathYear}->{$sexName}++;
 				# $statistics{$deathYear}->{'byAges5'}->{$ageGroup5Name}->{'anySex'}++;
 				# $statistics{$deathYear}->{'byAges5'}->{$ageGroup5Name}->{$sexName}++;
 				# $statistics{$deathYear}->{'byAges10'}->{$ageGroup10Name}->{'anySex'}++;
@@ -780,5 +790,25 @@ sub strip_missformattings {
 	$line =~ s/KOJCINOVAC, BOSNIE-HERZEGOVINE/KOJCINOVAC - BOSNIE-HERZEGOVINE/g;
 	$line =~ s/BARACAL; CELORICO/BARACAL - CELORICO/g;
 	$line =~ s/UENDER RERHIOUA ; TAOUNA/UENDER RERHIOUA - TAOUNA/g;
+	$line =~ s/HENCHIR KHANGA; TABARKA/HENCHIR KHANGA - TABARKA/g;
 	return $line;
+}
+
+sub quarter_from_date {
+	my ($date) = @_;
+	my ($y, $m, $d) = split '-', $date;
+	die unless $y && $m && $d;
+	my $quarter;
+	if ($m >= 1 && $m <= 3) {
+		$quarter = 1;
+	} elsif ($m >= 4 && $m <= 6) {
+		$quarter = 2;
+	} elsif ($m >= 7 && $m <= 9) {
+		$quarter = 3;
+	} elsif ($m >= 10 && $m <= 12) {
+		$quarter = 4;
+	} else {
+		die "date : [$date]";
+	}
+	return $quarter;
 }

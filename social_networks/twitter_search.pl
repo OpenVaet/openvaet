@@ -34,8 +34,13 @@ use global;
 
 # Fetching configuration required (twitter bearer token).
 my $twitterTweetsFolder  = 'social_networks_data/twitter';
+
 make_path($twitterTweetsFolder)
     unless (-d $twitterTweetsFolder);
+my $configurationFile    = 'tasks/social_networks/config.cfg';
+my %config            = ();
+get_config();
+my $twitterBearerToken   = $config{'twitterBearerToken'}        || die;
 
 # UA used to scrap target.
 my $cookie               = HTTP::Cookies->new();
@@ -45,24 +50,12 @@ my $ua                   = LWP::UserAgent->new
     cookie_jar           => $cookie,
     agent                => 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
 );
-my @headers;
-my $configurationFile    = 'tasks/social_networks/config.cfg';
-my %config               = ();
-my %tokens               = (); # keeps track of the successfull queries by tokens.
-get_config();
-my $twitterBearerToken   = select_token();
-say "twitterBearerToken : $twitterBearerToken";
-
-sub set_headers {
-    my $token = shift;
-    @headers  = (
-        'Authorization'      => 'Bearer ' . $token,
-        'Accept'             => '*/*',
-        'Accept-Encoding'    => 'gzip, deflate, br',
-        'Connection'         => 'keep-alive'
-    );
-    return @headers;
-}
+my @headers = (
+    'Authorization'      => 'Bearer ' . $twitterBearerToken,
+    'Accept'             => '*/*',
+    'Accept-Encoding'    => 'gzip, deflate, br',
+    'Connection'         => 'keep-alive'
+);
 
 # Initiates values stored.
 my $maxTweetsResults     = 100;       # Defines how many tweets we will get by query
@@ -70,10 +63,17 @@ my $sleepSecondsOnFail   = 10;        # Defines how long we will sleep on a fail
 my $sleepSeconds         = 900;       # Defines how long we will sleep on a "Too Many Requests" server reply.
 my $delayBetweenUpdates  = 3600 * 1;  # Time we wait (in seconds) between followers updates on a given profile.
 
-my %keywords             = ();
+my %keywords = ();
 load_keywords();
 
-search_keywords();
+my ($current, $total) = (0, 0);
+$total = keys %{$keywords{'included'}};
+for my $keyword (sort keys %{$keywords{'included'}}) {
+	$current++;
+	my $latestTweetId = latest_keyword_tweet_id($keyword);
+	search_tweets($keyword, $current, $total, $latestTweetId, undef);
+}
+
 
 sub get_config {
     die "missing file [$configurationFile]" unless -f $configurationFile;
@@ -129,78 +129,6 @@ sub load_keywords {
     }
 }
 
-sub select_token {
-    $twitterBearerToken = undef;
-    for my $token (@{$config{'twitterBearerTokens'}}) {
-        say "Testing token [$token]";
-        @headers   = set_headers($token);
-        my $status = test_query();
-        if ($status) {
-            $twitterBearerToken = $token;
-            last;
-        }
-    }
-    die "Failed to find an available token" unless $twitterBearerToken;
-    return $twitterBearerToken;
-}
-
-sub test_query {
-    # Casting a test query on "russia".
-    my $tweetsUrl = "https://api.twitter.com/2/tweets/search/recent?tweet.fields=attachments,author_id,context_annotations,conversation_id," .
-                    "created_at,entities,geo,id,in_reply_to_user_id,lang,possibly_sensitive,public_metrics,referenced_tweets,reply_settings," .
-                    "source,text,withheld&user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected," .
-                    "public_metrics,url,username,verified,withheld&max_results=10&expansions=attachments.poll_ids,attachments.media_keys,author_id," .
-                    "geo.place_id,in_reply_to_user_id,referenced_tweets.id,entities.mentions.username,referenced_tweets.id.author_id&media." .
-                    "fields=duration_ms,height,media_key,preview_image_url,public_metrics," .
-                    "type,url,width&query=russia";
-    my $fetched = 0;
-    my $content;
-    while ($fetched == 0) {
-        my $res = $ua->get($tweetsUrl, @headers);
-        unless ($res->is_success)
-        {
-            my $message = $res->message();
-            if ($message eq 'Too Many Requests') {
-                return 0;
-            } elsif ($message eq 'Bad Request') {
-                die "failed to get [$tweetsUrl]";
-            } elsif ($message eq 'Service Unavailable') {
-                # say "message : $message";
-                say "\nSleeping $sleepSecondsOnFail seconds before to try again.";
-                for my $sleep (1 .. $sleepSecondsOnFail) {
-                    STDOUT->printflush("\rSleeping [$sleep / $sleepSecondsOnFail]");
-                    sleep 1;
-                }
-                say "";
-            } elsif ($message eq 'read timeout') {
-                say "\nSleeping 5 seconds before to try again.";
-                for my $sleep (1 .. 5) {
-                    STDOUT->printflush("\rSleeping [$sleep / 5]");
-                    sleep 1;
-                }
-                say "";
-            } else {
-                p$res;
-                say "message : [$message]";
-                die "failed to get [$tweetsUrl]";
-            }
-        } else {
-            $fetched = 1;
-        }
-    }
-    return 1;
-}
-
-sub search_keywords {
-    my ($current, $total)    = (0, 0);
-    $total = keys %{$keywords{'included'}};
-    for my $keyword (sort keys %{$keywords{'included'}}) {
-        $current++;
-        my $latestTweetId    = latest_keyword_tweet_id($keyword);
-        search_tweets($keyword, $current, $total, $latestTweetId, undef);
-    }
-}
-
 sub latest_keyword_tweet_id {
 	my ($keyword) = shift;
 	my $latestTweetId;
@@ -209,7 +137,6 @@ sub latest_keyword_tweet_id {
 		my %timestamps = ();
 		for my $createdOnFolder (glob "$twitterTweetsFolder/$keyword/*") {
 			($createdOn) = $createdOnFolder =~ /$twitterTweetsFolder\/$keyword\/(.*)/;
-            die unless $createdOn;
 			$timestamps{$createdOn} = 1;
 		}
 		for my $timestamp (sort{$b <=> $a} keys %timestamps) {

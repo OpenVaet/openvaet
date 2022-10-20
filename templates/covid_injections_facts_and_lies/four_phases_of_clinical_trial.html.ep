@@ -136,6 +136,30 @@
 	.article-bulletpoint-text {
 		padding-left: 25px;
 	}
+
+	.ws-article-arial-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		font-weight: bold;
+		color: #007e39;
+		font-size: 1.3rem;
+	}
+
+	.ws-article-arial-green-comment {
+		margin-top: 5px;
+		padding-top: 5px;
+		padding-left: 0px;
+		padding-right: 15px;
+		padding-bottom: 5px;
+		width: 95%;
+		font-weight: bold;
+		color: #007e39;
+		font-size: 1.1rem;
+	}
 </style>
 
 % if ($currentLanguage eq 'en') {
@@ -217,7 +241,7 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<i>* “Before the <a href="https://www.fda.gov/" target="_blank">U.S. Food and Drug Administration</a> (FDA) approves a clinical trial to begin, scientists perform laboratory tests and studies in animals to test a potential therapy’s safety and efficacy. If these studies show favorable results, the FDA gives approval for the intervention to be tested in humans.”</i>
+		<i>* Before the <a href="https://www.fda.gov/" target="_blank">U.S. Food and Drug Administration</a> (FDA) approves a clinical trial to begin, scientists perform laboratory tests and studies in animals to test a potential therapy’s safety and efficacy. If these studies show favorable results, the FDA gives approval for the intervention to be tested in humans.</i>
     </div>
     <div class="ws-article-subtitle">
 		Finding Clinical Trial Information - ClinicalTrials.gov database
@@ -235,8 +259,10 @@
 			https://www.clinicaltrials.gov/ct2/home 
 		</a>
     </div>
-    <div class="ws-article-arial-red">
-		Our Comment
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+			Our Comment
+	    </div>
 		<div class="text_separator"></div>
 		Critics argue that clinical drug trials can be deliberately designed to lead to data outcomes that falsely credit or discredit the hypothetical usefulness of a specific drug as a specific treatment. 
 		<div class="text_separator"></div>
@@ -268,7 +294,7 @@
     	<div class="text_separator"></div>
     	<div class="text_separator"></div>
 		<a href="https://www.nia.nih.gov/health/what-are-clinical-trials-and-studies" target="_blank">
-			What Are Clinical Trials and Studies? | National Institute on Aging (nih.gov)
+			Que sont les essais cliniques et les études ? | National Institute on Aging (nih.gov)
 	    	<div class="text_separator"></div>
 			www.nia.nih.gov/health/what-are-clinical-trials-and-studies
 		</a>
@@ -327,7 +353,7 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<i>* “Avant que <a href="https://www.fda.gov/" target="_blank">la Food and Drug Administration (FDA) des États-Unis</a>  n'approuve le début d'un essai clinique, les scientifiques effectuent des tests de laboratoire et des études sur des animaux pour tester l'innocuité et l'efficacité d'une thérapie potentielle. Si ces études montrent des résultats favorables, la FDA donne son approbation pour que l'intervention soit testée chez l'homme.”</i>
+		<i>* Avant que <a href="https://www.fda.gov/" target="_blank">la Food and Drug Administration (FDA) des États-Unis</a>  n'approuve le début d'un essai clinique, les scientifiques effectuent des tests de laboratoire et des études sur des animaux pour tester l'innocuité et l'efficacité d'une thérapie potentielle. Si ces études montrent des résultats favorables, la FDA donne son approbation pour que l'intervention soit testée chez l'homme.</i>
     </div>
     <div class="ws-article-subtitle">
 		Recherche d'informations sur les essais cliniques - Base de données ClinicalTrials.gov
@@ -345,8 +371,10 @@
 			https://www.clinicaltrials.gov/ct2/home 
 		</a>
     </div>
-    <div class="ws-article-arial-red">
-		Notre commentaire
+    <div class="ws-article-arial-green">
+	    <div class="ws-article-arial-green-comment">
+			Notre commentaire
+	    </div>
 		<div class="text_separator"></div>
 		Les critiques soutiennent que les essais cliniques de médicaments peuvent être délibérément conçus pour aboutir à des résultats de données qui créditent ou discréditent à tort l'utilité hypothétique d'un médicament spécifique en tant que traitement spécifique.
 		<div class="text_separator"></div>

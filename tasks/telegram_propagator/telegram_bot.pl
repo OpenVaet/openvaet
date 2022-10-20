@@ -1067,7 +1067,7 @@ sub get_telegram_updates {
                 }
                 if (%$result{$channelLabel}->{'video'}) {
                     my $fileId      = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
-                    my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // die;
+                    my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // 'no_name.mp4';
                     my $fileDetails = $telegramApi->getFile({file_id => $fileId});
                     my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
                     my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";

@@ -362,7 +362,6 @@ sub startup {
     $r->get('/covid_injections_facts_and_lies/four_phases_of_clinical_trial')->to('covid_injections_facts_and_lies#four_phases_of_clinical_trial');
     $r->get('/covid_injections_facts_and_lies/pandemrix_vaccine')->to('covid_injections_facts_and_lies#pandemrix_vaccine');
     $r->get('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide')->to('covid_injections_facts_and_lies#when_goes_wrong_thalidomide');
-    $r->get('/covid_injections_facts_and_lies/clinical_trial_2020')->to('covid_injections_facts_and_lies#clinical_trial_2020');
     $r->get('/covid_injections_facts_and_lies/pcr_test_lft_limitations')->to('covid_injections_facts_and_lies#pcr_test_lft_limitations');
     $r->get('/covid_injections_facts_and_lies/g7_100days_pand_prepare')->to('covid_injections_facts_and_lies#g7_100days_pand_prepare');
     $r->get('/covid_injections_facts_and_lies/kary_mullis_pcr_fauci')->to('covid_injections_facts_and_lies#kary_mullis_pcr_fauci');

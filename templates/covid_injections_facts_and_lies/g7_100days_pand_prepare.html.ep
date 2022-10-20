@@ -136,6 +136,30 @@
 	.article-bulletpoint-text {
 		padding-left: 25px;
 	}
+
+	.ws-article-arial-green {
+		margin-top: 15px;
+		padding-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-bottom: 20px;
+		width: 95%;
+		font-weight: bold;
+		color: #007e39;
+		font-size: 1.3rem;
+	}
+
+	.ws-article-arial-green-comment {
+		margin-top: 5px;
+		padding-top: 5px;
+		padding-left: 0px;
+		padding-right: 15px;
+		padding-bottom: 5px;
+		width: 95%;
+		font-weight: bold;
+		color: #007e39;
+		font-size: 1.1rem;
+	}
 </style>
 
 % if ($currentLanguage eq 'en') {
@@ -172,7 +196,10 @@
 		<div class="text_separator"></div>
 		<a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf</a>
     </div>
-    <div class="ws-article-arial-red" style="margin-top:25px;">
+    <div class="ws-article-arial-green" style="margin-top:25px;">
+	    <div class="ws-article-arial-green-comment">
+	    	Our comment
+	    </div>
 		Critical attention must be paid to question the existence and validity of animal testing and clinical trials in addition to the safety of the MRNA platform short and long term.  
     </div>
 	<div class="text_separator"></div>
@@ -214,7 +241,10 @@
 		<div class="text_separator"></div>
 		<a href="https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf" target="_blank">https://cepi.net/wp-content/uploads/2022/03/8-March-2022_-HMG-CEPI-Industry-joint-statement.pdf</a>
     </div>
-    <div class="ws-article-arial-red" style="margin-top:25px;">
+    <div class="ws-article-arial-green" style="margin-top:25px;">
+	    <div class="ws-article-arial-green-comment">
+	    	Notre Commentaire
+	    </div>
 		Une attention critique doit être accordée à la question de l'existence et de la validité des tests sur les animaux et des essais cliniques en plus de la sécurité de la plate-forme d'ARNm à court et à long terme. 
     </div>
 	<div class="text_separator"></div>

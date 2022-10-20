@@ -1,8 +1,8 @@
 % layout 'default';
 % if ($currentLanguage eq 'en') {
-% title 'OPENVAET - Covid Injections - When it goes Wrong Thalidomide 1950s';
+% title 'OPENVAET - Covid Injections - Thalidomide Birth Defects (1950s) - Not Tested on Pregnant Animals';
 % } elsif ($currentLanguage eq 'fr') {
-% title 'OPENVAET - Quand ça tourne mal : Thalidomide 1950s';
+% title 'OPENVAET - Défauts de Naissances liés au Thalidomide (1950s) - Non testé sur des animaux gravides';
 % } else {
 
 % }

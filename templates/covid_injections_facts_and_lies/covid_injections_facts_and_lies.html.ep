@@ -257,6 +257,19 @@
     </div>
     <div class="text_separator"></div>
     <ul class="ws-index-container">
+    	<div style="width:100%;">
+    		<b>Introduction</b>
+    	</div>
+	    <div class="text_separator"></div>
+	    This resource is for YOU.
+	    <div class="text_separator"></div>
+		To help you challenge “The facts” promoted by official sources (including established broadcasting and publishing media) and find information suppressed & removed from social media etc.
+	    <div class="text_separator"></div>
+		To help you “catch up” on scientific debate you may have missed and/or have been denied.
+	    <div class="text_separator"></div>
+		We aim to inform without political opinions and help you find other sources so you can make up your own mind.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
     	<li class="ws-index-category-1">1. Traditional Vaccines</li>
     	<div style="width:100%;">
     		<ul>
@@ -291,8 +304,7 @@
     	<li class="ws-index-category-1-b">2. Clinical Drug Trials</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-b">The Importance of Thorough Testing including Animal Studies</li>
-    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">When it goes Wrong Thalidomide (1950s)</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Thalidomide Birth Defects (1950s) - Not Tested on Pregnant Animals</li>
     			<li class="ws-index-category-2-b">Drug Controversy Primodos (1960s)</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Clinical Trial Design & Terminology</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">The Four Phases of Clinical Drug Trials</li>
@@ -377,7 +389,6 @@
     	<li class="ws-index-category-1-e">5. Covid Injection Clinical Trials</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Covid Injection Clinical Trial Documents (2020)</li>
     			<li class="ws-index-category-2-e">Covid Injection Testing in Animals</li>
     			<li class="ws-index-category-2-e">Antibody Dependent Enhancement</li>
     			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Criticism of the Pfizer Covid Injection Clinical Trial & Data used for Emergency Authorisation</li>
@@ -464,6 +475,19 @@
     </div>
     <div class="text_separator"></div>
     <ul class="ws-index-container">
+    	<div style="width:100%;">
+    		<b>Introduction</b>
+    	</div>
+	    <div class="text_separator"></div>
+	    Cette ressource est pour VOUS.
+	    <div class="text_separator"></div>
+		Pour vous aider à contester « les faits » promus par des sources officielles (y compris les médias de diffusion et de publication établis) et à trouver des informations supprimées et supprimées des médias sociaux, etc.
+	    <div class="text_separator"></div>
+		Pour vous aider à « rattraper » le débat scientifique que vous avez peut-être manqué et/ou qui vous a été refusé.
+	    <div class="text_separator"></div>
+		Notre objectif est d'informer sans opinions politiques et de vous aider à trouver d'autres sources afin que vous puissiez vous faire votre propre opinion.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
     	<li class="ws-index-category-1">1. Vaccins Traditionnels</li>
     	<div style="width:100%;">
     		<ul>
@@ -498,8 +522,7 @@
     	<li class="ws-index-category-1-b">2. Essais cliniques des médicaments</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-b">L'importance des tests approfondis, y compris les études sur les animaux</li>
-    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Quand ça tourne mal : Thalidomide (1950s)</li>
+    			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/when_goes_wrong_thalidomide');return;">Défauts de Naissances liés au Thalidomide (1950s) - Non testé sur des animaux gravides</li>
     			<li class="ws-index-category-2-b">Controverse sur la drogue Primodos (1960)</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_design_terminology');return;">Conception et terminologie des essais cliniques</li>
     			<li class="ws-index-category-2-b category-item-done-b" onclick="openLocation('/covid_injections_facts_and_lies/four_phases_of_clinical_trial');return;">Les 4 phases des essais cliniques de médicaments</li>
@@ -584,7 +607,6 @@
     	<li class="ws-index-category-1-e">5. Essais cliniques sur les injections de Covid</li>
     	<div style="width:100%;">
     		<ul>
-    			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/clinical_trial_2020');return;">Documents d'essais cliniques sur l'injection de Covid (2020)</li>
     			<li class="ws-index-category-2-e">Test d'injection de Covid chez les animaux</li>
     			<li class="ws-index-category-2-e">Amélioration dépendante des anticorps</li>
     			<li class="ws-index-category-2-e category-item-done-e" onclick="openLocation('/covid_injections_facts_and_lies/criticism_clinical_trials');return;">Critique de l'essai clinique Pfizer des Injections Covid et données utilisées pour l'autorisation d'urgence</li>
