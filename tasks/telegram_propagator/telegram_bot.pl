@@ -279,6 +279,7 @@ sub post_on_gab {
     close $in;
     $json = decode_json($json);
     print_log("Retrieved Telegram message ...");
+    # p$json;
 
     # If we have a document attachment, we verify its a video or picture, and proceed with uploading.
     my @mediaIds;
@@ -353,12 +354,14 @@ sub post_on_gab {
         $params{'sensitive'}      = 'false';
         $params{'spoiler_text'}   = '';
         $params{'status'}         = $text;
+        # p%params;
         my $params = encode_json\%params;
         $request->header(@headers);
         $request->content($params);
         my $res     = $ua->request($request);
         my $content = $res->decoded_content;
         my $cJson   = decode_json($content);
+        # p$cJson;
         $postId     = %$cJson{'id'} // die "Failed posting to Gab";
         print_log("Successfully Posted Message to Gab ...");
     }
@@ -985,6 +988,7 @@ sub get_telegram_updates {
             }
         }
         for my $result (@{%$updates{'result'}}) {
+            # p$result;
             if (%$result{'channel_post'} || %$result{'edited_channel_post'}) {
                 my $channelLabel;
                 if (%$result{'channel_post'}) {
@@ -1077,6 +1081,23 @@ sub get_telegram_updates {
                 if (%$result{$channelLabel}->{'video'}) {
                     my $fileId      = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
                     my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // 'no_name.mp4';
+                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
+                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
+                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
+                    make_path($localFolder) unless (-d $localFolder);
+                    my $localFile   = "$localFolder/$fileName";
+                    unless (-f $localFile) {
+                        my $rc = getstore($fileUrl, $localFile);
+                        if (is_error($rc)) {
+                            die "getstore of <$fileUrl> failed with $rc";
+                        }
+                    }
+                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
+                }
+                if (%$result{$channelLabel}->{'sticker'}) {
+                    my $fileId      = %$result{$channelLabel}->{'sticker'}->{'file_id'}   // die;
+                    my $fileName    = %$result{$channelLabel}->{'sticker'}->{'file_name'} // 'sticker.webm';
                     my $fileDetails = $telegramApi->getFile({file_id => $fileId});
                     my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
                     my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
