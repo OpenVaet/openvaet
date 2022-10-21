@@ -11,6 +11,7 @@ sub pfizer_trial_cases_mapping {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // die;
+    my $merge4444To1231 = $self->param('merge4444To1231') // 1;
 
     my %languages       = ();
     $languages{'fr'}    = 'French';
@@ -36,6 +37,7 @@ sub pfizer_trial_cases_mapping {
 
     $self->render(
         currentLanguage => $currentLanguage,
+        merge4444To1231 => $merge4444To1231,
         languages       => \%languages,
         sites           => \%sites
     );
@@ -48,6 +50,7 @@ sub load_pfizer_trial_cases_mapping {
     my $currentLanguage = $self->param('currentLanguage') // die;
     my $mainWidth       = $self->param('mainWidth')       // die;
     my $mainHeight      = $self->param('mainHeight')      // die;
+    my $merge4444To1231 = $self->param('merge4444To1231') // die;
 
     say "siteTarget : $siteTarget";
     say "mainWidth  : $mainWidth";
@@ -60,6 +63,7 @@ sub load_pfizer_trial_cases_mapping {
     close $in;
     $json = decode_json($json);
     my %sites = ();
+    my ($targetLatitude, $targetLongitude, $targetTotalCases, $targetTotalCases);
     for my $siteCode (sort{$a <=> $b} keys %{%$json{'By Sites Codes'}}) {
     	next unless %$json{'By Sites Codes'}->{$siteCode}->{'latitude'};
     	if ($siteTarget) {
@@ -74,7 +78,12 @@ sub load_pfizer_trial_cases_mapping {
     	my $address = %$json{'By Sites Codes'}->{$siteCode}->{'address'} // die;
     	my $city = %$json{'By Sites Codes'}->{$siteCode}->{'city'} // die;
     	$sites{$siteCode}->{'siteName'}   = $siteName;
-    	$sites{$siteCode}->{'totalCases'} = $totalCases;
+        if ($merge4444To1231 == 1) {
+            if ($siteCode eq '1231') {
+                $totalCases += %$json{'By Sites Codes'}->{'4444'}->{'totalCases'};
+            }
+        }
+        $sites{$siteCode}->{'totalCases'} = $totalCases;
     	$sites{$siteCode}->{'postalCode'} = $postalCode;
     	$sites{$siteCode}->{'address'} = $address;
     	$sites{$siteCode}->{'city'} = $city;

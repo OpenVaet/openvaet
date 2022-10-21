@@ -358,9 +358,9 @@ sub post_on_gab {
         $request->content($params);
         my $res     = $ua->request($request);
         my $content = $res->decoded_content;
-        print_log("Successfully Posted Message to Gab ...");
         my $cJson   = decode_json($content);
         $postId     = %$cJson{'id'} // die "Failed posting to Gab";
+        print_log("Successfully Posted Message to Gab ...");
     }
 
     # Printing cache file.
@@ -496,13 +496,12 @@ sub post_on_gettr {
                 my @elems = split '\.', $file;
                 my $ext   = $elems[scalar @elems - 1] // die;
                 if ($ext eq 'mp4'  || $ext eq 'gif'  ||
-                    $ext eq 'webp' || $ext eq 'webm' || $ext eq 'm4v' || $ext eq 'mov'
+                    $ext eq 'mov'
                 ) {
                     $attachmentType = 'Video';
                     %fileDetails = upload_gettr_media($file, $ext);
                 } elsif (
-                    $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' ||
-                    $ext eq 'jfif'
+                    $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png'
                 ) {
                     $attachmentType = 'Picture';
                     my %fileDetails = upload_gettr_media($file, $ext);
@@ -741,8 +740,8 @@ sub file_type_from_ext {
         $fileType = 'video/mp4';
     } elsif ($ext eq 'jpg') {
         $fileType = 'image/jpg';
-    } elsif ($ext eq '') {
-
+    } elsif ($ext eq 'webm') {
+        $fileType = 'video/webm';
     } else {
         die "Unknown file extension : [$ext]";
     }

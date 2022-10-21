@@ -28,7 +28,15 @@
     <div class="text_separator"></div>
     The data used to produce this view can be downloaded here <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.json" download>on JSON format</a>, and here on <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.csv" download>.CSV format</a>.
     <div class="text_separator"></div>
-    Site 4444 and its 5 cases aren't identified accurately, and therefore don't appear on this map.
+    % if ($merge4444To1231 == 1) {
+    Site 4444 and its 5 cases are merged with site 1231 - as both sites are very likely to be the same (site 4444 isn't documented as are the other sites).
+    <div class="text_separator"></div>
+    <a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>&merge4444To1231=0">Click here</a> to display site 1231's cases only.
+    % } else {
+    Site 4444 and its 5 cases aren't displayed on this map.
+    <div class="text_separator"></div>
+    <a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>&merge4444To1231=1">Click here</a> to display site 1231 & 4444 merged data.
+    % }
     <h2>Sites Geolocations & Total Cases</h2>
     % } else {
     <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Retour aux études</div>
@@ -41,7 +49,15 @@
     <div class="text_separator"></div>
     La donnée utilisée pour produire ces visualisations peut être téléchargée <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.json" >ici au format JSON</a>, et <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.csv" >ici au format .CSV</a>.
     <div class="text_separator"></div>
-    Le site 4444 et ses 5 cas ne sont pas identifiés avec précision et ne figurent donc pas sur cette carte.
+    % if ($merge4444To1231 == 1) {
+    Le site 4444 et ses 5 cas sont rassemblés avec le site 1231 - comme les deux sites sont très probablement les mêmes (le site 4444 n'est pas documenté correctement comme le sont les autres sites).
+    <div class="text_separator"></div>
+    <a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>&merge4444To1231=0">Cliquez ici</a> pour afficher les cas du site 1231 uniquement.
+    % } else {
+    Le site 4444 et ses 5 cas ne sont pas affichés sur cette carte.
+    <div class="text_separator"></div>
+    <a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>&merge4444To1231=1">Cliquez ici</a> afficher les sites 1231 & 4444 rassemblés.
+    % }
     <h2>Geolocations des Sites & Cas Totaux</h2>
     % }
     <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
@@ -68,6 +84,7 @@
 
     var lat = 14.974135;
     var lng = -79.404801;
+    var merge4444To1231 = <%=$merge4444To1231%>;
 
     // center of the map
     var center    = [lat, lng];
@@ -102,6 +119,7 @@
                 siteTarget      : siteTarget,
                 mainWidth       : mainWidth,
                 mainHeight      : mainHeight,
+                merge4444To1231 : merge4444To1231,
                 currentLanguage : currentLanguage
            }
         });
