@@ -968,10 +968,22 @@ sub put_gab_media {
 sub get_telegram_updates {
     print_log("Getting Telegram Channels Last Updates ...");
     my $offset      = -10;
-    my $updates     = $telegramApi->getUpdates ({
-        timeout => 0,
-        $offset ? (offset => $offset) : ()
-    });
+    my $updates;
+    my $attempts = 0;
+    while (!$updates && $attempts < 10) {
+        $attempts++;
+        eval {
+            $updates        = $telegramApi->getUpdates ({
+                timeout => 0,
+                $offset ? (offset => $offset) : ()
+            });
+        };
+        if ($@) {
+            print_log("Failed getting update. Trying again in 5 minutes ...");
+            sleep 300;
+            $updates = undef;
+        }
+    }
     my %editedMessages = ();
     my %attachments    = ();
     if (%$updates{'result'}) {

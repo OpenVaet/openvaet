@@ -63,7 +63,7 @@ sub load_pfizer_trial_cases_mapping {
     close $in;
     $json = decode_json($json);
     my %sites = ();
-    my ($targetLatitude, $targetLongitude, $targetTotalCases, $targetTotalCases);
+    my ($targetLatitude, $targetLongitude, $targetTotalCases);
     for my $siteCode (sort{$a <=> $b} keys %{%$json{'By Sites Codes'}}) {
     	next unless %$json{'By Sites Codes'}->{$siteCode}->{'latitude'};
     	if ($siteTarget) {
