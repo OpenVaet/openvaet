@@ -1049,6 +1049,11 @@ sub get_telegram_updates {
                 }
                 $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
                 $messages{$channelName}->{$messageId}->{'editUts'}   = $editUts if $editUts;
+                if (%$result{$channelLabel}->{'forward_from_chat'}) {
+                    my $from  = %$result{$channelLabel}->{'forward_from_chat'}->{'title'}    // die;
+                    my $uName = %$result{$channelLabel}->{'forward_from_chat'}->{'username'} // die;
+                    $text     = "This message was forwarded from $from [https://t.me/$uName]\n\n" . $text;
+                }
                 $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
                 if (%$result{$channelLabel}->{'document'}) {
                     my $fileId      = %$result{$channelLabel}->{'document'}->{'file_id'}   // die;
