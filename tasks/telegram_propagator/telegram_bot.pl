@@ -1091,21 +1091,29 @@ sub get_telegram_updates {
                     }
                 }
                 if (%$result{$channelLabel}->{'video'}) {
-                    my $fileId      = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
-                    my $fileName    = %$result{$channelLabel}->{'video'}->{'file_name'} // 'no_name.mp4';
-                    my $fileDetails = $telegramApi->getFile({file_id => $fileId});
-                    my $filePath    = %$fileDetails{'result'}->{'file_path'} // die;   
-                    my $fileUrl     = "https://api.telegram.org/file/bot$telegramToken/$filePath";
-                    my $localFolder = "telegram_data/$channelName/$messageId/documents";
-                    make_path($localFolder) unless (-d $localFolder);
-                    my $localFile   = "$localFolder/$fileName";
-                    unless (-f $localFile) {
-                        my $rc = getstore($fileUrl, $localFile);
-                        if (is_error($rc)) {
-                            die "getstore of <$fileUrl> failed with $rc";
+                    my $fileId       = %$result{$channelLabel}->{'video'}->{'file_id'}   // die;
+                    my $fileName     = %$result{$channelLabel}->{'video'}->{'file_name'} // 'no_name.mp4';
+                    my $fileDetails;
+                    eval {
+                        $fileDetails = $telegramApi->getFile({file_id => $fileId});
+                    };
+                    if ($@) {
+                        $text .= "\n\nThis message was automatically copied from this Telegram post and has additional media you should check here : https://t.me/$channelName/$messageId";
+                        $messages{$channelName}->{$messageId}->{'text'} = $text;
+                    } else {
+                        my $filePath     = %$fileDetails{'result'}->{'file_path'} // die;   
+                        my $fileUrl      = "https://api.telegram.org/file/bot$telegramToken/$filePath";
+                        my $localFolder  = "telegram_data/$channelName/$messageId/documents";
+                        make_path($localFolder) unless (-d $localFolder);
+                        my $localFile    = "$localFolder/$fileName";
+                        unless (-f $localFile) {
+                            my $rc = getstore($fileUrl, $localFile);
+                            if (is_error($rc)) {
+                                die "getstore of <$fileUrl> failed with $rc";
+                            }
                         }
+                        push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                     }
-                    push @{$messages{$channelName}->{$messageId}->{'documents'}}, $localFile;
                 }
                 if (%$result{$channelLabel}->{'sticker'}) {
                     my $fileId      = %$result{$channelLabel}->{'sticker'}->{'file_id'}   // die;
