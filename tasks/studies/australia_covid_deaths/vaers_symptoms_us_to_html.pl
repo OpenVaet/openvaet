@@ -64,12 +64,19 @@ parse_cdc_years();
 my %reportsByDates = ();
 my %symptomsMet = ();
 my $totalReports = 0;
+my %stats = ();
+# parse_foreign_data();
 parse_yearly_data();
-parse_foreign_data();
+p%stats;
 
 # Printing dates & other stats.
-open my $out, '>:utf8', 'usa_and_foreign_death_reports.json';
-print $out encode_json\%reportsByDates;
+open my $out, '>:utf8', 'vax_by_doses.csv';
+for my $lastProductTaken (sort keys %stats) {
+	for my $lastDoseTaken (sort keys %{$stats{$lastProductTaken}}) {
+		my $totalDeaths = $stats{$lastProductTaken}->{$lastDoseTaken}->{'totalDeaths'} // die;
+		say $out "$lastProductTaken;$lastDoseTaken;$totalDeaths;";
+	}
+}
 close $out;
 
 # Printing symptoms encountered.
@@ -291,7 +298,7 @@ sub parse_yearly_data {
 	        	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
 	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
 	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
-	        	next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
+	        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
 				my %o = ();
 				$o{'substanceCategory'} = $substanceCategory;
 				$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -462,39 +469,10 @@ sub parse_yearly_data {
 			    $deceasedDate               = convert_date($deceasedDate)    if $deceasedDate;
 			    my ($receptionYear, $receptionMonth, $receptionDay) = split '-', $cdcReceptionDate;
 			    my $compDate = "$receptionYear$receptionMonth$receptionDay";
-			    # my $ageGroup;
-			    # if (defined $patientAge) {
-			    # 	$definedAge++;
-			    # # 	$ageGroups = age_to_age_group($patientAge);
-			    # }
-			    # else {
-			    # 	$ageGroups = 'Undefined Age';
-			    # }
 				my $immProjectNumber        = $values{'SPLTTYPE'};
 
 				# Taking care of building stats.
 				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-				# if (
-				# 	$patientDied
-				# ) {
-				# my $hasActiveSymptom = 0;
-				# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-				# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-				# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-				# 		$hasActiveSymptom = 1;
-				# 	}
-				# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-				# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-				# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-				# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-				# 	# 	$hasActiveSymptom = 1;
-				# 	# }
-				# }
-				# next unless $hasActiveSymptom == 1;
-			    if (defined $patientAge) {
-			    	$definedAge++;
-			    # 	$ageGroups = age_to_age_group($patientAge);
-			    }
 
 				my %o = ();
 				$o{'cdcReportInternalId'} = $cdcReportInternalId;
@@ -516,20 +494,20 @@ sub parse_yearly_data {
 				for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
 					$o{'symptoms'}->{$ausSymptomName} = 1;
 				}
+				my ($lastProductTaken, $lastDoseTaken);
 				for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
+					my $dose                   = %$vaccData{'dose'}                   // die;
+					my $substanceShortenedName = %$vaccData{'substanceShortenedName'} // die;
+					$lastProductTaken = $substanceShortenedName;
+					$lastDoseTaken    = $dose;
 					push @{$o{'vaccines'}}, \%$vaccData;
 				}
-
-			    my $normalizedDescription = lc $aEDescription;
-			    my $hasHit = 0;
-			    if ($normalizedDescription =~ /nickel/) {
-			    	$o{'hits'}->{'nickel'} = 1;
-			    	$hasHit = 1;
-			    }
-			    next unless $hasHit == 1;
+				die unless $lastProductTaken;
+				if ($patientDied) {
+					$stats{$lastProductTaken}->{$lastDoseTaken}->{'totalDeaths'}++;
+				}
 				$totalReports++;
 				push @{$reportsByDates{$compDate}}, \%o;
-			# }
 			}
 		}
 		close $dataIn;
@@ -772,7 +750,8 @@ sub substance_synthesis {
         $substanceName eq 'CSL LIMITED - FLU3 - INFLUENZA (SEASONAL) (FOREIGN)' ||
         $substanceName eq 'SANOFI PASTEUR - FLU4 - INFLUENZA (SEASONAL) (FLUZONE QUADRIVALENT)' ||
         $substanceName eq 'GLAXOSMITHKLINE BIOLOGICALS - FLU4 - INFLUENZA (SEASONAL) (FLUARIX QUADRIVALENT)' ||
-        $substanceName eq 'BAVARIAN NORDIC - SMALLMNK - SMALLPOX + MONKEYPOX (JYNNEOS)';
+        $substanceName eq 'BAVARIAN NORDIC - SMALLMNK - SMALLPOX + MONKEYPOX (JYNNEOS)' ||
+        $substanceName eq 'EMERGENT BIOSOLUTIONS - SMALL - SMALLPOX (ACAM2000)';
     my $substanceShortenedName;
     if (
         $substanceName eq 'GLAXOSMITHKLINE BIOLOGICALS - HIBV - HIB (HIBERIX)' ||
@@ -946,9 +925,17 @@ sub substance_synthesis {
     ) {
         $substanceShortenedName = 'COVID-19 VACCINE MODERNA';
     } elsif (
+        $substanceName eq 'MODERNA - COVID19-2 - COVID19 (COVID19 (MODERNA BIVALENT))'
+    ) {
+        $substanceShortenedName = 'COVID-19 VACCINE MODERNA - BIVALENT';
+    } elsif (
         $substanceName eq 'PFIZER\BIONTECH - COVID19 - COVID19 (COVID19 (PFIZER-BIONTECH))'
     ) {
         $substanceShortenedName = 'COVID-19 VACCINE PFIZER-BIONTECH';
+    } elsif (
+        $substanceName eq 'PFIZER\BIONTECH - COVID19-2 - COVID19 (COVID19 (PFIZER-BIONTECH BIVALENT))'
+    ) {
+        $substanceShortenedName = 'COVID-19 VACCINE PFIZER-BIONTECH - BIVALENT';
     } elsif ($substanceName eq 'UNKNOWN MANUFACTURER - COVID19 - COVID19 (COVID19 (UNKNOWN))') {
         $substanceShortenedName = 'COVID-19 VACCINE UNKNOWN MANUFACTURER';
     } elsif ($substanceName eq 'NOVAVAX - COVID19 - COVID19 (COVID19 (NOVAVAX))') {
@@ -963,30 +950,6 @@ sub substance_synthesis {
         $substanceCategory = 'OTHER'
     }
     return ($substanceCategory, $substanceShortenedName);
-}
-
-sub age_to_age_group {
-	my ($patientAge) = @_;
-	return (0, 'Unknown') unless defined $patientAge && length $patientAge >= 1;
-	my ($cdcAgeName);
-	if ($patientAge <= 5) {
-		$cdcAgeName       = 'Under 5';
-	} elsif ($patientAge > 5 && $patientAge <= 11.9) {
-		$cdcAgeName = '5-11 Years';
-	} elsif ($patientAge > 12 && $patientAge <= 15.9) {
-		$cdcAgeName = '12-11 Years';
-	} elsif ($patientAge > 16 && $patientAge <= 19) {
-		$cdcAgeName = '12-17 Years';
-	} elsif ($patientAge > 17.9 && $patientAge <= 64.9) {
-		$cdcAgeName = '18-64 Years';
-	} elsif ($patientAge > 64.9 && $patientAge <= 85.9) {
-		$cdcAgeName = '65-85 Years';
-	} elsif ($patientAge > 85.9) {
-		$cdcAgeName = 'More than 85 Years';
-	} else {
-		die "patientAge : $patientAge";
-	}
-	return ($cdcAgeName);
 }
 
 sub parse_foreign_data {
@@ -1065,7 +1028,7 @@ sub parse_foreign_data {
         	next unless $substanceCategory && $substanceCategory eq 'COVID-19';
         	# next unless $substanceShortenedName eq 'COVID-19 VACCINE PFIZER-BIONTECH';
         	# next unless $substanceShortenedName eq 'COVID-19 VACCINE MODERNA';
-        	next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
+        	# next unless $substanceShortenedName eq 'COVID-19 VACCINE JANSSEN';
 			my %o = ();
 			$o{'substanceCategory'} = $substanceCategory;
 			$o{'substanceShortenedName'} = $substanceShortenedName;
@@ -1244,67 +1207,46 @@ sub parse_foreign_data {
 		    # 	$ageGroups = 'Undefined Age';
 		    # }
 			my $immProjectNumber        = $values{'SPLTTYPE'};
-			if ($immProjectNumber !~ /^AU.*$/) {
 
-				# Taking care of building stats.
-				next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
-				# if (
-				# 	$patientDied
-				# ) {
-					# my $hasActiveSymptom = 0;
-					# for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-					# 	$symptomsMet{$ausSymptomName}->{'timesSeen'}++;
-					# 	if (exists $ausSymptoms{$ausSymptomName}->{'active'} && $ausSymptoms{$ausSymptomName}->{'active'} == 1) {
-					# 		$hasActiveSymptom = 1;
-					# 	}
-					# 	# if ($ausSymptomName eq 'Anaphylactic reaction' || $ausSymptomName eq 'Anaphylactic shock' || $ausSymptomName eq 'Anaphylactoid reaction' ||
-					# 	# 	$ausSymptomName eq 'Atonic seizures' || $ausSymptomName eq 'Focal dyscognitive seizures' || $ausSymptomName eq 'Generalised tonic-clonic seizure' ||
-					# 	# 	$ausSymptomName eq 'Partial seizures' || $ausSymptomName eq 'Seizure' || $ausSymptomName eq 'Seizure cluster' || $ausSymptomName eq 'Seizure like phenomena' ||
-					# 	# 	$ausSymptomName eq 'Tonic clonic movements' || $ausSymptomName eq 'Tonic convulsion' || $ausSymptomName eq 'Syncope' || $ausSymptomName eq 'Presyncope') {
-					# 	# 	$hasActiveSymptom = 1;
-					# 	# }
-					# }
-					# next unless $hasActiveSymptom == 1;
-				    if (defined $patientAge) {
-				    	$definedAge++;
-				    # 	$ageGroups = age_to_age_group($patientAge);
-				    }
+			# Taking care of building stats.
+			next unless exists $reportsVaccines{$cdcReportInternalId}->{'vaccines'};
+		    if (defined $patientAge) {
+		    	$definedAge++;
+		    # 	$ageGroups = age_to_age_group($patientAge);
+		    }
 
-					my %o = ();
-					$o{'cdcReportInternalId'} = $cdcReportInternalId;
-					$o{'cdcReceptionDate'} = $cdcReceptionDate;
-					$o{'source'}          = 'foreign';
-					$o{'sCode2'}          = $sCode2;
-					$o{'patientAge'}      = $patientAge;
-					$o{'cdcSexInternalId'} = $cdcSexInternalId;
-					$o{'cdcSexName'}      = $cdcSexName;
-					$o{'vaccinationDate'} = $vaccinationDate;
-					$o{'deceasedDate'}    = $deceasedDate;
-					$o{'aEDescription'} = $aEDescription;
-					$o{'cdcVaccineAdministrator'} = $cdcVaccineAdministrator;
-					$o{'hospitalized'}    = $hospitalized;
-					$o{'permanentDisability'} = $permanentDisability;
-					$o{'lifeThreatning'}  = $lifeThreatning;
-					$o{'patientDied'} = $patientDied;
-					$o{'immProjectNumber'} = $immProjectNumber;
-					for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
-						$o{'symptoms'}->{$ausSymptomName} = 1;
-					}
-					for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
-						push @{$o{'vaccines'}}, \%$vaccData;
-					}
-
-				    my $normalizedDescription = lc $aEDescription;
-				    my $hasHit = 0;
-				    if ($normalizedDescription =~ /nickel/) {
-				    	$o{'hits'}->{'nickel'} = 1;
-				    	$hasHit = 1;
-				    }
-				    next unless $hasHit == 1;
-					$totalReports++;
-					push @{$reportsByDates{$compDate}}, \%o;
-				# }
+			my %o = ();
+			$o{'cdcReportInternalId'} = $cdcReportInternalId;
+			$o{'cdcReceptionDate'} = $cdcReceptionDate;
+			$o{'source'}          = 'foreign';
+			$o{'sCode2'}          = $sCode2;
+			$o{'patientAge'}      = $patientAge;
+			$o{'cdcSexInternalId'} = $cdcSexInternalId;
+			$o{'cdcSexName'}      = $cdcSexName;
+			$o{'vaccinationDate'} = $vaccinationDate;
+			$o{'deceasedDate'}    = $deceasedDate;
+			$o{'aEDescription'} = $aEDescription;
+			$o{'cdcVaccineAdministrator'} = $cdcVaccineAdministrator;
+			$o{'hospitalized'}    = $hospitalized;
+			$o{'permanentDisability'} = $permanentDisability;
+			$o{'lifeThreatning'}  = $lifeThreatning;
+			$o{'patientDied'} = $patientDied;
+			$o{'immProjectNumber'} = $immProjectNumber;
+			for my $ausSymptomName (sort keys %{$reportsSymptoms{$cdcReportInternalId}}) {
+				$o{'symptoms'}->{$ausSymptomName} = 1;
 			}
+			my $lastProductTaken;
+			for my $vaccData (@{$reportsVaccines{$cdcReportInternalId}->{'vaccines'}}) {
+				my $substanceShortenedName = %$vaccData{'substanceShortenedName'} // die;
+				$lastProductTaken = $substanceShortenedName;
+				push @{$o{'vaccines'}}, \%$vaccData;
+			}
+			die unless $lastProductTaken;
+			if ($patientDied) {
+				$stats{$lastProductTaken}->{'totalDeaths'}++;
+			}
+			$totalReports++;
+			push @{$reportsByDates{$compDate}}, \%o;
 		}
 	}
 	close $dataIn;

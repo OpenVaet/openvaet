@@ -1,4 +1,4 @@
-package OpenVaet::Controller::PfizerTrialCasesMapping;
+package OpenVaet::Controller::AllCasesPfizerTrialCasesMapping;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
@@ -7,7 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
 
-sub pfizer_trial_cases_mapping {
+sub all_cases_pfizer_trial_cases_mapping {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // die;
@@ -18,7 +18,7 @@ sub pfizer_trial_cases_mapping {
     $languages{'en'}    = 'English';
 
     my $json;
-    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/stats_by_sites.json';
+    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/all_cases_stats_by_sites.json';
     while (<$in>) {
     	$json .= $_;
     }
@@ -48,7 +48,7 @@ sub pfizer_trial_cases_mapping {
     );
 }
 
-sub load_pfizer_trial_cases_mapping {
+sub load_all_cases_pfizer_trial_cases_mapping {
     my $self = shift;
 
     my $siteTarget      = $self->param('siteTarget')      // die;
@@ -61,7 +61,7 @@ sub load_pfizer_trial_cases_mapping {
     say "mainWidth  : $mainWidth";
     say "mainHeight : $mainHeight";
     my $json;
-    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/stats_by_sites.json';
+    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/all_cases_stats_by_sites.json';
     while (<$in>) {
     	$json .= $_;
     }

@@ -342,6 +342,8 @@ sub startup {
     $r->get('/studies/french_insee_deathes_data')->to('french_insee_deathes_data#french_insee_deathes_data');
     $r->get('/studies/pfizer_trial_cases_mapping')->to('pfizer_trial_cases_mapping#pfizer_trial_cases_mapping');
     $r->post('/pfizer_trial_cases_mapping/load_pfizer_trial_cases_mapping')->to('pfizer_trial_cases_mapping#load_pfizer_trial_cases_mapping');
+    $r->get('/studies/all_cases_pfizer_trial_cases_mapping')->to('all_cases_pfizer_trial_cases_mapping#all_cases_pfizer_trial_cases_mapping');
+    $r->post('/all_cases_pfizer_trial_cases_mapping/load_all_cases_pfizer_trial_cases_mapping')->to('all_cases_pfizer_trial_cases_mapping#load_all_cases_pfizer_trial_cases_mapping');
     $r->get('/pfizearch')->to('pfizearch#index');
     $r->get('/pfizearch/search')->to('pfizearch#search');
     $r->get('/pfizearch/documentation')->to('pfizearch#documentation');

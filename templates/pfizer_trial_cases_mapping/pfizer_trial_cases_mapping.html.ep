@@ -24,6 +24,12 @@
     <div class="text_separator"></div>
     This data can be directly accessed on .xlsx format <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">on this direct URL</a>.
     <div class="text_separator"></div>
+    You can cross-check this list by referring to pd-production-XXXX | /pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements.pdf&currentLanguage=en, page 586 to 602 (16 pages, final on 2 December 2020), "16.2.8.2.IA1 - Listing of Subjects With First COVID-19 Occurrence From 7 Days After Dose 2 and Without Evidence of Infection Prior to 7 Days After Dose 2 – Evaluable Efficacy Population (7 Days) – Interim Analysis 1", and to /pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf&currentLanguage=en, page 66 to 134 (68 pages), "16.2.8.2 - Listing of Subjects With First COVID-19 Occurrence From 7 Days After Dose 2 and Without Evidence of Infection Prior to 7 Days After Dose 2 – Evaluable Efficacy Population (7 Days) – Interim Analysis 1".
+    <div class="text_separator"></div>
+    You can then find these patients page 1059 to 2506 of this Final Analysis of Efficacy : /pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-fa-interim-narrative-sensitive.pdf&currentLanguage=en.
+    <div class="text_separator"></div>
+    These are the figures figured in the EUA at https://www.fda.gov/media/144416/download, page 23. These figures are also featured in this reference article, "Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine", at https://www.nejm.org/doi/full/10.1056/NEJMoa2034577, by Fernando P. Polack & al.
+    <div class="text_separator"></div>
     We merged the site codes in this .xlsx file with the sites data available thanks to PHMPT, taken from <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en" target="_blank">pd-production-111721 | 5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a>. 
     <div class="text_separator"></div>
     The data used to produce this view can be downloaded here <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.json" download>on JSON format</a>, and here on <a href="/doc/pfizer_trial_cases_mapping/data_by_sites.csv" download>.CSV format</a>.
@@ -44,6 +50,8 @@
     La liste des 170 patients est extraite de l'article <a target="_blank" href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/">Rapport 42: l'autorisation d'urgence de Pfizer accordée sur la base de moins de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocol disqualifiantes pour accorder l'EUA</a>, par l'équipe 3 du Daily Clout, Jeyanthi Kunadhasan MD, Fanzca - Ed Clark, MSE & Chris Flowers MD. Nous vous encourageons à lire cet article si vous ne l'avez pas encore fait.
     <div class="text_separator"></div>
     Cette donnée peut être accédée directement au format .xlsx <a target="_blank" href="https://dailyclout.io/wp-content/uploads/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.xlsx">sur ce lien direct</a>.
+    <div class="text_separator"></div>
+    PARAGRAPHE EN ANGLAIS A TRADUIRE ICI.
     <div class="text_separator"></div>
     Nous avons unifié les codes des sites avec les données disponibles grâce à PHMPT, prise sur <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en" target="_blank">pd-production-111721 | 5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a>. 
     <div class="text_separator"></div>

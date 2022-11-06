@@ -19,7 +19,9 @@
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">VAERS Domestic Data - Analyzing COVID substances impact on pregnancies, as per USA's adverse effects watch - Published on June 3, 2022</li>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/studies/pfizer_trial_cases_mapping');return;">Pfizer-Biontech Trials - Geographic Location of the trial sites of the 170 positive cases</li>
+        <li class="url-link" onclick="openLocation('/studies/pfizer_trial_cases_mapping');return;">Pfizer-Biontech Trials - Geographic Location of the trial sites of the 170 positive cases used in the Final Analysis of Efficacy</li>
+        <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/studies/all_cases_pfizer_trial_cases_mapping');return;">Pfizer-Biontech Trials - Geographic Location of the trial sites of the 327 positive cases</li>
     </ul>
     % } elsif ($currentLanguage eq 'fr') {
     <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
@@ -37,7 +39,11 @@
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/studies/vaers_fertility');return;">Données Domestiques VAERS - Analyse de l'impact des substances COVID sur les grossesses, sur la base de la veille d'effets secondaires aux USA - Publiée le 3 Juin 2022</li>
         <div class="text_separator"></div>
-        <li class="url-link" onclick="openLocation('/studies/pfizer_trial_cases_mapping');return;">Essais Pfizer-Biontech - Localisation géographiques des sites d'essais des 170 cas positifs</li>
+        <li class="url-link" onclick="openLocation('/studies/pfizer_trial_cases_mapping');return;">Essais Pfizer-Biontech - Localisation géographiques des sites d'essais des 170 cas positifs utilisés dans l'analyse finale d'efficacité</li>
+        <div class="text_separator"></div>
+        <li class="url-link" onclick="openLocation('/studies/all_cases_pfizer_trial_cases_mapping');return;">Essais Pfizer-Biontech - Localisation géographiques des sites d'essais des 327 cas positifs</li>
+        <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
+        <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
     </ul>
     % } else {
 
@@ -49,6 +55,4 @@
 % # <div class="text_separator"></div>
 % # <li class="url-link" onclick="openLocation('/studies/french_vaccines_watch');return;">Données Françaises - Questions ouvertes quant aux incohérences des chiffres communiqués par l'ANSM et Santé Publique France</li>
 % # <li class="url-link" onclick="openLocation('/studies/cdc_mortality');return;">Données CDC - Analyse générale de la mortalité aux Etats-Unis de 2014 à 2021 d'après les rapports CDC</li>
-% # <li class="url-link" onclick="openLocation('/studies/french_insee_deathes_data');return;">Données INSEE - Données de mortalité 2010 - 2022</li>
-% # <li class="url-link" onclick="openLocation('/open_medic');return;">Données OpenMedic - Classifications par groupes d'âges</li>
 
