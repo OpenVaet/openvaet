@@ -21,7 +21,7 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 
 # Verifies we have the folder aiming at receiving the files.
 make_path("public/pfizer_documents/zip_files")         unless (-d "public/pfizer_documents/zip_files");
-make_path("public/pfizer_documents/json_words")         unless (-d "public/pfizer_documents/json_words");
+make_path("public/pfizer_documents/json_words")        unless (-d "public/pfizer_documents/json_words");
 make_path("public/pfizer_documents/pdf_to_html_files") unless (-d "public/pfizer_documents/pdf_to_html_files");
 
 my %data = ();
@@ -51,7 +51,7 @@ print $out encode_json\%dump;
 close $out;
 
 # We then index every word in every html file.
-my $excludeAlphaNumeric = 1; # Either 0 or 1.
+my $excludeAlphaNumeric = 0; # Either 0 or 1.
 index_html_content();
 
 sub get_pfizer_documents {

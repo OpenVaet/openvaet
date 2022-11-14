@@ -21,11 +21,17 @@ use Math::Round qw(nearest);
 
 # Original demographic files of the patients is here, page 22 to 3139.
 # https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-demographics.pdf&currentLanguage=en
+# This file resulted to 714 people in the Randomization file which weren't in the November 2020 file.
+# Original demographic files of the patients is here, page 1 to 2951.
+# https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf&currentLanguage=en
+# This file has only 115 people missing.
+# These subjects can be found "16.2.1.1 Listing of Subjects Discontinued From Vaccination and/or From the Study" (April 2021) in 
+# https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-discontinued-patients.pdf&currentLanguage=en
 
 # This script parses this file, converts the PDF to HTML, then parses the HTML to convert it to a usable JSON format.
 
 # We first parse the PDF file (which must be located here, which means that you must run tasks/pfizer_documents/get_documents.pl first).
-my $demographicPdfFile   = "public/pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-demographics.pdf";
+my $demographicPdfFile   = "public/pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $demographicPdfFile;
 my $demographicPdfFolder = "raw_data/pfizer_trials/demographic";
 my $outputFolder      = "raw_data/pfizer_trials/demographic_output";
@@ -47,11 +53,11 @@ unless (-d $demographicPdfFolder) {
 	system($pdfToHtmlCommand);
 }
 
-# We then verify that we have as expected 3139 HTML pages resulting from the extraction.
+# We then verify that we have as expected 2951 HTML pages resulting from the extraction.
 my %htmlPages = ();
 verify_pdf_structure();
 
-# We then extract pages 22 to 3139 (table "All Subjects").
+# We then extract pages 1 to 2951 (table "All Subjects").
 my %patients = ();
 my $totalPatients = 0;
 extract_all_subjects_table();
@@ -102,14 +108,13 @@ sub verify_pdf_structure {
 		my ($pageNum) = $htmlFile =~ /\/page(.*)\.html/;
 		$htmlPages{$pageNum} = 1;
 	}
-	unless (keys %htmlPages == 3139) {
+	unless (keys %htmlPages == 2951) {
 		die "Something went wrong during PDF extraction. Please verify your PDF file & that XPDF is properly configured.";
 	}
 }
 
 sub extract_all_subjects_table {
 	for my $pageNum (sort{$a <=> $b} keys %htmlPages) {
-		next unless $pageNum >= 22;
 		my $htmlFile = "$demographicPdfFolder/page$pageNum.html";
 		say "htmlFile : $htmlFile";
 		my $content;
@@ -137,7 +142,8 @@ sub extract_all_subjects_table {
 		my ($dNum, $pNum) = (0, 0);
 		for my $div (@divs) {
 			my $text = $div->as_trimmed_text;
-			last if $text =~ /Note: Data for subjects randomized/;
+			# say "$dNum | $text";
+			# last if $text =~ /Note:/;
 			$dNum++;
 			if ($text =~ /^\d\d...2020$/) {
 				$pNum++;
@@ -155,7 +161,9 @@ sub extract_all_subjects_table {
 		# And then load the data in the final table.
 		for my $pNum (sort{$a <=> $b} keys %patientsIds) {
 			die unless exists $patientsCharacteristics{$pNum} && exists $screeningDates{$pNum};
-			my $patientId     = $patientsIds{$pNum}                           // die;
+			my $patientId     = $patientsIds{$pNum}->{'patientId'}            // die;
+			my $hasHIV        = $patientsIds{$pNum}->{'hasHIV'}               // die;
+			my $isPhase1      = $patientsIds{$pNum}->{'isPhase1'}             // die;
 			my $sex           = $patientsCharacteristics{$pNum}->{'sex'}      // die;
 			my $ageYears      = $patientsCharacteristics{$pNum}->{'ageYears'} // die;
 			my $screeningDate = $screeningDates{$pNum}->{'screeningDate'}     // die;
@@ -165,6 +173,8 @@ sub extract_all_subjects_table {
 			$totalPatients++;
 			$patients{$patientId}->{'pageNum'}       = $pageNum;
 			$patients{$patientId}->{'sex'}           = $sex;
+			$patients{$patientId}->{'hasHIV'}        = $hasHIV;
+			$patients{$patientId}->{'isPhase1'}      = $isPhase1;
 			$patients{$patientId}->{'ageYears'}      = $ageYears;
 			$patients{$patientId}->{'weekNumber'}    = $weekNumber;
 			$patients{$patientId}->{'year'}          = $year;
@@ -181,14 +191,15 @@ sub parse_patients_ids {
 	my $trialAndSiteData;
 	for my $div (@divs) {
 		my $text = $div->as_trimmed_text;
-		last if $text =~ /Note: Data for subjects randomized/;
+		last if $text =~ /Note:/;
 		$dNum++;
-		# say "$dNum | $text";
+		# say "$dNum | [$text]";
 		if (($text =~ /C4591001/ || $text =~ /\d\d\d\d\d\d\d\d/)) {
 			if ($text =~ /C4591001/) {
 				# say "text : $text";
 				unless ($text =~ /^C\d\d\d\d\d\d\d \d\d\d\d$/) {
 					($text) = $text =~ /(C\d\d\d\d\d\d\d \d\d\d\d)/;
+					# say "text : $text";
 					die unless $text;
 				}
 				$trialAndSiteData = $text;
@@ -198,15 +209,25 @@ sub parse_patients_ids {
 				# say "text : $text";
 				if ($trialAndSiteData) {
 					my $patientId = "$trialAndSiteData $text";
+					my ($hasHIV, $isPhase1) = (0, 0);
 					unless (length $patientId == 22) {
-						$patientId =~ s/†//;
+						if ($patientId =~ /\^/) {
+							$isPhase1 = 1;
+							$patientId =~ s/\^//;
+						}
+						if ($patientId =~ /†/) {
+							$hasHIV = 1;
+							$patientId =~ s/†//;
+						}
 						# say "patientId : [$patientId]";
 						die unless (length $patientId == 22);
 					}
 					# die;
 					$trialAndSiteData = undef;
 					$pNum++;
-					$patientsIds{$pNum} = $patientId;
+					$patientsIds{$pNum}->{'patientId'} = $patientId;
+					$patientsIds{$pNum}->{'hasHIV'}    = $hasHIV;
+					$patientsIds{$pNum}->{'isPhase1'}  = $isPhase1;
 					# say "$pNum | $patientId";
 				}
 			}
@@ -225,7 +246,7 @@ sub parse_patients_characteristics {
 	my ($dNum, $pNum) = (0, 0);
 	for my $div (@divs) {
 		my $text = $div->as_trimmed_text;
-		last if $text =~ /Note: Data for subjects randomized/;
+		last if $text =~ /Note:/;
 		$dNum++;
 		# say "$dNum | $text";
 		if ($text =~ / Male/ || $text =~ / Female/) {

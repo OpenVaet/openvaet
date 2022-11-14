@@ -344,6 +344,8 @@ sub startup {
     $r->post('/pfizer_trial_cases_mapping/load_pfizer_trial_cases_mapping')->to('pfizer_trial_cases_mapping#load_pfizer_trial_cases_mapping');
     $r->get('/studies/all_cases_pfizer_trial_cases_mapping')->to('all_cases_pfizer_trial_cases_mapping#all_cases_pfizer_trial_cases_mapping');
     $r->post('/all_cases_pfizer_trial_cases_mapping/load_all_cases_pfizer_trial_cases_mapping')->to('all_cases_pfizer_trial_cases_mapping#load_all_cases_pfizer_trial_cases_mapping');
+    $r->get('/studies/all_patients_pfizer_trial_cases_mapping')->to('all_patients_pfizer_trial_cases_mapping#all_patients_pfizer_trial_cases_mapping');
+    $r->post('/all_patients_pfizer_trial_cases_mapping/load_all_patients_pfizer_trial_cases_mapping')->to('all_patients_pfizer_trial_cases_mapping#load_all_patients_pfizer_trial_cases_mapping');
     $r->get('/pfizearch')->to('pfizearch#index');
     $r->get('/pfizearch/search')->to('pfizearch#search');
     $r->get('/pfizearch/documentation')->to('pfizearch#documentation');

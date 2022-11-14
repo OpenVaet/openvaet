@@ -205,6 +205,7 @@ sub date_to_day_of_week
 sub calculate_minutes_difference
 {
     my ($date1, $date2) = @_;
+    die "seems flawed, verify results in depth if used";
     # say "[$date1, $date2]";
     my ($dt1, $dt2);
     my ($year1, $month1, $day1, $hour1, $minute1, $seconde1) = $date1 =~ /(....)-(..)-(..) (..):(..):(..)/;
@@ -256,6 +257,65 @@ sub calculate_minutes_difference
     my $minutes = int(($seconds / 60 * 1000) / 1000);
     # say "minutes   : $minutes";
     return ($minutes);
+}
+
+sub calculate_days_difference
+{
+    my ($date1, $date2) = @_;
+    # say "date1     : [$date1]";
+    # say "date2     : [$date2]";
+    my ($dt1, $dt2);
+    my ($year1, $month1, $day1, $hour1, $minute1, $seconde1) = $date1 =~ /(....)-(..)-(..) (..):(..):(..)/;
+    my ($year2, $month2, $day2, $hour2, $minute2, $seconde2) = $date2 =~ /(....)-(..)-(..) (..):(..):(..)/;
+    eval {
+        $dt1 = DateTime->new(
+            time_zone => "Europe/Paris",
+            year      => $year1,
+            month     => $month1,
+            day       => $day1,
+            hour      => $hour1,
+            minute    => $minute1
+        );
+    };
+    if ($@) {
+        $hour1--;
+        $dt1 = DateTime->new(
+            time_zone => "Europe/Paris",
+            year      => $year1,
+            month     => $month1,
+            day       => $day1,
+            hour      => $hour1,
+            minute    => $minute1
+        );
+    }
+    eval {
+        $dt2 = DateTime->new(
+            time_zone => "Europe/Paris",
+            year      => $year2,
+            month     => $month2,
+            day       => $day2,
+            hour      => $hour2,
+            minute    => $minute2
+        );
+    };
+    if ($@) {
+        $hour2--;
+        $dt2 = DateTime->new(
+            time_zone => "Europe/Paris",
+            year      => $year2,
+            month     => $month2,
+            day       => $day2,
+            hour      => $hour2,
+            minute    => $minute2
+        );
+    }
+    # p$dt1;
+    # p$dt2;
+    use integer;
+    my $daysDif = $dt2->delta_days($dt1)->in_units('days');
+    # say "daysDif   : $daysDif";
+    # die;
+    return ($daysDif);
 }
 
 

@@ -14,54 +14,50 @@ use JSON;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-# Sites localisation comes from pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-iec-irb-consent-form.pdf
-# at https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en
-# Raw patient sites data comes the DailyClout spreadsheet 125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive_Table_16.2.8.1.xlsx
-# from PHMPT's 125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf
+# Sites localisation comes from https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=en
+# Raw patient testing data comes this article https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf&currentLanguage=en
+
 
 # Loading sites data.
 my %sites = ();
 config_sites();
 
 # We load the file produced by the daily clout.
-my @files       = ('raw_data/pfizer_trials/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive_Table_16.2.8.1.csv');
+my $sitesFile   = 'raw_data/pfizer_trials/170-Efficacy-Population-Analysis-19-23-days-protocol-deviaition-chart-26-Sep-2022-Final.csv';
 my %stats       = ();
 my $patientsNum = 0;
-for my $file (@files) {
-	open my $in, '<:utf8', $file;
-	while (<$in>) {
-		chomp $_;
-		my (undef, $siteNum, $countryData) = split ';', $_;
-		next unless $siteNum && $countryData;
-		my ($siteCode)   = $siteNum =~ /........ (....) ......../;
-		my $siteName     = $sites{$siteCode}->{'name'}         // die "siteCode : $siteCode";
-		my $latitude     = $sites{$siteCode}->{'latitude'}     // die;
-		my $longitude    = $sites{$siteCode}->{'longitude'}    // die;
-		my $investigator = $sites{$siteCode}->{'investigator'} // die;
-		my $address      = $sites{$siteCode}->{'address'};
-		my $postalCode   = $sites{$siteCode}->{'postalCode'};
-		my $city         = $sites{$siteCode}->{'city'};
-		my ($countryCode3, $age, $sex) = $countryData =~ /\((...)\/(..)\/(.)\)/;
-		say "$siteNum -> $siteCode, $countryData -> $countryCode3, $age, $sex";
-		$patientsNum++;
-		$stats{'Totals Cases'}++;
-		$stats{'By Countries'}->{$countryCode3}++;
-		# $stats{'By Ages'}->{$age}++;
-		# $stats{'By Sexes'}->{$sex}++;
-		$stats{'By Sites Codes'}->{$siteCode}->{'totalCases'}++;
-		$stats{'By Sites Codes'}->{$siteCode}->{'address'}  = $address;
-		$stats{'By Sites Codes'}->{$siteCode}->{'postalCode'}  = $postalCode;
-		$stats{'By Sites Codes'}->{$siteCode}->{'city'}  = $city;
-		$stats{'By Sites Codes'}->{$siteCode}->{'latitude'}  = $latitude;
-		$stats{'By Sites Codes'}->{$siteCode}->{'longitude'} = $longitude;
-		$stats{'By Sites Codes'}->{$siteCode}->{'investigator'} = $investigator;
-		$stats{'By Sites Codes'}->{$siteCode}->{'siteName'}  = $siteName;
-	}
-	close $in;
+open my $in, '<:utf8', $sitesFile;
+while (<$in>) {
+	chomp $_;
+	my (undef, $siteNum, $countryData) = split ';', $_;
+	next unless $siteNum && $countryData;
+	my ($siteCode)   = $siteNum =~ /........ (....) ......../;
+	my $siteName     = $sites{$siteCode}->{'name'}         // die;
+	my $latitude     = $sites{$siteCode}->{'latitude'}     // die;
+	my $longitude    = $sites{$siteCode}->{'longitude'}    // die;
+	my $investigator = $sites{$siteCode}->{'investigator'} // die;
+	my $address      = $sites{$siteCode}->{'address'};
+	my $postalCode   = $sites{$siteCode}->{'postalCode'};
+	my $city         = $sites{$siteCode}->{'city'};
+	my ($countryCode3, $age, $sex) = $countryData =~ /\((...)\/(..)\/(.)\)/;
+	# say "$siteNum -> $siteCode, $countryData -> $countryCode3, $age, $sex";
+	$patientsNum++;
+	$stats{'By Countries'}->{$countryCode3}++;
+	# $stats{'By Ages'}->{$age}++;
+	# $stats{'By Sexes'}->{$sex}++;
+	$stats{'By Sites Codes'}->{$siteCode}->{'totalCases'}++;
+	$stats{'By Sites Codes'}->{$siteCode}->{'address'}  = $address;
+	$stats{'By Sites Codes'}->{$siteCode}->{'postalCode'}  = $postalCode;
+	$stats{'By Sites Codes'}->{$siteCode}->{'city'}  = $city;
+	$stats{'By Sites Codes'}->{$siteCode}->{'latitude'}  = $latitude;
+	$stats{'By Sites Codes'}->{$siteCode}->{'longitude'} = $longitude;
+	$stats{'By Sites Codes'}->{$siteCode}->{'investigator'} = $investigator;
+	$stats{'By Sites Codes'}->{$siteCode}->{'siteName'}  = $siteName;
 }
+close $in;
 
 # Printing the usable files.
-open my $out, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/all_cases_data_by_sites.csv';
+open my $out, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/data_by_sites.csv';
 say $out "site code;site name;total cases;latitude;longitude;address;postal code;city;";
 my @sitesData = ();
 for my $siteCode (sort keys %{$stats{'By Sites Codes'}}) {
@@ -79,14 +75,12 @@ for my $siteCode (sort keys %{$stats{'By Sites Codes'}}) {
 	push @sitesData, \%o;
 }
 close $out;
-open my $jOut, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/all_cases_data_by_sites.json';
+open my $jOut, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/data_by_sites.json';
 print $jOut encode_json\@sitesData;
 close $jOut;
-open my $jOut2, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/all_cases_stats_by_sites.json';
+open my $jOut2, '>:utf8', 'public/doc/pfizer_trial_cases_mapping/stats_by_sites.json';
 print $jOut2 encode_json\%stats;
 close $jOut2;
-
-p%stats;
 
 sub config_sites {
 	# 1003
@@ -97,14 +91,6 @@ sub config_sites {
 	$sites{'1003'}->{'investigator'} = 'Edward Walsh';
 	$sites{'1003'}->{'latitude'}     = '43.192742';
 	$sites{'1003'}->{'longitude'}    = '-77.585667';
-	# 1005
-	$sites{'1005'}->{'name'}         = 'Rochester Clinical Research, Inc.';
-	$sites{'1005'}->{'address'}      = '500 Helendale Rd, Ste 265';
-	$sites{'1005'}->{'postalCode'}   = 'NY 14609';
-	$sites{'1005'}->{'city'}         = 'Rochester, New York';
-	$sites{'1005'}->{'investigator'} = 'Matthew Davis';
-	$sites{'1005'}->{'latitude'}     = '43.179476';
-	$sites{'1005'}->{'longitude'}    = '-77.545020';
 	# 1006
 	$sites{'1006'}->{'name'}         = 'J. Lewis Research Inc. / Foothill Family Clinic';
 	$sites{'1006'}->{'address'}      = '2295 Foothill Dr';
@@ -113,14 +99,6 @@ sub config_sites {
 	$sites{'1006'}->{'investigator'} = 'James Peterson';
 	$sites{'1006'}->{'latitude'}     = '40.721491';
 	$sites{'1006'}->{'longitude'}    = '-111.811763';
-	# 1007
-	$sites{'1007'}->{'name'}         = 'Cincinnati Children\'s Hospital Medical Center';
-	$sites{'1007'}->{'address'}      = '619 Oak St';
-	$sites{'1007'}->{'postalCode'}   = 'OH 45206';
-	$sites{'1007'}->{'city'}         = 'Cincinnati';
-	$sites{'1007'}->{'investigator'} = 'Robert Frenck';
-	$sites{'1007'}->{'latitude'}     = '39.129639';
-	$sites{'1007'}->{'longitude'}    = '-84.497039';
 	# 1008
 	$sites{'1008'}->{'name'}         = 'Clinical Research Professionals';
 	$sites{'1008'}->{'address'}      = '17998 Chesterfield Airport Rd, Ste 100';
@@ -137,14 +115,6 @@ sub config_sites {
 	$sites{'1009'}->{'investigator'} = 'Shane Christensen';
 	$sites{'1009'}->{'latitude'}     = '40.721491';
 	$sites{'1009'}->{'longitude'}    = '-111.811763';
-	# 1011
-	$sites{'1011'}->{'name'}         = 'Clinical Neuroscience Solutions, Inc';
-	$sites{'1011'}->{'address'}      = '618 E. S St, Ste 100';
-	$sites{'1011'}->{'postalCode'}   = 'FL 32801';
-	$sites{'1011'}->{'city'}         = 'Orlando';
-	$sites{'1011'}->{'investigator'} = 'Michael Dever';
-	$sites{'1011'}->{'latitude'}     = '39.129639';
-	$sites{'1011'}->{'longitude'}    = '-84.497039';
 	# 1013
 	$sites{'1013'}->{'name'}         = 'Clinical Neuroscience Solutions, Inc';
 	$sites{'1013'}->{'address'}      = '618 E. S St, Ste 100';
@@ -177,14 +147,6 @@ sub config_sites {
 	$sites{'1019'}->{'investigator'} = 'Charles Andrews';
 	$sites{'1019'}->{'latitude'}     = '29.510245';
 	$sites{'1019'}->{'longitude'}    = '-98.571134';
-	# 1024
-	$sites{'1024'}->{'name'}         = 'South Jersey Infectious Disease';
-	$sites{'1024'}->{'address'}      = '730 Shore Rd';
-	$sites{'1024'}->{'postalCode'}   = 'NJ 08244';
-	$sites{'1024'}->{'city'}         = 'Somers Point';
-	$sites{'1024'}->{'investigator'} = 'Christopher Lucasti';
-	$sites{'1024'}->{'latitude'}     = '39.313707';
-	$sites{'1024'}->{'longitude'}    = '-74.595725';
 	# 1028
 	$sites{'1028'}->{'name'}         = 'Lillestol Research LLC';
 	$sites{'1028'}->{'address'}      = '4450 31st Ave S, Ste 101';
@@ -193,14 +155,6 @@ sub config_sites {
 	$sites{'1028'}->{'investigator'} = 'Michael Lillestol';
 	$sites{'1028'}->{'latitude'}     = '46.833424';
 	$sites{'1028'}->{'longitude'}    = '-96.860613';
-	# 1036
-	$sites{'1036'}->{'name'}         = 'Trinity Clinical Research';
-	$sites{'1036'}->{'address'}      = '709 NW Atlantic St';
-	$sites{'1036'}->{'postalCode'}   = 'TN 37388';
-	$sites{'1036'}->{'city'}         = 'Tullahoma';
-	$sites{'1036'}->{'investigator'} = 'Marcus Lee';
-	$sites{'1036'}->{'latitude'}     = '35.369091';
-	$sites{'1036'}->{'longitude'}    = '-86.215992';
 	# 1037
 	$sites{'1037'}->{'name'}         = 'Clinical Neuroscience Solutions, Inc.';
 	$sites{'1037'}->{'address'}      = '6401 poplar Ave, Ste 420';
@@ -297,14 +251,6 @@ sub config_sites {
 	$sites{'1082'}->{'investigator'} = 'William Smith';
 	$sites{'1082'}->{'latitude'}     = '35.941513';
 	$sites{'1082'}->{'longitude'}    = '-83.945188';
-	# 1083
-	$sites{'1083'}->{'name'}         = 'Benchmark Research';
-	$sites{'1083'}->{'address'}      = '3100 Red River St, Ste 1';
-	$sites{'1083'}->{'postalCode'}   = 'TX 78705';
-	$sites{'1083'}->{'city'}         = 'Austin';
-	$sites{'1083'}->{'investigator'} = 'Laurence Chu';
-	$sites{'1083'}->{'latitude'}     = '30.290425';
-	$sites{'1083'}->{'longitude'}    = '-97.728125';
 	# 1085
 	$sites{'1085'}->{'name'}         = 'Ventavia Research Group, LLC';
 	$sites{'1085'}->{'address'}      = '300 N Rufe Snow Dr';
@@ -313,14 +259,6 @@ sub config_sites {
 	$sites{'1085'}->{'investigator'} = 'Gregory Fuller';
 	$sites{'1085'}->{'latitude'}     = '32.937803';
 	$sites{'1085'}->{'longitude'}    = '-97.229835';
-	# 1087
-	$sites{'1087'}->{'name'}         = 'PMG Research of Hickory, LLC';
-	$sites{'1087'}->{'address'}      = '1907 Tradd Court';
-	$sites{'1087'}->{'postalCode'}   = 'NC 28401';
-	$sites{'1087'}->{'city'}         = 'Wilmington';
-	$sites{'1087'}->{'investigator'} = 'Kevin Cannon';
-	$sites{'1087'}->{'latitude'}     = '34.208389';
-	$sites{'1087'}->{'longitude'}    = '-77.927732';
 	# 1088
 	$sites{'1088'}->{'name'}         = 'PMG Research of Hickory, LLC';
 	$sites{'1088'}->{'address'}      = '221 13th Ave P1 NW, Ste 201';
@@ -385,14 +323,6 @@ sub config_sites {
 	$sites{'1096'}->{'investigator'} = 'Van Tran';
 	$sites{'1096'}->{'latitude'}     = '29.810730';
 	$sites{'1096'}->{'longitude'}    = '-95.434200';
-	# 1097
-	$sites{'1097'}->{'name'}         = 'Main Street Physician\'s Care';
-	$sites{'1097'}->{'address'}      = '3600 Sea Moutain';
-	$sites{'1097'}->{'postalCode'}   = 'South Carolina 29566';
-	$sites{'1097'}->{'city'}         = 'Little River';
-	$sites{'1097'}->{'investigator'} = 'Tom Christensen';
-	$sites{'1097'}->{'latitude'}     = '33.868737';
-	$sites{'1097'}->{'longitude'}    = '-78.671005';
 	# 1098
 	$sites{'1098'}->{'name'}         = 'SMS Clinical Research, LLC';
 	$sites{'1098'}->{'address'}      = '1210 N Galloway Ave';
@@ -473,14 +403,6 @@ sub config_sites {
 	$sites{'1120'}->{'investigator'} = 'Paul Bradley';
 	$sites{'1120'}->{'latitude'}     = '32.008920';
 	$sites{'1120'}->{'longitude'}    = '-81.106783';
-	# 1121
-	$sites{'1121'}->{'name'}         = 'Optimal Research, LLC';
-	$sites{'1121'}->{'address'}      = '4911 N. Executive Dr, 2nd Fl';
-	$sites{'1121'}->{'postalCode'}   = 'ILLINOIS 61614';
-	$sites{'1121'}->{'city'}         = 'Peoria';
-	$sites{'1121'}->{'investigator'} = 'Daniel Brune';
-	$sites{'1121'}->{'latitude'}     = '40.747241';
-	$sites{'1121'}->{'longitude'}    = '-89.608416';
 	# 1122
 	$sites{'1122'}->{'name'}         = 'VA Northeast Ohio Healthcare System';
 	$sites{'1122'}->{'address'}      = '10701 E Blvd.';
@@ -511,16 +433,8 @@ sub config_sites {
 	$sites{'1126'}->{'postalCode'}   = 'CA 95815';
 	$sites{'1126'}->{'city'}         = 'Sacramento';
 	$sites{'1126'}->{'investigator'} = 'Nicola Klein';
-	$sites{'1126'}->{'latitude'}     = '37.662357';
-	$sites{'1126'}->{'longitude'}    = '-97.245145';
-	# 1127
-	$sites{'1127'}->{'name'}         = 'Alliance for Multispecialty Research, LLC';
-	$sites{'1127'}->{'address'}      = '1709 S Rock Rd';
-	$sites{'1127'}->{'postalCode'}   = 'KS 67207';
-	$sites{'1127'}->{'city'}         = 'Wichita';
-	$sites{'1127'}->{'investigator'} = 'Tracy Klein';
-	$sites{'1127'}->{'latitude'}     = '38.595276';
-	$sites{'1127'}->{'longitude'}    = '-121.429798';
+	$sites{'1126'}->{'latitude'}     = '38.595276';
+	$sites{'1126'}->{'longitude'}    = '-121.429798';
 	# 1128
 	$sites{'1128'}->{'name'}         = 'Ventavia Research Group, LLC';
 	$sites{'1128'}->{'address'}      = '1307 8th Ave, Ste 202 & Ste M1';
@@ -569,14 +483,6 @@ sub config_sites {
 	$sites{'1141'}->{'investigator'} = 'Patricia Winokur';
 	$sites{'1141'}->{'latitude'}     = '41.660436';
 	$sites{'1141'}->{'longitude'}    = '-91.548543';
-	# 1147
-	$sites{'1147'}->{'name'}         = 'Ochsner Clinic Foundation';
-	$sites{'1147'}->{'address'}      = '1514 Jefferson Hwy';
-	$sites{'1147'}->{'postalCode'}   = 'LA 70121';
-	$sites{'1147'}->{'city'}         = 'New Orleans';
-	$sites{'1147'}->{'investigator'} = 'Julia Garcia-Diaz';
-	$sites{'1147'}->{'latitude'}     = '29.962430';
-	$sites{'1147'}->{'longitude'}    = '-90.145600';
 	# 1149
 	$sites{'1149'}->{'name'}         = 'Collaborative Neuroscience Research, LLC';
 	$sites{'1149'}->{'address'}      = '12772 Valley View St, Ste 3';
@@ -593,14 +499,6 @@ sub config_sites {
 	$sites{'1152'}->{'investigator'} = 'Donald Branson';
 	$sites{'1152'}->{'latitude'}     = '32.817426';
 	$sites{'1152'}->{'longitude'}    = '-117.124983';
-	# 1156
-	$sites{'1156'}->{'name'}         = 'Acevedo Clinical Research Associates';
-	$sites{'1156'}->{'address'}      = '2400 Nw 54th St';
-	$sites{'1156'}->{'postalCode'}   = 'FL 33142';
-	$sites{'1156'}->{'city'}         = 'Miami';
-	$sites{'1156'}->{'investigator'} = 'Hector Rodriguez';
-	$sites{'1156'}->{'latitude'}     = '25.823990';
-	$sites{'1156'}->{'longitude'}    = '-80.237163';
 	# 1162
 	$sites{'1162'}->{'name'}         = 'Atlanta Center for Medical Research';
 	$sites{'1162'}->{'address'}      = '501 Fairburn Rd SW';
@@ -633,14 +531,6 @@ sub config_sites {
 	$sites{'1168'}->{'investigator'} = 'Steven Cox';
 	$sites{'1168'}->{'latitude'}     = '35.209973';
 	$sites{'1168'}->{'longitude'}    = '-97.476766';
-	# 1169
-	$sites{'1169'}->{'name'}         = 'Lehigh Valley Health Network / Network Office of Research and Innovation';
-	$sites{'1169'}->{'address'}      = '17th & Chew Streets';
-	$sites{'1169'}->{'postalCode'}   = 'PA 18102';
-	$sites{'1169'}->{'city'}         = 'Allentown';
-	$sites{'1169'}->{'investigator'} = 'Joseph Yozviak';
-	$sites{'1169'}->{'latitude'}     = '40.600758';
-	$sites{'1169'}->{'longitude'}    = '-75.494202';
 	# 1170
 	$sites{'1170'}->{'name'}         = 'North Texas Infectious Deseases Consultants, P.A.';
 	$sites{'1170'}->{'address'}      = '3409 Worth St, Ste 710, 725, 740';
@@ -649,22 +539,6 @@ sub config_sites {
 	$sites{'1170'}->{'investigator'} = 'Mezgebe Berhe';
 	$sites{'1170'}->{'latitude'}     = '32.788375';
 	$sites{'1170'}->{'longitude'}    = '-96.779399';
-	# 1171
-	$sites{'1171'}->{'name'}         = 'DM Clinical Research';
-	$sites{'1171'}->{'address'}      = '13406 Medical Complex Dr, Ste 53';
-	$sites{'1171'}->{'postalCode'}   = 'TX 77375';
-	$sites{'1171'}->{'city'}         = 'Tomball';
-	$sites{'1171'}->{'investigator'} = 'Earl Martin';
-	$sites{'1171'}->{'latitude'}     = '30.084754';
-	$sites{'1171'}->{'longitude'}    = '-95.623484';
-	# 1174
-	$sites{'1174'}->{'name'}         = 'Infectious Diseases Physicians, LLC';
-	$sites{'1174'}->{'address'}      = '3289 Woodburn Rd, Ste 200';
-	$sites{'1174'}->{'postalCode'}   = 'VA 22003';
-	$sites{'1174'}->{'city'}         = 'Annandale';
-	$sites{'1174'}->{'investigator'} = 'Donald Poretz';
-	$sites{'1174'}->{'latitude'}     = '38.854249';
-	$sites{'1174'}->{'longitude'}    = '-77.223548';
 	# 1178
 	$sites{'1178'}->{'name'}         = 'Clinical Research Associates, Inc.';
 	$sites{'1178'}->{'address'}      = '1500 Church St, Ste 100';
@@ -681,46 +555,6 @@ sub config_sites {
 	$sites{'1179'}->{'investigator'} = 'Steven Katzman';
 	$sites{'1179'}->{'latitude'}     = '42.519643';
 	$sites{'1179'}->{'longitude'}    = '-83.359298';
-	# 1194
-	$sites{'1194'}->{'name'}         = 'IKF Pneumologie GmbH & Co KG';
-	$sites{'1194'}->{'address'}      = 'Institut für klinische Forschung';
-	$sites{'1194'}->{'postalCode'}   = '60596';
-	$sites{'1194'}->{'city'}         = 'Frankfurt am Main';
-	$sites{'1194'}->{'investigator'} = 'Steven Katzman';
-	$sites{'1194'}->{'latitude'}     = '50.100141';
-	$sites{'1194'}->{'longitude'}    = '8.668858';
-	# 1203
-	$sites{'1203'}->{'name'}         = 'CRS Clinical Research Services Berlin GmbH';
-	$sites{'1203'}->{'address'}      = 'Sellerstr. 31';
-	$sites{'1203'}->{'postalCode'}   = '13353';
-	$sites{'1203'}->{'city'}         = 'Berlin';
-	$sites{'1203'}->{'investigator'} = 'Sybille Baumann';
-	$sites{'1203'}->{'latitude'}     = '52.539590';
-	$sites{'1203'}->{'longitude'}    = '13.370117';
-	# 1207
-	$sites{'1207'}->{'name'}         = 'Ankara Universitesi Tip Fakultesi, Ibni Sina Hastanesi';
-	$sites{'1207'}->{'address'}      = 'Anabilim Dali';
-	$sites{'1207'}->{'postalCode'}   = '06230';
-	$sites{'1207'}->{'city'}         = 'Ankara';
-	$sites{'1207'}->{'investigator'} = 'Ismail Balik';
-	$sites{'1207'}->{'latitude'}     = '39.933943';
-	$sites{'1207'}->{'longitude'}    = '32.882137';
-	# 1209
-	$sites{'1209'}->{'name'}         = 'Istanbul Yedikule Gogus Hastaliklari ve Gogus';
-	$sites{'1209'}->{'address'}      = 'Zeytinburnu';
-	$sites{'1209'}->{'postalCode'}   = '34020';
-	$sites{'1209'}->{'city'}         = 'Istanbul';
-	$sites{'1209'}->{'investigator'} = 'Sedat Altin';
-	$sites{'1209'}->{'latitude'}     = '41.001984';
-	$sites{'1209'}->{'longitude'}    = '28.915308';
-	# 1221
-	$sites{'1221'}->{'name'}         = 'Gallup Indian Medical Center';
-	$sites{'1221'}->{'address'}      = '516 E Nizhoni Blvd';
-	$sites{'1221'}->{'postalCode'}   = 'New Mexico 87301';
-	$sites{'1221'}->{'city'}         = 'Gallup';
-	$sites{'1221'}->{'investigator'} = 'Laura Hammitt';
-	$sites{'1221'}->{'latitude'}     = '35.508026';
-	$sites{'1221'}->{'longitude'}    = '-108.729960';
 	# 1223
 	$sites{'1223'}->{'name'}         = 'Yale Center for Clinical Investigations';
 	$sites{'1223'}->{'address'}      = '2 Church St S, Ste 114';
@@ -761,14 +595,6 @@ sub config_sites {
 	$sites{'1241'}->{'investigator'} = 'Edson Moreira';
 	$sites{'1241'}->{'latitude'}     = '-12.934974';
 	$sites{'1241'}->{'longitude'}    = '-38.506831';
-	# 1247
-	$sites{'1247'}->{'name'}         = 'Tiervlei Trial Centre, Basement Level, Karl Bremer Hospital';
-	$sites{'1247'}->{'address'}      = 'c/o Mike Bienaar Boulevard & Frans Coradie Avenue, Bellville';
-	$sites{'1247'}->{'postalCode'}   = 'WESTERN CAPE 7530';
-	$sites{'1247'}->{'city'}         = 'Cape Town';
-	$sites{'1247'}->{'investigator'} = 'Haylene Nell';
-	$sites{'1247'}->{'latitude'}     = '-33.871827';
-	$sites{'1247'}->{'longitude'}    = '18.637222';
 	# 1251
 	$sites{'1251'}->{'name'}         = 'Birmingham Clinical Research Unit';
 	$sites{'1251'}->{'address'}      = '2017 Cayon Rd, Ste 41';
