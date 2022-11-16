@@ -292,7 +292,7 @@ sub post_on_gab {
             my $docNum = 0;
             for my $file (@{%$json{'documents'}}) {
                 $docNum++;
-                if ($docNum == $maxPicturesAttached) {
+                if ($docNum > $maxPicturesAttached) {
                     $hasIncompatibleMedia = 1;
                     last;
                 }
@@ -505,7 +505,7 @@ sub post_on_gettr {
             my $docNum = 0;
             for my $file (@{%$json{'documents'}}) {
                 $docNum++;
-                if ($docNum == $maxPicturesAttached) {
+                if ($docNum > $maxPicturesAttached) {
                     $hasIncompatibleMedia = 1;
                     last;
                 }
