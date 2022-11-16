@@ -62,6 +62,7 @@ my $gettrUserPassword          = $config{'gettrUserPassword'}          // die;
 my $gabGroupsPostingVisibility = 'public'; # Either "public" or "unlisted". To adjust if the behavior varies on your Gab account.
 my $skipCurrentHistory         = 0;        # Either 0 or 1. If 1, the bot will catch up on every existing message without actually posting.
                                            # Must be 0 on production mod.
+my $maxPicturesAttached        = 4;        # Shouldn't evolve much - for now it's the same limit of 4 on Gettr & Gab.
 
 # Initiates UserAgent.
 my $cookie = HTTP::Cookies->new();
@@ -288,7 +289,13 @@ sub post_on_gab {
     if ($skipCurrentHistory == 0 ) {
         my $hasIncompatibleMedia = 0;
         if (%$json{'documents'}) {
+            my $docNum = 0;
             for my $file (@{%$json{'documents'}}) {
+                $docNum++;
+                if ($docNum == $maxPicturesAttached) {
+                    $hasIncompatibleMedia = 1;
+                    last;
+                }
                 my @elems = split '\.', $file;
                 my $ext   = $elems[scalar @elems - 1] // die;
                 if ($ext eq 'mp4'             || $ext eq 'jpg'        || $ext eq 'jpeg'      || $ext eq 'png' || $ext eq 'gif' ||
@@ -495,7 +502,13 @@ sub post_on_gettr {
         my $attachmentType;
         my $hasIncompatibleMedia = 0;
         if (%$json{'documents'}) {
+            my $docNum = 0;
             for my $file (@{%$json{'documents'}}) {
+                $docNum++;
+                if ($docNum == $maxPicturesAttached) {
+                    $hasIncompatibleMedia = 1;
+                    last;
+                }
                 my @elems = split '\.', $file;
                 my $ext   = $elems[scalar @elems - 1] // die;
                 if ($ext eq 'mp4'  || $ext eq 'gif'  ||

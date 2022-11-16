@@ -1,0 +1,96 @@
+
+% my %sites = %$sites;
+<div style="width:100%;display: flex;flex-wrap: wrap;">
+% if ($mainWidth > 500) {
+	<div style="width:80%;">
+		<div id="map" style="height: 500px;width: 100%;z-index: 1;"></div>
+	</div>
+	<div style="width:20%;">
+		<div  id="currentMouseOver">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+% } else {
+	<div style="width:100%;">
+		<div id="map" style="height: 250px;width: 100%;z-index: 1;"></div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;">
+		<div  id="currentMouseOver">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+% }
+</div>
+
+<script type="text/javascript">
+
+	// Create the map
+	var map       = L.map('map', {attributionControl: false}).setView(center, zoomLevel);
+	var pinLat;
+	var pinLng;
+	var zoom;
+	% for my $siteCode (sort{$a <=> $b} keys %sites) {
+		% my $siteName = $sites{$siteCode}->{'siteName'} // die;
+		% my $latitude = $sites{$siteCode}->{'latitude'} // die;
+		% my $longitude = $sites{$siteCode}->{'longitude'} // die;
+		% my $postalCode = $sites{$siteCode}->{'postalCode'} // die;
+		% my $totalCases = $sites{$siteCode}->{'totalCases'} // die;
+		% my $investigator = $sites{$siteCode}->{'investigator'} // die;
+		% my $address = $sites{$siteCode}->{'address'} // die;
+		% my $city = $sites{$siteCode}->{'city'} // die;
+		% my $radiusSize = 25000 * $totalCases;
+		% my $siteNamePrint = $siteName;
+		% $siteNamePrint =~ s/\'/\\\'/;
+		var circle<%=$siteCode%> = L.circle([<%=$latitude%>, <%=$longitude%>], {
+		    color: 'red',
+		    fillColor: '#f03',
+		    fillOpacity: 0.5,
+		    radius: <%=$radiusSize%>,
+		    siteName: '<%=$siteName%>',
+		    address: '<%=$address%>',
+		    investigator: '<%=$investigator%>',
+		    postalCode: '<%=$postalCode%>',
+		    city: '<%=$city%>',
+		    siteCode: <%=$siteCode%>,
+		    totalCases: <%=$totalCases%>
+		}).addTo(map).on('mouseover', onClick);
+	% }
+
+	// Set up the OSM layer
+	L.tileLayer(
+		'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: 'Data © <a href="http://osm.org/copyright">OpenStreetMap</a>',
+		maxZoom: 18
+	}).addTo(map);
+
+    $( document ).ready(function() {
+		var flags = document.querySelectorAll('.leaflet-bottom leaflet-right');
+		console.log(flags);
+		flags.forEach(flag => {
+			flag.remove();
+			alert('removed');
+		});
+    });
+
+    function onClick(e) {
+    	let siteCode = this.options.siteCode;
+    	let siteName = this.options.siteName;
+    	let totalCases = this.options.totalCases;
+    	let address = this.options.address;
+    	let postalCode = this.options.postalCode;
+    	let city = this.options.city;
+    	let investigator = this.options.investigator;
+	    // alert(this.getLatLng() + ', siteName : ' + siteName + ', siteCode : ' + siteCode + ', totalCases : ' + totalCases);
+	    $('#currentMouseOver').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + siteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + siteCode  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + address + ', '+ postalCode + ', '+ city + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + investigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalCases + ' Cases</div>')
+	}
+</script>
