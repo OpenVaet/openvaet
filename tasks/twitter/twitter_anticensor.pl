@@ -564,7 +564,7 @@ sub flag_unfollowed_relation {
 
 sub verify_twitter_user_existing_relations {
     for my $twitterUser1Id (sort{$a <=> $b} keys %twitterUserRelations) {
-        my $twitterUser1Name = $twitterUsers{$twitterUser1Id}->{'twitterUserName'} // die;
+        my $twitterUser1Name = $twitterUsers{$twitterUser1Id}->{'twitterUserName'} // next;
         for my $twitterUser2Id (sort{$a <=> $b} keys %{$twitterUserRelations{$twitterUser1Id}}) {
             my $twitterUser2Name = $twitterUsers{$twitterUser2Id}->{'twitterUserName'} // next;
             unless (exists $currentUserRelations{$twitterUser1Id}->{$twitterUser2Id}) {

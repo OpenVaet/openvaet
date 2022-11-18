@@ -32,6 +32,28 @@ get_pfizer_documents();
 # Extracts the Pfizer docs.
 extract_pfizer_documents();
 
+my ($continue, $tries, $forward) = (0, 0, 0);
+while ($continue == 0) {
+	say "Done extracting Pfizer Files. Do you also wish to proceed with Pfizearch configuration ? (You must have xpdf installed as described in this page [https://openvaet.org/pfizearch/documentation?currentLanguage=en])";
+	say "Enter [Y/n] to continue or exit";
+	my $stdin = <STDIN>;
+	chomp $stdin;
+	$stdin = lc $stdin;
+	if ($stdin) {
+		if ($stdin eq 'y' || $stdin eq 'n') {
+			$continue = 1;
+			$forward  = 1 if $stdin eq 'y';
+		}
+	}
+	if ($tries > 5) {
+		say "Too many failed attempts. Exiting. Read the documentation & restart the script to proceed forward.";
+		exit;
+	}
+}
+
+exit unless $forward;
+
+
 # Converts the Pfizer's PDFs to HTML.
 # You'll need the XPDF version corresponding to your OS.
 # Both files below are coming from https://www.xpdfreader.com/download.html

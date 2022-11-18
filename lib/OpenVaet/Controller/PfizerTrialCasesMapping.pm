@@ -18,7 +18,7 @@ sub pfizer_trial_cases_mapping {
     $languages{'en'}    = 'English';
 
     my $json;
-    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/stats_by_sites.json';
+    open my $in, '<:utf8', 'public/doc/pfizer_trials/stats_by_sites.json';
     while (<$in>) {
     	$json .= $_;
     }
@@ -61,7 +61,7 @@ sub load_pfizer_trial_cases_mapping {
     say "mainWidth  : $mainWidth";
     say "mainHeight : $mainHeight";
     my $json;
-    open my $in, '<:utf8', 'public/doc/pfizer_trial_cases_mapping/stats_by_sites.json';
+    open my $in, '<:utf8', 'public/doc/pfizer_trials/stats_by_sites.json';
     while (<$in>) {
     	$json .= $_;
     }

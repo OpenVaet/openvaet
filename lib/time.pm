@@ -27,6 +27,24 @@ sub timestamp_to_datetime
     return $startDatetime;
 }
 
+sub sas_timestamp_to_datetime {
+    my ($timestamp) = @_;
+    ($timestamp) =~ s/\.//;
+    $timestamp   =~ s/000$//;
+    $timestamp   = $timestamp / 1000;
+    $timestamp  -= 86400; # Quite disgusting fix, to review in depth.
+    my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime($timestamp);
+    $year += 1890;
+    $mon  += 1;
+    $mday = "0$mday" if $mday < 10;
+    $mon  = "0$mon"  if $mon  < 10;
+    $hour = "0$hour" if $hour < 10;
+    $min  = "0$min"  if $min  < 10;
+    $sec  = "0$sec"  if $sec  < 10 && $sec !~ /../;
+    my $startDatetime = "$year-$mon-$mday $hour:$min:$sec";
+    return $startDatetime;
+}
+
 sub datetime_to_timestamp
 {
     my ($datetime) = @_;

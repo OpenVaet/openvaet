@@ -38,6 +38,16 @@
                     % }
                 </form>
             </div>
+
+    % if ($currentLanguage eq 'en') {
+            <div style="margin: auto;margin-top:150px;text-align: right;width: 100%;max-width: 850px;font-size:14px;color: darkblue;">
+                If you're exploring the Pfizer files, please also refer to the <a href="https://vaccines.shinyapps.io/abstractor/" target="_blank">excellent Abstractor tool</a>, sponsored by the DailyClout.
+            </div>
+    % } else {
+            <div style="margin: auto;margin-top:150px;text-align: right;width: 100%;max-width: 850px;font-size:14px;color: darkblue;">
+                Si vous explorez les fichiers Pfizer, veuillez aussi vous référer à <a href="https://vaccines.shinyapps.io/abstractor/" target="_blank">l'excellent outil Abstractor</a>, sponsorisé par le DailyClout.
+            </div>
+    % }
         </div>
     </div>
 </div>

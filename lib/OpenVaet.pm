@@ -320,6 +320,7 @@ sub startup {
 	$r->get('/changelog')->to('changelog#changelog');
 	$r->get('/studies')->to('studies#studies');
     $r->get('/studies/vaers_fertility')->to('studies#vaers_fertility');
+    $r->get('/studies/verifying_170_cases')->to('verifying_170_cases#verifying_170_cases');
 	$r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
 	$r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
     $r->post('/studies/vaers_fertility/set_report_pregnancy_attribute')->to('studies#set_report_pregnancy_attribute');
