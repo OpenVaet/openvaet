@@ -1,0 +1,6 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer Trial Cases Locations';
+% } else {
+% title 'OPENVAET - Localisation des cas lors des essais Pfizer';
+% }

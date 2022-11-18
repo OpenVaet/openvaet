@@ -1,0 +1,158 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer Phase 3 Clinical Trials - Identifying the data of the 170 patients qualifying for the efficacy calculation';
+% } else {
+% title 'OPENVAET - Essais cliniques de phase 3 Pfizer - Identification des 170 patients retenus pour le calcul d\'efficacité';
+% }
+<div class="content-container" style="padding-left: 10px;padding-right: 10px;width: calc(100% - 15px);line-height: 1.2;">
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div style="width:100%;text-align: center;font-size: 22px;font-weight: bold;">
+		Pfizer Phase 3 Clinical Trials - Identifying the data of the 170 patients qualifying for the efficacy calculation
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 20px;font-weight: bold;">
+	    Introduction
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	This page presents an extraction of the 170 patients used in the efficacy analysis. To dive deeper in that subject, we suggest you to read the excellent DailyClout's Team 3's forensic & analytic work, presented in their article, <a href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/" target="_blank">Report 42: Pfizer’s EUA Granted Based on Fewer Than 0.4% of Clinical Trial Participants. FDA Ignored Disqualifying Protocol Deviations to Grant EUA.</a>.
+	<div class="text_separator"></div>
+	<a target="_blank" href="https://github.com/OpenVaet/openvaet">The code</a>, redacted using Perl 5, and data used in this analysis is publicly available, and independently verifiable following the links in the article.
+	<div class="text_separator"></div>
+	Refer to the <a href="/data?currentLanguage=en">Data page</a>, section "Running The Project On Windows" or "Running The Project On Linux", for the dependencies required (you don't need a database but you need Perl 5 & the project dependencies). You'll also need the <a href="https://www.xpdfreader.com/download.html" target="_blank">XPDF executable</a> corresponding to your OS placed in your project root folder.
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 20px;font-weight: bold;">
+	    Methodology
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 18px;font-weight: bold;">
+	    PHPMT Files Download & Extraction
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	We automatically downloaded the documents from the Pfizer trials made available on <a href="https://phmpt.org/pfizers-documents/" target="_blank">PHMPT.org</a>, using the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_documents/get_documents.pl" target="_blank">tasks/pfizer_documents/get_documents.pl</a> (Github).
+	<div class="text_separator"></div>
+	<b>If you're using the scripts provided but aren't using Pfizearch, you can answer "N" when the script asks you if it should proceed with the very time consuming PDF extraction of all the .PDF files.</b>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 18px;font-weight: bold;">
+	    Key Files Extraction
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Several tables, in several files, have been sustained as key in the analysis.
+	<div class="text_separator"></div>
+	<div style="width: 100%;overflow-x: auto;overflow-y: auto;text-align: center;border: 1px solid black;box-sizing: border-box;font-size: 13px;">
+		<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;font-weight: bold;padding-top: 15px;">
+			<div style="width: 20%;">
+				File Name
+			</div>
+			<div style="width: 20%;">
+				Table Name
+			</div>
+			<div style="width: 10%;">
+				Pages
+			</div>
+			<div style="width: 15%;">
+				Extraction Script (Github)
+			</div>
+			<div style="width: 25%;">
+				Notes
+			</div>
+			<div style="width: 10%;">
+				Output
+			</div>
+		</div>
+		<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
+			<div style="width: 20%;">
+				<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf</a>
+			</div>
+			<div style="width: 20%;">
+				16.2.1.1 Listing of Subjects Discontinued From Vaccination and/or From the Study – All Subjects ≥16 Years of Age
+			</div>
+			<div style="width: 10%;">
+				1 to 2951
+			</div>
+			<div style="width: 15%;">
+				<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_trial_demographics.pl" target="_blank">tasks/pfizer_trials/extract_trial_demographics.pl</a>
+			</div>
+			<div style="width: 25%;">
+				Demographic table containing 44.257 subjects data.
+			</div>
+			<div style="width: 5%;">
+				<a href="/doc/pfizer_trials/pfizer_trial_demographics.csv" download>.CSV</a>
+			</div>
+			<div style="width: 5%;">
+				<a href="/doc/pfizer_trials/pfizer_trial_demographics.json" download>.JSON</a>
+			</div>
+		</div>
+		<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
+			<div style="width: 20%;">
+				<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_c4591001-interim-mth6-randomization-sensitive.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-050222/125742_S1_M5_5351_c4591001-interim-mth6-randomization-sensitive.pdf</a>
+			</div>
+			<div style="width: 20%;">
+				16.1.7.1 Listing of Randomization Scheme and Actual Vaccine Received – All Subjects ≥16 Years of Age
+			</div>
+			<div style="width: 10%;">
+				1 to 4376
+			</div>
+			<div style="width: 15%;">
+				<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_randomization_scheme.pl" target="_blank">tasks/pfizer_trials/extract_randomization_scheme.pl</a>
+			</div>
+			<div style="width: 25%;">
+				Randomization table containing 44.360 subjects assigned groups & doses received.
+			</div>
+			<div style="width: 5%;">
+			</div>
+			<div style="width: 5%;">
+				<a href="/doc/pfizer_trials/pfizer_trial_randomization.json" download>.JSON</a>
+			</div>
+		</div>
+		<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;padding-bottom:15px;border-top: 1px solid black;">
+			<div style="width: 20%;">
+				<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf</a>
+			</div>
+			<div style="width: 20%;">
+				16.2.8.2 Listing of Subjects With First COVID-19 Occurrence From 7 Days After Dose 2 and Without Evidence of Infection Prior to 7 Days After Dose 2 – Evaluable Efficacy (7 Days) Population
+			</div>
+			<div style="width: 10%;">
+				66 to 99
+			</div>
+			<div style="width: 15%;">
+				<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_efficacy_cases.pl" target="_blank">tasks/pfizer_trials/extract_efficacy_cases.pl</a>
+			</div>
+			<div style="width: 25%;">
+				Interim Lab Measurements file containing 170 positive cases, sustained for efficacy calculation when the file was edited.
+			</div>
+			<div style="width: 5%;">
+				<a href="/doc/pfizer_trials/pfizer_trial_efficacy_cases_2.csv" download>.CSV</a>
+			</div>
+			<div style="width: 5%;">
+				<a href="/doc/pfizer_trials/pfizer_trial_efficacy_cases_2.json" download>.JSON</a>
+			</div>
+		</div>
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 18px;font-weight: bold;">
+	    Data Merging
+	</div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Data from the efficacy table has been merged with the demographic tables & randomization tables data using the <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/merge_efficacy_cases_data.pl" target="_blank">tasks/pfizer_trials/merge_efficacy_cases_data.pl</a> script.
+	<div class="text_separator"></div>
+	Result is a 170 list of subjects, <b>which you can <a href="/doc/pfizer_trials/170_positive_efficacy.xlsx" download>download here</a> on XLSX format.</b>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
