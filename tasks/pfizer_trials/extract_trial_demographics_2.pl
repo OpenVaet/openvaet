@@ -33,8 +33,8 @@ use Math::Round qw(nearest);
 # We first parse the PDF file (which must be located here, which means that you must run tasks/pfizer_documents/get_documents.pl first).
 my $demographicPdfFile   = "public/pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $demographicPdfFile;
-my $demographicPdfFolder = "raw_data/pfizer_trials/demographic";
-my $outputFolder      = "public/doc/pfizer_trials";
+my $demographicPdfFolder = "raw_data/pfizer_trials/demographic_2";
+my $outputFolder         = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
 # If the pdf hasn't been extracted already, proceeding.
@@ -67,19 +67,19 @@ say "totalPatients   : $totalPatients";
 # Generates weekly stats, prints .CSV.
 my %stats = ();
 my $patientsToNov14 = 0;
-open my $out, '>:utf8', "$outputFolder/pfizer_trial_demographics.csv";
+open my $out, '>:utf8', "$outputFolder/pfizer_trial_demographics_2.csv";
 say $out "file;page number;entry number;patient id;sex;age (years);screening date;has HIV;is phase 1;";
-for my $uniqueSubjectId (sort keys %patients) {
-	my $sex           = $patients{$uniqueSubjectId}->{'sex'}           // die;
-	my $year          = $patients{$uniqueSubjectId}->{'year'}          // die;
-	my $month         = $patients{$uniqueSubjectId}->{'month'}         // die;
-	my $ageYears      = $patients{$uniqueSubjectId}->{'ageYears'}      // die;
-	my $hasHIV        = $patients{$uniqueSubjectId}->{'hasHIV'}        // die;
-	my $isPhase1      = $patients{$uniqueSubjectId}->{'isPhase1'}      // die;
-	my $pageNum       = $patients{$uniqueSubjectId}->{'pageNum'}       // die;
-	my $entryNum      = $patients{$uniqueSubjectId}->{'entryNum'}      // die;
-	my $screeningDate = $patients{$uniqueSubjectId}->{'screeningDate'} // die;
-	say $out "pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf;$pageNum;$entryNum;$uniqueSubjectId;$sex;$ageYears;$screeningDate;$hasHIV;$isPhase1;";
+for my $uSubjectId (sort keys %patients) {
+	my $sex           = $patients{$uSubjectId}->{'sex'}           // die;
+	my $year          = $patients{$uSubjectId}->{'year'}          // die;
+	my $month         = $patients{$uSubjectId}->{'month'}         // die;
+	my $ageYears      = $patients{$uSubjectId}->{'ageYears'}      // die;
+	my $hasHIV        = $patients{$uSubjectId}->{'hasHIV'}        // die;
+	my $isPhase1      = $patients{$uSubjectId}->{'isPhase1'}      // die;
+	my $pageNum       = $patients{$uSubjectId}->{'pageNum'}       // die;
+	my $entryNum      = $patients{$uSubjectId}->{'entryNum'}      // die;
+	my $screeningDate = $patients{$uSubjectId}->{'screeningDate'} // die;
+	say $out "pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf;$pageNum;$entryNum;$uSubjectId;$sex;$ageYears;$screeningDate;$hasHIV;$isPhase1;";
 	if ($screeningDate >= '20200720' && $screeningDate <= '20201114') {
 		$patientsToNov14++;
 	}
@@ -88,7 +88,7 @@ close $out;
 say "patientsToNov14 : $patientsToNov14";
 
 # Prints patients JSON.
-open my $out3, '>:utf8', "$outputFolder/pfizer_trial_demographics.json";
+open my $out3, '>:utf8', "$outputFolder/pfizer_trial_demographics_2.json";
 print $out3 encode_json\%patients;
 close $out3;
 # p%stats;
@@ -153,7 +153,7 @@ sub extract_all_subjects_table {
 		# p%patientsIds;
 		for my $pNum (sort{$a <=> $b} keys %patientsIds) {
 			die unless exists $patientsCharacteristics{$pNum} && exists $screeningDates{$pNum};
-			my $uniqueSubjectId = $patientsIds{$pNum}->{'uniqueSubjectId'}      // die;
+			my $uSubjectId = $patientsIds{$pNum}->{'uSubjectId'}      // die;
 			my $subjectId       = $patientsIds{$pNum}->{'subjectId'}            // die;
 			my $hasHIV          = $patientsIds{$pNum}->{'hasHIV'}               // die;
 			my $isPhase1        = $patientsIds{$pNum}->{'isPhase1'}             // die;
@@ -166,8 +166,8 @@ sub extract_all_subjects_table {
 			my $weekNumber      = $screeningDates{$pNum}->{'weekNumber'}        // die;
 			$totalPatients++;
 			$patients{$subjectId}->{'pageNum'}         = $pageNum;
-			$patients{$subjectId}->{'uniqueSubjectId'} = $uniqueSubjectId;
-			$patients{$subjectId}->{'uniqueSubjectIds'}->{$uniqueSubjectId} = 1;
+			$patients{$subjectId}->{'uSubjectId'} = $uSubjectId;
+			$patients{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 			$patients{$subjectId}->{'sex'}             = $sex;
 			$patients{$subjectId}->{'hasHIV'}          = $hasHIV;
 			$patients{$subjectId}->{'isPhase1'}        = $isPhase1;
@@ -216,29 +216,31 @@ sub parse_patients_ids {
 					# die;
 				} else {
 					if ($trialData && $siteData) {
-						my $uniqueSubjectId = "$trialData $siteData $word";
+						my $uSubjectId = "$trialData $siteData $word";
 						my ($hasHIV, $isPhase1) = (0, 0);
-						unless (length $uniqueSubjectId == 22) {
-							if ($uniqueSubjectId =~ /\^/) {
+						unless (length $uSubjectId == 22) {
+							if ($uSubjectId =~ /\^/) {
 								$isPhase1 = 1;
-								$uniqueSubjectId =~ s/\^//;
+								$uSubjectId =~ s/\^//;
 							}
-							if ($uniqueSubjectId =~ /†/) {
+							if ($uSubjectId =~ /†/) {
 								$hasHIV = 1;
-								$uniqueSubjectId =~ s/†//;
+								$uSubjectId =~ s/†//;
 							}
-							# say "uniqueSubjectId : [$uniqueSubjectId]";
-							die unless (length $uniqueSubjectId == 22);
+							# say "uSubjectId : [$uSubjectId]";
+							die unless (length $uSubjectId == 22);
 						}
 						# die;
+						my ($subjectId) = $uSubjectId =~ /^C4591001 \d\d\d\d (\d\d\d\d\d\d\d\d)$/;
+						die unless $subjectId;
 						$entryNum++;
 						$patientsIds{$entryNum}->{'entryNum'}                 = $entryNum;
-						$patientsIds{$entryNum}->{'uniqueSubjectId'}          = $uniqueSubjectId;
-						$patientsIds{$entryNum}->{'subjectId'}                = $word;
-						$patientsIds{$entryNum}->{'uniqueSubjectIdTopMargin'} = $topMargin;
+						$patientsIds{$entryNum}->{'uSubjectId'}          = $uSubjectId;
+						$patientsIds{$entryNum}->{'subjectId'}                = $subjectId;
+						$patientsIds{$entryNum}->{'uSubjectIdTopMargin'} = $topMargin;
 						$patientsIds{$entryNum}->{'hasHIV'}                   = $hasHIV;
 						$patientsIds{$entryNum}->{'isPhase1'}                 = $isPhase1;
-						# say "$entryNum | $uniqueSubjectId";
+						# say "$entryNum | $uSubjectId";
 						$trialData = undef;
 						$siteData  = undef;
 						$topMargin = undef;

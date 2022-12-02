@@ -1,0 +1,145 @@
+% layout 'default';
+% title 'OPENVAET - Keywords Sets';
+% my %keywordsSets = %$keywordsSets;
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/social_networks');return;">&#10229; Return to social networks admin</div>
+        <div class="text_separator"></div>
+        <div style="width: 95%;text-align: right;"><span onclick="openLocation('/social_networks/new_keywords_set');return;" class="url-link noselect">Add new set +</span></div>
+        <h2>My Keywords Sets</h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="owned-keywords-sets-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 70%;"><b>Keyword Set Name</b></th>
+                    <th style="width: 20%;"><b>Keywords Included</b></th>
+                    <th style="width: 10%;"><b>Edit</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $keywordSetName (sort keys %{$keywordsSets{'owned'}}) {
+                    % my $keywordsSetId  = $keywordsSets{'owned'}->{$keywordSetName}->{'keywordsSetId'} // die;
+                    % my $totalKeywords = $keywordsSets{'owned'}->{$keywordSetName}->{'totalKeywords'} // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$keywordSetName%></b></td>
+                        <td style="width: 20%;"><b><%=$totalKeywords%></b></td>
+                        <td style="width: 10%;cursor: pointer;">
+                            <img src="/images/edit.png" style="width:20px;display: block;margin: auto;" onclick="openKeywordsSet('<%=$keywordsSetId%>');return;">
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <h2>Common Keywords Sets</h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="notOwned-keywords-sets-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 70%;"><b>Keyword Set Name</b></th>
+                    <th style="width: 20%;"><b>Keywords Included</b></th>
+                    <th style="width: 10%;"><b>Edit</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $keywordSetName (sort keys %{$keywordsSets{'notOwned'}}) {
+                    % my $keywordsSetId  = $keywordsSets{'notOwned'}->{$keywordSetName}->{'keywordsSetId'} // die;
+                    % my $totalKeywords = $keywordsSets{'notOwned'}->{$keywordSetName}->{'totalKeywords'} // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$keywordSetName%></b></td>
+                        <td style="width: 20%;"><b><%=$totalKeywords%></b></td>
+                        <td style="width: 10%;cursor: pointer;">
+                            <img src="/images/edit.png" style="width:20px;display: block;margin: auto;" onclick="openKeywordsSet('<%=$keywordsSetId%>');return;">
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/social_networks');return;">&#10229; Retour à l'administration des réseaux sociaux</div>
+        <div class="text_separator"></div>
+        <div style="width: 95%;text-align: right;"><span onclick="openLocation('/social_networks/new_keywords_set');return;" class="url-link noselect">Création d'un set +</span></div>
+        <h2>Mes Sets de Mots Clés</h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="owned-keywords-sets-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 70%;"><b>Keyword Set Name</b></th>
+                    <th style="width: 20%;"><b>Keywords Included</b></th>
+                    <th style="width: 10%;"><b>Edit</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $keywordSetName (sort keys %{$keywordsSets{'owned'}}) {
+                    % my $keywordsSetId  = $keywordsSets{'owned'}->{$keywordSetName}->{'keywordsSetId'} // die;
+                    % my $totalKeywords = $keywordsSets{'owned'}->{$keywordSetName}->{'totalKeywords'} // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$keywordSetName%></b></td>
+                        <td style="width: 20%;"><b><%=$totalKeywords%></b></td>
+                        <td style="width: 10%;cursor: pointer;">
+                            <img src="/images/edit.png" style="width:20px;display: block;margin: auto;" onclick="openKeywordsSet('<%=$keywordsSetId%>');return;">
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        <h2>Sets de Mots Clés Communs</h2>
+        <table style="width: 100%;font-size: 12px;text-align: center;margin-top:15px;" id="notOwned-keywords-sets-table">
+            <thead>
+                <tr style="width: 100%;">
+                    <th style="width: 70%;"><b>Keyword Set Name</b></th>
+                    <th style="width: 20%;"><b>Keywords Included</b></th>
+                    <th style="width: 10%;"><b>Edit</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                % for my $keywordSetName (sort keys %{$keywordsSets{'notOwned'}}) {
+                    % my $keywordsSetId  = $keywordsSets{'notOwned'}->{$keywordSetName}->{'keywordsSetId'} // die;
+                    % my $totalKeywords = $keywordsSets{'notOwned'}->{$keywordSetName}->{'totalKeywords'} // die;
+                    <tr>
+                        <td style="width: 70%;"><b><%=$keywordSetName%></b></td>
+                        <td style="width: 20%;"><b><%=$totalKeywords%></b></td>
+                        <td style="width: 10%;cursor: pointer;">
+                            <img src="/images/edit.png" style="width:20px;display: block;margin: auto;" onclick="openKeywordsSet('<%=$keywordsSetId%>');return;">
+                        </td>
+                    </tr>
+                % }
+            </tbody>
+        </table>
+        % } else {
+
+        % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+<script type="text/javascript">
+    function openKeywordsSet(keywordsSetId) {
+        window.location.href = '/social_networks/edit_keywords_set?currentLanguage=<%=$currentLanguage%>&keywordsSetId=' + keywordsSetId;
+    }
+
+    $(document).ready( function () {
+        $('#owned-keywords-sets-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "order": [[ 0, "asc" ]],
+            "columnDefs": [
+                { "searchable": false, "targets": 1 },
+                { "searchable": false, "targets": 2 }
+            ]
+        });
+        $('#notOwned-keywords-sets-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "order": [[ 0, "asc" ]],
+            "columnDefs": [
+                { "searchable": false, "targets": 1 },
+                { "searchable": false, "targets": 2 }
+            ]
+        });
+    } );
+</script>

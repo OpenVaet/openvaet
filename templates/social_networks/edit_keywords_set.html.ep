@@ -1,0 +1,121 @@
+% layout 'default';
+% title 'OPENVAET - Data Administration';
+<head>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+</head>
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/social_networks/keywords_sets');return;">&#10229; Return to data admin</div>
+        <h2><%=$keywordsSetName%> - Keywords</h2>
+        Enter your keywords (one by line).
+        <div class="text_separator"></div>
+        % if ($keywords) {
+            % if ($canEdit) {
+            <textarea style="width: 95%;height: 60vh;" id="keywords"><%==$keywords%></textarea>
+            % } else {
+            <textarea style="width: 95%;height: 60vh;" id="keywords" disabled><%==$keywords%></textarea>
+            % }
+        % } else {
+            % if ($canEdit) {
+            <textarea style="width: 95%;height: 60vh;" id="keywords"></textarea>
+            % } else {
+            <textarea style="width: 95%;height: 60vh;" id="keywords" disabled></textarea>
+            % }
+        % }
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;text-align: center;height: 35px;">
+            <button class="button" id="saveButton" style="width: 300px;height: 35px;" onclick="saveKeywordsSet();return;">Sauvegarder</button>
+        </div>
+        <div class="horizontal-separator"></div>
+        <div id="errorEntry-3" class="input-container" style="font-size:16px;color:red;">
+            
+        </div>
+        % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/social_networks/keywords_sets');return;">&#10229; Retour à l'administration des données</div>
+        <h2>Mots clés - <%=$keywordsSetName%></h2>
+        Saisissez vos mots clés (1 par ligne).
+        <div class="text_separator"></div>
+        % if ($keywords) {
+            % if ($canEdit) {
+            <textarea style="width: 95%;height: 60vh;" id="keywords"><%==$keywords%></textarea>
+            % } else {
+            <textarea style="width: 95%;height: 60vh;" id="keywords" disabled><%==$keywords%></textarea>
+            % }
+        % } else {
+            % if ($canEdit) {
+            <textarea style="width: 95%;height: 60vh;" id="keywords"></textarea>
+            % } else {
+            <textarea style="width: 95%;height: 60vh;" id="keywords" disabled></textarea>
+            % }
+        % }
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        % if ($canEdit) {
+        <div style="width:100%;text-align: center;height: 35px;">
+            <button class="button" id="saveButton" style="width: 300px;height: 35px;" onclick="saveKeywordsSet();return;">Sauvegarder</button>
+        </div>
+        % }
+        <div class="horizontal-separator"></div>
+        <div id="errorEntry-3" class="input-container" style="font-size:16px;color:red;">
+            
+        </div>
+        % } else {
+
+        % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+% if ($self->is_admin()) {
+<script type="text/javascript">
+    $(document).ready( function () {
+        formatKeywords();
+    })
+
+    function formatKeywords() {
+        let content = document.getElementById('keywords').value;
+        content = content.replace(/\<br \/\>/g, '&#13;');
+        document.getElementById('keywords').innerHTML = content;
+    }
+
+    function saveKeywordsSet() {
+        let keywordsSetId = <%=$keywordsSetId%>;
+        let keywords = $('#keywords').val();
+        keywords     = keywords.replace(/\r?\n/g, '<br />');
+
+        let request = $.ajax({
+            url: "/social_networks/save_keywords",
+            type: "POST",
+            data: {
+                keywords : keywords,
+                keywordsSetId : keywordsSetId
+            }
+        });
+
+        request.done(function(data) {
+            window.location.href = '/social_networks/keywords_sets';
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+
+
+    $(document).ready( function () {
+        $('#keywords-table').DataTable({
+            "paging": false,
+            "searching": true,
+            "order": [[ 0, "asc" ]],
+            "columnDefs": [
+                { "searchable": false, "targets": 1 }
+            ]
+        });
+    } );
+</script>
+% }

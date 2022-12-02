@@ -1,0 +1,180 @@
+<style type="text/css">
+	.table-container {
+		width: 100%;
+		max-width: 800px;
+		overflow-x: auto;
+		font-size:14px;
+		margin: auto;
+		height: 500px;
+		overflow-y:auto;
+	}
+	.table-header {
+		min-width: 500px;
+		width: 100%;
+		font-weight: bold;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		background: #f8f5f2;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.table-cell-1 {
+		width: 40%;
+		min-width: 200px;
+	}
+	.table-cell-2 {
+		width: 20%;
+		min-width: 100px;
+	}
+	.table-cell-3 {
+		width: 20%;
+		min-width: 100px;
+	}
+	.table-cell-4 {
+		width: 20%;
+		min-width: 100px;
+	}
+	.table-sub-header {
+		min-width: 500px;
+		width: calc(100% - 15px);
+		text-align: left;
+		padding-left:15px;
+		font-weight: bold;
+		display: flex;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.table-row-1 {
+		min-width: 500px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.table-row-2 {
+		background: #f6f6f6;
+		min-width: 500px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+</style>
+
+% my %demographics = %$demographics;
+% my $totalSubjects = $demographics{'totalSubjects'} // die;
+% my $bNT162b2 = $demographics{'armGroups'}->{'BNT162b2'} // die;
+% my $placebo = $demographics{'armGroups'}->{'Placebo'} // die;
+
+<div class="table-container">
+	<div class="table-header">
+		<div class="table-cell-1">
+			Characteristics
+		</div>
+		<div class="table-cell-2">
+			BNT162b2
+    		<div class="text_separator"></div>
+    		(N=<%=$bNT162b2%>)
+		</div>
+		<div class="table-cell-3">
+			Placebo
+    		<div class="text_separator"></div>
+    		(N=<%=$placebo%>)
+		</div>
+		<div class="table-cell-4">
+			Total
+    		<div class="text_separator"></div>
+    		(N=<%=$totalSubjects%>)
+		</div>
+	</div>
+	<div class="table-sub-header">
+		Sex
+	</div>
+	% my $rowNum = 1;
+	% for my $sexId (sort{$a <=> $b} keys %{$demographics{'sexGroups'}}) {
+		% $rowNum++;
+		% if ($rowNum == 3) {
+			% $rowNum = 1;
+		% }
+		% my $sexName = $demographics{'sexGroups'}->{$sexId}->{'sexName'} // die;
+		% my $totalSubjects = $demographics{'sexGroups'}->{$sexId}->{'totalSubjects'} // die;
+		% my $bNT162b2 = $demographics{'sexGroups'}->{$sexId}->{'BNT162b2'} // 0;
+		% my $placebo = $demographics{'sexGroups'}->{$sexId}->{'Placebo'} // 0;
+		<div class="table-row-<%=$rowNum%>">
+			<div class="table-cell-1">
+				<%=$sexName%>
+			</div>
+			<div class="table-cell-2">
+				<%=$bNT162b2%>
+			</div>
+			<div class="table-cell-3">
+				<%=$placebo%>
+			</div>
+			<div class="table-cell-4">
+				<%=$totalSubjects%>
+			</div>
+		</div>
+	% }
+	<hr>
+	<div class="table-sub-header">
+		Age Groups
+	</div>
+	% $rowNum = 1;
+	% for my $ageGroupId (sort{$a <=> $b} keys %{$demographics{'ageGroups'}}) {
+		% $rowNum++;
+		% if ($rowNum == 3) {
+			% $rowNum = 1;
+		% }
+		% my $ageGroupName = $demographics{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} // die;
+		% my $totalSubjects = $demographics{'ageGroups'}->{$ageGroupId}->{'totalSubjects'} // die;
+		% my $bNT162b2 = $demographics{'ageGroups'}->{$ageGroupId}->{'BNT162b2'} // 0;
+		% my $placebo = $demographics{'ageGroups'}->{$ageGroupId}->{'Placebo'} // 0;
+		<div class="table-row-<%=$rowNum%>">
+			<div class="table-cell-1">
+				<%=$ageGroupName%>
+			</div>
+			<div class="table-cell-2">
+				<%=$bNT162b2%>
+			</div>
+			<div class="table-cell-3">
+				<%=$placebo%>
+			</div>
+			<div class="table-cell-4">
+				<%=$totalSubjects%>
+			</div>
+		</div>
+	% }
+	<div class="table-sub-header">
+		Trial Site Countries
+	</div>
+	% $rowNum = 1;
+	% for my $trialSiteCountry (sort keys %{$demographics{'countries'}}) {
+		% $rowNum++;
+		% if ($rowNum == 3) {
+			% $rowNum = 1;
+		% }
+		% my $totalSubjects = $demographics{'countries'}->{$trialSiteCountry}->{'totalSubjects'} // die;
+		% my $bNT162b2 = $demographics{'countries'}->{$trialSiteCountry}->{'BNT162b2'} // 0;
+		% my $placebo = $demographics{'countries'}->{$trialSiteCountry}->{'Placebo'} // 0;
+		<div class="table-row-<%=$rowNum%>">
+			<div class="table-cell-1">
+				<%=$trialSiteCountry%>
+			</div>
+			<div class="table-cell-2">
+				<%=$bNT162b2%>
+			</div>
+			<div class="table-cell-3">
+				<%=$placebo%>
+			</div>
+			<div class="table-cell-4">
+				<%=$totalSubjects%>
+			</div>
+		</div>
+	% }
+</div> 

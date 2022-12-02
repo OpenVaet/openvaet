@@ -321,6 +321,14 @@ sub startup {
 	$r->get('/studies')->to('studies#studies');
     $r->get('/studies/vaers_fertility')->to('studies#vaers_fertility');
     $r->get('/studies/verifying_170_cases')->to('verifying_170_cases#verifying_170_cases');
+    $r->get('/studies/review_nejm_fda_data')->to('review_nejm_fda_data#review_nejm_fda_data');
+    $r->post('/review_nejm_fda_data/load_dose_1_mapping')->to('review_nejm_fda_data#load_dose_1_mapping');
+    $r->post('/review_nejm_fda_data/load_dose_1_week_by_week')->to('review_nejm_fda_data#load_dose_1_week_by_week');
+    $r->post('/review_nejm_fda_data/load_dose_1_demographic')->to('review_nejm_fda_data#load_dose_1_demographic');
+    $r->post('/review_nejm_fda_data/load_dose_2_mapping')->to('review_nejm_fda_data#load_dose_2_mapping');
+    $r->post('/review_nejm_fda_data/load_dose_2_week_by_week')->to('review_nejm_fda_data#load_dose_2_week_by_week');
+    $r->post('/review_nejm_fda_data/load_dose_2_demographic')->to('review_nejm_fda_data#load_dose_2_demographic');
+    $r->post('/review_nejm_fda_data/load_efficacy_cases')->to('review_nejm_fda_data#load_efficacy_cases');
 	$r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
 	$r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
     $r->post('/studies/vaers_fertility/set_report_pregnancy_attribute')->to('studies#set_report_pregnancy_attribute');

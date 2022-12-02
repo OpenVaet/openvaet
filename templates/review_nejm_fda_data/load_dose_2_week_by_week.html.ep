@@ -1,0 +1,39 @@
+% my %weekByWeekSecondDose = %$weekByWeekSecondDose;
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+The second doses administred to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div id="second_doses_week_by_week">
+
+</div>
+
+<script type="text/javascript">
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawWeekByWeekSecondDose);
+
+    function drawWeekByWeekSecondDose() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Week Number', 'BNT162b2', 'Placebo', { role: 'annotation' } ],
+            % for my $weekNumber (sort{$a <=> $b} keys %weekByWeekSecondDose) {
+                % my $bNT162b2 = $weekByWeekSecondDose{$weekNumber}->{'bNT162b2'}  // 0;
+                % my $placebo = $weekByWeekSecondDose{$weekNumber}->{'placebo'}   // 0;
+                ["<%==$weekNumber%>", <%=$placebo%>, <%=$bNT162b2%>, ''],
+            % }
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            width: chartWidth,
+            height: 550,
+            legend: { position: 'top', maxLines: 3 },
+            bar: { groupWidth: '75%' },
+            isStacked: true,
+        };
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("second_doses_week_by_week"));
+        chartAdvEffects.draw(view, options);
+    }
+</script>

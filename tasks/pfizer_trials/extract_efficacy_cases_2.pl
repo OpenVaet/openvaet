@@ -27,7 +27,7 @@ use Math::Round qw(nearest);
 # We first parse the PDF file (which must be located here, which means that you must run tasks/pfizer_documents/get_documents.pl first).
 my $casesPdfFile   = "public/pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $casesPdfFile;
-my $casesPdfFolder = "raw_data/pfizer_trials/cases_efficacy_1";
+my $casesPdfFolder = "raw_data/pfizer_trials/cases_efficacy_2";
 my $outputFolder   = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
@@ -58,7 +58,7 @@ extract_all_subjects_table();
 say "total patients in this efficacy table : [$totalPatients]";
 
 # Prints patients JSON.
-open my $out, '>:utf8', "$outputFolder/pfizer_trial_efficacy_cases_1.json";
+open my $out, '>:utf8', "$outputFolder/pfizer_trial_efficacy_cases_2.json";
 print $out encode_json\%patients;
 close $out;
 

@@ -1,0 +1,54 @@
+% layout 'default';
+% title 'OPENVAET - Social Networks';
+% my %summaryStats = %$summaryStats;
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        % if ($currentLanguage eq 'en') {
+        <div class="url-link noselect" onclick="openLocation('/');return;">&#10229; Return to Home</div>
+        <h2>Data Administration</h2>
+        This section allows access to the social networks monitoring configuration.
+        <div class="text_separator"></div>
+        <a href="/social_networks/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Analytics Keywords Sets</a>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % for my $network (sort keys %summaryStats) {
+            % my $toReview = $summaryStats{$network}->{'toReview'} // 0;
+            % if ($toReview > 0) {
+            <div style="height:50px;width:100%;display:flex;flex-wrap:wrap;cursor: pointer;font-weight: bold;" onclick="reviewNetworkPosts('<%=$network%>')"><img src="/images/<%=$network%>.svg" style="height: 40px;width: 40px;"><div style="width: calc(50%);padding-left: 15px;padding-top: 13px;"><%=$network%></div><div style="width: calc(50% - 65px);background: lightgoldenrodyellow;padding-top: 13px;text-align: center;"><%=$toReview%> to review</div></div>
+            % } else {
+            <div style="height:50px;width:100%;display:flex;flex-wrap:wrap;font-weight: bold;"><img src="/images/<%=$network%>.svg" style="height: 40px;width: 40px;"><div style="width: calc(50%);padding-left: 15px;padding-top: 13px;"><%=$network%></div><div style="width: calc(50% - 65px);background: lightgreen;padding-top: 13px;text-align: center;"><%=$toReview%> to review</div></div>
+            % }
+        % }
+        % } elsif ($currentLanguage eq 'fr') {
+        <div class="url-link noselect" onclick="openLocation('/data');return;">&#10229; Retour à l'accueil</div>
+        <h2>Administration Données</h2>
+        Cette section permet l'accès à nos à l'administration du monitoring sur les réseaux sociaux.
+        <div class="text_separator"></div>
+        <a href="/social_networks/keywords_sets?currentLanguage=<%=$currentLanguage%>"><img src="/images/dictionary.png" height="25px" width="25px">Sets de mots clés</a>
+        <div class="text_separator"></div>
+        <hr>
+        <div class="text_separator"></div>
+        % for my $network (sort keys %summaryStats) {
+            % my $toReview = $summaryStats{$network}->{'toReview'} // 0;
+            % if ($toReview > 0) {
+            <div style="height:50px;width:100%;display:flex;flex-wrap:wrap;cursor: pointer;font-weight: bold;" onclick="reviewNetworkPosts('<%=$network%>')"><img src="/images/<%=$network%>.svg" style="height: 40px;width: 40px;"><div style="width: calc(50%);padding-left: 15px;padding-top: 13px;"><%=$network%></div><div style="width: calc(50% - 65px);background: lightgoldenrodyellow;padding-top: 13px;text-align: center;"><%=$toReview%> à revoir</div></div>
+            % } else {
+            <div style="height:50px;width:100%;display:flex;flex-wrap:wrap;font-weight: bold;"><img src="/images/<%=$network%>.svg" style="height: 40px;width: 40px;"><div style="width: calc(50%);padding-left: 15px;padding-top: 13px;"><%=$network%></div><div style="width: calc(50% - 65px);background: lightgreen;padding-top: 13px;text-align: center;"><%=$toReview%> à revoir</div></div>
+            % }
+        % }
+        % } else {
+
+        % }
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+
+<script type="text/javascript">
+    function reviewNetworkPosts(network) {
+
+        window.location.href = '/social_networks/review_network_posts?currentLanguage=<%=$currentLanguage%>&network=' + network;
+    }
+</script>

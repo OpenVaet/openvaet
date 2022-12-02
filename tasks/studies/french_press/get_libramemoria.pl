@@ -24,8 +24,9 @@ die unless -d "raw_data/libramemoria";
 list_dates();
 
 sub list_dates {
-	my $fromDatetime  = '2007-01-01 12:00:00';
-	my $toDatetime    = time::current_datetime();
+	my $fromDatetime  = '2020-01-01 12:00:00';
+	# my $toDatetime    = time::current_datetime();
+	my $toDatetime    = '2020-03-03 12:00:00';
 	($toDatetime)     = split ' ', $toDatetime;
 	$toDatetime       = "$toDatetime 12:00:00";
 	my $fromTimestamp = time::datetime_to_timestamp($fromDatetime);
@@ -34,7 +35,6 @@ sub list_dates {
 	while ($fromTimestamp <= $toTimestamp) {
 		my ($date)      = split ' ', $fromDatetime;
 		my $dailyFile   = "raw_data/libramemoria/libramemoria_" . "$date.json";
-		my $knownDeaths = 0;
 		unless (-f $dailyFile) {
 			$totalDates++;
 			$dates{$fromTimestamp} = $date;

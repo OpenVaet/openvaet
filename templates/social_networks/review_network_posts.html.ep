@@ -1,0 +1,77 @@
+% layout 'default';
+% title 'OPENVAET - Data Administration';
+% my @forwardedPosts = @$forwardedPosts;
+<div class="content-container" style="padding-left: 15px;">
+    % if ($self->is_admin()) {
+        <div class="text_separator"></div>
+        <div class="url-link noselect" onclick="openLocation('/social_networks');return;">&#10229; Return to social networks</div>
+        <h2><%=$network%> - Recent Posts</h2>
+        % for my $fileData (@forwardedPosts) {
+            % my $id = %$fileData{'id'} // die;
+            % my $url = %$fileData{'url'} // die;
+            % my $text = %$fileData{'text'} // die;
+            % my $creationDatetime = %$fileData{'creationDatetime'} // die;
+            % my $review = %$fileData{'review'} // die;
+            % if ($review == 0) {
+                <div style="width: 100%;margin-top: 5px;padding-top: 9px;padding-bottom: 9px;text-align: center;display: flex;flex-wrap: wrap;">
+                    <div style="width: 100%;flex-wrap: wrap;display: flex;">
+                        <div style="width: calc(50% - 10px);text-align: left;padding-left: 10px;"><%=$creationDatetime%></div>
+                        <div style="width: calc(50% - 10px);text-align: right;padding-right: 10px;"><a href="<%=$url%>" target="_blank">Source</a></div>
+                    </div>
+                    <div class="text_separator"></div>
+                    <div class="text_separator"></div>
+                    <div style="width:calc(100% - 50px)">
+                    <%==$text%>
+                    </div>
+                    <div style="width:50px;min-height: 50px;"><input class="post-check" type="checkbox" id="<%=$id%>"></div>
+                </div>
+            % }
+        % }
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;">
+            <div style="width:300px;background:lightgrey;font-weight: bold;text-align: center;padding-top: 15px;padding-bottom: 15px;margin: auto;display:block;cursor: pointer;" onclick="finalizeReview();return;">Finalize this review</div>
+        </div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+    % } else {
+        You're not allowed on this page. Login and come back, or <a href="/">return home</a>.
+    % }
+</div>
+% if ($self->is_admin()) {
+    <script type="text/javascript">
+        function finalizeReview() {
+            let postsObj = {};
+            let network  = '<%=$network%>';
+            const posts = document.getElementsByClassName("post-check");
+            for (let i = 0; i < posts.length; i++) {
+                let postId  = posts[i].id;
+                console.log('postId : ' + postId);
+                let checked = posts[i].checked;
+                console.log('checked : ' + checked);
+                postsObj[postId] = checked;
+            }
+            let postsJson = JSON.stringify(postsObj);
+            console.log(postsJson);
+            let request = $.ajax({
+                url: "/social_networks/finalize_network_review",
+                type: "POST",
+                data: {
+                    network : network,
+                    posts   : postsJson
+                }
+            });
+
+            request.done(function(data) {
+                window.location.href = '/social_networks';
+            });
+
+            // Printing error message if case of failure
+            request.fail(function(jqXHR, textStatus) {
+                alert("Something went wrong : " + textStatus)
+            });
+        }
+    </script>
+% }

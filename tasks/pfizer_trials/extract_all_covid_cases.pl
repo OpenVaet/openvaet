@@ -36,7 +36,7 @@ use Math::Round qw(nearest);
 my $casesPdfFile   = "public/pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $casesPdfFile;
 my $casesPdfFolder = "raw_data/pfizer_trials/cases";
-my $outputFolder   = "raw_data/pfizer_trials/cases_output";
+my $outputFolder   = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
 # If the pdf hasn't been extracted already, proceeding.
@@ -71,10 +71,10 @@ say "totalPatients   : $totalPatients";
 # my $patientsToSept6 = 0;
 # open my $out, '>:utf8', "$outputFolder/pfizer_trial_cases.csv";
 # say $out "number;patient id;sex;age (years);screening date;week number;";
-# for my $patientId (sort keys %patients) {
-# 	my $casesMonth      = $patients{$patientId}->{'casesMonth'}      // die;
-# 	my $casesDate       = $patients{$patientId}->{'casesDate'}       // die;
-# 	my $casesWeekNumber = $patients{$patientId}->{'casesWeekNumber'} // die;
+# for my $uSubjectId (sort keys %patients) {
+# 	my $casesMonth      = $patients{$uSubjectId}->{'casesMonth'}      // die;
+# 	my $casesDate       = $patients{$uSubjectId}->{'casesDate'}       // die;
+# 	my $casesWeekNumber = $patients{$uSubjectId}->{'casesWeekNumber'} // die;
 # 	$stats{$casesWeekNumber}->{'cases'}++;
 # 	$stats{$casesWeekNumber}->{'month'} = $casesMonth if !exists $stats{$casesWeekNumber}->{'month'};
 # 	if ($casesDate >= '20200720' && $casesDate <= '20200906') {
@@ -94,10 +94,10 @@ say "totalPatients   : $totalPatients";
 # }
 # close $out2;
 
-# # Prints patients JSON.
-# open my $out3, '>:utf8', "$outputFolder/pfizer_trial_cases.json";
-# print $out3 encode_json\%patients;
-# close $out3;
+# Prints patients JSON.
+open my $out3, '>:utf8', "$outputFolder/pfizer_trial_cases_1.json";
+print $out3 encode_json\%patients;
+close $out3;
 
 sub verify_pdf_structure {
 	for my $htmlFile (glob "$casesPdfFolder/*") {
@@ -147,7 +147,9 @@ sub extract_all_subjects_table {
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $patientId              = $patientsIds{$topMargin}->{'patientId'}                     // die;
+			my $uSubjectId              = $patientsIds{$topMargin}->{'uSubjectId'}                     // die;
+			my ($subjectId) = $uSubjectId =~ /^C\d\d\d\d\d\d\d \d\d\d\d (\d\d\d\d\d\d\d\d)/;
+			die unless $subjectId;
 			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}                      // die;
 		# 	my $casesDate       = $casesDates{$topMargin}->{'casesDate'}       // die;
 		# 	my $casesMonth      = $casesDates{$topMargin}->{'casesMonth'}      // die;
@@ -155,13 +157,14 @@ sub extract_all_subjects_table {
 		# 	my $casesYear       = $casesDates{$topMargin}->{'casesYear'}       // die;
 		# 	my $casesGroup      = $casesData{$topMargin}->{'casesGroup'};
 		# 	# p$casesData{$topMargin};
-			$patients{$patientId}->{'pageNum'}  = $pageNum;
-			$patients{$patientId}->{'entryNum'} = $entryNum;
-		# 	$patients{$patientId}->{'casesDate'}       = $casesDate;
-		# 	$patients{$patientId}->{'casesMonth'}      = $casesMonth;
-		# 	$patients{$patientId}->{'casesWeekNumber'} = $casesWeekNumber;
-		# 	$patients{$patientId}->{'casesYear'}       = $casesYear;
-		# 	$patients{$patientId}->{'casesGroup'}      = $casesGroup;
+			$patients{$subjectId}->{'uSubjectId'}  = $uSubjectId;
+			$patients{$subjectId}->{'pageNum'}  = $pageNum;
+			$patients{$subjectId}->{'entryNum'} = $entryNum;
+		# 	$patients{$uSubjectId}->{'casesDate'}       = $casesDate;
+		# 	$patients{$uSubjectId}->{'casesMonth'}      = $casesMonth;
+		# 	$patients{$uSubjectId}->{'casesWeekNumber'} = $casesWeekNumber;
+		# 	$patients{$uSubjectId}->{'casesYear'}       = $casesYear;
+		# 	$patients{$uSubjectId}->{'casesGroup'}      = $casesGroup;
 		# 	for my $doseNum (sort{$a <=> $b} keys %{$casesData{$topMargin}->{'doses'}}) {
 		# 		my $dose       = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'dose'}       // next;
 		# 		my $month      = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'month'}      // next;
@@ -169,15 +172,16 @@ sub extract_all_subjects_table {
 		# 		my $doseDate   = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'doseDate'};
 		# 		my $weekNumber = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'weekNumber'} // die;
 		# 		my $year       = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'year'}       // die;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'dose'}       = $dose;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'month'}      = $month;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'dosage'}     = $dosage;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'doseDate'}   = $doseDate;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'weekNumber'} = $weekNumber;
-		# 		$patients{$patientId}->{'doses'}->{$doseNum}->{'year'}       = $year;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'dose'}       = $dose;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'month'}      = $month;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'dosage'}     = $dosage;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'doseDate'}   = $doseDate;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'weekNumber'} = $weekNumber;
+		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'year'}       = $year;
 		# 	}
 		}
-		last if $pageNum == 65;
+		# last if $pageNum == 65;
+		last if $pageNum == 216;
 	}
 }
 
@@ -207,22 +211,22 @@ sub parse_patients_ids {
 			} else {
 				# say "text : $text";
 				if ($trialAndSiteData) {
-					my $patientId = "$trialAndSiteData $text";
-					$patientId =~ s/\^//;
-					unless (length $patientId == 22) {
-						$patientId =~ s/†//;
-						unless (length $patientId == 22) {
-							($patientId) = split ' \(', $patientId;
-							# say "patientId : [$patientId]";
-							die "patientId : [$patientId]" unless (length $patientId == 22);
+					my $uSubjectId = "$trialAndSiteData $text";
+					$uSubjectId =~ s/\^//;
+					unless (length $uSubjectId == 22) {
+						$uSubjectId =~ s/†//;
+						unless (length $uSubjectId == 22) {
+							($uSubjectId) = split ' \(', $uSubjectId;
+							# say "uSubjectId : [$uSubjectId]";
+							die "uSubjectId : [$uSubjectId]" unless (length $uSubjectId == 22);
 						}
 					}
 					# die;
 					$entryNum++;
 					$patientsIds{$topMargin}->{'entryNum'}               = $entryNum;
-					$patientsIds{$topMargin}->{'patientId'}          = $patientId;
-					$patientsIds{$topMargin}->{'patientIdTopMargin'} = $topMargin;
-					# say "$entryNum | $patientId";
+					$patientsIds{$topMargin}->{'uSubjectId'}          = $uSubjectId;
+					$patientsIds{$topMargin}->{'uSubjectIdTopMargin'} = $topMargin;
+					# say "$entryNum | $uSubjectId";
 					$trialAndSiteData = undef;
 					$topMargin = undef;
 				}

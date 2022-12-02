@@ -1,0 +1,195 @@
+<style type="text/css">
+	.efficacy-table-container {
+		width: 100%;
+		max-width: 1290px;
+		overflow-y: auto;
+		font-size:14px;
+		margin: auto;
+		height: 500px;
+		overflow-y:auto;
+	}
+	.efficacy-table-header {
+		position: absolute;
+		min-width: 1275px;
+		max-width: 1275px;
+		width: 100%;
+		font-weight: bold;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		background: #f8f5f2;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.efficacy-table-cell-1 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-2 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-3 {
+		width: 5%;
+		min-width: 50px;
+	}
+	.efficacy-table-cell-4 {
+		width: 5%;
+		min-width: 50px;
+	}
+	.efficacy-table-cell-5 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-6 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-7 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-8 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-9 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-cell-10 {
+		width: calc(10% - 25px);
+		min-width: 75px;
+	}
+	.efficacy-table-cell-11 {
+		width: 10%;
+		min-width: 100px;
+	}
+	.efficacy-table-row-1 {
+		background: #f6f6f6;
+		min-width: 1275px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.efficacy-table-row-2 {
+		min-width: 1275px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+</style>
+
+% my %efficacySubjects = %$efficacySubjects;
+
+<div class="efficacy-table-container">
+	<div class="efficacy-table-header">
+		<div class="efficacy-table-cell-1">
+			Subject Id
+		</div>
+		<div class="efficacy-table-cell-2">
+			Site
+		</div>
+		<div class="efficacy-table-cell-3">
+			Sex
+		</div>
+		<div class="efficacy-table-cell-4">
+			Age
+		</div>
+		<div class="efficacy-table-cell-5">
+			Screening
+		</div>
+		<div class="efficacy-table-cell-6">
+			Random.
+		</div>
+		<div class="efficacy-table-cell-7">
+			Arm
+		</div>
+		<div class="efficacy-table-cell-8">
+			Dose 1
+		</div>
+		<div class="efficacy-table-cell-9">
+			Dose 2
+		</div>
+		<div class="efficacy-table-cell-10">
+			D.O.E.
+		</div>
+		<div class="efficacy-table-cell-11">
+			Swab Date
+		</div>
+	</div>
+	% use Data::Printer;
+	% my $rNum = 0;
+	% my $rowNum = 1;
+	% for my $swabDate (sort{$a <=> $b} keys %efficacySubjects) {
+		% for my $subjectId (sort{$a <=> $b} keys %{$efficacySubjects{$swabDate}}) {
+			% $rNum++;
+			% $rowNum++;
+			% if ($rowNum == 3) {
+				% $rowNum = 1;
+			% }
+			% p$efficacySubjects{$swabDate}->{$subjectId};
+			% my $trialSiteId = $efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteId'} // die;
+			% my $sexName = $efficacySubjects{$swabDate}->{$subjectId}->{'sexName'} // die;
+			% my $subjectId = $efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} // die;
+			% my $age = $efficacySubjects{$swabDate}->{$subjectId}->{'age'} // die;
+			% my $screeningDate = $efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} // die;
+			% my $randomizationDate = $efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} // die;
+			% my $randomizationGroup = $efficacySubjects{$swabDate}->{$subjectId}->{'randomizationGroup'} // die;
+			% my $swabSourceFile = $efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceFile'} // die;
+			% my $dose1Date = $efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} // die;
+			% my $dose2Date = $efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} // die;
+			% my $daysOfExposure = $efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} // die;
+			% my $swabDate = $efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} // die;
+			% if ($rNum == 1) {
+			<div class="efficacy-table-row-<%=$rowNum%>" style="margin-top: 41px;">
+			% } else {
+			<div class="efficacy-table-row-<%=$rowNum%>">
+			% }
+				<div class="efficacy-table-cell-1">
+				% if ($swabSourceFile eq 'pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-randomization-sensitive.pdf') {
+					<%=$subjectId%>
+				% } else {
+					<span style="background:yellow;"><%=$subjectId%></span>
+				% }
+				</div>
+				<div class="efficacy-table-cell-2">
+					<%=$trialSiteId%>
+				</div>
+				<div class="efficacy-table-cell-3">
+					<%=$sexName%>
+				</div>
+				<div class="efficacy-table-cell-4">
+					<%=$age%>
+				</div>
+				<div class="efficacy-table-cell-5">
+					<%=$screeningDate%>
+				</div>
+				<div class="efficacy-table-cell-6">
+					<%=$randomizationDate%>
+				</div>
+				<div class="efficacy-table-cell-7">
+					<%=$randomizationGroup%>
+				</div>
+				<div class="efficacy-table-cell-8">
+					<%=$dose1Date%>
+				</div>
+				<div class="efficacy-table-cell-9">
+					<%=$dose2Date%>
+				</div>
+				<div class="efficacy-table-cell-10">
+					<%=$daysOfExposure%>
+				</div>
+				<div class="efficacy-table-cell-11">
+					<%=$swabDate%>
+				</div>
+			</div>
+		% }
+	% }
+</div> 

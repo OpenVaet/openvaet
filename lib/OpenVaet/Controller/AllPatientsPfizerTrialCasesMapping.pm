@@ -1,4 +1,4 @@
-package OpenVaet::Controller::AllCasesPfizerTrialCasesMapping;
+package OpenVaet::Controller::AllPatientsPfizerTrialCasesMapping;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
@@ -7,7 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use session;
 
-sub all_cases_pfizer_trial_cases_mapping {
+sub all_patients_pfizer_trial_cases_mapping {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // die;
@@ -48,7 +48,7 @@ sub all_cases_pfizer_trial_cases_mapping {
     );
 }
 
-sub load_all_cases_pfizer_trial_cases_mapping {
+sub load_all_patients_pfizer_trial_cases_mapping {
     my $self = shift;
 
     my $siteTarget      = $self->param('siteTarget')      // die;

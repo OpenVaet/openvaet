@@ -71,10 +71,10 @@ say "totalPatients   : $totalPatients";
 # my $patientsToSept6 = 0;
 # open my $out, '>:utf8', "$outputFolder/pfizer_trial_cases.csv";
 # say $out "number;patient id;sex;age (years);screening date;week number;";
-# for my $patientId (sort keys %patients) {
-# 	my $casesMonth      = $patients{$patientId}->{'casesMonth'}      // die;
-# 	my $casesDate       = $patients{$patientId}->{'casesDate'}       // die;
-# 	my $casesWeekNumber = $patients{$patientId}->{'casesWeekNumber'} // die;
+# for my $uSubjectId (sort keys %patients) {
+# 	my $casesMonth      = $patients{$uSubjectId}->{'casesMonth'}      // die;
+# 	my $casesDate       = $patients{$uSubjectId}->{'casesDate'}       // die;
+# 	my $casesWeekNumber = $patients{$uSubjectId}->{'casesWeekNumber'} // die;
 # 	$stats{$casesWeekNumber}->{'cases'}++;
 # 	$stats{$casesWeekNumber}->{'month'} = $casesMonth if !exists $stats{$casesWeekNumber}->{'month'};
 # 	if ($casesDate >= '20200720' && $casesDate <= '20200906') {
@@ -113,6 +113,7 @@ sub verify_pdf_structure {
 sub extract_all_subjects_table {
 	my $processedRows = 0;
 	my $labConflicts = 0;
+	my $priorNov14 = 0;
 	my $localLabKnown = 0;
 	for my $pageNum (sort{$a <=> $b} keys %htmlPages) {
 		my $htmlFile = "$casesPdfFolder/page$pageNum.html";
@@ -152,11 +153,13 @@ sub extract_all_subjects_table {
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $patientId              = $patientsIds{$topMargin}->{'patientId'}                     // die;
+			my $uSubjectId              = $patientsIds{$topMargin}->{'uSubjectId'}                     // die;
+			my ($subjectId) = $uSubjectId =~ /^C\d\d\d\d\d\d\d \d\d\d\d (\d\d\d\d\d\d\d\d)/;
+			die unless $subjectId;
 			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}                      // die;
-			die if exists $patients{$patientId};
-			$patients{$patientId}->{'pageNum'}  = $pageNum;
-			$patients{$patientId}->{'entryNum'} = $entryNum;
+			die if exists $patients{$uSubjectId};
+			$patients{$subjectId}->{'pageNum'}  = $pageNum;
+			$patients{$subjectId}->{'entryNum'} = $entryNum;
 
 			# Locates next patient top margin.
 			my $nextTopMargin;
@@ -246,7 +249,7 @@ sub extract_all_subjects_table {
 							for my $eN (sort{$a <=> $b} keys %{$casesDates{$nextTM}}) {
 								$swabDate = $casesDates{$nextTM}->{$eN}->{'casesDate'} // die;
 							}
-							say "A row with local & central & no end date -> $symptomstartDate, $visit1Tests, $centralLabTest != $localLabTest, $swabDate";
+							# say "A row with local & central & no end date -> $symptomstartDate, $visit1Tests, $centralLabTest != $localLabTest, $swabDate";
 							$processedRows++;
 							last if $centralLabTest =~ /Pos/;
 							# die;
@@ -279,7 +282,7 @@ sub extract_all_subjects_table {
 								}
 							}
 							$processedRows++;
-							say "A row with central only & no end date -> $symptomstartDate, $visit1Tests, $centralLabTest, $swabDate";
+							# say "A row with central only & no end date -> $symptomstartDate, $visit1Tests, $centralLabTest, $swabDate";
 							last if $centralLabTest =~ /Pos/;
 							# p$casesDates{$tM};
 							# die;
@@ -352,7 +355,7 @@ sub extract_all_subjects_table {
 						for my $eN (sort{$a <=> $b} keys %{$casesDates{$nextTM}}) {
 							$swabDate = $casesDates{$nextTM}->{$eN}->{'casesDate'} // die;
 						}
-						say "A conflict between labs row -> $symptomstartDate, $symptomsEndDate, $visit1Tests, $centralLabTest != $localLabTest, $swabDate";
+						# say "A conflict between labs row -> $symptomstartDate, $symptomsEndDate, $visit1Tests, $centralLabTest != $localLabTest, $swabDate";
 						$processedRows++;
 						last if $centralLabTest =~ /Pos/;
 					} else {
@@ -371,7 +374,7 @@ sub extract_all_subjects_table {
 								$swabDate = $casesDates{$tM}->{$eN}->{'casesDate'} // die;
 							}
 						}
-						say "A really normal row -> $symptomstartDate, $symptomsEndDate, $visit1Tests, $centralLabTest, $swabDate";
+						# say "A really normal row -> $symptomstartDate, $symptomsEndDate, $visit1Tests, $centralLabTest, $swabDate";
 						$processedRows++;
 						last if $centralLabTest =~ /Pos/;
 					}
@@ -400,22 +403,32 @@ sub extract_all_subjects_table {
 				$labConflicts++ if $localLabTest eq 'Neg';
 				$localLabKnown++;
 			}
+			unless (exists $patients{$subjectId}->{'swabDate'}) {
+				if ($swabDate <= 20201114) {
+					$priorNov14++;
+				}
+			}
 			$centralLabTest = 'Pos';
-			$patients{$patientId}->{'symptomstartDate'} = $symptomstartDate;
-			$patients{$patientId}->{'symptomsEndDate'} = $symptomsEndDate;
-			$patients{$patientId}->{'centralLabTest'} = $centralLabTest;
-			$patients{$patientId}->{'localLabTest'} = $localLabTest;
-			$patients{$patientId}->{'swabDate'} = $swabDate;
-			$patients{$patientId}->{'visit1NBindingAssayTest'} = $visit1NBindingAssayTest;
-			$patients{$patientId}->{'nucleicAcidAmplificationTest1'} = $nucleicAcidAmplificationTest1;
-			$patients{$patientId}->{'nucleicAcidAmplificationTest2'} = $nucleicAcidAmplificationTest2;
-			say "$symptomstartDate, $symptomsEndDate, $centralLabTest, $localLabTest, $swabDate -> $visit1NBindingAssayTest, $nucleicAcidAmplificationTest1, $nucleicAcidAmplificationTest2";
+			$patients{$subjectId}->{'uSubjectId'} = $uSubjectId;
+			$patients{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
+			$patients{$subjectId}->{'symptomstartDate'} = $symptomstartDate;
+			$patients{$subjectId}->{'symptomsEndDate'} = $symptomsEndDate;
+			$patients{$subjectId}->{'centralLabTest'} = $centralLabTest;
+			$patients{$subjectId}->{'localLabTest'} = $localLabTest;
+			$patients{$subjectId}->{'swabDate'} = $swabDate;
+			$patients{$subjectId}->{'visit1NBindingAssayTest'} = $visit1NBindingAssayTest;
+			$patients{$subjectId}->{'nucleicAcidAmplificationTest1'} = $nucleicAcidAmplificationTest1;
+			$patients{$subjectId}->{'nucleicAcidAmplificationTest2'} = $nucleicAcidAmplificationTest2;
+			# p%patients;
+			# die;
+			say "$subjectId - $symptomstartDate, $symptomsEndDate, $centralLabTest, $swabDate -> $visit1NBindingAssayTest, $nucleicAcidAmplificationTest1, $nucleicAcidAmplificationTest2";
 		}
 		last if $pageNum == 224;
 	}
 	say "processedRows : $processedRows";
 	say "localLabKnown : $localLabKnown";
 	say "labConflicts : $labConflicts";
+	say "priorNov14 : $priorNov14";
 }
 
 sub parse_patients_ids {
@@ -444,22 +457,22 @@ sub parse_patients_ids {
 			} else {
 				# say "text : $text";
 				if ($trialAndSiteData) {
-					my $patientId = "$trialAndSiteData $text";
-					$patientId =~ s/\^//;
-					unless (length $patientId == 22) {
-						$patientId =~ s/†//;
-						unless (length $patientId == 22) {
-							($patientId) = split ' \(', $patientId;
-							# say "patientId : [$patientId]";
-							die "patientId : [$patientId]" unless (length $patientId == 22);
+					my $uSubjectId = "$trialAndSiteData $text";
+					$uSubjectId =~ s/\^//;
+					unless (length $uSubjectId == 22) {
+						$uSubjectId =~ s/†//;
+						unless (length $uSubjectId == 22) {
+							($uSubjectId) = split ' \(', $uSubjectId;
+							# say "uSubjectId : [$uSubjectId]";
+							die "uSubjectId : [$uSubjectId]" unless (length $uSubjectId == 22);
 						}
 					}
 					# die;
 					$entryNum++;
 					$patientsIds{$topMargin}->{'entryNum'}               = $entryNum;
-					$patientsIds{$topMargin}->{'patientId'}          = $patientId;
-					$patientsIds{$topMargin}->{'patientIdTopMargin'} = $topMargin;
-					# say "$entryNum | $patientId";
+					$patientsIds{$topMargin}->{'uSubjectId'}          = $uSubjectId;
+					$patientsIds{$topMargin}->{'uSubjectIdTopMargin'} = $topMargin;
+					# say "$entryNum | $uSubjectId";
 					$trialAndSiteData = undef;
 					$topMargin = undef;
 				}

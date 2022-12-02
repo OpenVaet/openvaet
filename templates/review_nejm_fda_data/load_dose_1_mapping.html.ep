@@ -1,0 +1,96 @@
+
+% my %sites = %$sites;
+<div style="width:100%;display: flex;flex-wrap: wrap;">
+% if ($mainWidth > 500) {
+	<div style="width:80%;">
+		<div id="map1" style="height: 500px;width: 100%;z-index: 1;"></div>
+	</div>
+	<div style="width:20%;">
+		<div  id="currentMouseOver1">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+% } else {
+	<div style="width:100%;">
+		<div id="map1" style="height: 250px;width: 100%;z-index: 1;"></div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;">
+		<div  id="currentMouseOver1">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+% }
+</div>
+
+<script type="text/javascript">
+
+	// Create the map
+	var map1       = L.map('map1', {attributionControl: false}).setView(center, zoomLevel);
+	var pinLat;
+	var pinLng;
+	var zoom;
+	% for my $trialSiteId (sort{$a <=> $b} keys %sites) {
+		% my $trialSiteName = $sites{$trialSiteId}->{'trialSiteName'} // die;
+		% my $trialSiteLatitude = $sites{$trialSiteId}->{'trialSiteLatitude'} // die;
+		% my $trialSiteLongitude = $sites{$trialSiteId}->{'trialSiteLongitude'} // die;
+		% my $trialSitePostalCode = $sites{$trialSiteId}->{'trialSitePostalCode'} // die;
+		% my $totalSubjects = $sites{$trialSiteId}->{'totalSubjects'} // die;
+		% my $trialSiteInvestigator = $sites{$trialSiteId}->{'trialSiteInvestigator'} // die;
+		% my $trialSiteAddress = $sites{$trialSiteId}->{'trialSiteAddress'} // die;
+		% my $trialSiteCity = $sites{$trialSiteId}->{'trialSiteCity'} // die;
+		% my $radiusSize = 250 * $totalSubjects;
+		% my $trialSiteNamePrint = $trialSiteName;
+		% $trialSiteNamePrint =~ s/\'/\\\'/;
+		var circle<%=$trialSiteId%> = L.circle([<%=$trialSiteLatitude%>, <%=$trialSiteLongitude%>], {
+		    color: '#79b',
+		    fillColor: '#79b',
+		    fillOpacity: 0.9,
+		    radius: <%=$radiusSize%>,
+		    trialSiteName: '<%=$trialSiteName%>',
+		    trialSiteAddress: '<%=$trialSiteAddress%>',
+		    trialSiteInvestigator: '<%=$trialSiteInvestigator%>',
+		    trialSitePostalCode: '<%=$trialSitePostalCode%>',
+		    trialSiteCity: '<%=$trialSiteCity%>',
+		    trialSiteId: <%=$trialSiteId%>,
+		    totalSubjects: <%=$totalSubjects%>
+		}).addTo(map1).on('mouseover', onClick);
+	% }
+
+	// Set up the OSM layer
+	L.tileLayer(
+		'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: 'Data © <a href="http://osm.org/copyright">OpenStreetMap</a>',
+		maxZoom: 18
+	}).addTo(map1);
+
+    $( document ).ready(function() {
+		var flags = document.querySelectorAll('.leaflet-bottom leaflet-right');
+		console.log(flags);
+		flags.forEach(flag => {
+			flag.remove();
+			alert('removed');
+		});
+    });
+
+    function onClick(e) {
+    	let trialSiteId = this.options.trialSiteId;
+    	let trialSiteName = this.options.trialSiteName;
+    	let totalSubjects = this.options.totalSubjects;
+    	let trialSiteAddress = this.options.trialSiteAddress;
+    	let trialSitePostalCode = this.options.trialSitePostalCode;
+    	let trialSiteCity = this.options.trialSiteCity;
+    	let trialSiteInvestigator = this.options.trialSiteInvestigator;
+	    // alert(this.getLatLng() + ', trialSiteName : ' + trialSiteName + ', trialSiteId : ' + trialSiteId + ', totalSubjects : ' + totalSubjects);
+	    $('#currentMouseOver1').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + trialSiteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + trialSiteAddress + ', '+ trialSitePostalCode + ', '+ trialSiteCity + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + trialSiteInvestigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjects + ' Subjects</div>')
+	}
+</script>

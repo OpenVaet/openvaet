@@ -27,7 +27,7 @@ use Math::Round qw(nearest);
 # We first parse the PDF file (which must be located here, which means that you must run tasks/pfizer_documents/get_documents.pl first).
 my $randomizationPdfFile   = "public/pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_c4591001-interim-mth6-randomization-sensitive.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $randomizationPdfFile;
-my $randomizationPdfFolder = "raw_data/pfizer_trials/randomization_scheme";
+my $randomizationPdfFolder = "raw_data/pfizer_trials/randomization_scheme_2";
 my $outputFolder           = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
@@ -61,21 +61,44 @@ say "total entries   : " . keys %patients;
 
 # Generates weekly stats, prints .CSV.
 my %stats = ();
+my $patientsFromP1ToCutOff = 0;
+my $doses1FromP1ToCutOff = 0;
+my $doses2FromP1ToCutOff = 0;
 my $patientsToCutOff = 0;
-open my $out, '>:utf8', "$outputFolder/pfizer_trial_randomization.csv";
+open my $out, '>:utf8', "$outputFolder/pfizer_trial_randomization_2.csv";
 say $out "number;patient id;sex;age (years);screening date;week number;";
-for my $patientId (sort keys %patients) {
-	my $randomizationMonth      = $patients{$patientId}->{'randomizationMonth'}      // die;
-	my $randomizationDate       = $patients{$patientId}->{'randomizationDate'}       // die;
-	my $randomizationWeekNumber = $patients{$patientId}->{'randomizationWeekNumber'} // die;
+for my $uSubjectId (sort keys %patients) {
+	my $randomizationMonth      = $patients{$uSubjectId}->{'randomizationMonth'}      // die;
+	my $randomizationDate       = $patients{$uSubjectId}->{'randomizationDate'}       // die;
+	my $dose1Date               = $patients{$uSubjectId}->{'doses'}->{'1'}->{'doseDate'};
+	my $dose2Date               = $patients{$uSubjectId}->{'doses'}->{'2'}->{'doseDate'};
+	my $randomizationWeekNumber = $patients{$uSubjectId}->{'randomizationWeekNumber'} // die;
 	$stats{$randomizationWeekNumber}->{'cases'}++;
 	$stats{$randomizationWeekNumber}->{'month'} = $randomizationMonth if !exists $stats{$randomizationWeekNumber}->{'month'};
+	if ($dose1Date) {
+
+		if ($dose1Date >= '20200720' && $dose1Date <= '20201114') {
+			$doses1FromP1ToCutOff++;
+		}
+	}
 	if ($randomizationDate >= '20200720' && $randomizationDate <= '20201114') {
+		$patientsFromP1ToCutOff++;
+	}
+	if ($randomizationDate <= '20201114') {
 		$patientsToCutOff++;
+	}
+	if ($dose2Date) {
+
+		if ($dose2Date >= '20200720' && $dose2Date <= '20201108') {
+			$doses2FromP1ToCutOff++;
+		}
 	}
 }
 close $out;
+say "patients from July 20 to Nov. 14 2020 cut-off : [$patientsFromP1ToCutOff]";
 say "patients to Nov. 14 2020 cut-off : [$patientsToCutOff]";
+say "doses 1 from July 20 to Nov. 14 2020 cut-off : [$doses1FromP1ToCutOff]";
+say "doses 2 from July 20 to Nov. 8 2020 cut-off : [$doses2FromP1ToCutOff]";
 
 # Prints weekly stats.
 open my $out2, '>:utf8', "$outputFolder/randomization_weekly_recruitment.csv";
@@ -88,7 +111,7 @@ for my $weekNumber (sort{$a <=> $b} keys %stats) {
 close $out2;
 
 # Prints patients JSON.
-open my $out3, '>:utf8', "$outputFolder/pfizer_trial_randomization.json";
+open my $out3, '>:utf8', "$outputFolder/pfizer_trial_randomization_2.json";
 print $out3 encode_json\%patients;
 close $out3;
 
@@ -139,19 +162,22 @@ sub extract_all_subjects_table {
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $patientId               = $patientsIds{$topMargin}->{'patientId'}                      // die;
+			my $uSubjectId              = $patientsIds{$topMargin}->{'uSubjectId'}                     // die;
+			my ($subjectId)             = $uSubjectId =~ /^C\d\d\d\d\d\d\d \d\d\d\d (\d\d\d\d\d\d\d\d)/;
 			my $randomizationDate       = $randomizationDates{$topMargin}->{'randomizationDate'}       // die;
 			my $randomizationMonth      = $randomizationDates{$topMargin}->{'randomizationMonth'}      // die;
 			my $randomizationWeekNumber = $randomizationDates{$topMargin}->{'randomizationWeekNumber'} // die;
 			my $randomizationYear       = $randomizationDates{$topMargin}->{'randomizationYear'}       // die;
 			my $randomizationGroup      = $randomizationData{$topMargin}->{'randomizationGroup'};
 			# p$randomizationData{$topMargin};
-			$patients{$patientId}->{'pageNum'}                 = $pageNum;
-			$patients{$patientId}->{'randomizationDate'}       = $randomizationDate;
-			$patients{$patientId}->{'randomizationMonth'}      = $randomizationMonth;
-			$patients{$patientId}->{'randomizationWeekNumber'} = $randomizationWeekNumber;
-			$patients{$patientId}->{'randomizationYear'}       = $randomizationYear;
-			$patients{$patientId}->{'randomizationGroup'}      = $randomizationGroup;
+			$patients{$subjectId}->{'pageNum'}                 = $pageNum;
+			$patients{$subjectId}->{'randomizationDate'}       = $randomizationDate;
+			$patients{$subjectId}->{'uSubjectId'}              = $uSubjectId;
+			$patients{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
+			$patients{$subjectId}->{'randomizationMonth'}      = $randomizationMonth;
+			$patients{$subjectId}->{'randomizationWeekNumber'} = $randomizationWeekNumber;
+			$patients{$subjectId}->{'randomizationYear'}       = $randomizationYear;
+			$patients{$subjectId}->{'randomizationGroup'}      = $randomizationGroup;
 			for my $doseNum (sort{$a <=> $b} keys %{$randomizationData{$topMargin}->{'doses'}}) {
 				my $dose       = $randomizationData{$topMargin}->{'doses'}->{$doseNum}->{'dose'}       // next;
 				my $month      = $randomizationData{$topMargin}->{'doses'}->{$doseNum}->{'month'}      // next;
@@ -159,12 +185,12 @@ sub extract_all_subjects_table {
 				my $doseDate   = $randomizationData{$topMargin}->{'doses'}->{$doseNum}->{'doseDate'};
 				my $weekNumber = $randomizationData{$topMargin}->{'doses'}->{$doseNum}->{'weekNumber'} // die;
 				my $year       = $randomizationData{$topMargin}->{'doses'}->{$doseNum}->{'year'}       // die;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'dose'}       = $dose;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'month'}      = $month;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'dosage'}     = $dosage;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'doseDate'}   = $doseDate;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'weekNumber'} = $weekNumber;
-				$patients{$patientId}->{'doses'}->{$doseNum}->{'year'}       = $year;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'dose'}       = $dose;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'month'}      = $month;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'dosage'}     = $dosage;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'doseDate'}   = $doseDate;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'weekNumber'} = $weekNumber;
+				$patients{$subjectId}->{'doses'}->{$doseNum}->{'year'}       = $year;
 			}
 		}
 	}
@@ -196,18 +222,18 @@ sub parse_patients_ids {
 			} else {
 				# say "text : $text";
 				if ($trialAndSiteData) {
-					my $patientId = "$trialAndSiteData $text";
-					$patientId =~ s/\^//;
-					unless (length $patientId == 22) {
-						$patientId =~ s/†//;
-						# say "patientId : [$patientId]";
-						die "patientId : [$patientId]" unless (length $patientId == 22);
+					my $uSubjectId = "$trialAndSiteData $text";
+					$uSubjectId =~ s/\^//;
+					unless (length $uSubjectId == 22) {
+						$uSubjectId =~ s/†//;
+						# say "uSubjectId : [$uSubjectId]";
+						die "uSubjectId : [$uSubjectId]" unless (length $uSubjectId == 22);
 					}
 					# die;
 					$pNum++;
-					$patientsIds{$topMargin}->{'patientId'}          = $patientId;
-					$patientsIds{$topMargin}->{'patientIdTopMargin'} = $topMargin;
-					# say "$pNum | $patientId";
+					$patientsIds{$topMargin}->{'uSubjectId'}          = $uSubjectId;
+					$patientsIds{$topMargin}->{'uSubjectIdTopMargin'} = $topMargin;
+					# say "$pNum | $uSubjectId";
 					$trialAndSiteData = undef;
 					$topMargin = undef;
 				}
@@ -264,10 +290,11 @@ sub parse_randomization_dates {
 			}
 			die unless $date;
 			my ($randomizationDate, $randomizationYear, $randomizationMonth, $randomizationWeekNumber) = convert_date($date);
-			$pNum++;
 			my $style = $div->attr_get_i('style');
 			my ($topMargin) = $style =~ /top:(.*)px;/;
 			die unless looks_like_number $topMargin;
+			next if exists $randomizationDates{$topMargin};
+			$pNum++;
 			$randomizationDates{$topMargin}->{'randomizationDateTopMargin'} = $topMargin;
 			$randomizationDates{$topMargin}->{'randomizationDate'}          = $randomizationDate;
 			$randomizationDates{$topMargin}->{'randomizationYear'}          = $randomizationYear;

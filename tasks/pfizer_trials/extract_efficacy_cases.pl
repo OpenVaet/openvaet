@@ -65,12 +65,12 @@ close $out;
 # Prints patients CSV.
 open my $out2, '>:utf8', "$outputFolder/pfizer_trial_efficacy_cases.csv";
 say $out2 "Source File;Page Number;Entry Number;Subject Id;Central Lab Result;Symptoms Start Date;";
-for my $subjectId (sort keys %patients) {
-	my $symptomstartDate = $patients{$subjectId}->{'symptomstartDate'} // die;
-	my $swabResult       = $patients{$subjectId}->{'swabResult'}       // die;
-	my $pageNum          = $patients{$subjectId}->{'pageNum'}          // die;
-	my $entryNum         = $patients{$subjectId}->{'entryNum'}         // die;
-	say $out2 "pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf;$pageNum;$entryNum;$subjectId;$swabResult;$symptomstartDate;";
+for my $uSubjectId (sort keys %patients) {
+	my $symptomstartDate = $patients{$uSubjectId}->{'symptomstartDate'} // die;
+	my $swabResult       = $patients{$uSubjectId}->{'swabResult'}       // die;
+	my $pageNum          = $patients{$uSubjectId}->{'pageNum'}          // die;
+	my $entryNum         = $patients{$uSubjectId}->{'entryNum'}         // die;
+	say $out2 "pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf;$pageNum;$entryNum;$uSubjectId;$swabResult;$symptomstartDate;";
 
 }
 close $out2;
@@ -113,9 +113,10 @@ sub extract_all_subjects_table {
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $subjectId              = $patientsIds{$topMargin}->{'subjectId'}                     // die;
-			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}                      // die;
-			die if exists $patients{$subjectId};
+			my $subjectId  = $patientsIds{$topMargin}->{'subjectId'}  // die;
+			my $uSubjectId = $patientsIds{$topMargin}->{'uSubjectId'} // die;
+			my $entryNum   = $patientsIds{$topMargin}->{'entryNum'}   // die;
+			die if exists $patients{$uSubjectId};
 			$patients{$subjectId}->{'pageNum'}  = $pageNum;
 			$patients{$subjectId}->{'entryNum'} = $entryNum;
 
@@ -142,6 +143,7 @@ sub extract_all_subjects_table {
 			}
 			$patients{$subjectId}->{'symptomstartDate'} = $symptomstartDate;
 			$patients{$subjectId}->{'swabResult'}       = $swabResult;
+			$patients{$subjectId}->{'uSubjectId'}       = $uSubjectId;
 		}
 		last if $pageNum == 99;
 	}
@@ -174,19 +176,20 @@ sub parse_patients_ids {
 					$siteData = $word;
 				} else {
 					if ($trialData && $siteData) {
-						my $subjectId = "$trialData $siteData $word";
-						$subjectId =~ s/\^//;
-						unless (length $subjectId == 22) {
-							$subjectId =~ s/†//;
-							unless (length $subjectId == 22) {
-								($subjectId) = split ' \(', $subjectId;
-								die "subjectId : [$subjectId]" unless (length $subjectId == 22);
+						my $uSubjectId = "$trialData $siteData $word";
+						$uSubjectId =~ s/\^//;
+						unless (length $uSubjectId == 22) {
+							$uSubjectId =~ s/†//;
+							unless (length $uSubjectId == 22) {
+								($uSubjectId) = split ' \(', $uSubjectId;
+								die "uSubjectId : [$uSubjectId]" unless (length $uSubjectId == 22);
 							}
 						}
 						$entryNum++;
-						$patientsIds{$topMargin}->{'entryNum'}           = $entryNum;
-						$patientsIds{$topMargin}->{'subjectId'}          = $subjectId;
-						$patientsIds{$topMargin}->{'subjectIdTopMargin'} = $topMargin;
+						$patientsIds{$topMargin}->{'entryNum'}            = $entryNum;
+						$patientsIds{$topMargin}->{'subjectId'}           = $word;
+						$patientsIds{$topMargin}->{'uSubjectId'}          = $uSubjectId;
+						$patientsIds{$topMargin}->{'uSubjectIdTopMargin'} = $topMargin;
 						$trialData = undef;
 						$siteData  = undef;
 						$topMargin = undef;
