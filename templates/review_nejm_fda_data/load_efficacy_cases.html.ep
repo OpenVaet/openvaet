@@ -9,7 +9,6 @@
 		overflow-y:auto;
 	}
 	.efficacy-table-header {
-		position: absolute;
 		min-width: 1275px;
 		max-width: 1275px;
 		width: 100%;
@@ -125,11 +124,9 @@
 		</div>
 	</div>
 	% use Data::Printer;
-	% my $rNum = 0;
 	% my $rowNum = 1;
 	% for my $swabDate (sort{$a <=> $b} keys %efficacySubjects) {
 		% for my $subjectId (sort{$a <=> $b} keys %{$efficacySubjects{$swabDate}}) {
-			% $rNum++;
 			% $rowNum++;
 			% if ($rowNum == 3) {
 				% $rowNum = 1;
@@ -147,13 +144,9 @@
 			% my $dose2Date = $efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} // die;
 			% my $daysOfExposure = $efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} // die;
 			% my $swabDate = $efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} // die;
-			% if ($rNum == 1) {
-			<div class="efficacy-table-row-<%=$rowNum%>" style="margin-top: 41px;">
-			% } else {
 			<div class="efficacy-table-row-<%=$rowNum%>">
-			% }
 				<div class="efficacy-table-cell-1">
-				% if ($swabSourceFile eq 'pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-randomization-sensitive.pdf') {
+				% if ($swabSourceFile eq 'pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf') {
 					<%=$subjectId%>
 				% } else {
 					<span style="background:yellow;"><%=$subjectId%></span>

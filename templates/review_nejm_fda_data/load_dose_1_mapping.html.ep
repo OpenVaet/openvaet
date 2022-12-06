@@ -4,6 +4,8 @@
 % if ($mainWidth > 500) {
 	<div style="width:80%;">
 		<div id="map1" style="height: 500px;width: 100%;z-index: 1;"></div>
+		<div class="text_separator"></div>
+		<div class="image_caption">1 subject = 250 meter radius</div>
 	</div>
 	<div style="width:20%;">
 		<div  id="currentMouseOver1">
@@ -16,6 +18,8 @@
 % } else {
 	<div style="width:100%;">
 		<div id="map1" style="height: 250px;width: 100%;z-index: 1;"></div>
+		<div class="text_separator"></div>
+		<div class="image_caption">1 subject = 250 meter radius</div>
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>

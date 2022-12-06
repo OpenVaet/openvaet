@@ -4,6 +4,8 @@
 % if ($mainWidth > 500) {
 	<div style="width:80%;">
 		<div id="map2" style="height: 500px;width: 100%;z-index: 1;"></div>
+		<div class="text_separator"></div>
+		<div class="image_caption">1 subject = 250 meters radius, 1 case = 25 000 meters</div>
 	</div>
 	<div style="width:20%;">
 		<div  id="currentMouseOver2">
@@ -16,6 +18,8 @@
 % } else {
 	<div style="width:100%;">
 		<div id="map2" style="height: 250px;width: 100%;z-index: 1;"></div>
+		<div class="text_separator"></div>
+		<div class="image_caption">1 subject = 250 meters radius, 1 case = 25 000 meters</div>
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -45,16 +49,34 @@
 		% my $trialSiteLongitude = $sites{$trialSiteId}->{'trialSiteLongitude'} // die;
 		% my $trialSitePostalCode = $sites{$trialSiteId}->{'trialSitePostalCode'} // die;
 		% my $totalSubjects = $sites{$trialSiteId}->{'totalSubjects'} // die;
+		% my $totalCases = $sites{$trialSiteId}->{'totalCases'} // 0;
 		% my $trialSiteInvestigator = $sites{$trialSiteId}->{'trialSiteInvestigator'} // die;
 		% my $trialSiteAddress = $sites{$trialSiteId}->{'trialSiteAddress'} // die;
 		% my $trialSiteCity = $sites{$trialSiteId}->{'trialSiteCity'} // die;
 		% my $radiusSize = 250 * $totalSubjects;
+		% my $casesRadiusSize = 25000 * $totalCases;
 		% my $trialSiteNamePrint = $trialSiteName;
 		% $trialSiteNamePrint =~ s/\'/\\\'/;
+		% if ($totalCases) {
+		var casesCircle<%=$trialSiteId%> = L.circle([<%=$trialSiteLatitude%>, <%=$trialSiteLongitude%>], {
+		    color: '#DC3912',
+		    fillColor: '#DC3912',
+		    fillOpacity: 0.9,
+		    radius: <%=$casesRadiusSize%>,
+		    trialSiteName: '<%=$trialSiteName%>',
+		    trialSiteAddress: '<%=$trialSiteAddress%>',
+		    trialSiteInvestigator: '<%=$trialSiteInvestigator%>',
+		    trialSitePostalCode: '<%=$trialSitePostalCode%>',
+		    trialSiteCity: '<%=$trialSiteCity%>',
+		    trialSiteId: <%=$trialSiteId%>,
+		    totalCases: <%=$totalCases%>,
+		    totalSubjects: <%=$totalSubjects%>
+		}).addTo(map2).on('mouseover', onClick);
+		% }
 		var circle<%=$trialSiteId%> = L.circle([<%=$trialSiteLatitude%>, <%=$trialSiteLongitude%>], {
 		    color: '#7a7777',
 		    fillColor: '#7a7777',
-		    fillOpacity: 0.9,
+		    fillOpacity: 0.7,
 		    radius: <%=$radiusSize%>,
 		    trialSiteName: '<%=$trialSiteName%>',
 		    trialSiteAddress: '<%=$trialSiteAddress%>',
@@ -62,6 +84,7 @@
 		    trialSitePostalCode: '<%=$trialSitePostalCode%>',
 		    trialSiteCity: '<%=$trialSiteCity%>',
 		    trialSiteId: <%=$trialSiteId%>,
+		    totalCases: <%=$totalCases%>,
 		    totalSubjects: <%=$totalSubjects%>
 		}).addTo(map2).on('mouseover', onClick);
 	% }
@@ -86,11 +109,12 @@
     	let trialSiteId = this.options.trialSiteId;
     	let trialSiteName = this.options.trialSiteName;
     	let totalSubjects = this.options.totalSubjects;
+    	let totalCases = this.options.totalCases;
     	let trialSiteAddress = this.options.trialSiteAddress;
     	let trialSitePostalCode = this.options.trialSitePostalCode;
     	let trialSiteCity = this.options.trialSiteCity;
     	let trialSiteInvestigator = this.options.trialSiteInvestigator;
 	    // alert(this.getLatLng() + ', trialSiteName : ' + trialSiteName + ', trialSiteId : ' + trialSiteId + ', totalSubjects : ' + totalSubjects);
-	    $('#currentMouseOver2').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + trialSiteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + trialSiteAddress + ', '+ trialSitePostalCode + ', '+ trialSiteCity + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + trialSiteInvestigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjects + ' Subjects</div>')
+	    $('#currentMouseOver2').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + trialSiteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + trialSiteAddress + ', '+ trialSitePostalCode + ', '+ trialSiteCity + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + trialSiteInvestigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjects + ' Subjects</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalCases + ' Cases</div>')
 	}
 </script>

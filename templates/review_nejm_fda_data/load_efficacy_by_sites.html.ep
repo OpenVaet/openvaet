@@ -1,0 +1,228 @@
+<style type="text/css">
+	.sites-stats-table-container {
+		width: 100%;
+		max-width: 1290px;
+		overflow-y: auto;
+		font-size:14px;
+		margin: auto;
+		height: 330px;
+		overflow-y:auto;
+	}
+	.sites-stats-table-header {
+		min-width: 1275px;
+		max-width: 1275px;
+		width: 100%;
+		font-weight: bold;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		background: #f8f5f2;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.sites-stats-table-header-2 {
+		min-width: 1275px;
+		max-width: 1275px;
+		width: 100%;
+		font-weight: bold;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		background: #f8f5f2;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.sites-stats-table-cell-1 {
+		width: 5%;
+		min-width: 100px;
+	}
+	.sites-stats-table-cell-3 {
+		width: 10%;
+		min-width: 250px;
+	}
+	.sites-stats-table-cell-2 {
+		width: 6%;
+		min-width: 50px;
+	}
+	.sites-stats-table-row-1 {
+		background: #f6f6f6;
+		min-width: 1275px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+	.sites-stats-table-row-2 {
+		min-width: 1275px;
+		width: 100%;
+		display: flex;
+		text-align: center;
+		flex-wrap: wrap;
+		padding-top:15px;
+		padding-bottom: 10px;
+	}
+</style>
+
+% my %efficacyStats = %$efficacyStats;
+
+<div class="sites-stats-table-container">
+	<div class="sites-stats-table-header">
+		<div class="sites-stats-table-cell-1">
+			
+		</div>
+		<div class="sites-stats-table-cell-3">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Total
+		</div>
+		<div class="sites-stats-table-cell-2">
+
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+			September
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+			October
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+		<div class="sites-stats-table-cell-2">
+			November
+		</div>
+		<div class="sites-stats-table-cell-2">
+			
+		</div>
+	</div>
+	<div class="sites-stats-table-header-2">
+		<div class="sites-stats-table-cell-1">
+			Site
+		</div>
+		<div class="sites-stats-table-cell-3">
+			Name
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Subjects
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Cases
+		</div>
+		<div class="sites-stats-table-cell-2">
+			D.O.E.
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Subjects
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Cases
+		</div>
+		<div class="sites-stats-table-cell-2">
+			I.R. / 1 000
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Subjects
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Cases
+		</div>
+		<div class="sites-stats-table-cell-2">
+			I.R. / 1 000
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Subjects
+		</div>
+		<div class="sites-stats-table-cell-2">
+			Cases
+		</div>
+		<div class="sites-stats-table-cell-2">
+			I.R. / 1 000
+		</div>
+	</div>
+	% my $rowNum = 1;
+	% for my $country (sort keys %efficacyStats) {
+		% $rowNum++;
+		% if ($rowNum == 3) {
+			% $rowNum = 1;
+		% }
+		% my $trialSiteName          = $efficacyStats{$country}->{'trialSiteName'}          // die;
+		% my $totalSubjects          = $efficacyStats{$country}->{'totalSubjects'}          // die;
+		% my $totalCases             = $efficacyStats{$country}->{'totalCases'}             // die;
+		% next unless $totalCases;
+		% my $totalDaysOfExposure    = $efficacyStats{$country}->{'totalDaysOfExposure'}    // die;
+		% my $totalSubjectsSeptember = $efficacyStats{$country}->{'totalSubjectsSeptember'} // die;
+		% my $totalCasesSeptember    = $efficacyStats{$country}->{'totalCasesSeptember'}    // die;
+		% my $exposureRateSeptember  = $efficacyStats{$country}->{'exposureRateSeptember'}  // die;
+		% my $totalSubjectsOctober   = $efficacyStats{$country}->{'totalSubjectsOctober'}   // die;
+		% my $totalCasesOctober      = $efficacyStats{$country}->{'totalCasesOctober'}      // die;
+		% my $exposureRateOctober    = $efficacyStats{$country}->{'exposureRateOctober'}    // die;
+		% my $totalSubjectsNovember  = $efficacyStats{$country}->{'totalSubjectsNovember'}  // die;
+		% my $totalCasesNovember     = $efficacyStats{$country}->{'totalCasesNovember'}     // die;
+		% my $exposureRateNovember   = $efficacyStats{$country}->{'exposureRateNovember'}   // die;
+		<div class="sites-stats-table-row-<%=$rowNum%>">
+			<div class="sites-stats-table-cell-1">
+				<b><%=$country%></b>
+			</div>
+			<div class="sites-stats-table-cell-3">
+				<b><%=$trialSiteName%></b>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalSubjects%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalCases%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalDaysOfExposure%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalSubjectsSeptember%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalCasesSeptember%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+			% if ($country eq 'Argentina') {
+				<span style="background:yellow;"><%=$exposureRateSeptember%></span>
+			% } else {
+				<%=$exposureRateSeptember%>
+			% }
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalSubjectsOctober%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalCasesOctober%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$exposureRateOctober%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalSubjectsNovember%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$totalCasesNovember%>
+			</div>
+			<div class="sites-stats-table-cell-2">
+				<%=$exposureRateNovember%>
+			</div>
+		</div>
+	% }
+</div> 

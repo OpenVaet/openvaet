@@ -41,7 +41,8 @@ load_efficacy();
 # die;
 my %dose1Stats = ();
 my %dose2Stats = ();
-my %positiveSubjectsExposure = ();
+my %positiveSubjectsExposureByCountries = ();
+my %positiveSubjectsExposureByTrialSites = ();
 my %efficacySubjects = ();
 verify_randomization();
 average_trial_sites_dose_1_days();
@@ -69,23 +70,175 @@ close $o2;
 open my $o3, '>:utf8', 'public/doc/pfizer_trials/efficacy_subjects.json';
 print $o3 encode_json\%efficacySubjects;
 close $o3;
+p%stats;
+# p%positiveSubjectsExposureByCountries;
 
-# p%stats;
-# p%positiveSubjectsExposure;
-
-for my $trialSiteCountry (sort keys %positiveSubjectsExposure) {
-	my $totalDaysOfExposure   = $positiveSubjectsExposure{$trialSiteCountry}->{'totalDaysOfExposure'} // die;
-	my $totalSubjects         = $positiveSubjectsExposure{$trialSiteCountry}->{'totalSubjects'} // die;
-	my $totalCases            = $positiveSubjectsExposure{$trialSiteCountry}->{'totalCases'} // 0;
-	my $averageDaysOfExposure = $totalDaysOfExposure / $totalSubjects;
-	my $exposureRate          = nearest(0.000001, $totalCases / $averageDaysOfExposure * 100);
-	say "trialSiteCountry      : $trialSiteCountry";
-	say "totalDaysOfExposure   : $totalDaysOfExposure";
-	say "totalSubjects         : $totalSubjects";
-	say "totalCases            : $totalCases";
-	say "averageDaysOfExposure : $averageDaysOfExposure";
-	say "exposureRate          : $exposureRate";
+my %trialSitesCountriesData = ();
+for my $trialSiteCountry (sort keys %positiveSubjectsExposureByCountries) {
+	p$positiveSubjectsExposureByCountries{$trialSiteCountry};
+	my $totalDaysOfExposure     = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposure'}    // die;
+	my $totalSubjects           = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjects'}          // die;
+	my $totalCases              = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCases'}             // 0;
+	my $totalSubjectsOctober    = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}   // 0;
+	my $totalCasesOctober       = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesOctober'}      // 0;
+	my $totalSubjectsSeptember  = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'} // 0;
+	my $totalCasesSeptember     = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesSeptember'}    // 0;
+	my $totalSubjectsNovember   = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}  // 0;
+	my $totalCasesNovember      = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesNovember'}     // 0;
+	my $totalDaysOfExposureSeptember = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} // 0;
+	my $totalDaysOfExposureOctober   = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'}   // 0;
+	my $totalDaysOfExposureNovember  = $positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'}  // 0;
+	my $averageDaysOfExposure   = $totalDaysOfExposure / $totalSubjects;
+	my $averageSubjectsOn30Days = nearest(0.01, $totalDaysOfExposure / 30);
+	my $averageSubjectsOn30DaysSeptember = nearest(0.01, $totalDaysOfExposureSeptember / 30);
+	my $averageSubjectsOn30DaysOctober   = nearest(0.01, $totalDaysOfExposureOctober   / 30);
+	my $averageSubjectsOn30DaysNovember  = nearest(0.01, $totalDaysOfExposureNovember  / 30);
+	my ($exposureRateSeptember,
+		$exposureRateOctober,
+		$exposureRateNovember)  = (0, 0, 0);
+	if ($totalSubjectsSeptember) {
+		$exposureRateSeptember  = nearest(0.001, $totalCasesSeptember / $averageSubjectsOn30DaysSeptember * 1000);
+	}
+	if ($totalSubjectsOctober) {
+		$exposureRateOctober    = nearest(0.001, $totalCasesOctober / $averageSubjectsOn30DaysOctober * 1000);
+	}
+	if ($totalSubjectsNovember) {
+		$exposureRateNovember   = nearest(0.001, $totalCasesNovember / $averageSubjectsOn30DaysNovember * 1000);
+	}
+	say "*" x 50;
+	say "*" x 50;
+	say "trialSiteCountry                 : $trialSiteCountry";
+	say "totalDaysOfExposure              : $totalDaysOfExposure";
+	say "totalSubjects                    : $totalSubjects";
+	say "averageDaysOfExposure            : $averageDaysOfExposure";
+	say "averageSubjectsOn30Days          : $averageSubjectsOn30Days";
+	say "totalCases                       : $totalCases";
+	say "totalSubjectsOctober             : $totalSubjectsOctober";
+	say "totalCasesOctober                : $totalCasesOctober";
+	say "exposureRateOctober              : $exposureRateOctober";
+	say "totalSubjectsSeptember           : $totalSubjectsSeptember";
+	say "totalCasesSeptember              : $totalCasesSeptember";
+	say "exposureRateSeptember            : $exposureRateSeptember";
+	say "totalSubjectsNovember            : $totalSubjectsNovember";
+	say "totalCasesNovember               : $totalCasesNovember";
+	say "exposureRateNovember             : $exposureRateNovember";
+	say "totalDaysOfExposureSeptember     : $totalDaysOfExposureSeptember";
+	say "totalDaysOfExposureOctober       : $totalDaysOfExposureOctober";
+	say "totalDaysOfExposureNovember      : $totalDaysOfExposureNovember";
+	say "averageSubjectsOn30DaysSeptember : $averageSubjectsOn30DaysSeptember";
+	say "averageSubjectsOn30DaysOctober   : $averageSubjectsOn30DaysOctober";
+	say "averageSubjectsOn30DaysNovember  : $averageSubjectsOn30DaysNovember";
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposure'}              = $totalDaysOfExposure;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalSubjects'}                    = $totalSubjects;
+	$trialSitesCountriesData{$trialSiteCountry}->{'averageDaysOfExposure'}            = $averageDaysOfExposure;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalCases'}                       = $totalCases;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalSubjectsOctober'}             = $totalSubjectsOctober;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalCasesOctober'}                = $totalCasesOctober;
+	$trialSitesCountriesData{$trialSiteCountry}->{'exposureRateOctober'}              = $exposureRateOctober;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalSubjectsSeptember'}           = $totalSubjectsSeptember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalCasesSeptember'}              = $totalCasesSeptember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'exposureRateSeptember'}            = $exposureRateSeptember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalSubjectsNovember'}            = $totalSubjectsNovember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalCasesNovember'}               = $totalCasesNovember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'exposureRateNovember'}             = $exposureRateNovember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureSeptember'}     = $totalDaysOfExposureSeptember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureOctober'}       = $totalDaysOfExposureOctober;
+	$trialSitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureNovember'}      = $totalDaysOfExposureNovember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysSeptember'} = $averageSubjectsOn30DaysSeptember;
+	$trialSitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysOctober'}   = $averageSubjectsOn30DaysOctober;
+	$trialSitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysNovember'}  = $averageSubjectsOn30DaysNovember;
 }
+# p%trialSitesCountriesData;
+open my $o4, '>:utf8', 'public/doc/pfizer_trials/efficacy_stats.json';
+print $o4 encode_json\%trialSitesCountriesData;
+close $o4;
+
+my %trialSitesData = ();
+for my $trialSiteId (sort keys %positiveSubjectsExposureByTrialSites) {
+	p$positiveSubjectsExposureByTrialSites{$trialSiteId};
+	my $trialSiteName           = $sites{$trialSiteId}->{'name'}         // die;
+	my $trialSiteInvestigator   = $sites{$trialSiteId}->{'investigator'} // die;
+	my $totalDaysOfExposure     = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposure'}    // die;
+	my $totalSubjects           = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjects'}          // die;
+	my $totalCases              = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCases'}             // 0;
+	my $totalSubjectsOctober    = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsOctober'}   // 0;
+	my $totalCasesOctober       = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesOctober'}      // 0;
+	my $totalSubjectsSeptember  = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsSeptember'} // 0;
+	my $totalCasesSeptember     = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesSeptember'}    // 0;
+	my $totalSubjectsNovember   = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsNovember'}  // 0;
+	my $totalCasesNovember      = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesNovember'}     // 0;
+	my $totalDaysOfExposureSeptember = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureSeptember'} // 0;
+	my $totalDaysOfExposureOctober   = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureOctober'}   // 0;
+	my $totalDaysOfExposureNovember  = $positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureNovember'}  // 0;
+	my $averageDaysOfExposure   = $totalDaysOfExposure / $totalSubjects;
+	my $averageSubjectsOn30Days = nearest(0.01, $totalDaysOfExposure / 30);
+	my $averageSubjectsOn30DaysSeptember = nearest(0.01, $totalDaysOfExposureSeptember / 30);
+	my $averageSubjectsOn30DaysOctober   = nearest(0.01, $totalDaysOfExposureOctober   / 30);
+	my $averageSubjectsOn30DaysNovember  = nearest(0.01, $totalDaysOfExposureNovember  / 30);
+	my ($exposureRateSeptember,
+		$exposureRateOctober,
+		$exposureRateNovember)  = (0, 0, 0);
+	if ($totalSubjectsSeptember) {
+		$exposureRateSeptember  = nearest(0.001, $totalCasesSeptember / $averageSubjectsOn30DaysSeptember * 1000);
+	}
+	if ($totalSubjectsOctober) {
+		$exposureRateOctober    = nearest(0.001, $totalCasesOctober / $averageSubjectsOn30DaysOctober * 1000);
+	}
+	if ($totalSubjectsNovember) {
+		$exposureRateNovember   = nearest(0.001, $totalCasesNovember / $averageSubjectsOn30DaysNovember * 1000);
+	}
+	say "*" x 50;
+	say "*" x 50;
+	say "trialSiteId                      : $trialSiteId";
+	say "trialSiteName                    : $trialSiteName";
+	say "trialSiteInvestigator            : $trialSiteInvestigator";
+	say "totalDaysOfExposure              : $totalDaysOfExposure";
+	say "totalSubjects                    : $totalSubjects";
+	say "averageDaysOfExposure            : $averageDaysOfExposure";
+	say "averageSubjectsOn30Days          : $averageSubjectsOn30Days";
+	say "totalCases                       : $totalCases";
+	say "totalSubjectsOctober             : $totalSubjectsOctober";
+	say "totalCasesOctober                : $totalCasesOctober";
+	say "exposureRateOctober              : $exposureRateOctober";
+	say "totalSubjectsSeptember           : $totalSubjectsSeptember";
+	say "totalCasesSeptember              : $totalCasesSeptember";
+	say "exposureRateSeptember            : $exposureRateSeptember";
+	say "totalSubjectsNovember            : $totalSubjectsNovember";
+	say "totalCasesNovember               : $totalCasesNovember";
+	say "exposureRateNovember             : $exposureRateNovember";
+	say "totalDaysOfExposureSeptember     : $totalDaysOfExposureSeptember";
+	say "totalDaysOfExposureOctober       : $totalDaysOfExposureOctober";
+	say "totalDaysOfExposureNovember      : $totalDaysOfExposureNovember";
+	say "averageSubjectsOn30DaysSeptember : $averageSubjectsOn30DaysSeptember";
+	say "averageSubjectsOn30DaysOctober   : $averageSubjectsOn30DaysOctober";
+	say "averageSubjectsOn30DaysNovember  : $averageSubjectsOn30DaysNovember";
+	$trialSitesData{$trialSiteId}->{'trialSiteId'}                      = $trialSiteId;
+	$trialSitesData{$trialSiteId}->{'trialSiteName'}                    = $trialSiteName;
+	$trialSitesData{$trialSiteId}->{'totalDaysOfExposure'}              = $totalDaysOfExposure;
+	$trialSitesData{$trialSiteId}->{'totalSubjects'}                    = $totalSubjects;
+	$trialSitesData{$trialSiteId}->{'averageDaysOfExposure'}            = $averageDaysOfExposure;
+	$trialSitesData{$trialSiteId}->{'totalCases'}                       = $totalCases;
+	$trialSitesData{$trialSiteId}->{'totalSubjectsOctober'}             = $totalSubjectsOctober;
+	$trialSitesData{$trialSiteId}->{'totalCasesOctober'}                = $totalCasesOctober;
+	$trialSitesData{$trialSiteId}->{'exposureRateOctober'}              = $exposureRateOctober;
+	$trialSitesData{$trialSiteId}->{'totalSubjectsSeptember'}           = $totalSubjectsSeptember;
+	$trialSitesData{$trialSiteId}->{'totalCasesSeptember'}              = $totalCasesSeptember;
+	$trialSitesData{$trialSiteId}->{'exposureRateSeptember'}            = $exposureRateSeptember;
+	$trialSitesData{$trialSiteId}->{'totalSubjectsNovember'}            = $totalSubjectsNovember;
+	$trialSitesData{$trialSiteId}->{'totalCasesNovember'}               = $totalCasesNovember;
+	$trialSitesData{$trialSiteId}->{'exposureRateNovember'}             = $exposureRateNovember;
+	$trialSitesData{$trialSiteId}->{'totalDaysOfExposureSeptember'}     = $totalDaysOfExposureSeptember;
+	$trialSitesData{$trialSiteId}->{'totalDaysOfExposureOctober'}       = $totalDaysOfExposureOctober;
+	$trialSitesData{$trialSiteId}->{'totalDaysOfExposureNovember'}      = $totalDaysOfExposureNovember;
+	$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysSeptember'} = $averageSubjectsOn30DaysSeptember;
+	$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysOctober'}   = $averageSubjectsOn30DaysOctober;
+	$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysNovember'}  = $averageSubjectsOn30DaysNovember;
+}
+p%trialSitesData;
+open my $o5, '>:utf8', 'public/doc/pfizer_trials/efficacy_sites_stats.json';
+print $o5 encode_json\%trialSitesData;
+close $o5;
+
 
 sub load_adva {
 	open my $in, '<:utf8', $advaFile;
@@ -392,19 +545,77 @@ sub verify_randomization {
 						# p$randomization{$subjectId};
 						# p$screening{$subjectId};
 					}
-					$positiveSubjectsExposure{$trialSiteCountry}->{'totalCases'}++;
+					if ($swabDate >= 20201101 && $swabDate <= 20201131) {
+						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesNovember'}++;
+						$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesNovember'}++;
+					}
+					if ($swabDate >= 20201001 && $swabDate <= 20201031) {
+						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesOctober'}++;
+						$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesOctober'}++;
+					}
+					if ($swabDate >= 20200901 && $swabDate <= 20200931) {
+						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesSeptember'}++;
+						$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesSeptember'}++;
+					}
+					$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCases'}++;
+					$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCases'}++;
 				}
+				$dose2Stats{$trialSiteId}->{'totalCases'}++;
 			}
 		}
 		$stats{'14_eligiblePopulationPreCutOff'}->{'totalSubjects'}++;
 		$stats{'14_eligiblePopulationPreCutOff'}->{$randomizationGroup}++;
 		$stats{'14_eligiblePopulationPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
-		my $daysOfExposure = calc_days_difference($dose2Date, '20201115');
-		$daysOfExposure = $daysOfExposure - 7;
+		my $daysOfExposure = calc_days_difference($dose2Date, '20201114');
+		$daysOfExposure = $daysOfExposure - 6;
 		die unless $daysOfExposure >= 0;
-		$positiveSubjectsExposure{$trialSiteCountry}->{'totalSubjects'}++;
-		$positiveSubjectsExposure{$trialSiteCountry}->{'totalDaysOfExposure'}+= $daysOfExposure;
+		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjects'}++;
+		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposure'} += $daysOfExposure;
+		$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjects'}++;
+		$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposure'} += $daysOfExposure;
+		if ($dose2Date <= 20201131) {
+			my $monthlyDays = 0;
+			if ($dose2Date <= 20201101) {
+				$monthlyDays = 30;
+			} else {
+				$monthlyDays = calc_days_difference($dose2Date, '20201101');
+				$monthlyDays = 30 - $monthlyDays;
+			}
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}++;
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'} += $monthlyDays;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsNovember'}++;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureNovember'} += $monthlyDays;
+		}
+		if ($dose2Date <= 20201031) {
+			my $monthlyDays = 0;
+			if ($dose2Date <= 20201001) {
+				$monthlyDays = 30;
+			} else {
+				$monthlyDays = calc_days_difference($dose2Date, '20201001');
+				$monthlyDays = 30 - $monthlyDays;
+			}
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}++;
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'} += $monthlyDays;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsOctober'}++;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureOctober'} += $monthlyDays;
+		}
+		if ($dose2Date <= 20200931) {
+			my $monthlyDays = 0;
+			if ($dose2Date <= 20200901) {
+				$monthlyDays = 30;
+			} else {
+				$monthlyDays = calc_days_difference($dose2Date, '20200901');
+				$monthlyDays = 30 - $monthlyDays;
+			}
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'}++;
+			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsSeptember'}++;
+			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
+		}
 		if (exists $cases{$subjectId}->{'swabDate'}) {
+			$daysOfExposure = calc_days_difference($dose2Date, $swabDate);
+			$daysOfExposure = $daysOfExposure - 6;
+			die unless $daysOfExposure >= 0;
 			$efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} = $subjectId;
 			$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
 			$efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} = $daysOfExposure;
@@ -1206,8 +1417,8 @@ sub config_sites {
 	$sites{'1126'}->{'city'}         = 'Sacramento';
 	$sites{'1126'}->{'investigator'} = 'Nicola Klein';
 	$sites{'1126'}->{'country'}      = 'USA';
-	$sites{'1126'}->{'latitude'}     = '37.662357';
-	$sites{'1126'}->{'longitude'}    = '-97.245145';
+	$sites{'1126'}->{'latitude'}     = '38.595565';
+	$sites{'1126'}->{'longitude'}    = '-121.429578';
 	# 1127
 	$sites{'1127'}->{'name'}         = 'Alliance for Multispecialty Research, LLC';
 	$sites{'1127'}->{'address'}      = '1709 S Rock Rd';
@@ -1884,14 +2095,14 @@ sub config_sites {
 	$sites{'1269'}->{'latitude'}     = '34.187014';
 	$sites{'1269'}->{'longitude'}    = '-118.396461';
 	# 1270
-	$sites{'1270'}->{'name'}         = 'Kaiser Petmanente Sacramento ';
-	$sites{'1270'}->{'address'}      = '1650 Response Rd';
-	$sites{'1270'}->{'postalCode'}   = 'CA 95815';
+	$sites{'1270'}->{'name'}         = 'Kaiser Petmanente Santa Clara';
+	$sites{'1270'}->{'address'}      = '710 Lawrence Expy';
+	$sites{'1270'}->{'postalCode'}   = 'CALIFORNIA 95051';
 	$sites{'1270'}->{'country'}      = 'USA';
-	$sites{'1270'}->{'city'}         = 'Sacramento';
+	$sites{'1270'}->{'city'}         = 'Santa Clara';
 	$sites{'1270'}->{'investigator'} = 'Nicola Klein';
-	$sites{'1270'}->{'latitude'}     = '38.595300';
-	$sites{'1270'}->{'longitude'}    = '-121.429827';
+	$sites{'1270'}->{'latitude'}     = '37.336446';
+	$sites{'1270'}->{'longitude'}    = '-121.996307';
 
 	# Displaying total sites.
 	# my $totalSites   = keys %sites;

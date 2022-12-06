@@ -1,7 +1,7 @@
 % my %weekByWeekSecondDose = %$weekByWeekSecondDose;
 <div class="text_separator"></div>
 <div class="text_separator"></div>
-The second doses administred to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
+The second doses administered to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
 <div class="text_separator"></div>
 <div class="text_separator"></div>
 <div id="second_doses_week_by_week">
