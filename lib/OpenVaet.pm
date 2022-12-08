@@ -331,6 +331,7 @@ sub startup {
     $r->post('/review_nejm_fda_data/load_efficacy_cases')->to('review_nejm_fda_data#load_efficacy_cases');
     $r->post('/review_nejm_fda_data/load_efficacy_by_sites')->to('review_nejm_fda_data#load_efficacy_by_sites');
     $r->post('/review_nejm_fda_data/load_efficacy_by_sites_countries')->to('review_nejm_fda_data#load_efficacy_by_sites_countries');
+    $r->post('/review_nejm_fda_data/load_efficacy_cases_week_by_week')->to('review_nejm_fda_data#load_efficacy_cases_week_by_week');
 	$r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
 	$r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
     $r->post('/studies/vaers_fertility/set_report_pregnancy_attribute')->to('studies#set_report_pregnancy_attribute');

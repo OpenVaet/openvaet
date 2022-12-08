@@ -1,7 +1,7 @@
 <style type="text/css">
 	.countries-stats-table-container-b {
 		width: 100%;
-		max-width: 1290px;
+		max-width: 1305px;
 		overflow-y: auto;
 		font-size:14px;
 		margin: auto;
@@ -10,11 +10,11 @@
 	}
 	.countries-stats-table-container {
 		width: 100%;
-		max-width: 1290px;
+		max-width: 1305px;
 		overflow-y: auto;
 		font-size:14px;
 		margin: auto;
-		height: 340px;
+		height: 410px;
 		overflow-y:auto;
 	}
 	.countries-stats-table-header-b {

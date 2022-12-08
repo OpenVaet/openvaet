@@ -1,0 +1,39 @@
+% my %weekByWeekCases = %$weekByWeekCases;
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+The cases observed on <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below by swab dates.
+<div class="text_separator"></div>
+<div class="text_separator"></div>
+<div id="cases_week_by_week">
+
+</div>
+
+<script type="text/javascript">
+
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawWeekByWeekCases);
+
+    function drawWeekByWeekCases() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Week Number', 'BNT162b2', 'Placebo', { role: 'annotation' } ],
+            % for my $weekNumber (sort{$a <=> $b} keys %weekByWeekCases) {
+                % my $bNT162b2 = $weekByWeekCases{$weekNumber}->{'bNT162b2'}  // 0;
+                % my $placebo = $weekByWeekCases{$weekNumber}->{'placebo'}   // 0;
+                ["<%==$weekNumber%>", <%=$bNT162b2%>, <%=$placebo%>, ''],
+            % }
+        ]);
+
+        var view = new google.visualization.DataView(data);
+
+        var options = {
+            width: chartWidth,
+            height: 550,
+            legend: { position: 'top', maxLines: 3 },
+            bar: { groupWidth: '75%' },
+            isStacked: true,
+        };
+        chartAdvEffects = new google.visualization.ColumnChart(document.getElementById("cases_week_by_week"));
+        chartAdvEffects.draw(view, options);
+    }
+</script>

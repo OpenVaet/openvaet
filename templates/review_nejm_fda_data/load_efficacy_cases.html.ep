@@ -132,6 +132,7 @@
 				% $rowNum = 1;
 			% }
 			% p$efficacySubjects{$swabDate}->{$subjectId};
+			% my $uSubjectId = $efficacySubjects{$swabDate}->{$subjectId}->{'uSubjectId'} // die;
 			% my $trialSiteId = $efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteId'} // die;
 			% my $sexName = $efficacySubjects{$swabDate}->{$subjectId}->{'sexName'} // die;
 			% my $subjectId = $efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} // die;
@@ -147,9 +148,9 @@
 			<div class="efficacy-table-row-<%=$rowNum%>">
 				<div class="efficacy-table-cell-1">
 				% if ($swabSourceFile eq 'pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf') {
-					<%=$subjectId%>
+					<%=$uSubjectId%>
 				% } else {
-					<span style="background:yellow;"><%=$subjectId%></span>
+					<span style="background:yellow;"><%=$uSubjectId%></span>
 				% }
 				</div>
 				<div class="efficacy-table-cell-2">

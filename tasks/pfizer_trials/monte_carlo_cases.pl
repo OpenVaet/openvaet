@@ -14,17 +14,17 @@ use lib "$FindBin::Bin/../../lib";
 use time;
 
 # Defines the variable.
-my $file       = 'public/doc/pfizer_trials/efficacy_stats.json'; # File storing trial sites data.
-my $sims       = 100000000; # Number of random tests performed.
-my $iR         = 5;         # Total of cases / 1 000 subjects we expect to fall sick monthly.
-my $iRP        = $iR / 1000;
-my $sRP        = 1 - $iRP;
-my $dailyIP    = 1 - $sRP ** (1 / 30);
-my $dailyIP10M = nearest(1, $dailyIP * 10000000);
-die if $dailyIP10M > 10000000;
-say "iRP        : $iRP";
-say "dailyIP    : $dailyIP";
-say "dailyIP10M : $dailyIP10M";
+my $file       = 'public/doc/pfizer_trials/efficacy_stats.json'; # File storing trial sites countries data.
+my $sims       = 1000000; # Number of random tests performed.
+
+# Setting countries incidence rate (from JH for USA & Argentina, and static 3 for the less represented countries).
+my %countriesEstimatedIR              = ();
+$countriesEstimatedIR{'Argentina'}    = 7;
+$countriesEstimatedIR{'Brazil'}       = 3;
+$countriesEstimatedIR{'Germany'}      = 3;
+$countriesEstimatedIR{'South Africa'} = 3;
+$countriesEstimatedIR{'Turkey'}       = 3;
+$countriesEstimatedIR{'USA'}          = 3.5;
 
 my %sites = ();
 load_sites();
@@ -37,6 +37,8 @@ my $highestConsecutive  = 0;
 while ($totalSims < $sims) {
 	$cpt++;
 	$totalSims++;
+
+	# Every 100 sims, renders current stats.
 	if ($cpt == 100) {
 		$cpt = 0;
 		my ($total, $count, $min, $max) = (0, 0, 10000000, 0);
@@ -48,18 +50,26 @@ while ($totalSims < $sims) {
 			$count += $res;
 		}
 		my $avg = nearest(0.1, $count / $total);
-		STDOUT->printflush("\rSimulating [$totalSims] - [$min | $avg | $max] - [$highestConsecutive] - [$consecutive8OrAbove]                ")
+		my $pct = nearest(0.0000001, $consecutive8OrAbove * 100 / $totalSims);
+		STDOUT->printflush("\rSimulating [$totalSims] - [$min | $avg | $max] - [$highestConsecutive] - [$consecutive8OrAbove - $pct %]                ")
 	}
 	my %sim = ();
+	my %infected = ();
 	# For each day...
 	for my $day (1 .. 30) {
 		# For each site
 		for my $country (sort keys %sites) {
-			my $totalSubjects = $sites{$country} // die;
+			my $totalSubjects = $sites{$country}->{'subjects'}   // die;
+			my $dailyIP10M    = $sites{$country}->{'dailyIP10M'} // die;
 			# For each subject on site.
 			for my $subject (1 .. $totalSubjects) {
+				# Skips the patient if he already fell sick during that simulation.
+				next if exists $infected{$subject};
+				# If the patient scores below or equal IR set for the country on a random score,
+				# considering he caught covid.
 				my $rand = nearest(1, rand(10000000));
 				if ($rand <= $dailyIP10M) {
+					$infected{$subject} = 1;
 					$sim{$day}->{$country}->{$subject} = 1;
 					# die "$day | $country | $subject -> Positive ($rand)";
 				}
@@ -107,7 +117,19 @@ sub load_sites {
 	for my $country (sort keys %sitesRaw) {
 		my $averageSubjectsOn30DaysSeptember = $sitesRaw{$country}->{'averageSubjectsOn30DaysSeptember'} // next;
 		$averageSubjectsOn30DaysSeptember = nearest(1, $averageSubjectsOn30DaysSeptember);
-		$sites{$country} = $averageSubjectsOn30DaysSeptember;
+		$sites{$country}->{'subjects'} = $averageSubjectsOn30DaysSeptember;
+	}
+	for my $country (sort keys %sites) {
+		my $iR         = $countriesEstimatedIR{$country} // die "country : $country";       # Total of cases / 1 000 subjects we expect to fall sick monthly.
+		my $iRP        = $iR / 1000;
+		my $sRP        = 1 - $iRP;
+		my $dailyIP    = 1 - $sRP ** (1 / 30);
+		my $dailyIP10M = nearest(1, $dailyIP * 10000000);
+		die if $dailyIP10M > 10000000;
+		say "iRP        : $iRP";
+		say "dailyIP    : $dailyIP";
+		say "dailyIP10M : $dailyIP10M";
+		$sites{$country}->{'dailyIP10M'} = $dailyIP10M;
 	}
 }
 

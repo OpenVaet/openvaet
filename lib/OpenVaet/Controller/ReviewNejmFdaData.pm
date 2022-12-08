@@ -80,6 +80,8 @@ sub review_nejm_fda_data {
     my %firstDoseData = json_from_file($firstDoseDataFile);
     my $secondDoseDataFile = 'public/doc/pfizer_trials/second_doses_stats.json';
     my %secondDoseData = json_from_file($secondDoseDataFile);
+    my $casesDataFile = 'public/doc/pfizer_trials/efficacy_cases_stats.json';
+    my %casesData = json_from_file($casesDataFile);
     # p%secondDoseData;
 
     my %dose1Sites = ();
@@ -98,12 +100,21 @@ sub review_nejm_fda_data {
         $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} = $trialSiteName;
         $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'} = $trialSitePostalCode;
     }
+    my %casesSites = ();
+    for my $trialSiteId (sort{$a <=> $b} keys %casesData) {
+        my $trialSiteName = $casesData{$trialSiteId}->{'trialSiteName'} // die "trialSiteId : $trialSiteId";
+        my $trialSitePostalCode = $casesData{$trialSiteId}->{'trialSitePostalCode'};
+        my $totalSubjects = $casesData{$trialSiteId}->{'totalSubjects'} // die;
+        $casesSites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} = $trialSiteName;
+        $casesSites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'} = $trialSitePostalCode;
+    }
 
     $self->render(
         currentLanguage => $currentLanguage,
         languages => \%languages,
         dose1Sites => \%dose1Sites,
-        dose2Sites => \%dose2Sites
+        dose2Sites => \%dose2Sites,
+        casesSites => \%casesSites
     );
 }
 
@@ -422,6 +433,51 @@ sub load_efficacy_by_sites {
         mainWidth       => $mainWidth,
         mainHeight      => $mainHeight,
         efficacyStats   => \%efficacyStats
+    );
+}
+
+sub load_efficacy_cases_week_by_week {
+    my $self = shift;
+
+    my $siteTarget      = $self->param('siteTarget')      // die;
+    my $currentLanguage = $self->param('currentLanguage') // die;
+    my $mainWidth       = $self->param('mainWidth')       // die;
+    my $mainHeight      = $self->param('mainHeight')      // die;
+    say "siteTarget : $siteTarget";
+
+    my $casesDataFile = 'public/doc/pfizer_trials/efficacy_cases_stats.json';
+    my %casesData = json_from_file($casesDataFile);
+
+    my %weekByWeekCases = ();
+    my ($totalBnt, $totalPlacebo, $totalSubjects, $fromDate, $toDate, $daysDifference) = (0, 0, 0);
+    $fromDate = $casesData{$siteTarget}->{'firstCase'} // die;
+    $toDate = $casesData{$siteTarget}->{'lastCase'} // die;
+    $daysDifference = calc_days_difference($fromDate, $toDate);
+    $fromDate = date_from_compdate($fromDate);
+    $toDate = date_from_compdate($toDate);
+    for my $weekNumber (sort{$a <=> $b} keys %{$casesData{$siteTarget}->{'weekNumbers'}}) {
+        my $bNT162b2 = $casesData{$siteTarget}->{'weekNumbers'}->{$weekNumber}->{'BNT162b2'} // 0;
+        my $placebo = $casesData{$siteTarget}->{'weekNumbers'}->{$weekNumber}->{'Placebo'} // 0;
+        $weekByWeekCases{$weekNumber}->{'bNT162b2'} = $bNT162b2;
+        $weekByWeekCases{$weekNumber}->{'placebo'} = $placebo;
+        $totalSubjects += $bNT162b2;
+        $totalSubjects += $placebo;
+        $totalBnt += $bNT162b2;
+        $totalPlacebo += $placebo;
+    }
+    # p%weekByWeekCases;
+
+    $self->render(
+        currentLanguage     => $currentLanguage,
+        totalBnt            => $totalBnt,
+        totalPlacebo        => $totalPlacebo,
+        totalSubjects       => $totalSubjects,
+        fromDate            => $fromDate,
+        toDate              => $toDate,
+        daysDifference      => $daysDifference,
+        mainWidth           => $mainWidth,
+        mainHeight          => $mainHeight,
+        weekByWeekCases => \%weekByWeekCases
     );
 }
 

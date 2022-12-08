@@ -30,6 +30,7 @@ my %stats             = ();
 my %cases             = ();
 my %adva              = ();
 my %sites             = ();
+my %casesStats        = ();
 
 config_sites();
 load_adva();
@@ -67,6 +68,9 @@ close $o1;
 open my $o2, '>:utf8', 'public/doc/pfizer_trials/second_doses_stats.json';
 print $o2 encode_json\%dose2Stats;
 close $o2;
+open my $o6, '>:utf8', 'public/doc/pfizer_trials/efficacy_cases_stats.json';
+print $o6 encode_json\%casesStats;
+close $o6;
 open my $o3, '>:utf8', 'public/doc/pfizer_trials/efficacy_subjects.json';
 print $o3 encode_json\%efficacySubjects;
 close $o3;
@@ -313,6 +317,8 @@ sub verify_randomization {
 	$dose1Stats{'0'}->{'lastDose1'} = '0';
 	$dose2Stats{'0'}->{'firstDose2'} = '99999999';
 	$dose2Stats{'0'}->{'lastDose2'} = '0';
+	$casesStats{'0'}->{'firstCase'} = '99999999';
+	$casesStats{'0'}->{'lastCase'} = '0';
 	for my $subjectId (sort{$a <=> $b} keys %randomization) {
 
 		# say "subjectId : $subjectId";
@@ -323,418 +329,470 @@ sub verify_randomization {
 		$stats{'0_preliminaryExclusions'}->{'totalScreened'}++;
 		unless ($randomizationDate) {
 			$stats{'0_preliminaryExclusions'}->{'noRandomizationDate'}++;
-			next;
-		}
-		unless ($randomizationDate <= 20201114) {
-			$stats{'0_preliminaryExclusions'}->{'randomizedPostDate'}++;
-			next;
-		}
-		unless (exists $screening{$subjectId}) {
-			say "subjectId : $subjectId";
-			p$randomization{$subjectId};
-			die;
-		}
-		my $screeningDate = $screening{$subjectId}->{'screeningDate'} // die;
-		my $screeningDateOrigin = $screening{$subjectId}->{'screeningDateOrigin'} // die;
-		my $isPhase1 = $screening{$subjectId}->{'isPhase1'};
-		if ($isPhase1) {
-			if ($isPhase1 eq 'Yes') {
-				$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
-				next;
-			}
-		}
-		my $hasHIV = $screening{$subjectId}->{'hasHIV'};
-		if ($hasHIV) {
-			if ($hasHIV eq 'Yes') {
-				$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
-				next;
-			}
-		}
-		if ($screeningDate > $randomizationDate) {
-			# say "$subjectId -> screeningDate : $screeningDate | randomizationDate : $randomizationDate";
-			$stats{'0_preliminaryExclusions'}->{'screenedPostRandom'}++;
-			next;
-		}
-		next unless $randomizationDate >= 20200720 && $randomizationDate <= 20201114;
-		unless ($screeningDate <= 20201114) {
-			# p$screening{$subjectId};
-			$stats{'0_preliminaryExclusions'}->{'skippedByScreeningDate'}++;
-			# say "screeningDate : $screeningDate";
-			next;
-		}
-		$stats{'1_totalPhase2And3RandomizedPostConsent'}->{'totalSubjects'}++;
-		my $randomizationGroup = $randomization{$subjectId}->{'randomizationGroup'} // die;
-		$randomizationGroup = 'BNT162b2' if $randomizationGroup =~ /BNT162b2/;
-		$stats{'1_totalPhase2And3RandomizedPostConsent'}->{$randomizationGroup}++;
-		my $dose1Date = $randomization{$subjectId}->{'dose1Date'} // next;
-		next unless $dose1Date <= 20201114;
-		$stats{'2_totalPhase2And3Dose1'}->{'totalSubjects'}++;
-		$stats{'2_totalPhase2And3Dose1'}->{$randomizationGroup}++;
-
-		# Identifying the age, sex & trial site, ideally from the ADVA file, and if not available, from the demographic data.
-		my ($age, $sexName, $trialSiteId);
-		if (exists $adva{$subjectId}) {
-			# say "all cool";
-			$trialSiteId = $adva{$subjectId}->{'trialSiteId'} // die;
-			$sexName         = $adva{$subjectId}->{'sex'}         // die;
-			if ($sexName eq 'M') {
-				$sexName = 'Male';
-			} elsif ($sexName eq 'F') {
-				$sexName = 'Female';
+		} else {
+			unless ($randomizationDate <= 20201114) {
+				$stats{'0_preliminaryExclusions'}->{'randomizedPostDate'}++;
 			} else {
-				die "sexName : $sexName";
-			}
-			$age         = $adva{$subjectId}->{'age'}         // die;
-			# p$adva{$subjectId};
-			# die;
-		} else {
-			die unless exists $demographic{$subjectId};
-			# p$demographic{$subjectId};
-			# die;
-			my $uSubjectId = $demographic{$subjectId}->{'uSubjectId'}  // die;
-			($trialSiteId) = $uSubjectId =~ /^C4591001 (....) \d\d\d\d\d\d\d\d$/;
-			die unless $trialSiteId && looks_like_number $trialSiteId;
-			$sexName       = $demographic{$subjectId}->{'sex'}         // die;
-			$age           = $demographic{$subjectId}->{'ageYears'}    // die;
-		}
-		die unless $trialSiteId && defined $age && $sexName;
-		my ($ageGroupId, $ageGroupName) = age_to_age_group($age);
-		my $sexGroupId;
-		if ($sexName eq 'Female') {
-			$sexGroupId = 1;
-		} elsif ($sexName eq 'Male') {
-			$sexGroupId = 2;
-		} else {
-			die;
-		}
-		unless (exists $dose1Stats{$trialSiteId}) {
-
-			$dose1Stats{$trialSiteId}->{'firstDose1'} = '99999999';
-			$dose1Stats{$trialSiteId}->{'lastDose1'}  = '0';
-		}
-
-		# Builing week by week dose 1 data.
-		# say "dose1Date : $dose1Date";
-		my $trialSiteCountry      = $sites{$trialSiteId}->{'country'}      // die "trialSiteId : $trialSiteId";
-		my $trialSiteState        = $sites{$trialSiteId}->{'state'};
-		if ($trialSiteCountry eq 'USA' && !$trialSiteState) {
-			die "trialSiteId : $trialSiteId";
-		}
-		my $trialSiteName         = $sites{$trialSiteId}->{'name'}         // die;
-		my $trialSitePostalCode   = $sites{$trialSiteId}->{'postalCode'}   // die;
-		my $trialSiteAddress      = $sites{$trialSiteId}->{'address'}      // die;
-		my $trialSiteCity         = $sites{$trialSiteId}->{'city'}         // die;
-		my $trialSiteInvestigator = $sites{$trialSiteId}->{'investigator'} // die;
-		my $trialSiteLatitude     = $sites{$trialSiteId}->{'latitude'}     // die;
-		my $trialSiteLongitude    = $sites{$trialSiteId}->{'longitude'}    // die;
-		my $dose1WeekNumber       = week_from_compdate($dose1Date);
-		if ($dose1Stats{'0'}->{'firstDose1'} > $dose1Date) {
-			$dose1Stats{'0'}->{'firstDose1'} = $dose1Date;
-		}
-		if ($dose1Stats{'0'}->{'lastDose1'} < $dose1Date) {
-			$dose1Stats{'0'}->{'lastDose1'} = $dose1Date;
-		}
-		if ($dose1Stats{$trialSiteId}->{'firstDose1'} > $dose1Date) {
-			$dose1Stats{$trialSiteId}->{'firstDose1'} = $dose1Date;
-		}
-		if ($dose1Stats{$trialSiteId}->{'lastDose1'} < $dose1Date) {
-			$dose1Stats{$trialSiteId}->{'lastDose1'} = $dose1Date;
-		}
-		# say "dose1WeekNumber : $dose1WeekNumber";
-		$dose1Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
-		$dose1Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
-		$dose1Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
-		$dose1Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
-		$dose1Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
-		$dose1Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-		$dose1Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
-		$dose1Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
-		$dose1Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
-		$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-		$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-		$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-		$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-		$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-		$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-		$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-		$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-		$dose1Stats{$trialSiteId}->{'totalSubjects'}++;
-		$dose1Stats{$trialSiteId}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
-		$dose1Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
-		$dose1Stats{'0'}->{'totalSubjects'}++;
-		$dose1Stats{'0'}->{'trialSiteName'} = 'All Sites';
-		$dose1Stats{'0'}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
-		$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-		$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-		$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-		$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-		$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-		$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-		$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-		$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-		# die;
-
-		# Dose 2 data & stats.
-		my $dose2Date = $randomization{$subjectId}->{'dose2Date'} // next;
-		next unless $dose2Date <= 20201114;
-		$stats{'3_totalPhase2And3Dose2'}->{'totalSubjects'}++;
-		$stats{'3_totalPhase2And3Dose2'}->{$randomizationGroup}++;
-		next unless $dose2Date <= 20201108;
-		$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{'totalSubjects'}++;
-		$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{$randomizationGroup}++;
-		my $daysDifferenceBetweenDoses1And2 = calc_days_difference($dose1Date, $dose2Date);
-		next unless $daysDifferenceBetweenDoses1And2 >= 19 && $daysDifferenceBetweenDoses1And2 <= 42;
-		$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{'totalSubjects'}++;
-		$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{$randomizationGroup}++;
-		unless (exists $adva{$subjectId}) {
-			$stats{'6_noAdvaData'}->{'totalSubjects'}++;
-			$stats{'6_noAdvaData'}->{$randomizationGroup}++;
-			$stats{'6_noAdvaData'}->{'subjects'}->{$subjectId} = 1;
-			if (exists $cases{$subjectId}->{'swabDate'}) {
-				my $swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
-				if ($swabDate <= 20201114) {
-					p$cases{$subjectId};
-					say "swabDate : [$swabDate] for subjectId [$subjectId]";
-					$stats{'6_noAdvaData'}->{'positivePreCutOff'}++;
+				unless (exists $screening{$subjectId}) {
+					say "subjectId : $subjectId";
+					p$randomization{$subjectId};
+					die;
 				}
-			}
-		}
-
-		# Verifying if the subject had evidence of infection prior 7 days post dose 2.
-		my %visitDates = ();
-		for my $visitDatetime (sort keys %{$cases{$subjectId}->{'visits'}}) {
-			my ($visitDate) = split ' ', $visitDatetime;
-			$visitDate =~ s/\D//g;
-			$visitDates{$visitDate} = \%{$cases{$subjectId}->{'visits'}->{$visitDatetime}};
-		}
-
-		# If the patient has a documented Covid, tagging so.
-		my ($sourceFile, $sourceTable, $swabDate);
-		if (exists $cases{$subjectId}->{'swabDate'}) {
-			$sourceFile  = $cases{$subjectId}->{'sourceFile'}  // die;
-			$sourceTable = $cases{$subjectId}->{'sourceTable'} // die;
-			$swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
-			$stats{'7_positiveSwabs'}->{'totalSubjects'}++;
-			$stats{'7_positiveSwabs'}->{$randomizationGroup}++;
-			$stats{'7_positiveSwabs'}->{$sourceTable}++;
-
-			next if $swabDate > 20201114;
-			$stats{'8_positiveSwabsPreCutOff'}->{'totalSubjects'}++;
-			$stats{'8_positiveSwabsPreCutOff'}->{$randomizationGroup}++;
-			$stats{'8_positiveSwabsPreCutOff'}->{$sourceTable}++;
-			$stats{'8_positiveSwabsPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
-			$stats{'8_positiveSwabsPreCutOff'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-			my $daysDifferenceBetweenPosTestAnd2 = calc_days_difference($dose2Date, $swabDate);
-			if ($swabDate < $dose2Date) {
-				# say "Tested positive before dose 2 : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-				$stats{'9_positiveNBindingPriorDose2'}->{'totalSubjects'}++;
-				$stats{'9_positiveNBindingPriorDose2'}->{$randomizationGroup}++;
-				next;
-			} else {
-				if ($daysDifferenceBetweenPosTestAnd2 < 7) {
-					# say "Tested positive before dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-					$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-					$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-					next;
+				my $screeningDate = $screening{$subjectId}->{'screeningDate'} // die;
+				my $screeningDateOrigin = $screening{$subjectId}->{'screeningDateOrigin'} // die;
+				my $isPhase1 = $screening{$subjectId}->{'isPhase1'};
+				if ($isPhase1 && ($isPhase1 eq 'Yes')) {
+					$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
 				} else {
-					# say "Tested positive after dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-					$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-					$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-					$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-					if (exists $efficacy{$subjectId}) {
-						say "Tested positive after dose 2 + 7 days, in efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-						$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'totalSubjects'}++;
-						$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
-						$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+					my $hasHIV = $screening{$subjectId}->{'hasHIV'};
+					if ($hasHIV && ($hasHIV eq 'Yes')) {
+						$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
 					} else {
-						say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-						$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'totalSubjects'}++;
-						$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
-						# $stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'subjects'}->{$subjectId} = 1;
-						$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-						# p$randomization{$subjectId};
-						# p$screening{$subjectId};
-					}
-					if ($swabDate >= 20201101 && $swabDate <= 20201131) {
-						if ($trialSiteState) {
-							$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesNovember'}++;
-						}
-						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesNovember'}++;
-						$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesNovember'}++;
-					}
-					if ($swabDate >= 20201001 && $swabDate <= 20201031) {
-						if ($trialSiteState) {
-							$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesOctober'}++;
-						}
-						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesOctober'}++;
-						$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesOctober'}++;
-					}
-					if ($swabDate >= 20200901 && $swabDate <= 20200931) {
-						if ($trialSiteState) {
-							$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesSeptember'}++;
-						}
-						$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesSeptember'}++;
-					}
-					if ($trialSiteState) {
-						$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCases'}++;
-					}
-					$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCases'}++;
-					$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCases'}++;
-				}
-				$dose2Stats{$trialSiteId}->{'totalCases'}++;
-			}
-		}
-		$stats{'14_eligiblePopulationPreCutOff'}->{'totalSubjects'}++;
-		$stats{'14_eligiblePopulationPreCutOff'}->{$randomizationGroup}++;
-		$stats{'14_eligiblePopulationPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
-		my $daysOfExposure = calc_days_difference($dose2Date, '20201114');
-		$daysOfExposure = $daysOfExposure - 6;
-		die unless $daysOfExposure >= 0;
-		if ($trialSiteState) {
-			$positiveSubjectsExposureByCountries{$trialSiteState}->{'isUSAState'} = 1;
-			$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjects'}++;
-			$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposure'} += $daysOfExposure;
-		}
-		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'isUSAState'} = 0;
-		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjects'}++;
-		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposure'} += $daysOfExposure;
-		$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjects'}++;
-		$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposure'} += $daysOfExposure;
-		if ($dose2Date <= 20201131) {
-			my $monthlyDays = 0;
-			if ($dose2Date <= 20201101) {
-				$monthlyDays = 30;
-			} else {
-				$monthlyDays = calc_days_difference($dose2Date, '20201101');
-				$monthlyDays = 30 - $monthlyDays;
-			}
-			if ($trialSiteState) {
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsNovember'}++;
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-			}
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}++;
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsNovember'}++;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-		}
-		if ($dose2Date <= 20201031) {
-			my $monthlyDays = 0;
-			if ($dose2Date <= 20201001) {
-				$monthlyDays = 30;
-			} else {
-				$monthlyDays = calc_days_difference($dose2Date, '20201001');
-				$monthlyDays = 30 - $monthlyDays;
-			}
-			if ($trialSiteState) {
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsOctober'}++;
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-			}
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}++;
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsOctober'}++;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-		}
-		if ($dose2Date <= 20200931) {
-			my $monthlyDays = 0;
-			if ($dose2Date <= 20200901) {
-				$monthlyDays = 30;
-			} else {
-				$monthlyDays = calc_days_difference($dose2Date, '20200901');
-				$monthlyDays = 30 - $monthlyDays;
-			}
-			if ($trialSiteState) {
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsSeptember'}++;
-				$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-			}
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'}++;
-			$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsSeptember'}++;
-			$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-		}
-		if (exists $cases{$subjectId}->{'swabDate'}) {
-			$daysOfExposure = calc_days_difference($dose2Date, $swabDate);
-			$daysOfExposure = $daysOfExposure - 6;
-			die unless $daysOfExposure >= 0;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} = $subjectId;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} = $daysOfExposure;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'doseDateOrigin'} = $doseDateOrigin;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = $screeningDateOrigin;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'isPhase1'} = $isPhase1;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'hasHIV'} = $hasHIV;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationGroup'} = $randomizationGroup;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'age'} = $age;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'sexName'} = $sexName;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteId'} = $trialSiteId;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceTable'} = $sourceTable;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceFile'} = $sourceFile;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = ucfirst $screeningDateOrigin;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} = $swabDate;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteName'} = $trialSiteName;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSitePostalCode'} = $trialSitePostalCode;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteAddress'} = $trialSiteAddress;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCity'} = $trialSiteCity;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCountry'} = $trialSiteCountry;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLatitude'} = $trialSiteLatitude;
-			$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLongitude'} = $trialSiteLongitude;
-			# p%efficacySubjects;
-			# die;
-		}
+						if ($screeningDate > $randomizationDate) {
+							# say "$subjectId -> screeningDate : $screeningDate | randomizationDate : $randomizationDate";
+							$stats{'0_preliminaryExclusions'}->{'screenedPostRandom'}++;
+						} else {
+							if ($randomizationDate >= 20200720 && $randomizationDate <= 20201114) {
+								unless ($screeningDate <= 20201114) {
+									# p$screening{$subjectId};
+									$stats{'0_preliminaryExclusions'}->{'skippedByScreeningDate'}++;
+								} else {
+									$stats{'1_totalPhase2And3RandomizedPostConsent'}->{'totalSubjects'}++;
+									my $randomizationGroup = $randomization{$subjectId}->{'randomizationGroup'} // die;
+									$randomizationGroup = 'BNT162b2' if $randomizationGroup =~ /BNT162b2/;
+									$stats{'1_totalPhase2And3RandomizedPostConsent'}->{$randomizationGroup}++;
+									my $dose1Date = $randomization{$subjectId}->{'dose1Date'} // next;
+									if ($dose1Date <= 20201114) {
+										$stats{'2_totalPhase2And3Dose1'}->{'totalSubjects'}++;
+										$stats{'2_totalPhase2And3Dose1'}->{$randomizationGroup}++;
 
-		# Eligible population post dose 2.
-		unless (exists $dose2Stats{$trialSiteId}) {
-			$dose2Stats{$trialSiteId}->{'firstDose2'} = '99999999';
-			$dose2Stats{$trialSiteId}->{'lastDose2'}  = '0';
+										# Identifying the age, sex & trial site, ideally from the ADVA file, and if not available, from the demographic data.
+										my ($age, $sexName, $trialSiteId);
+										if (exists $adva{$subjectId}) {
+											# say "all cool";
+											$trialSiteId = $adva{$subjectId}->{'trialSiteId'} // die;
+											$sexName         = $adva{$subjectId}->{'sex'}         // die;
+											if ($sexName eq 'M') {
+												$sexName = 'Male';
+											} elsif ($sexName eq 'F') {
+												$sexName = 'Female';
+											} else {
+												die "sexName : $sexName";
+											}
+											$age         = $adva{$subjectId}->{'age'}         // die;
+											# p$adva{$subjectId};
+											# die;
+										} else {
+											die unless exists $demographic{$subjectId};
+											# p$demographic{$subjectId};
+											# die;
+											my $uSubjectId = $demographic{$subjectId}->{'uSubjectId'}  // die;
+											($trialSiteId) = $uSubjectId =~ /^C4591001 (....) \d\d\d\d\d\d\d\d$/;
+											die unless $trialSiteId && looks_like_number $trialSiteId;
+											$sexName       = $demographic{$subjectId}->{'sex'}         // die;
+											$age           = $demographic{$subjectId}->{'ageYears'}    // die;
+										}
+										die unless $trialSiteId && defined $age && $sexName;
+										my ($ageGroupId, $ageGroupName) = age_to_age_group($age);
+										my $sexGroupId;
+										if ($sexName eq 'Female') {
+											$sexGroupId = 1;
+										} elsif ($sexName eq 'Male') {
+											$sexGroupId = 2;
+										} else {
+											die;
+										}
+										unless (exists $dose1Stats{$trialSiteId}) {
+
+											$dose1Stats{$trialSiteId}->{'firstDose1'} = '99999999';
+											$dose1Stats{$trialSiteId}->{'lastDose1'}  = '0';
+										}
+
+										# Builing week by week dose 1 data.
+										# say "dose1Date : $dose1Date";
+										my $trialSiteCountry      = $sites{$trialSiteId}->{'country'}      // die "trialSiteId : $trialSiteId";
+										my $trialSiteState        = $sites{$trialSiteId}->{'state'};
+										if ($trialSiteCountry eq 'USA' && !$trialSiteState) {
+											die "trialSiteId : $trialSiteId";
+										}
+										my $trialSiteName         = $sites{$trialSiteId}->{'name'}         // die;
+										my $trialSitePostalCode   = $sites{$trialSiteId}->{'postalCode'}   // die;
+										my $trialSiteAddress      = $sites{$trialSiteId}->{'address'}      // die;
+										my $trialSiteCity         = $sites{$trialSiteId}->{'city'}         // die;
+										my $trialSiteInvestigator = $sites{$trialSiteId}->{'investigator'} // die;
+										my $trialSiteLatitude     = $sites{$trialSiteId}->{'latitude'}     // die;
+										my $trialSiteLongitude    = $sites{$trialSiteId}->{'longitude'}    // die;
+										my $dose1WeekNumber       = week_from_compdate($dose1Date);
+										if ($dose1Stats{'0'}->{'firstDose1'} > $dose1Date) {
+											$dose1Stats{'0'}->{'firstDose1'} = $dose1Date;
+										}
+										if ($dose1Stats{'0'}->{'lastDose1'} < $dose1Date) {
+											$dose1Stats{'0'}->{'lastDose1'} = $dose1Date;
+										}
+										if ($dose1Stats{$trialSiteId}->{'firstDose1'} > $dose1Date) {
+											$dose1Stats{$trialSiteId}->{'firstDose1'} = $dose1Date;
+										}
+										if ($dose1Stats{$trialSiteId}->{'lastDose1'} < $dose1Date) {
+											$dose1Stats{$trialSiteId}->{'lastDose1'} = $dose1Date;
+										}
+										# say "dose1WeekNumber : $dose1WeekNumber";
+										$dose1Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
+										$dose1Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
+										$dose1Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
+										$dose1Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
+										$dose1Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
+										$dose1Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
+										$dose1Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
+										$dose1Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
+										$dose1Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
+										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+										$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+										$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+										$dose1Stats{$trialSiteId}->{'totalSubjects'}++;
+										$dose1Stats{$trialSiteId}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
+										$dose1Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
+										$dose1Stats{'0'}->{'totalSubjects'}++;
+										$dose1Stats{'0'}->{'trialSiteName'} = 'All Sites';
+										$dose1Stats{'0'}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
+										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+										$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+										$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+										# die;
+
+										# Dose 2 data & stats.
+										my $dose2Date = $randomization{$subjectId}->{'dose2Date'} // next;
+										if ($dose2Date <= 20201114) {
+											$stats{'3_totalPhase2And3Dose2'}->{'totalSubjects'}++;
+											$stats{'3_totalPhase2And3Dose2'}->{$randomizationGroup}++;
+											if ($dose2Date <= 20201108) {
+												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{'totalSubjects'}++;
+												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{$randomizationGroup}++;
+												my $daysDifferenceBetweenDoses1And2 = calc_days_difference($dose1Date, $dose2Date);
+												next unless $daysDifferenceBetweenDoses1And2 >= 19 && $daysDifferenceBetweenDoses1And2 <= 42;
+												$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{'totalSubjects'}++;
+												$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{$randomizationGroup}++;
+												unless (exists $adva{$subjectId}) {
+													$stats{'6_noAdvaData'}->{'totalSubjects'}++;
+													$stats{'6_noAdvaData'}->{$randomizationGroup}++;
+													$stats{'6_noAdvaData'}->{'subjects'}->{$subjectId} = 1;
+													if (exists $cases{$subjectId}->{'swabDate'}) {
+														my $swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
+														if ($swabDate <= 20201114) {
+															p$cases{$subjectId};
+															say "swabDate : [$swabDate] for subjectId [$subjectId]";
+															$stats{'6_noAdvaData'}->{'positivePreCutOff'}++;
+														}
+													}
+												}
+
+												# Verifying if the subject had evidence of infection prior 7 days post dose 2.
+												my %visitDates = ();
+												for my $visitDatetime (sort keys %{$cases{$subjectId}->{'visits'}}) {
+													my ($visitDate) = split ' ', $visitDatetime;
+													$visitDate =~ s/\D//g;
+													$visitDates{$visitDate} = \%{$cases{$subjectId}->{'visits'}->{$visitDatetime}};
+												}
+
+												# If the patient has a documented Covid, tagging so.
+												my ($sourceFile, $sourceTable, $swabDate);
+												if (exists $cases{$subjectId}->{'swabDate'}) {
+													$sourceFile  = $cases{$subjectId}->{'sourceFile'}  // die;
+													$sourceTable = $cases{$subjectId}->{'sourceTable'} // die;
+													$swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
+													$stats{'7_positiveSwabs'}->{'totalSubjects'}++;
+													$stats{'7_positiveSwabs'}->{$randomizationGroup}++;
+													$stats{'7_positiveSwabs'}->{$sourceTable}++;
+
+													next if $swabDate > 20201114;
+													$stats{'8_positiveSwabsPreCutOff'}->{'totalSubjects'}++;
+													$stats{'8_positiveSwabsPreCutOff'}->{$randomizationGroup}++;
+													$stats{'8_positiveSwabsPreCutOff'}->{$sourceTable}++;
+													$stats{'8_positiveSwabsPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
+													$stats{'8_positiveSwabsPreCutOff'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+													my $daysDifferenceBetweenPosTestAnd2 = calc_days_difference($dose2Date, $swabDate);
+													if ($swabDate < $dose2Date) {
+														# say "Tested positive before dose 2 : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+														$stats{'9_positiveNBindingPriorDose2'}->{'totalSubjects'}++;
+														$stats{'9_positiveNBindingPriorDose2'}->{$randomizationGroup}++;
+														next;
+													} else {
+														if ($daysDifferenceBetweenPosTestAnd2 < 7) {
+															# say "Tested positive before dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+															$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
+															$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
+															next;
+														} else {
+															# say "Tested positive after dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+															$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
+															$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
+															$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+															if (exists $efficacy{$subjectId}) {
+																say "Tested positive after dose 2 + 7 days, in efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+																$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'totalSubjects'}++;
+																$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
+																$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+															} else {
+																say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+																$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'totalSubjects'}++;
+																$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
+																# $stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'subjects'}->{$subjectId} = 1;
+																$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+																# p$randomization{$subjectId};
+																# p$screening{$subjectId};
+															}
+															unless (exists $casesStats{$trialSiteId}) {
+
+																$casesStats{$trialSiteId}->{'firstCase'} = '99999999';
+																$casesStats{$trialSiteId}->{'lastCase'}  = '0';
+															}
+															if ($casesStats{'0'}->{'firstCase'} > $swabDate) {
+																$casesStats{'0'}->{'firstCase'} = $swabDate;
+															}
+															if ($casesStats{'0'}->{'lastCase'} < $swabDate) {
+																$casesStats{'0'}->{'lastCase'} = $swabDate;
+															}
+															if ($casesStats{$trialSiteId}->{'firstCase'} > $swabDate) {
+																$casesStats{$trialSiteId}->{'firstCase'} = $swabDate;
+															}
+															if ($casesStats{$trialSiteId}->{'lastCase'} < $swabDate) {
+																$casesStats{$trialSiteId}->{'lastCase'} = $swabDate;
+															}
+															my $swabNumber       = week_from_compdate($swabDate);
+															$casesStats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
+															$casesStats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
+															$casesStats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
+															$casesStats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
+															$casesStats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
+															$casesStats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
+															$casesStats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
+															$casesStats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
+															$casesStats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
+															$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+															$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+															$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+															$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+															$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+															$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+															$casesStats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+															$casesStats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+															$casesStats{$trialSiteId}->{'totalSubjects'}++;
+															$casesStats{$trialSiteId}->{'weekNumbers'}->{$swabNumber}->{$randomizationGroup}++;
+															$casesStats{'0'}->{'armGroups'}->{$randomizationGroup}++;
+															$casesStats{'0'}->{'totalSubjects'}++;
+															$casesStats{'0'}->{'trialSiteName'} = 'All Sites';
+															$casesStats{'0'}->{'weekNumbers'}->{$swabNumber}->{$randomizationGroup}++;
+															$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+															$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+															$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+															$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+															$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+															$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+															$casesStats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+															$casesStats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+															if ($swabDate >= 20201101 && $swabDate <= 20201131) {
+																# if ($trialSiteState) {
+																# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesNovember'}++;
+																# }
+																$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesNovember'}++;
+																$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesNovember'}++;
+															}
+															if ($swabDate >= 20201001 && $swabDate <= 20201031) {
+																# if ($trialSiteState) {
+																# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesOctober'}++;
+																# }
+																$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesOctober'}++;
+																$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesOctober'}++;
+															}
+															if ($swabDate >= 20200901 && $swabDate <= 20200931) {
+																# if ($trialSiteState) {
+																# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesSeptember'}++;
+																# }
+																$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesSeptember'}++;
+															}
+															# if ($trialSiteState) {
+															# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCases'}++;
+															# }
+															$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCases'}++;
+															$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCases'}++;
+														}
+														$dose2Stats{$trialSiteId}->{'totalCases'}++;
+													}
+												}
+												$stats{'14_eligiblePopulationPreCutOff'}->{'totalSubjects'}++;
+												$stats{'14_eligiblePopulationPreCutOff'}->{$randomizationGroup}++;
+												$stats{'14_eligiblePopulationPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
+												my $daysOfExposure = calc_days_difference($dose2Date, '20201114');
+												$daysOfExposure = $daysOfExposure - 6;
+												die unless $daysOfExposure >= 0;
+												# if ($trialSiteState) {
+												# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'isUSAState'} = 1;
+												# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjects'}++;
+												# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposure'} += $daysOfExposure;
+												# }
+												$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'isUSAState'} = 0;
+												$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjects'}++;
+												$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposure'} += $daysOfExposure;
+												$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjects'}++;
+												$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposure'} += $daysOfExposure;
+												if ($dose2Date <= 20201131) {
+													my $monthlyDays = 0;
+													if ($dose2Date <= 20201101) {
+														$monthlyDays = 30;
+													} else {
+														$monthlyDays = calc_days_difference($dose2Date, '20201101');
+														$monthlyDays = 30 - $monthlyDays;
+													}
+													# if ($trialSiteState) {
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsNovember'}++;
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureNovember'} += $monthlyDays;
+													# }
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}++;
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'} += $monthlyDays;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsNovember'}++;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureNovember'} += $monthlyDays;
+												}
+												if ($dose2Date <= 20201031) {
+													my $monthlyDays = 0;
+													if ($dose2Date <= 20201001) {
+														$monthlyDays = 30;
+													} else {
+														$monthlyDays = calc_days_difference($dose2Date, '20201001');
+														$monthlyDays = 30 - $monthlyDays;
+													}
+													# if ($trialSiteState) {
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsOctober'}++;
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureOctober'} += $monthlyDays;
+													# }
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}++;
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'} += $monthlyDays;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsOctober'}++;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureOctober'} += $monthlyDays;
+												}
+												if ($dose2Date <= 20200931) {
+													my $monthlyDays = 0;
+													if ($dose2Date <= 20200901) {
+														$monthlyDays = 30;
+													} else {
+														$monthlyDays = calc_days_difference($dose2Date, '20200901');
+														$monthlyDays = 30 - $monthlyDays;
+													}
+													# if ($trialSiteState) {
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalSubjectsSeptember'}++;
+													# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
+													# }
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'}++;
+													$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalSubjectsSeptember'}++;
+													$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
+												}
+												if (exists $cases{$subjectId}->{'swabDate'}) {
+													$daysOfExposure = calc_days_difference($dose2Date, $swabDate);
+													$daysOfExposure = $daysOfExposure - 6;
+													die unless $daysOfExposure >= 0;
+													my $uSubjectId = $adva{$subjectId}->{'uSubjectId'} // die;
+													# p$adva{$subjectId};
+													# die;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} = $subjectId;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} = $daysOfExposure;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'doseDateOrigin'} = $doseDateOrigin;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = $screeningDateOrigin;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'isPhase1'} = $isPhase1;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'hasHIV'} = $hasHIV;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationGroup'} = $randomizationGroup;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'uSubjectId'} = $uSubjectId;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'age'} = $age;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'sexName'} = $sexName;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteId'} = $trialSiteId;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceTable'} = $sourceTable;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceFile'} = $sourceFile;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = ucfirst $screeningDateOrigin;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} = $swabDate;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteName'} = $trialSiteName;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSitePostalCode'} = $trialSitePostalCode;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteAddress'} = $trialSiteAddress;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCity'} = $trialSiteCity;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCountry'} = $trialSiteCountry;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLatitude'} = $trialSiteLatitude;
+													$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLongitude'} = $trialSiteLongitude;
+													# p%efficacySubjects;
+													# die;
+												}
+
+												# Eligible population post dose 2.
+												unless (exists $dose2Stats{$trialSiteId}) {
+													$dose2Stats{$trialSiteId}->{'firstDose2'} = '99999999';
+													$dose2Stats{$trialSiteId}->{'lastDose2'}  = '0';
+												}
+												my $dose2WeekNumber       = week_from_compdate($dose2Date);
+												if ($dose2Stats{'0'}->{'firstDose2'} > $dose2Date) {
+													$dose2Stats{'0'}->{'firstDose2'} = $dose2Date;
+												}
+												if ($dose2Stats{'0'}->{'lastDose2'} < $dose2Date) {
+													$dose2Stats{'0'}->{'lastDose2'} = $dose2Date;
+												}
+												if ($dose2Stats{$trialSiteId}->{'firstDose2'} > $dose2Date) {
+													$dose2Stats{$trialSiteId}->{'firstDose2'} = $dose2Date;
+												}
+												if ($dose2Stats{$trialSiteId}->{'lastDose2'} < $dose2Date) {
+													$dose2Stats{$trialSiteId}->{'lastDose2'} = $dose2Date;
+												}
+												# say "dose2WeekNumber : $dose2WeekNumber";
+												$dose2Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
+												$dose2Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
+												$dose2Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
+												$dose2Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
+												$dose2Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
+												$dose2Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
+												$dose2Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
+												$dose2Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
+												$dose2Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
+												$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+												$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+												$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+												$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+												$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+												$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+												$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+												$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+												$dose2Stats{$trialSiteId}->{'totalSubjects'}++;
+												$dose2Stats{$trialSiteId}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
+												$dose2Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
+												$dose2Stats{'0'}->{'totalSubjects'}++;
+												$dose2Stats{'0'}->{'trialSiteName'} = 'All Sites';
+												$dose2Stats{'0'}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
+												$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
+												$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
+												$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
+												$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
+												$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
+												$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
+												$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
+												$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-		my $dose2WeekNumber       = week_from_compdate($dose2Date);
-		if ($dose2Stats{'0'}->{'firstDose2'} > $dose2Date) {
-			$dose2Stats{'0'}->{'firstDose2'} = $dose2Date;
-		}
-		if ($dose2Stats{'0'}->{'lastDose2'} < $dose2Date) {
-			$dose2Stats{'0'}->{'lastDose2'} = $dose2Date;
-		}
-		if ($dose2Stats{$trialSiteId}->{'firstDose2'} > $dose2Date) {
-			$dose2Stats{$trialSiteId}->{'firstDose2'} = $dose2Date;
-		}
-		if ($dose2Stats{$trialSiteId}->{'lastDose2'} < $dose2Date) {
-			$dose2Stats{$trialSiteId}->{'lastDose2'} = $dose2Date;
-		}
-		# say "dose2WeekNumber : $dose2WeekNumber";
-		$dose2Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
-		$dose2Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
-		$dose2Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
-		$dose2Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
-		$dose2Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
-		$dose2Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-		$dose2Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
-		$dose2Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
-		$dose2Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
-		$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-		$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-		$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-		$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-		$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-		$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-		$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-		$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-		$dose2Stats{$trialSiteId}->{'totalSubjects'}++;
-		$dose2Stats{$trialSiteId}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
-		$dose2Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
-		$dose2Stats{'0'}->{'totalSubjects'}++;
-		$dose2Stats{'0'}->{'trialSiteName'} = 'All Sites';
-		$dose2Stats{'0'}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
-		$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-		$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-		$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-		$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-		$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-		$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-		$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-		$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
 	}
 }
 

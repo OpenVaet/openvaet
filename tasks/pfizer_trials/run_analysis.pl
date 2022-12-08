@@ -26,5 +26,5 @@ system("perl tasks/pfizer_trials/extract_all_covid_cases.pl");
 system("perl tasks/pfizer_trials/extract_all_covid_cases_april_2021.pl"); # --> 1 168, 351
 system("perl tasks/pfizer_trials/compare_covid_cases.pl");                # --> 1 180 total cases.
 system("perl tasks/pfizer_trials/merge_doses.pl");
-system("perl tasks/pfizer_trials/merge_screening_randomization.pl");        # --> Actual efficacy figures
+system("perl tasks/pfizer_trials/analyze_efficacy.pl");                   # --> Actual efficacy figures
 # die;
