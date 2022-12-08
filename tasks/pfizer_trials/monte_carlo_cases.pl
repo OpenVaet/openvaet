@@ -29,9 +29,9 @@ say "dailyIP10M : $dailyIP10M";
 my %sites = ();
 load_sites();
 
-my %simulationResults = ();
-my $totalSims = 0;
-my $cpt = 0;
+my %simulationResults   = ();
+my $totalSims           = 0;
+my $cpt                 = 0;
 my $consecutive8OrAbove = 0;
 my $highestConsecutive  = 0;
 while ($totalSims < $sims) {

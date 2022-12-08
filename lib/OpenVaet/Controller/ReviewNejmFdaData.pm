@@ -353,11 +353,11 @@ sub load_efficacy_cases {
     my %efficacySubjects = json_from_file($efficacySubjectsFile);
     for my $swabDate (sort{$a <=> $b} keys %efficacySubjects) {
         for my $subjectId (sort{$a <=> $b} keys %{$efficacySubjects{$swabDate}}) {
-            p$efficacySubjects{$swabDate}->{$subjectId};
+            # p$efficacySubjects{$swabDate}->{$subjectId};
             my $dose1Date = $efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} // die;
-            $dose1Date = date_from_compdate($dose1Date);
+            $dose1Date    = date_from_compdate($dose1Date);
             my $dose2Date = $efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} // die;
-            $dose2Date = date_from_compdate($dose2Date);
+            $dose2Date    = date_from_compdate($dose2Date);
             my $randomizationDate = $efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} // die;
             $randomizationDate = date_from_compdate($randomizationDate);
             my $screeningDate = $efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} // die;
@@ -384,37 +384,19 @@ sub load_efficacy_by_sites_countries {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // die;
+    my $showUSAStates   = $self->param('showUSAStates')   // die;
     my $mainWidth       = $self->param('mainWidth')       // die;
     my $mainHeight      = $self->param('mainHeight')      // die;
 
-    say "mainWidth  : $mainWidth";
-    say "mainHeight : $mainHeight";
+    say "mainWidth     : $mainWidth";
+    say "showUSAStates : $showUSAStates";
+    say "mainHeight    : $mainHeight";
 
     my $efficacyStatsFile = 'public/doc/pfizer_trials/efficacy_stats.json';
     my %efficacyStats = json_from_file($efficacyStatsFile);
-    p%efficacyStats;
-    # for my $swabDate (sort{$a <=> $b} keys %efficacyStats) {
-    #     for my $subjectId (sort{$a <=> $b} keys %{$efficacyStats{$swabDate}}) {
-    #         p$efficacyStats{$swabDate}->{$subjectId};
-    #         my $dose1Date = $efficacyStats{$swabDate}->{$subjectId}->{'dose1Date'} // die;
-    #         $dose1Date = date_from_compdate($dose1Date);
-    #         my $dose2Date = $efficacyStats{$swabDate}->{$subjectId}->{'dose2Date'} // die;
-    #         $dose2Date = date_from_compdate($dose2Date);
-    #         my $randomizationDate = $efficacyStats{$swabDate}->{$subjectId}->{'randomizationDate'} // die;
-    #         $randomizationDate = date_from_compdate($randomizationDate);
-    #         my $screeningDate = $efficacyStats{$swabDate}->{$subjectId}->{'screeningDate'} // die;
-    #         $screeningDate = date_from_compdate($screeningDate);
-    #         my $swabDate = $efficacyStats{$swabDate}->{$subjectId}->{'swabDate'} // die;
-    #         my $swabDateFormat = date_from_compdate($swabDate);
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'swabDate'} = $swabDateFormat;
-    #     }
-    # }
 
     $self->render(
+        showUSAStates   => $showUSAStates,
         currentLanguage => $currentLanguage,
         mainWidth       => $mainWidth,
         mainHeight      => $mainHeight,
@@ -434,27 +416,6 @@ sub load_efficacy_by_sites {
 
     my $efficacyStatsFile = 'public/doc/pfizer_trials/efficacy_sites_stats.json';
     my %efficacyStats = json_from_file($efficacyStatsFile);
-    p%efficacyStats;
-    # for my $swabDate (sort{$a <=> $b} keys %efficacyStats) {
-    #     for my $subjectId (sort{$a <=> $b} keys %{$efficacyStats{$swabDate}}) {
-    #         p$efficacyStats{$swabDate}->{$subjectId};
-    #         my $dose1Date = $efficacyStats{$swabDate}->{$subjectId}->{'dose1Date'} // die;
-    #         $dose1Date = date_from_compdate($dose1Date);
-    #         my $dose2Date = $efficacyStats{$swabDate}->{$subjectId}->{'dose2Date'} // die;
-    #         $dose2Date = date_from_compdate($dose2Date);
-    #         my $randomizationDate = $efficacyStats{$swabDate}->{$subjectId}->{'randomizationDate'} // die;
-    #         $randomizationDate = date_from_compdate($randomizationDate);
-    #         my $screeningDate = $efficacyStats{$swabDate}->{$subjectId}->{'screeningDate'} // die;
-    #         $screeningDate = date_from_compdate($screeningDate);
-    #         my $swabDate = $efficacyStats{$swabDate}->{$subjectId}->{'swabDate'} // die;
-    #         my $swabDateFormat = date_from_compdate($swabDate);
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
-    #         $efficacyStats{$swabDate}->{$subjectId}->{'swabDate'} = $swabDateFormat;
-    #     }
-    # }
 
     $self->render(
         currentLanguage => $currentLanguage,

@@ -20,7 +20,7 @@ The second doses administered to <b><%=$totalSubjects%> subjects</b>, <%=$totalP
             % for my $weekNumber (sort{$a <=> $b} keys %weekByWeekSecondDose) {
                 % my $bNT162b2 = $weekByWeekSecondDose{$weekNumber}->{'bNT162b2'}  // 0;
                 % my $placebo = $weekByWeekSecondDose{$weekNumber}->{'placebo'}   // 0;
-                ["<%==$weekNumber%>", <%=$placebo%>, <%=$bNT162b2%>, ''],
+                ["<%==$weekNumber%>", <%=$bNT162b2%>, <%=$placebo%>, ''],
             % }
         ]);
 

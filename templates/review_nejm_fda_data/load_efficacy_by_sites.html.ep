@@ -5,12 +5,12 @@
 		overflow-y: auto;
 		font-size:14px;
 		margin: auto;
-		height: 330px;
+		height: 500px;
 		overflow-y:auto;
 	}
 	.sites-stats-table-header {
-		min-width: 1275px;
-		max-width: 1275px;
+		min-width: 1273px;
+		max-width: 1273px;
 		width: 100%;
 		font-weight: bold;
 		display: flex;
@@ -21,8 +21,8 @@
 		padding-bottom: 10px;
 	}
 	.sites-stats-table-header-2 {
-		min-width: 1275px;
-		max-width: 1275px;
+		min-width: 1273px;
+		max-width: 1273px;
 		width: 100%;
 		font-weight: bold;
 		display: flex;
@@ -46,7 +46,7 @@
 	}
 	.sites-stats-table-row-1 {
 		background: #f6f6f6;
-		min-width: 1275px;
+		min-width: 1260px;
 		width: 100%;
 		display: flex;
 		text-align: center;
@@ -55,7 +55,7 @@
 		padding-bottom: 10px;
 	}
 	.sites-stats-table-row-2 {
-		min-width: 1275px;
+		min-width: 1260px;
 		width: 100%;
 		display: flex;
 		text-align: center;
