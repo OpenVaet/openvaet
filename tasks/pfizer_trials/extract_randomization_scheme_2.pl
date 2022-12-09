@@ -89,7 +89,7 @@ for my $uSubjectId (sort keys %patients) {
 	}
 	if ($dose2Date) {
 
-		if ($dose2Date >= '20200720' && $dose2Date <= '20201108') {
+		if ($dose2Date >= '20200720' && $dose2Date <= '20201107') {
 			$doses2FromP1ToCutOff++;
 		}
 	}

@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.32</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Released a new study "Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures".</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Publication d'une nouvelle étude "Essais cliniques Pfizer/BioNTech - une tentative malheureuse mais en profondeur de reproduire les chiffres communiqués au NEJM & à la FDA.</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.31</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

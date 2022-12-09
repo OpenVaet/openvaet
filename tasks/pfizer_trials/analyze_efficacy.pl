@@ -318,7 +318,9 @@ sub verify_randomization {
 	$dose2Stats{'0'}->{'firstDose2'} = '99999999';
 	$dose2Stats{'0'}->{'lastDose2'} = '0';
 	$casesStats{'0'}->{'firstCase'} = '99999999';
-	$casesStats{'0'}->{'lastCase'} = '0';
+	$casesStats{'0'}->{'lastCase'}  = '0';
+	open my $out, '>:utf8', "public/doc/pfizer_trials/all_patients.csv";
+	say $out "subjectId;screeningDate;screeningDateOrigin;isPhase1;hasHIV;randomizationGroup;dose1Date;age;sexName;trialSiteId;ageGroupId;ageGroupName;sexGroupId;uSubjectId;trialSiteCountry;daysOfExposure;trialSiteState;trialSiteName;trialSitePostalCode;trialSiteAddress;trialSiteCity;trialSiteInvestigator;trialSiteLatitude;trialSiteLongitude;dose1WeekNumber;dose2Date;sourceFile;sourceTable;swabDate;daysDifferenceBetweenPosTestAnd2;swabNumber;";
 	for my $subjectId (sort{$a <=> $b} keys %randomization) {
 
 		# say "subjectId : $subjectId";
@@ -354,7 +356,7 @@ sub verify_randomization {
 				if ($isPhase1 && ($isPhase1 eq 'Yes')) {
 					$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
 				} else {
-					$hasHIV = $screening{$subjectId}->{'hasHIV'};
+					$hasHIV     = $screening{$subjectId}->{'hasHIV'};
 					if ($hasHIV && ($hasHIV eq 'Yes')) {
 						$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
 					} else {
@@ -373,6 +375,10 @@ sub verify_randomization {
 									$stats{'1_totalPhase2And3RandomizedPostConsent'}->{$randomizationGroup}++;
 									$dose1Date = $randomization{$subjectId}->{'dose1Date'};
 									if ($dose1Date && ($dose1Date <= 20201114)) {
+										# p$randomization{$subjectId};
+										# p $adva{$subjectId};
+										# p $demographic{$subjectId};
+										$uSubjectId = $demographic{$subjectId}->{'uSubjectId'}  // $adva{$subjectId}->{'uSubjectId'} // die;
 										$stats{'2_totalPhase2And3Dose1'}->{'totalSubjects'}++;
 										$stats{'2_totalPhase2And3Dose1'}->{$randomizationGroup}++;
 
@@ -395,7 +401,6 @@ sub verify_randomization {
 											die unless exists $demographic{$subjectId};
 											# p$demographic{$subjectId};
 											# die;
-											$uSubjectId    = $demographic{$subjectId}->{'uSubjectId'}  // die;
 											($trialSiteId) = $uSubjectId =~ /^C4591001 (....) \d\d\d\d\d\d\d\d$/;
 											die unless $trialSiteId && looks_like_number $trialSiteId;
 											$sexName       = $demographic{$subjectId}->{'sex'}         // die;
@@ -482,7 +487,7 @@ sub verify_randomization {
 										if ($dose2Date && ($dose2Date <= 20201114)) {
 											$stats{'3_totalPhase2And3Dose2'}->{'totalSubjects'}++;
 											$stats{'3_totalPhase2And3Dose2'}->{$randomizationGroup}++;
-											if ($dose2Date <= 20201108) {
+											if ($dose2Date <= 20201107) {
 												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{'totalSubjects'}++;
 												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{$randomizationGroup}++;
 												my $daysDifferenceBetweenDoses1And2 = calc_days_difference($dose1Date, $dose2Date);
@@ -644,7 +649,7 @@ sub verify_randomization {
 														$stats{'14_eligiblePopulationPreCutOff'}->{$randomizationGroup}++;
 														$stats{'14_eligiblePopulationPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
 														$daysOfExposure = calc_days_difference($dose2Date, '20201114');
-														$daysOfExposure = $daysOfExposure - 6;
+														$daysOfExposure = $daysOfExposure - 7;
 														die unless $daysOfExposure >= 0;
 														# if ($trialSiteState) {
 														# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'isUSAState'} = 1;
@@ -709,7 +714,7 @@ sub verify_randomization {
 														}
 														if ($hasSwab && $swabInDelay) {
 															$daysOfExposure = calc_days_difference($dose2Date, $swabDate);
-															$daysOfExposure = $daysOfExposure - 6;
+															$daysOfExposure = $daysOfExposure - 7;
 															die unless $daysOfExposure >= 0;
 															$uSubjectId = $adva{$subjectId}->{'uSubjectId'} // die;
 															# p$adva{$subjectId};
@@ -807,7 +812,17 @@ sub verify_randomization {
 				}
 			}
 		}
+		my $line;
+		my @vals = ($subjectId, $screeningDate, $screeningDateOrigin, $isPhase1, $hasHIV, $randomizationGroup, $dose1Date, $age, $sexName, $trialSiteId, $ageGroupId, $ageGroupName, $sexGroupId, $uSubjectId, $trialSiteCountry, $daysOfExposure, $trialSiteState, $trialSiteName, $trialSitePostalCode, $trialSiteAddress, $trialSiteCity, $trialSiteInvestigator, $trialSiteLatitude, $trialSiteLongitude, $dose1WeekNumber, $dose2Date, $sourceFile, $sourceTable, $swabDate, $daysDifferenceBetweenPosTestAnd2, $swabNumber);
+		for my $val (@vals) {
+			$val = '' unless $val;
+			$line .= ";$val" if defined $line;
+			$line = $val if !defined$line;
+		}
+		$line .= ';';
+		say $out $line;
 	}
+	close $out;
 }
 
 sub calc_days_difference {

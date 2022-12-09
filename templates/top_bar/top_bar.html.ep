@@ -393,7 +393,7 @@
                 <li onclick="openLocation('/data_admin');return;">Data Administration</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.31</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.32</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
                 <li class="divider"></li>
@@ -413,7 +413,7 @@
                 <li onclick="openLocation('/data_admin');return;">Administration Données</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.31</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.32</div></li>
             % }
         </ul>
     </label>
@@ -608,7 +608,7 @@
                 <li onclick="openLocation('/social_networks');return;">Social Networks</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.31</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.32</div></li>
             % } else {
                 <li onclick="openLocation('/data');return;">Données & Code</li>
                 % # <li class="divider"></li>
@@ -630,7 +630,7 @@
                 <li onclick="openLocation('/social_networks');return;">Réseaux Sociaux</li>
                 <li class="divider"></li>
                 % }
-                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.31</div></li>
+                <li onclick="openLocation('/changelog');return;" style="background: lightgrey;"><div style="text-align: right;font-size: 12px;">v 1.32</div></li>
             % }
         </ul>
     </label>

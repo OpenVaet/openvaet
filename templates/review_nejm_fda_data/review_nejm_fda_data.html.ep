@@ -1,8 +1,8 @@
 % layout 'default';
 % if ($currentLanguage eq 'en') {
-% title 'OPENVAET - Pfizer Clinical Phase 3 Trial - Reviewing the numbers communicated to the FDA & NEJM';
+% title 'OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures';
 % } else {
-% title 'OPENVAET - Essais cliniques de phase 3 Pfizer - Revue des chiffres communiqués à la FDA et au NEJM';
+% title 'OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures';
 % }
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
@@ -13,7 +13,24 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link href="/css/select2.min.css" rel="stylesheet" />
     <script src="/js/select2.min.js"></script>
-    <meta property="og:image" content="/doc/pfizer_trials/dose2AndCasesMap.jpg" />
+    <!-- Primary Meta Tags -->
+	<title>OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures</title>
+	<meta name="title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta name="description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="og:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="og:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="og:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="twitter:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="twitter:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="twitter:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
 </head>
 
 <style>
@@ -43,7 +60,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-		Study version 1.0, published on 2022-12-09 (YYYY-MM-DD)
+		Study version 1.0, published on 2022-12-09
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -60,7 +77,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <h2>Preliminary facts reminder</h2>
-    The Pfizer/BionTech vaccine <b>"efficacy of 95%"</b> was announced, through the press, on November 18, 2020, as per example this New-York Times Article, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
+    The Pfizer/BioNTech vaccine <b>"efficacy of 95%"</b> was announced, through the press, on November 18, 2020, as per example this New-York Times Article, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
     <div class="text_separator"></div>
     On November 20, 2020, as exposed on the <a href="https://www.fda.gov/media/144416/download" target="_blank">Emergency Use Authorization (EUA) for an Unapproved Product Review Memorandum</a>, the submission process for the EUA began. This process <a href="https://www.fda.gov/media/144245/download" target="_blank">took some time and ended on December 10, 2020</a>.
     <div class="text_separator"></div>
@@ -80,13 +97,13 @@
     <div class="text_separator"></div>
 	<a href="https://phmpt.org/court-documents/" target="_blank">PHMPT's FOI & lawsuits</a> allowed the public to access the documents which were supposed to stay hidden for 75 years, and which are supporting the FDA EUA & the NEJM study.
     <div class="text_separator"></div>
-    This data is therefore partially available, even if <b>key files required to reproduce the original code, such as the ADSL file, are still not provided</b> when this study is written, on December 8, 2022.
+    This data is therefore partially available, even if <b>key files required to reproduce the original code, such as the ADSL file (Subject-Level Analysis Data), are still not provided</b> when this study is written, on December 8, 2022.
     <div class="text_separator"></div>
     This lack of transparency hasn't evolved despite <a href="https://www.bmj.com/content/378/bmj.o1731/rr-1" target="_blank">this recent letter from Peter Doshi to the BMJ</a> on October 07, 2022.
     <div class="text_separator"></div>
 	The <b>Data Cut-off dates</b> featured in the NEJM study are unclear, and therefore clarified hereafter.
 	<ul>
-		<li>Efficacy subset data cut-off was <b>November 14</b> - but given 7 days were required post dose 2, no patient injected post November 08 was included</li>
+		<li>Efficacy subset data cut-off was <b>November 14</b> - but given 7 days were required post dose 2, no patient injected post November 7 was included</li>
 		<div class="text_separator"></div>
 		<li>Safety subset data cut-off was <b>October 9</b> (at least 2 months of follow-up post dose 1)</li>
 	</ul>
@@ -133,7 +150,7 @@
     <div class="text_separator"></div>
     It is also unclear why some patients haven't been included in the efficacy data while they appear to have tested positive prior the data cut-off - particularly in the NEJM article (4).
 	<div class="text_separator"></div>
-	Lastly, a sequence of 8 subjects testing positive out of the sole argentinian site appears quite <b>unlikely to have appeared by chance in the context of a fair, randomized trial (4).</b>
+	Lastly, a sequence of 8 subjects testing positive out of the sole Argentinian site appears quite <b>unlikely to have appeared by chance in the context of a fair, randomized trial (4).</b>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -212,7 +229,7 @@
 	<div class="text_separator"></div>
 	We couldn't find an explanation for these 5 subjects <i>(10461292, 11471037, 11471145, 12231001, 12321087)</i> standing out as having received two doses but having no ADVA data. <i>10361096</i> was incarcerated, but still should have performed visits to receive two doses.
 	<div class="text_separator"></div>
-	As a side note, while we find 43 655 subjects randomized, 43 661 patients were claimed to have been recruited by Pfizer & BioNTech in this article from the New York times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">2 Companies Say Their Vaccines Are 95% Effective. What Does That Mean?</a>. Another number which appears nowhere in the FDA & NEJM studies, the closest being 43 651 in the FDA figures (cf. consort diagram [1] above).
+	As a side note, while we find 43 655 subjects randomized, 43 661 patients were claimed to have been recruited by Pfizer & BioNTech in this article from the New York Times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">2 Companies Say Their Vaccines Are 95% Effective. What Does That Mean?</a>. Another number which appears nowhere in the FDA & NEJM studies, the closest being 43 651 in the FDA figures (cf. consort diagram [1] above).
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -317,7 +334,7 @@
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-    	3.4 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Demographic characteristics
+    	3.4 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Demographic characteristics
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -349,7 +366,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    3.5 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+	    3.5 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -376,7 +393,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-    	3.6 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, and efficacy cases, Mapping by sites
+    	3.6 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, and efficacy cases, Mapping by sites
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -494,7 +511,7 @@
     </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's abnomaly, appear to show an higher incidence rate.
+	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
 	<div class="text_separator"></div>
 	To provide a first evaluation of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
 	<ul>
@@ -502,7 +519,7 @@
 		<li>7 cases / 1000 subjects / month for Argentina</li>
 		<li>3 cases / 1000 subjects / month for the other less represented country</li>
 	</ul>
-	Simulations are summarized in the following table; resulting in a <b>0.307% chance of this result occuring</b>.
+	Simulations are summarized in the following table; resulting in a <b>0.2488% chance of this result occuring</b>.
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="table-container" style="height:auto;min-width: 760px;">
@@ -539,19 +556,19 @@
 				1 000 000
 			</div>
 			<div class="table-cell-2" style="width:10%;">
-				3
+				5
 			</div>
 			<div class="table-cell-3" style="width:10%;">
-				40
+				37
 			</div>
 			<div class="table-cell-4" style="width:10%;">
-				18.7
+				18.9
 			</div>
 			<div class="table-cell-4">
-				3073
+				2488
 			</div>
 			<div class="table-cell-4" style="width:10%;">
-				<b>0.3073 %</b>
+				<b>0.2488 %</b>
 			</div>
 		</div>
 		<hr>
@@ -565,7 +582,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    4.3 - Cases up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+	    4.3 - Cases up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -935,7 +952,7 @@
 		<div class="text_separator"></div>
 		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/merge_doses.pl" target="_blank">tasks/pfizer_trials/merge_doses.pl</a> script merges the doses injections dates in the following <a href="/doc/pfizer_trials/merged_doses_data.json" download>.JSON</a> file.</li>
 		<div class="text_separator"></div>
-		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/merged_doses_data.json" download>.CSV</a> containing the 44 982 subjects screened data</li>
+		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> containing the merged subjects screened data.</li>
 	</ul>
 	
 	<div class="text_separator"></div>
@@ -965,7 +982,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-		Study version 1.0, published on 2022-12-09 (YYYY-MM-DD)
+		Study version 1.0, published on 2022-12-09
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -982,7 +999,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <h2>Preliminary facts reminder</h2>
-    The Pfizer/BionTech vaccine <b>"efficacy of 95%"</b> was announced, through the press, on November 18, 2020, as per example this New-York Times Article, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
+    The Pfizer/BioNTech vaccine <b>"efficacy of 95%"</b> was announced, through the press, on November 18, 2020, as per example this New-York Times Article, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
     <div class="text_separator"></div>
     On November 20, 2020, as exposed on the <a href="https://www.fda.gov/media/144416/download" target="_blank">Emergency Use Authorization (EUA) for an Unapproved Product Review Memorandum</a>, the submission process for the EUA began. This process <a href="https://www.fda.gov/media/144245/download" target="_blank">took some time and ended on December 10, 2020</a>.
     <div class="text_separator"></div>
@@ -1002,13 +1019,13 @@
     <div class="text_separator"></div>
 	<a href="https://phmpt.org/court-documents/" target="_blank">PHMPT's FOI & lawsuits</a> allowed the public to access the documents which were supposed to stay hidden for 75 years, and which are supporting the FDA EUA & the NEJM study.
     <div class="text_separator"></div>
-    This data is therefore partially available, even if <b>key files required to reproduce the original code, such as the ADSL file, are still not provided</b> when this study is written, on December 8, 2022.
+    This data is therefore partially available, even if <b>key files required to reproduce the original code, such as the ADSL file (Subject-Level Analysis Data), are still not provided</b> when this study is written, on December 8, 2022.
     <div class="text_separator"></div>
     This lack of transparency hasn't evolved despite <a href="https://www.bmj.com/content/378/bmj.o1731/rr-1" target="_blank">this recent letter from Peter Doshi to the BMJ</a> on October 07, 2022.
     <div class="text_separator"></div>
 	The <b>Data Cut-off dates</b> featured in the NEJM study are unclear, and therefore clarified hereafter.
 	<ul>
-		<li>Efficacy subset data cut-off was <b>November 14</b> - but given 7 days were required post dose 2, no patient injected post November 08 was included</li>
+		<li>Efficacy subset data cut-off was <b>November 14</b> - but given 7 days were required post dose 2, no patient injected post November 7 was included</li>
 		<div class="text_separator"></div>
 		<li>Safety subset data cut-off was <b>October 9</b> (at least 2 months of follow-up post dose 1)</li>
 	</ul>
@@ -1055,7 +1072,7 @@
     <div class="text_separator"></div>
     It is also unclear why some patients haven't been included in the efficacy data while they appear to have tested positive prior the data cut-off - particularly in the NEJM article (4).
 	<div class="text_separator"></div>
-	Lastly, a sequence of 8 subjects testing positive out of the sole argentinian site appears quite <b>unlikely to have appeared by chance in the context of a fair, randomized trial (4).</b>
+	Lastly, a sequence of 8 subjects testing positive out of the sole Argentinian site appears quite <b>unlikely to have appeared by chance in the context of a fair, randomized trial (4).</b>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1239,7 +1256,7 @@
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-    	3.4 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Demographic characteristics
+    	3.4 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Demographic characteristics
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1271,7 +1288,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    3.5 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+	    3.5 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1298,7 +1315,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-    	3.6 - Subjects up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, and efficacy cases, Mapping by sites
+    	3.6 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, and efficacy cases, Mapping by sites
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1416,7 +1433,7 @@
     </div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's abnomaly, appear to show an higher incidence rate.
+	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
 	<div class="text_separator"></div>
 	To provide a first evaluation of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
 	<ul>
@@ -1424,7 +1441,7 @@
 		<li>7 cases / 1000 subjects / month for Argentina</li>
 		<li>3 cases / 1000 subjects / month for the other less represented country</li>
 	</ul>
-	Simulations are summarized in the following table; resulting in a <b>0.307% chance of this result occuring</b>.
+	Simulations are summarized in the following table; resulting in a <b>0.2488% chance of this result occuring</b>.
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="table-container" style="height:auto;min-width: 760px;">
@@ -1461,19 +1478,19 @@
 				1 000 000
 			</div>
 			<div class="table-cell-2" style="width:10%;">
-				3
+				5
 			</div>
 			<div class="table-cell-3" style="width:10%;">
-				40
+				37
 			</div>
 			<div class="table-cell-4" style="width:10%;">
-				18.7
+				18.9
 			</div>
 			<div class="table-cell-4">
-				3073
+				2488
 			</div>
 			<div class="table-cell-4" style="width:10%;">
-				<b>0.3073 %</b>
+				<b>0.2488 %</b>
 			</div>
 		</div>
 		<hr>
@@ -1487,7 +1504,7 @@
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
     <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    4.3 - Cases up to November 8, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+	    4.3 - Cases up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1857,7 +1874,7 @@
 		<div class="text_separator"></div>
 		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/merge_doses.pl" target="_blank">tasks/pfizer_trials/merge_doses.pl</a> script merges the doses injections dates in the following <a href="/doc/pfizer_trials/merged_doses_data.json" download>.JSON</a> file.</li>
 		<div class="text_separator"></div>
-		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/merged_doses_data.json" download>.CSV</a> containing the 44 982 subjects screened data</li>
+		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> containing the merged subjects screened data.</li>
 	</ul>
 	
 	<div class="text_separator"></div>

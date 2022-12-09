@@ -91,7 +91,7 @@ my %stats = ();
 my %subjects = ();
 for my $subjectId (sort keys %advaData) {
 	$stats{'totalPatients'}++;
-	my $siteId    = $advaData{$subjectId}->{'siteId'} // die;
+	my $trialSiteId   = $advaData{$subjectId}->{'trialSiteId'} // die;
 	my $uSubjectId    = $advaData{$subjectId}->{'uSubjectId'} // die;
 	die unless exists $allFilesData{'subjects'}->{$subjectId};
 	# 1st Dose.
@@ -157,9 +157,9 @@ for my $subjectId (sort keys %advaData) {
 	my ($dose2Date)   = split ' ', $dose2Datetime;
 	my $dose2CompDate = $dose2Date;
 	$dose2CompDate    =~ s/\D//g;
-	next unless $dose2CompDate <= 20201108;
-	$stats{'totalPatientsWithDose2Nov08'}->{'total'}++;
-	$stats{'totalPatientsWithDose2Nov08'}->{$actArm}++;
+	next unless $dose2CompDate <= 20201107;
+	$stats{'totalPatientsWithDose2Nov07'}->{'total'}++;
+	$stats{'totalPatientsWithDose2Nov07'}->{$actArm}++;
 	# next unless $dose2Date && ($dose2Date <= 20201114); # Fernando's 2 doses in efficacy
 }
 
