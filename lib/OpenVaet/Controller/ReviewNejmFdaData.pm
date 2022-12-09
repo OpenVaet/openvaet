@@ -360,6 +360,10 @@ sub load_efficacy_cases {
     say "mainWidth  : $mainWidth";
     say "mainHeight : $mainHeight";
 
+    my $efficacySubjectsSustainedFile = 'public/doc/pfizer_trials/170_positive_efficacy.json';
+    my %efficacySubjectsSustained = json_from_file($efficacySubjectsSustainedFile);
+    p%efficacySubjectsSustained;
+
     my $efficacySubjectsFile = 'public/doc/pfizer_trials/efficacy_subjects.json';
     my %efficacySubjects = json_from_file($efficacySubjectsFile);
     for my $swabDate (sort{$a <=> $b} keys %efficacySubjects) {
@@ -375,10 +379,15 @@ sub load_efficacy_cases {
             $screeningDate = date_from_compdate($screeningDate);
             my $swabDate = $efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} // die;
             my $swabDateFormat = date_from_compdate($swabDate);
+            my $efficacyIncluded = 0;
+            if (exists $efficacySubjectsSustained{$subjectId}) {
+                $efficacyIncluded = 1;
+            }
             $efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
             $efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
             $efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
             $efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
+            $efficacySubjects{$swabDate}->{$subjectId}->{'efficacyIncluded'} = $efficacyIncluded;
             $efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} = $swabDateFormat;
         }
     }
