@@ -49,7 +49,7 @@
 <div class="content-container" style="padding-left:30px;padding-right: 30px;width: calc(100% - 60px);max-width: 1400px;line-height: 26px;text-justify: inter-word;font-size: 1.1875rem;">
     <div class="text_separator"></div>
     % if ($currentLanguage eq 'en') {
-    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+    <div class="url-link noselect" onclick="openLocation('/studies?currentLanguage=<%=$currentLanguage%>');return;">&#10229; Return to studies</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -60,7 +60,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-		Study version 1.0, published on 2022-12-09
+		Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.2</a>, published on 2022-12-09
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -217,7 +217,7 @@
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	The subjects corresponding, according to the criteria determined by the protocol, to the efficacy subset. 
+	The subjects corresponding, according to the criteria determined by the protocol, to the efficacy subset, are represented in the following mapping. 
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div onclick="openInNewTab('/doc/pfizer_trials/EfficacyDiagram.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
@@ -515,7 +515,7 @@
 	<div class="text_separator"></div>
 	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
 	<div class="text_separator"></div>
-	To provide a first evaluation of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
+	To provide a raw approximate of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
 	<ul>
 		<li>3.5 cases / 1000 subjects / month for USA</li>
 		<li>7 cases / 1000 subjects / month for Argentina</li>
@@ -577,9 +577,9 @@
 	</div> 
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	An imperfect evaluation, of course, as the overestimated Incidence rate is balanced by the unknown of couples among subjects and over-exposed healhcare workers.
+	An imperfect evaluation, of course, as the high Argentinian Incidence rate is balanced by various unknown (couples among subjects, over-exposed healhcare workers, local variants).
 	<div class="text_separator"></div>
-	We will refine the model used to take into account incidence rate by US state - data at city granularity being, unfortunately, very hard to find. The potential false positive factor of the tests realized to feed the country scale figures also needs deeper examination.
+	We will refine the model used to take into account incidence rate by US state - data at city granularity being, unfortunately, very hard to find. How accurate is the fact of using John Hopkins' data to evaluate trial sites infection trends also requires further examination.
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -956,15 +956,6 @@
 		<div class="text_separator"></div>
 		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> containing the merged subjects screened data.</li>
 	</ul>
-	
-	<div class="text_separator"></div>
-	<div class="text_separator"></div>
-    <div class="text_separator"></div>
-    <div class="text_separator"></div>
-    <div class="text_separator"></div>
-    <div class="text_separator"></div>
-    <div class="text_separator"></div>
-    <div class="text_separator"></div>
     % } else {
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -984,7 +975,7 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-		Study version 1.0, published on 2022-12-09
+		Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.2</a>, published on 2022-12-09
 	</div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -1141,7 +1132,7 @@
 	</div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	The subjects corresponding, according to the criteria determined by the protocol, to the efficacy subset. 
+	The subjects corresponding, according to the criteria determined by the protocol, to the efficacy subset, are represented in the following mapping. 
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div onclick="openInNewTab('/doc/pfizer_trials/EfficacyDiagram.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
@@ -1153,7 +1144,7 @@
 	<div class="text_separator"></div>
 	We couldn't find an explanation for these 5 subjects <i>(10461292, 11471037, 11471145, 12231001, 12321087)</i> standing out as having received two doses but having no ADVA data. <i>10361096</i> was incarcerated, but still should have performed visits to receive two doses.
 	<div class="text_separator"></div>
-	As a side note, while we find 43 655 subjects randomized, 43 661 patients were claimed to have been recruited by Pfizer & BioNTech in this article from the New York times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">2 Companies Say Their Vaccines Are 95% Effective. What Does That Mean?</a>. Another number which appears nowhere in the FDA & NEJM studies, the closest being 43 651 in the FDA figures (cf. consort diagram [1] above).
+	As a side note, while we find 43 655 subjects randomized, 43 661 patients were claimed to have been recruited by Pfizer & BioNTech in this article from the New York Times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">2 Companies Say Their Vaccines Are 95% Effective. What Does That Mean?</a>. Another number which appears nowhere in the FDA & NEJM studies, the closest being 43 651 in the FDA figures (cf. consort diagram [1] above).
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1439,7 +1430,7 @@
 	<div class="text_separator"></div>
 	The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
 	<div class="text_separator"></div>
-	To provide a first evaluation of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
+	To provide a raw approximate of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
 	<ul>
 		<li>3.5 cases / 1000 subjects / month for USA</li>
 		<li>7 cases / 1000 subjects / month for Argentina</li>
@@ -1501,9 +1492,9 @@
 	</div> 
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
-	An imperfect evaluation, of course, as the overestimated Incidence rate is balanced by the unknown of couples among subjects and over-exposed healhcare workers.
+	An imperfect evaluation, of course, as the high Argentinian Incidence rate is balanced by various unknown (couples among subjects, over-exposed healhcare workers, local variants).
 	<div class="text_separator"></div>
-	We will refine the model used to take into account incidence rate by US state - data at city granularity being, unfortunately, very hard to find. The potential false positive factor of the tests realized to feed the country scale figures also needs deeper examination.
+	We will refine the model used to take into account incidence rate by US state - data at city granularity being, unfortunately, very hard to find. How accurate is the fact of using John Hopkins' data to evaluate trial sites infection trends also requires further examination.
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
     <div class="text_separator"></div>
@@ -1880,6 +1871,7 @@
 		<div class="text_separator"></div>
 		<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> containing the merged subjects screened data.</li>
 	</ul>
+    % }
 	
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>
@@ -1889,7 +1881,6 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
     <div class="text_separator"></div>
-    % }
 </div>
 <script type="text/javascript" src="/js/charts_loader.js"></script>
 
