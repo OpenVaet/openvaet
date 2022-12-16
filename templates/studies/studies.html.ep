@@ -9,8 +9,8 @@
     This section will gather the various analytics on the data which will be realized.
     <div class="text_separator"></div>
     <ul>
-        <li class="url-link" onclick="openLocation('/studies/vaers_data_deletion');return;">VAERS - Spending more time obfuscating data than caring about victims</li>
-        <div class="text_separator"></div>
+        % # <li class="url-link" onclick="openLocation('/studies/vaers_data_deletion');return;">VAERS - Spending more time obfuscating data than caring about victims</li>
+        % # <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/studies/review_nejm_fda_data');return;">Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures - Published on December 9, 2022</li>
         <div class="text_separator"></div>
         <li class="url-link" onclick="openLocation('/studies/verifying_170_cases');return;">Pfizer Phase 3 Clinical Trials - Identifying the data of the 170 patients qualifying for the efficacy calculation - Published on November 19, 2022</li>

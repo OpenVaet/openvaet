@@ -98,88 +98,173 @@
 
 % if ($showUSAStates eq 'true') {
 	<div class="countries-stats-table-container-b">
-		<div class="countries-stats-table-header-b">
-			<div class="countries-stats-table-cell-1">
-				
-			</div>
-			<div class="countries-stats-table-cell-2">
+		% if ($currentLanguage eq 'En') {
+			<div class="countries-stats-table-header-b">
+				<div class="countries-stats-table-cell-1">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
 
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Total
-			</div>
-			<div class="countries-stats-table-cell-2">
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Total
+				</div>
+				<div class="countries-stats-table-cell-2">
 
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					September
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					October
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					November
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
 			</div>
-			<div class="countries-stats-table-cell-2">
-				
+			<div class="countries-stats-table-header-2-b">
+				<div class="countries-stats-table-cell-1">
+					Country / State
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Subjects
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cases
+				</div>
+				<div class="countries-stats-table-cell-2">
+					D.O.E.
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Subjects
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cases
+				</div>
+				<div class="countries-stats-table-cell-2">
+					I.R. / 1 000
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Subjects
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cases
+				</div>
+				<div class="countries-stats-table-cell-2">
+					I.R. / 1 000
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Subjects
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cases
+				</div>
+				<div class="countries-stats-table-cell-2">
+					I.R. / 1 000
+				</div>
 			</div>
-			<div class="countries-stats-table-cell-2">
-				September
+		% } else {
+			<div class="countries-stats-table-header-b">
+				<div class="countries-stats-table-cell-1">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Total
+				</div>
+				<div class="countries-stats-table-cell-2">
+
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Septembre
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Octobre
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Novembre
+				</div>
+				<div class="countries-stats-table-cell-2">
+					
+				</div>
 			</div>
-			<div class="countries-stats-table-cell-2">
-				
+			<div class="countries-stats-table-header-2-b">
+				<div class="countries-stats-table-cell-1">
+					Pays
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Sujets
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cas
+				</div>
+				<div class="countries-stats-table-cell-2">
+					T.J.E
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Sujets
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cas
+				</div>
+				<div class="countries-stats-table-cell-2">
+					T.I. / 1 000
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Sujets
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cas
+				</div>
+				<div class="countries-stats-table-cell-2">
+					T.I. / 1 000
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Sujets
+				</div>
+				<div class="countries-stats-table-cell-2">
+					Cas
+				</div>
+				<div class="countries-stats-table-cell-2">
+					T.I. / 1 000
+				</div>
 			</div>
-			<div class="countries-stats-table-cell-2">
-				
-			</div>
-			<div class="countries-stats-table-cell-2">
-				October
-			</div>
-			<div class="countries-stats-table-cell-2">
-				
-			</div>
-			<div class="countries-stats-table-cell-2">
-				
-			</div>
-			<div class="countries-stats-table-cell-2">
-				November
-			</div>
-			<div class="countries-stats-table-cell-2">
-				
-			</div>
-		</div>
-		<div class="countries-stats-table-header-2-b">
-			<div class="countries-stats-table-cell-1">
-				Country / State
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Subjects
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Cases
-			</div>
-			<div class="countries-stats-table-cell-2">
-				D.O.E.
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Subjects
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Cases
-			</div>
-			<div class="countries-stats-table-cell-2">
-				I.R. / 1 000
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Subjects
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Cases
-			</div>
-			<div class="countries-stats-table-cell-2">
-				I.R. / 1 000
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Subjects
-			</div>
-			<div class="countries-stats-table-cell-2">
-				Cases
-			</div>
-			<div class="countries-stats-table-cell-2">
-				I.R. / 1 000
-			</div>
-		</div>
+		% }
 		% my $rowNum = 1;
 		% for my $country (sort keys %efficacyStats) {
 			% next unless $country eq 'USA';
@@ -319,6 +404,7 @@
 	</div> 
 % } else {
 	<div class="countries-stats-table-container">
+	% if ($currentLanguage eq 'En') {
 		<div class="countries-stats-table-header">
 			<div class="countries-stats-table-cell-1">
 				
@@ -401,6 +487,90 @@
 				I.R. / 1 000
 			</div>
 		</div>
+	% } else {
+		<div class="countries-stats-table-header">
+			<div class="countries-stats-table-cell-1">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Total
+			</div>
+			<div class="countries-stats-table-cell-2">
+
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Septembre
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Octobre
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Novembre
+			</div>
+			<div class="countries-stats-table-cell-2">
+				
+			</div>
+		</div>
+		<div class="countries-stats-table-header-2">
+			<div class="countries-stats-table-cell-1">
+				Pays
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Sujets
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Cas
+			</div>
+			<div class="countries-stats-table-cell-2">
+				T.J.E
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Sujets
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Cas
+			</div>
+			<div class="countries-stats-table-cell-2">
+				T.I. / 1 000
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Sujets
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Cas
+			</div>
+			<div class="countries-stats-table-cell-2">
+				T.I. / 1 000
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Sujets
+			</div>
+			<div class="countries-stats-table-cell-2">
+				Cas
+			</div>
+			<div class="countries-stats-table-cell-2">
+				T.I. / 1 000
+			</div>
+		</div>
+	% }
 		% my $rowNum = 1;
 		% for my $country (sort keys %efficacyStats) {
 			% $rowNum++;
@@ -421,6 +591,11 @@
 			% my $totalSubjectsNovember  = $efficacyStats{$country}->{'totalSubjectsNovember'}  // die;
 			% my $totalCasesNovember     = $efficacyStats{$country}->{'totalCasesNovember'}     // die;
 			% my $exposureRateNovember   = $efficacyStats{$country}->{'exposureRateNovember'}   // die;
+			% $country =~ s/Argentina/Argentine/;
+			% $country =~ s/Brazil/Brésil/;
+			% $country =~ s/Germany/Allemagne/;
+			% $country =~ s/South Africa/Afrique du Sud/;
+			% $country =~ s/Turkey/Turquie/;
 			<div class="countries-stats-table-row-<%=$rowNum%>">
 				<div class="countries-stats-table-cell-1">
 					<b><%=$country%></b>
@@ -441,7 +616,7 @@
 					<%=$totalCasesSeptember%>
 				</div>
 				<div class="countries-stats-table-cell-2">
-				% if ($country eq 'Argentina') {
+				% if ($country eq 'Argentine') {
 					<span style="background:yellow;"><%=$exposureRateSeptember%></span>
 				% } else {
 					<%=$exposureRateSeptember%>
@@ -454,7 +629,7 @@
 					<%=$totalCasesOctober%>
 				</div>
 				<div class="countries-stats-table-cell-2">
-				% if ($country eq 'Argentina') {
+				% if ($country eq 'Argentine') {
 					<span style="background:yellow;"><%=$exposureRateOctober%></span>
 				% } else {
 					<%=$exposureRateOctober%>

@@ -89,6 +89,7 @@
 
 <div class="efficacy-table-container">
 	<div class="efficacy-table-header">
+    % if ($currentLanguage eq 'en') {
 		<div class="efficacy-table-cell-1">
 			Subject Id
 		</div>
@@ -122,6 +123,41 @@
 		<div class="efficacy-table-cell-11">
 			Swab Date
 		</div>
+    % } else {
+		<div class="efficacy-table-cell-1">
+			Id Sujet
+		</div>
+		<div class="efficacy-table-cell-2">
+			Site
+		</div>
+		<div class="efficacy-table-cell-3">
+			Sexe
+		</div>
+		<div class="efficacy-table-cell-4">
+			Age
+		</div>
+		<div class="efficacy-table-cell-5">
+			Revue
+		</div>
+		<div class="efficacy-table-cell-6">
+			Random.
+		</div>
+		<div class="efficacy-table-cell-7">
+			Groupe
+		</div>
+		<div class="efficacy-table-cell-8">
+			Dose 1
+		</div>
+		<div class="efficacy-table-cell-9">
+			Dose 2
+		</div>
+		<div class="efficacy-table-cell-10">
+			T.J.E.
+		</div>
+		<div class="efficacy-table-cell-11">
+			Prelev. Date
+		</div>
+	% }
 	</div>
 	% use Data::Printer;
 	% my $rowNum = 1;
@@ -158,7 +194,15 @@
 					<%=$trialSiteId%>
 				</div>
 				<div class="efficacy-table-cell-3">
+			    % if ($currentLanguage eq 'en') {
 					<%=$sexName%>
+			    % } else {
+			    	% if ($sexName eq 'Male') {
+			    		Homme
+		    		% } else {
+		    			Femme
+	    			% }
+				% }
 				</div>
 				<div class="efficacy-table-cell-4">
 					<%=$age%>

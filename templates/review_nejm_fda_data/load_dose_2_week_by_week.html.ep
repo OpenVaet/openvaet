@@ -1,7 +1,11 @@
 % my %weekByWeekSecondDose = %$weekByWeekSecondDose;
 <div class="text_separator"></div>
 <div class="text_separator"></div>
+% if ($currentLanguage eq 'En') {
 The second doses administered to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
+% } else {
+Les secondes doses administrées à <b><%=$totalSubjects%> sujets</b>, <%=$totalPlacebo%> dans le groupe placebo & <%=$totalBnt%> dans le groupe BNT162b2, semaine après semaine, du <%=$fromDate%> au <%=$toDate%> (<b><%=$daysDifference%> jours</b>), sont représentés dans le tableau ci-dessous.
+% }
 <div class="text_separator"></div>
 <div class="text_separator"></div>
 <div id="second_doses_week_by_week">

@@ -73,6 +73,7 @@
 % my $placebo = $demographics{'armGroups'}->{'Placebo'} // die;
 
 <div class="table-container">
+	% if ($currentLanguage eq 'En') {
 	<div class="table-header">
 		<div class="table-cell-1">
 			Characteristics
@@ -96,6 +97,31 @@
 	<div class="table-sub-header">
 		Sex
 	</div>
+	% } else {
+	<div class="table-header">
+		<div class="table-cell-1">
+			Caractéristiques
+		</div>
+		<div class="table-cell-2">
+			BNT162b2
+    		<div class="text_separator"></div>
+    		(N=<%=$bNT162b2%>)
+		</div>
+		<div class="table-cell-3">
+			Placebo
+    		<div class="text_separator"></div>
+    		(N=<%=$placebo%>)
+		</div>
+		<div class="table-cell-4">
+			Total
+    		<div class="text_separator"></div>
+    		(N=<%=$totalSubjects%>)
+		</div>
+	</div>
+	<div class="table-sub-header">
+		Sexe
+	</div>
+	% }
 	% my $rowNum = 1;
 	% for my $sexId (sort{$a <=> $b} keys %{$demographics{'sexGroups'}}) {
 		% $rowNum++;
@@ -107,9 +133,23 @@
 		% my $bNT162b2 = $demographics{'sexGroups'}->{$sexId}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'sexGroups'}->{$sexId}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
+			% if ($currentLanguage eq 'En') {
 			<div class="table-cell-1">
 				<%=$sexName%>
 			</div>
+			% } else {
+				% if ($sexName eq 'Male') {
+					<div class="table-cell-1">
+						Hommes
+					</div>
+				% } elsif ($sexName eq 'Female') {
+					<div class="table-cell-1">
+						Femmes
+					</div>
+				% } else {
+					% die;
+				% }
+			% }
 			<div class="table-cell-2">
 				<%=$bNT162b2%>
 			</div>
@@ -122,9 +162,15 @@
 		</div>
 	% }
 	<hr>
+	% if ($currentLanguage eq 'En') {
 	<div class="table-sub-header">
 		Age Groups
 	</div>
+	% } else {
+	<div class="table-sub-header">
+		Groupes d'Ages
+	</div>
+	% }
 	% $rowNum = 1;
 	% for my $ageGroupId (sort{$a <=> $b} keys %{$demographics{'ageGroups'}}) {
 		% $rowNum++;
@@ -136,9 +182,17 @@
 		% my $bNT162b2 = $demographics{'ageGroups'}->{$ageGroupId}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'ageGroups'}->{$ageGroupId}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
-			<div class="table-cell-1">
-				<%=$ageGroupName%>
-			</div>
+			% if ($currentLanguage eq 'En') {
+				<div class="table-cell-1">
+					<%=$ageGroupName%>
+				</div>
+			% } else {
+				% $ageGroupName =~ s/Years/Ans/;
+				% $ageGroupName =~ s/More than/Plus de/;
+				<div class="table-cell-1">
+					<%=$ageGroupName%>
+				</div>
+			% }
 			<div class="table-cell-2">
 				<%=$bNT162b2%>
 			</div>
@@ -150,9 +204,15 @@
 			</div>
 		</div>
 	% }
+	% if ($currentLanguage eq 'En') {
 	<div class="table-sub-header">
 		Trial Site Countries
 	</div>
+	% } else {
+	<div class="table-sub-header">
+		Pays des Sites d'Essais
+	</div>
+	% }
 	% $rowNum = 1;
 	% for my $trialSiteCountry (sort keys %{$demographics{'countries'}}) {
 		% $rowNum++;
@@ -163,9 +223,20 @@
 		% my $bNT162b2 = $demographics{'countries'}->{$trialSiteCountry}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'countries'}->{$trialSiteCountry}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
-			<div class="table-cell-1">
-				<%=$trialSiteCountry%>
-			</div>
+			% if ($currentLanguage eq 'En') {
+				<div class="table-cell-1">
+					<%=$trialSiteCountry%>
+				</div>
+			% } else {
+				% $trialSiteCountry =~ s/Argentina/Argentine/;
+				% $trialSiteCountry =~ s/Brazil/Brésil/;
+				% $trialSiteCountry =~ s/Germany/Allemagne/;
+				% $trialSiteCountry =~ s/South Africa/Afrique du Sud/;
+				% $trialSiteCountry =~ s/Turkey/Turquie/;
+				<div class="table-cell-1">
+					<%=$trialSiteCountry%>
+				</div>
+			% }
 			<div class="table-cell-2">
 				<%=$bNT162b2%>
 			</div>

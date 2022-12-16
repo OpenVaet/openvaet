@@ -1,7 +1,11 @@
 % my %weekByWeekCases = %$weekByWeekCases;
 <div class="text_separator"></div>
 <div class="text_separator"></div>
+% if ($currentLanguage eq 'En') {
 The cases observed on <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below by swab dates.
+% } else {
+Les cas observés sur <b><%=$totalSubjects%> sujets</b>, <%=$totalPlacebo%> dans le groupe placebo & <%=$totalBnt%> dans le groupe BNT162b2, semaine par semaine, du <%=$fromDate%> au <%=$toDate%> (<b><%=$daysDifference%> jours</b>), sont représentés dans le tableau ci-dessous, par dates de prélèvement.
+% }
 <div class="text_separator"></div>
 <div class="text_separator"></div>
 <div id="cases_week_by_week">

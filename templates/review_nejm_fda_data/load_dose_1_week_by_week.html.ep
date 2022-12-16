@@ -1,7 +1,11 @@
 % my %weekByWeekFirstDose = %$weekByWeekFirstDose;
 <div class="text_separator"></div>
 <div class="text_separator"></div>
-The first doses administred to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
+% if ($currentLanguage eq 'En') {
+The first doses administered to <b><%=$totalSubjects%> subjects</b>, <%=$totalPlacebo%> in the placebo group & <%=$totalBnt%> in the BNT162b2 group, week by week, from <%=$fromDate%> to <%=$toDate%> (<b><%=$daysDifference%> days</b>), are represented in the chart below.
+% } else {
+Les premières doses administrées à <b><%=$totalSubjects%> sujets</b>, <%=$totalPlacebo%> dans le groupe placebo & <%=$totalBnt%> dans le groupe BNT162b2, semaine par semaine, du <%=$fromDate%> au <%=$toDate%> (110 jours), sont représentées dans le tableau ci-dessous.
+% }
 <div class="text_separator"></div>
 <div class="text_separator"></div>
 <div id="first_doses_week_by_week">

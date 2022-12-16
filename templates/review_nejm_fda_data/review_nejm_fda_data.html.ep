@@ -2,7 +2,7 @@
 % if ($currentLanguage eq 'en') {
 % title 'OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures';
 % } else {
-% title 'Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les chiffres d\'efficacité du NEJM et de la FDA';
+% title 'Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA';
 % }
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
@@ -444,7 +444,7 @@
 	    <div class="text_separator"></div>
 	    For each month, we evaluated the total of days of exposure (D.O.E) which occured (total of subjects from their date of vaccination, or the begining of the month if the subject was vaccinated before, to the end of the month).
 	    <div class="text_separator"></div>
-	    We then divided this total of "days/subjects exposed" by the total of monthly days to reach a normalized incidence rate.
+	    We then divided this total of "days/subjects exposed" by the total of monthly days to reach a normalized incidence rate (IR).
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;word-break: break-word;" id="dataBySitesCountriesEfficacy1">
@@ -476,9 +476,9 @@
 	    </div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    As we can observe in the .XLSX file, a total of <b>1 160 917 cases</b> occured in USA in November, for a population of (<a href="/census_data?currentLanguage=<%=$currentLanguage%>" target="_blank">roughly</a>) <b>331 501 080 citizen</b>, according to the U.S Census Bureau <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank" download="">flawed data</a>, resulting in a September <b>approximative IR of 3.5 / 1 000</b>.
+	    As we can observe in the .XLSX file, a total of <b>1 160 917 cases</b> occured in USA in November, for a population of (<a href="/census_data?currentLanguage=<%=$currentLanguage%>" target="_blank">roughly</a>) <b>331 501 080 citizen</b>, according to the U.S Census Bureau <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank" download="">flawed data</a>, resulting in a September <b>approximate IR of 3.5 / 1 000</b>.
 	    <div class="text_separator"></div>
-	    Argentina, on another hand, with <b>318 874 cases</b> for a population of <b>45 376 763 citizen</b> <a href="https://data.worldbank.org/country/argentina" target="_blank">according to the World Bank</a>, appears to have an <b>approximative IR of 7 / 1 000</b> in September.
+	    Argentina, on another hand, with <b>318 874 cases</b> for a population of <b>45 376 763 citizen</b> <a href="https://data.worldbank.org/country/argentina" target="_blank">according to the World Bank</a>, appears to have an <b>approximate IR of 7 / 1 000</b> in September.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -513,7 +513,7 @@
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
+		The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation appears to show an higher incidence rate.
 		<div class="text_separator"></div>
 		To provide a raw approximate of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
 		<ul>
@@ -944,11 +944,9 @@
 		<ul>
 			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_pdf_demographics.pl" target="_blank">tasks/pfizer_trials/compare_pdf_demographics.pl</a> script merges the demographic data available in a single <a href="/doc/pfizer_trials/pfizer_trial_demographics_merged.json" download>.JSON</a> file.</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> script generates approximate screening dates when none were available, and dispose of a single file for all subjects' screening dates, generating another <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>.JSON</a> file.</li>
+			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> script generates approximate screening dates when none were available, and allows us to dispose of a single file for all subjects' screening dates, generating another <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>.JSON</a> file.</li>
 			<div class="text_separator"></div>
 			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyse_adva_file.pl" target="_blank">tasks/pfizer_trials/analyse_adva_file.pl</a> script merges the randomization dates available, and extrapolate approximate one when none were available, resulting in the following <a href="/doc/pfizer_trials/subjects_randomization_dates_merged.json" download>.JSON</a> file.</li>
-			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> script merges the randomization dates available, and extrapolate approximate one when none were available, resulting in the following <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>.JSON</a> file.</li>
 			<div class="text_separator"></div>
 			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_covid_cases.pl" target="_blank">tasks/pfizer_trials/compare_covid_cases.pl</a> script merges the covid cases resulting in the following <a href="/doc/pfizer_trials/pfizer_trial_cases_merged.json" download>.JSON</a> file.</li>
 			<div class="text_separator"></div>
@@ -963,14 +961,9 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    <div style="background:#DC3912;padding:2px 2px 2px 2px;width: 100%;text-align: center;font-weight: bold;font-size: 14px;color:white;">
-	    	This article will be translated to french on November 15. You can use Google translate on the page meanwhile.
-	    </div>
-	    <div class="text_separator"></div>
-	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;text-align: center;font-size: 2.175rem;font-weight: bold;line-height: 34px;">
-			Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les chiffres d'efficacité du NEJM et de la FDA
+			Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d'efficacité du NEJM et de la FDA
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -982,21 +975,21 @@
 	    <h2>Introduction</h2>
 	    Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.
 	    <div class="text_separator"></div>
-		En utilisant la donnée communiquée par la FDA, et mise à disposition du public grâce aux requêtes et procès en Droit à l'information de l'association "Public Health and Medical Professionals for Transparency's Freedom Of Information" (PHMPT), nous sommes capables de démontrer que de nombreuses anomalies affectent les populations représentées dans l'essai clinique - dans une proportion qui pourrait avoir affecté les résultats finaux, <b>jugés en premier lieu sur un sous-groupe de 170 sujets.</b>.
+		En utilisant la donnée communiquée par la FDA, et mise à disposition du public grâce aux requêtes et procès en Droit à l'information de l'association "Public Health and Medical Professionals for Transparency's Freedom Of Information" (PHMPT), nous pouvons démontrer que de nombreuses anomalies affectent les populations représentées dans l'essai clinique - dans une proportion qui pourrait avoir affecté les résultats finaux, <b>établis en premier lieu sur un sous-groupe de 170 sujets.</b>.
 	    <div class="text_separator"></div>
-	    Alors que nous étudions ces données, des articles des plus intéressants nous ont été présentés par l'équipe 3 du DailyClout, Jeyanthi Kunadhasan, MD (<a href="https://gettr.com/user/Jkun85" target="_blank">Gettr</a>), Ed Clark, MSE, et Chris Flowers, MD (<a href="https://gettr.com/user/chrisflowersmd" target="_blank">Gettr</a>), et par le lanceur d'alerte anonyme Arkmedic (<a href="https://t.me/arkmedic" target="_blank">Telegram</a> | <a href="https://gab.com/arkmedic" target="_blank">Gab</a> | <a href="https://arkmedic.substack.com/" target="_blank">Substack</a>), mettant en lumière de nombreuses anomalies dans l'essai clinique.
+	    Alors que nous étudiions ces données, des articles des plus intéressants nous ont été présentés par l'équipe 3 du DailyClout, Jeyanthi Kunadhasan, MD (<a href="https://gettr.com/user/Jkun85" target="_blank">Gettr</a>), Ed Clark, MSE, et Chris Flowers, MD (<a href="https://gettr.com/user/chrisflowersmd" target="_blank">Gettr</a>), et par le lanceur d'alerte anonyme Arkmedic (<a href="https://t.me/arkmedic" target="_blank">Telegram</a> | <a href="https://gab.com/arkmedic" target="_blank">Gab</a> | <a href="https://arkmedic.substack.com/" target="_blank">Substack</a>), mettant en lumière de nombreuses anomalies dans l'essai clinique.
 	    <div class="text_separator"></div>
-	    Bénéficiant de leurs lumières précieuses, et désirant vérifier et être capable de confirmer leurs calculs, nous avons étudié l'essai avec Geoff Pain, PHD (<a href="https://gettr.com/user/GeoffPainPhD" target="_blank">Gettr</a>), et partageons nos découvertes préliminaires, qui, nous l'espérons, vont simplifier l'accessibilité des données pour les autres chercheurs qui seraient désireux d'étudier cet essai clinique de première importance.
+	    Bénéficiant de leurs lumières précieuses, et désirant vérifier et confirmer leurs calculs, nous avons étudié l'essai avec Geoff Pain, PHD (<a href="https://gettr.com/user/GeoffPainPhD" target="_blank">Gettr</a>), et partageons nos découvertes préliminaires, qui, nous l'espérons, vont simplifier l'accessibilité des données pour les autres chercheurs qui seraient désireux d'étudier cet essai clinique de première importance.
 	    <div class="text_separator"></div>
-	    Ceux qui seraient désireux d'étudier l'essai clinique pourront aussi bénéficier de la lecture de ce rapport par la biostatisticienne Christine Cotton, <a href="https://christine-cotton.1ere-page.fr/wp-content/uploads/2022/03/Vaccine-expertise-GCP-CCotton-2022-02-28-French-v2_AC.pdf" target="_blank">"Evaluation des pratiques méthodologiques mises en oeuvre dans les essais Pfizer dans le développement de son vaccin ARM-messager contre la COVID-19 en regard des Bonnes Pratiques Cliniques"</a>, dont vous pouvez trouver le <a href="https://twitter.com/StatChrisCotton/status/1599719427183808512" target="_blank">résumé ici</a>.
+	    Ceux qui seraient désireux d'étudier l'essai clinique pourront aussi bénéficier de la lecture de ce rapport par la biostatisticienne Christine Cotton, <a href="https://christine-cotton.1ere-page.fr/wp-content/uploads/2022/03/Vaccine-expertise-GCP-CCotton-2022-02-28-French-v2_AC.pdf" target="_blank">"Evaluation des pratiques méthodologiques mises en oeuvre dans les essais Pfizer dans le développement de son vaccin ARM-messager contre la COVID-19 en regard des Bonnes Pratiques Cliniques"</a>, dont on trouve le <a href="https://twitter.com/StatChrisCotton/status/1599719427183808512" target="_blank">résumé ici</a>.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <h2>Rappel préliminaire des faits</h2>
-		<b>L' "efficacité de 95%"</b> du vaccin Pfizer/BioNTech a été annoncée par voie de presse, le 18 Novembre 2020, comme l'illustre par exemple cet article du New-York Times, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
+		<b>L' "efficacité à 95%"</b> du vaccin Pfizer/BioNTech a été annoncée par voie de presse, le 18 Novembre 2020, comme l'illustre par exemple cet article du New-York Times, <a href="https://www.nytimes.com/2020/11/18/health/pfizer-covid-vaccine.html" target="_blank">New Pfizer Results: Coronavirus Vaccine Is Safe and 95% Effective</a>.
 	    <div class="text_separator"></div>
 		Le 20 Novembre 2020, comme exposé dans le <a href="https://www.fda.gov/media/144416/download" target="_blank">Mémorandum d'autorisation d'utilisation d'urgence pour un produit non-approuvé</a>, le processus d'application pour l'EUA a été mis en route. Ce processus <a href="https://www.fda.gov/media/144245/download" target="_blank">a pris quelque temps et s'est achevé le 10 Décembre 2020</a>.
 	    <div class="text_separator"></div>
-	    Le 11 Décembre 2020, un jour après, <a href="https://www.cdc.gov/mmwr/volumes/69/wr/mm6950e2.htm?s_cid=mm6950e2_w" target="_blank">l'EUA a été accordée par la FDA</a>.
+	    Le 11 Décembre 2020, le lendemain, <a href="https://www.cdc.gov/mmwr/volumes/69/wr/mm6950e2.htm?s_cid=mm6950e2_w" target="_blank">l'EUA a été accordée par la FDA</a>.
 	    <div class="text_separator"></div>
 	    Quelques unes des dates clés sont résumées dans la chronologie ci-dessous.
 	    <div class="text_separator"></div>
@@ -1006,31 +999,31 @@
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    Dans l'article <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Sûreté et Efficacité du BNT162b2 aRNM Vaccin Covid-19</a>, publié le 31 Décembre 2020 dans le New England Journal of Medicine (NEJM.org), par Fernando P. Polack et al., le Monde a vu pour la première fois quelques détails sur les chiffres soutenant cette affirmation.
+	    C'est dans l'article <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Sûreté et Efficacité du BNT162b2 aRNM Vaccin Covid-19</a>, publié le 31 Décembre 2020 dans le New England Journal of Medicine (NEJM.org), par Fernando P. Polack et al., que le monde a découvert pour la première fois quelques détails plus précis sur les chiffres soutenant cette affirmation.
 	    <div class="text_separator"></div>
-	    Comme établi dans ce document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & suivantes, l'étude a été finalisée le 16 Décembre 2020. Ce document rappelle aussi les études précédemment publiées.
+	    Comme établi dans le document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & suivantes, l'étude a été finalisée le 16 Décembre 2020. Ce document rappelle aussi les études précédemment publiées.
 	    <div class="text_separator"></div>
 		Les <a href="https://phmpt.org/court-documents/" target="_blank">FOI & procès de PHMPT</a> ont permis au public d'accéder aux documents qui étaient supposés rester cachés pendant 75 ans, et qui soutiennent l'autorisation d'utilisation d'urgence de la FDA & l'étude du NEJM.
 	    <div class="text_separator"></div>
-	    Ces données sont donc désormais partiellement disponible, même si <b>des fichiers clés requis pour reproduire le code d'origine, comme le fichier ADSL (Donnée d'analyse de niveau sujet), n'ont toujours pas été fournis</b> quand cette étude est rédigée, le 8 Décembre 2022.
+	    Ces données sont donc désormais partiellement disponibles, même si <b>des fichiers-clés requis pour reproduire le code d'origine, comme le fichier ADSL (Donnée d'analyse de niveau sujet), n'ont toujours pas été fournis</b> à la date de rédaction de cette étude, le 8 Décembre 2022.
 	    <div class="text_separator"></div>
-	    Ce manque de transparence n'a pas évolué, malgré <a href="https://www.bmj.com/content/378/bmj.o1731/rr-1" target="_blank">cette lettre récente de Peter Doshi au BMJ</a>, le 7 Octobre 2022.
+	    Un manque de transparence qui se perpétue, malgré <a href="https://www.bmj.com/content/378/bmj.o1731/rr-1" target="_blank">cette lettre récente de Peter Doshi au BMJ</a>, le 7 Octobre 2022.
 	    <div class="text_separator"></div>
-	    Les <b>dates limites des données</b> affichées dans le NEJM sont peu claires, et par conséquent clarifiées ci-après.
+	    Les <b>dates limites des données</b> affichées dans le NEJM étant peu claires, nous les avons clarifiées ci-après.
 		<ul>
 			<li>La date limite des données pour le sous-groupe d'analyse d'efficacité était le <b>14 Novembre</b> - mais compte tenu des 7 jours requis post dose 2, aucun patient injecté après le 7 Novembre n'a été inclu.</li>
 			<div class="text_separator"></div>
-			<li>La date limite des données pour le sous-groupe d'analyse de la sûreté était le <b>9 Octobre</b> (au moins deux mois de suivi depuis la dose 1)</li>
+			<li>La date limite des données pour le sous-groupe d'analyse de sûreté était le <b>9 Octobre</b> (au moins deux mois de suivi depuis la dose 1)</li>
 		</ul>
-		<b>L'interval stipulé entre les injections</b> de 21 jours, dans l'étude du NEJM, est trompeuse. Comme illustré à la <a href="https://www.nejm.org/doi/suppl/10.1056/NEJMoa2034577/suppl_file/nejmoa2034577_protocol.pdf" target="_blank">page 347 du protocole de l'étude NEJM</a> & à la <a href="https://www.fda.gov/media/144416/download" target="_blank">table 2 du Mémorandum FDA, page 18</a>, le délai était en pratique un interval de 19 à 42 jours. Ce point a été porté à notre attention par l'article de l'équipe 3 du DailyClout <a href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/" target="_blank">Rapport 42 : L'EUA Pfizer accordée sur la base de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocole disqualifiantes pour accorder l'EUA</a>.
+		<b>L'intervalle stipulé entre les injections</b> de 21 jours, dans l'étude du NEJM, est trompeuse. Comme illustré à la <a href="https://www.nejm.org/doi/suppl/10.1056/NEJMoa2034577/suppl_file/nejmoa2034577_protocol.pdf" target="_blank">page 347 du protocole de l'étude NEJM</a> & à la <a href="https://www.fda.gov/media/144416/download" target="_blank">table 2 du Mémorandum FDA, page 18</a>, le délai était en pratique un interval de 19 à 42 jours. Ce point a été porté à notre attention par l'article de l'équipe 3 du DailyClout <a href="https://dailyclout.io/report-41-the-170-clinical-trial-participants-who-changed-the-world-pfizer-ignored-protocol-deviations-to-obtain-emergency-use-authorization-for-its-covid-19-mrna-vaccine/" target="_blank">Rapport 42 : L'EUA Pfizer accordée sur la base de 0.4% des participants à l'essai clinique. La FDA a ignoré des déviations de protocole disqualifiantes pour accorder l'EUA</a>.
 		<div class="text_separator"></div>
 		Cet article met aussi en lumière plusieurs anomalies que nous encourageons les chercheurs à parcourir.
 		<div class="text_separator"></div>
-		<a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>">Nous avons cartographié ces cas</a>, ce qui n'a que mis en lumière l'importance du site 1231, dirigé par l'auteur principal de l'étude NEJM, Fernando Polack. <a href="/studies/verifying_170_cases?currentLanguage=<%=$currentLanguage%>">Nous avons vérifié les sujets retenus pour l'analyse d'efficacité</a> localisés par l'équipe 3 du DailyClout</a>, et désiré calculer le taux d'incidence par site.
+		<a href="/studies/pfizer_trial_cases_mapping?currentLanguage=<%=$currentLanguage%>">Nous avons cartographié ces cas</a>, ce qui a mis en lumière l'importance du site 1231, dirigé par l'auteur principal de l'étude NEJM, Fernando Polack. <a href="/studies/verifying_170_cases?currentLanguage=<%=$currentLanguage%>">Nous avons vérifié les sujets retenus pour l'analyse d'efficacité</a> localisés par l'équipe 3 du DailyClout</a>, et désiré calculer le taux d'incidence par site.
 	    <div class="text_separator"></div>
 	    Il faut aussi souligner, comme mentionné page 24 <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_c4591001-S-csdrg.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">de ce document</a> que des "sites virtuels" ont été créés et intégrés dans l'"identifiant unique" du patient. Ce point est important car le site 4444, site virtuel du site 1231, apparaît souvent dans les résultats d'efficacité.
 		<div class="text_separator"></div>
-		Enfin, comme cela avait déjà été souligné par Arkmedic (via l'une de ses nombreuses anciennes incarnations Twitter (censurées), Jikkyleaks, archivée sur Telegram <a href="https://t.me/jikkyleaks">ici</a>), chaque analyse d'écouvillon a été faite dans le laboratoire Pearl River de Pfizer à New York - même si une analyse locale avait été réalisée par le laboratoire du site d'essai.
+		Enfin, comme cela avait déjà été souligné par Arkmedic (via l'une de ses nombreuses anciennes incarnations Twitter (censurées), Jikkyleaks, archivée sur Telegram <a href="https://t.me/jikkyleaks">ici</a>), toutes les analyses d'écouvillons ont été faites dans le laboratoire Pearl River de Pfizer à New York - même si une analyse locale avait été réalisée par le laboratoire du site d'essai.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div onclick="openInNewTab('/doc/pfizer_trials/1231ToCentralLab.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;">
@@ -1063,11 +1056,11 @@
 			<li>27 Fichiers XLSX, extraits des fichiers SAS</li>
 		</ul>
 	    <div class="text_separator"></div>
-	    Cet article s'est attaché à reproduire les chiffres communiqués au NEJM par Pfizer & Biontech en ce qui concerne le sous-ensemble efficacité. Cela nous a conduit à souligner que les chiffres figurant dans l'étude NEJM & dans le mémorandum FDA sont flous, <b>et parfois contradictoires (1)</b>.
+	    Cet article s'est attaché à reproduire les chiffres communiqués au NEJM par Pfizer & Biontech en ce qui concerne le sous-ensemble efficacité. Cela nous a conduit à souligner que les chiffres figurant dans l'étude NEJM & dans le mémorandum FDA étaient flous, <b>et parfois contradictoires (1)</b>.
 	    <div class="text_separator"></div>
 		La plupart des chiffres de population présentés dans l'étude ne sont en aucun cas reproductibles compte tenu de l'état actuel des données et <b>mettent en évidence de multiples anomalies (2)</b>.
 	    <div class="text_separator"></div>
-	    Il est aussi particulièrement peu clair pourquoi certains patients n'ont pas été inclus dans les données d'efficacité alors qu'ils semblent avoir été testés positifs avant la date limite des données - en particulier dans l'article du NEJM (4).
+	    La raison pour laquelle certains patients n'ont pas été inclus dans les données d'efficacité, alors qu'ils semblent avoir été testés positifs avant la date limite des données, est particulièrement obscure, en particulier dans l'article du NEJM (4).
 		<div class="text_separator"></div>
 		Enfin, une séquence de 8 sujets testés positifs sur le seul site argentin semble <b>peu susceptible d'être apparue par hasard dans le cadre d'un essai intègre et randomisé (4).</b>
 		<div class="text_separator"></div>
@@ -1093,7 +1086,7 @@
 		<div class="text_separator"></div>
 		Comme souligné, les données de randomisation ne correspondent pas entre la FDA et le NEJM, avec <b>103 sujets supplémentaires</b> dans le memorandum FDA.
 		<div class="text_separator"></div>
-		L'un des rares points de concordance entre ceux-ci est que 43 448 sujets auraient été injectés avec une première dose. Cependant, bien que ce soit l'un des détails quant aux sujets dont nous disposons, les tentatives de reproduire ces calculs selon les critères de l'essai ont été infructueuses.
+		L'un des rares points de concordance entre ces deux documents est que 43 448 sujets auraient été injectés avec une première dose. Cependant, bien que ce soit l'un des groupes correctement documentés dans les fichiers .PDF, les tentatives de reproduire ce sous-groupe selon les critères de l'essai ont été infructueuses.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1126,42 +1119,44 @@
 			<div class="text_separator"></div>
 			<li>3108 de ces sujets n'apparaissent dans aucun fichier PDF. Une liste de "44 959 sujets probablement revus" a été générée en parcourant les fichiers PDF & SAS - mais ce chiffre pourrait inclure quelques rares doublons. Quand aucune date de revue n'était documentée, nous l'avons évaluée sur la base de son ordre d'apparition dans le fichier .XPT, après avoir vérifié qu'ils étaient bien incrémentaux pour les <b>44 404 sujets</b> dont la date de revue était connue. Le dernier sujet (sujet 44442322) apparait aussi dans les fichiers de démographie comme le dernier sujet recruté par le site virtuel 4444 (site 1231) <b>le 27 Septembre 2020</b>.</li>
 			<div class="text_separator"></div>
-			<li>Nous pouvons spéculer, sur la base de ces données, que les "44 820 sujets revus" cités dans la table 1 de l'étude NEJM ont été établis uniquement en intégrant les sources dont le fond a été surligné en vert clair. <b>Pourquoi des sujets qui sont présents dans des analyses laboratoires, ou dans le fichier ADVA, seraient exclus du champ des "sujets revus" n'est pas clair.</b></li>
+			<li>Nous pouvons spéculer, sur la base de ces données, que les "44 820 sujets revus" cités dans la table 1 de l'étude NEJM ont été établis uniquement en intégrant les sources dont le fond a été surligné en vert clair. <b>La raison pour laquelle des sujets qui sont présents dans des analyses de laboratoire, ou dans le fichier ADVA, seraient exclus du champ des "sujets revus" n'est pas claire.</b></li>
 			<div class="text_separator"></div>
-			<li>Randomization data has been extracted for the PDF files. When no randomization data was available (102 subjects appearing in the ADVA files), the randomization date has been set to the first vaccination date (as is the case for most subjects). <b>It is unclear why we have a 5 subjects offset with the FDA Memorandum; and therefore a 108 subjects offset with the NEJM ones.</b></li>
+			<li>Les données de randomisation ont été extraites des fichiers .PDF. Quand aucune donnée de randomisation n'était disponible (102 sujets dans les fichiers ADVA), la date de randomisation a été définie à la date de la première vaccination (comme c'est le cas pour la plupart des sujets). <b>La raison pour laquelle nous avons un écart de 5 sujets avec le mémorandum FDA n'est pas claire; et par conséquent un écart de 108 sujets avec les chiffres du NEJM ne l'est guère plus.</b></li>
 			<div class="text_separator"></div>
-			<li>The doses injected have been built using the randomization PDF files & the ADVA XPT file. It is unclear why <b>102 subjects</b> of the ADVA files aren't appearing in the Randomization files - along with why 27 subjects from the randomization files aren't in the ADVA file.</li>
+			<li>Les doses injectées ont été reconstruites en utilisant le fichier ADVA et les fichiers PDF de randomisation. Il est, à nouveau, surprenant que <b>102 sujets</b> du fichier ADVA n'apparaissent pas dans les fichiers de randomisation - ainsi que 27 sujets présents dans les fichiers de randomisation qui n'apparaissent pas dans le fichier ADVA.</li>
 		</ul>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 1.6875rem;font-weight: bold;">
-		    3 - Reconstituting efficacy subset figures.
+		    3 - Reconstitution des chiffres du groupe d'efficacité.
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The subjects corresponding, according to the criteria determined by the protocol, to the efficacy subset, are represented in the following mapping. 
+		Les sujets correspondant, selon les critères déterminés par le protocole, au sous-groupe d'efficacité, sont représentés dans le diagramme suivant. 
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-	    <div onclick="openInNewTab('/doc/pfizer_trials/EfficacyDiagram.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
-	    	<img src="/doc/pfizer_trials/EfficacyDiagram.png" style="width:800px;display:block;margin:auto;">
+	    <div onclick="openInNewTab('/doc/pfizer_trials/EfficacyDiagramFR.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
+	    	<img src="/doc/pfizer_trials/EfficacyDiagramFR.png" style="width:800px;display:block;margin:auto;">
 			<div class="text_separator"></div>
-			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+			<div class="image_caption">
+				Cliquez pour ouvrir l'image en plein écran dans un nouvel onglet.
+			</div>
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		We couldn't find an explanation for these 5 subjects <i>(10461292, 11471037, 11471145, 12231001, 12321087)</i> standing out as having received two doses but having no ADVA data. <i>10361096</i> was incarcerated, but still should have performed visits to receive two doses.
+		Nous n'avons pas pu trouver d'explication pour ces 5 sujets <i>(10461292, 11471037, 11471145, 12231001, 12321087)</i> se démarquant comme ayant reçu deux doses mais n'ayant pas de données ADVA. <i>10361096</i> a été incarcéré, mais aurait quand même dû effectuer des analyses pour recevoir deux doses.
 		<div class="text_separator"></div>
-		As a side note, while we find 43 655 subjects randomized, 43 661 patients were claimed to have been recruited by Pfizer & BioNTech in this article from the New York Times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">2 Companies Say Their Vaccines Are 95% Effective. What Does That Mean?</a>. Another number which appears nowhere in the FDA & NEJM studies, the closest being 43 651 in the FDA figures (cf. consort diagram [1] above).
+		En aparté, on notera qu'alors qu'on identifie 43 655 sujets randomisés, 43 661 patients auraient été recrutés par Pfizer & BioNTech selon cet article du New York Times, <a href="https://www.nytimes.com/2020/11/20/health/covid-vaccine-95-effective.html" target="_blank">"2 entreprises affirment que leurs vaccins sont efficaces à 95 %. Qu'est-ce que cela signifie?"</a>. Un autre chiffre qui n'apparaît nulle part dans les études FDA & NEJM, le plus proche étant 43 651 dans les chiffres FDA (cf. diagramme de consort [1] ci-dessus).
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	3.1 - Doses 1 Administered, Demographic characteristics
+	    	3.1 - Doses 1 administrées, caractéristiques démographiques
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		Basic demographic characteristics of the subjects who received a first dose of either BNT162b2 or Placebo are represented in the following table.
+		Les caractéristiques démographiques de base des sujets qui ont reçu une première dose de BNT162b2 ou de placebo sont représentées dans le tableau suivant.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
@@ -1187,7 +1182,7 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    3.2 - Doses 1 Administered, Week by week 
+		    3.2 - Doses 1 administrées, semaine par semaine
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1196,6 +1191,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %dose1Sites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$dose1Sites{$totalSubjects}}) {
 	                % my $trialSiteName = $dose1Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $dose1Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1212,25 +1208,27 @@
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		As you can verify for yourself using the above filter, <b>it is unclear how site 1231, who enrolled so many more subjects than the other sites, was able to achieve completion of its schedule in just 52 days (most of the doses being injected within a 3 weeks window)</b>, while the other sites completed their doses schedule within multiple weeks in the overall 110 days period (excluding site 1231, within <b>an average period of 64 days</b>).
+		Comme vous pouvez le vérifier par vous-même en utilisant le filtre ci-dessus, il reste à déterminer <b>comment le site 1231, qui a recruté tellement plus de sujets que les autres sites, a pu terminer son calendrier en seulement 52 jours (la plupart des doses étant injectées dans une fenêtre de 3 semaines)</b>, alors que les autres sites ont terminé leur calendrier de doses en plusieurs semaines au cours de la période globale de 110 jours (à l'exception du site 1231, <b>dans un délai moyen de 64 jours</b>).
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div onclick="openInNewTab('/doc/pfizer_trials/Site1231Dose1.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
 	    	<img src="/doc/pfizer_trials/Site1231Dose1.png" style="width:800px;display:block;margin:auto;">
 			<div class="text_separator"></div>
-			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+			<div class="image_caption">
+				Cliquez pour ouvrir l'image en plein écran dans un nouvel onglet.
+			</div>
 	    </div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	3.3 - Doses 1 Administered, Mapping by sites
+	    	3.3 - Doses 1 administrées, Cartographie des sites
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The following map illustrates the total of subjects injected with dose 1, by site. You can display only one specific site using the filter.
+		La carte suivante illustre le nombre total de sujets injectés avec la dose 1, par site. Vous pouvez n'afficher qu'un seul site précis à l'aide du filtre.
 		<div class="text_separator"></div>
-		<b>Note that the positions of the sites 1126 & 1270 are perhaps reversed</b>, as both sites are listed on both identifiers, on the <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a> site listing.
+		<b>Notez que les positions des sites 1126 & 1270 sont peut-être inversés</b>, dans la mesure où les deux sites sont listés sous ces deux identifiants, sur le listing des sites <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-111721/5.2-listing-of-clinical-sites-and-cvs-pages-1-41.pdf</a>.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
@@ -1238,6 +1236,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %dose1Sites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$dose1Sites{$totalSubjects}}) {
 	                % my $trialSiteName = $dose1Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $dose1Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1257,11 +1256,11 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	3.4 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Demographic characteristics
+	    	3.4 - Sujets jusqu'au 7 novembre, dose 2 dans les 19 à 42 jours post dose 1, sans Covid 7 jours post dose 2, Caractéristiques démographiques
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		Basic demographic characteristics of the subjects who received a first dose of either BNT162b2 or Placebo are represented in the following table.
+		Les caractéristiques démographiques de base des sujets qui ont reçu une première dose de BNT162b2 ou de placebo sont représentées dans le tableau suivant.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
@@ -1269,6 +1268,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %dose2Sites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$dose2Sites{$totalSubjects}}) {
 	                % my $trialSiteName = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1289,7 +1289,7 @@
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    3.5 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+		    3.5 - Sujets jusqu'au 7 novembre, dose 2 dans les 19 à 42 jours après la dose 1, sans Covid 7 jours après la dose 2, semaine par semaine
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1298,6 +1298,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %dose2Sites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$dose2Sites{$totalSubjects}}) {
 	                % my $trialSiteName = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1316,13 +1317,13 @@
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	3.6 - Subjects up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, and efficacy cases, Mapping by sites
+	    	3.6 - Sujets jusqu'au 7 novembre, dose 2 dans les 19 à 42 jours post dose 1, sans Covid 7 jours post dose 2, et cas d'efficacité, Cartographie par sites
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The following map illustrates the total of subjects injected with dose 2 <span style="background: #868282;color:white;padding: 2px 6px 2px 6px;">(in dark grey)</span>, by site, and the Covid-19 cases qualifying for the efficacy analysis <span style="background: #DC3912;color:white;padding: 2px 6px 2px 6px;">(in red)</span>.
+		La carte suivante illustre le total des sujets injectés avec la dose 2 <span style="background: #868282;color:white;padding: 2px 6px 2px 6px;">(en gris foncé)</span>, par site, et les cas de Covid-19 éligibles à l'analyse d'efficacité <span style="background: #DC3912;color:white;padding: 2px 6px 2px 6px;">(en rouge)</span>.
 		<div class="text_separator"></div>
-		You can display only one specific site using the filter.
+		Vous pouvez n'afficher qu'un seul site spécifique à l'aide du filtre.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width: calc(100% - 75px);max-width:162px;margin-left: 5px;">
@@ -1330,6 +1331,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %dose2Sites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$dose2Sites{$totalSubjects}}) {
 	                % my $trialSiteName = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $dose2Sites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1346,28 +1348,28 @@
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		This map provides an even clearer highlight of the most abnormal incidence rate among patients in Nebraska, ranking <a href="https://www.statista.com/statistics/183588/population-density-in-the-federal-states-of-the-us/" target="_blank">44th by population density</a> in USA and <a href="https://www.icip.iastate.edu/tables/population/urban-pct-states" target="_blank">31th by urban population</a>. A lot of these sites are belonging to the <b>Meridian Clinical Research, LLC network</b>, which, <a href="https://www.mcrmed.com/" target="_blank">according to its website</a>, operates 35 trial sites accross USA. It is unclear wether only 6 Meridian sites were involved, or if other sites are also in the Meridian Network.
+		Cette carte manifeste plus clairement un taux d'incidence anormal chez les patients du Nebraska, au <a href="https://www.statista.com/statistics/183588/population-density-in-the-federal-states-of-the-us/" target="_blank">44e rang pour la densité de population</a> aux États-Unis, et <a href="https://www.icip.iastate.edu/tables/population/urban-pct-states" target="_blank">au 31e rang pour la population urbaine</a>. Un grand nombre de ces sites appartiennent au réseau <b>"Meridian Clinical Research, LLC"</b>, qui, <a href="https://www.mcrmed.com/" target="_blank">selon son site Web</a>, exploite 35 sites d'essais à travers les États-Unis. Il n'est pas clair si seulement 6 sites Meridian étaient impliqués, ou si d'autres sites sont également dans le réseau Meridian.
 		<div class="text_separator"></div>
-		Further investigations of this very surprising geographical repartition, led by the Daily Clout investigators, are ongoing.
+		Des investigations plus approfondies sur cette répartition géographique très surprenante, menées par les enquêteurs du Daily Clout, sont en cours.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 1.6875rem;font-weight: bold;">
-		    4 - Confirmed Covid-19 cases among eligible efficacy subset
+		    4 - Cas confirmés de Covid-19 parmi le sous-groupe éligible à l'analyse d'efficacité
 		</div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    This section focuses on the subjects who, according to the criteria exposed in the protocol (no HIV, not phase 1, at least 7 days post dose 2 prior Covid symptoms confirmed by a positive Polymerase chain reaction method (PCR)), would have qualified for the efficacy group.
+	    Cette section se concentre sur les sujets qui, selon les critères exposés dans le protocole (pas de VIH, pas de phase 1, au moins 7 jours après la dose 2 sans "Covid-19 symptomatique confirmés par une méthode de réaction en chaîne par polymérase" (PCR) positive), auraient été qualifiés pour le groupe d'efficacité.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	4.1 - Incidence rate by trial site's countries & population's days of exposure
+	    	4.1 - Taux d'incidence par pays des sites d'essais et jours d'exposition des populations
 		</div>
 	    <div class="text_separator"></div>
-	    For each month, we evaluated the total of days of exposure (D.O.E) which occured (total of subjects from their date of vaccination, or the begining of the month if the subject was vaccinated before, to the end of the month).
+	    Nous avons évalué, mois par mois, le total des jours d'exposition (T.J.E) survenus (total des sujets depuis leur date de vaccination, ou depuis le début du mois si le sujet a été vacciné le mois précédent, jusqu'à la fin du mois courant).
 	    <div class="text_separator"></div>
-	    We then divided this total of "days/subjects exposed" by the total of monthly days to reach a normalized incidence rate.
+		Nous avons ensuite divisé ce total de "jours/sujets exposés" par le total de jours mensuels pour atteindre un taux d'incidence (TI) normalisé.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:100%;word-break: break-word;" id="dataBySitesCountriesEfficacy1">
@@ -1375,10 +1377,10 @@
 	    </div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    <b>The IR in Argentina, in September (highlighted in yellow), with 8 cases, obviously poses question, while USA with much more subjects exposed only had 7 detected cases. Same applies in October.</b>
+	    <b>L'IR en Argentine, en septembre (surligné en jaune), avec 8 cas, pose évidemment question, alors que les USA avec beaucoup plus de sujets exposés n'avaient que 7 cas détectés. Le même commentaire s'applique en octobre.</b>
 	    <div class="text_separator"></div>
 		<div class="text_separator"></div>
-		John Hopkins University's <a href="https://coronavirus.jhu.edu/region/united-states" target="_blank">cases timeline for USA</a>, and <a href="" target="_blank">for Argentina</a> are represented below, and the daily cases for September have been synthetized in this <a href="/doc/pfizer_trials/USA_Argentina_John_Hopkins_Figures.xlsx" target="_blank" download>.XLSX file</a>.
+		Les chronologies des cas de l'université John Hopkins, <a href="https://coronavirus.jhu.edu/region/united-states" target="_blank">pour les Etats-Unis</a>, et <a href="" target="_blank">pour l'Argentine</a> sont représentés ci-dessous, et les cas quotidiens de septembre ont été synthétisés dans ce <a href="/doc/pfizer_trials/USA_Argentina_John_Hopkins_Figures.xlsx" target="_blank" download>fichier .XLSX.</a>.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1386,7 +1388,9 @@
 	    <div onclick="openInNewTab('/doc/pfizer_trials/USA_Cases_JH_Timeline.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
 	    	<img src="/doc/pfizer_trials/USA_Cases_JH_Timeline.png" style="width:800px;display:block;margin:auto;">
 			<div class="text_separator"></div>
-			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+			<div class="image_caption">
+				Cliquez pour ouvrir l'image en plein écran dans un nouvel onglet.
+			</div>
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1395,24 +1399,26 @@
 	    <div onclick="openInNewTab('/doc/pfizer_trials/Argentina_JH_Timeline.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
 	    	<img src="/doc/pfizer_trials/Argentina_JH_Timeline.png" style="width:800px;display:block;margin:auto;">
 			<div class="text_separator"></div>
-			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+			<div class="image_caption">
+				Cliquez pour ouvrir l'image en plein écran dans un nouvel onglet.
+			</div>
 	    </div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    As we can observe in the .XLSX file, a total of <b>1 160 917 cases</b> occured in USA in November, for a population of (<a href="/census_data?currentLanguage=<%=$currentLanguage%>" target="_blank">roughly</a>) <b>331 501 080 citizen</b>, according to the U.S Census Bureau <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank" download="">flawed data</a>, resulting in a September <b>approximative IR of 3.5 / 1 000</b>.
+	    Comme nous pouvons l'observer dans le fichier .XLSX ci-dessus, un total de <b>1 160 917 cas</b> sont survenus aux États-Unis en novembre, pour une population d'(<a href="/census_data?currentLanguage=<%=$currentLanguage%>" target="_blank">environ</a>) <b>331 501 080 citoyens</b>, selon les <a href="https://www2.census.gov/programs-surveys/popest/tables/2020-2021/national/asrh/nc-est2021-syasexn.xlsx" target="_blank" download="">données erronées</a> du U.S Census Bureau, résultant en un <b>TI approximatif de septembre de 3,5 / 1 000</b>.
 	    <div class="text_separator"></div>
-	    Argentina, on another hand, with <b>318 874 cases</b> for a population of <b>45 376 763 citizen</b> <a href="https://data.worldbank.org/country/argentina" target="_blank">according to the World Bank</a>, appears to have an <b>approximative IR of 7 / 1 000</b> in September.
+	    L'Argentine, en revanche, avec <b>318 874 cas</b> pour une population de <b>45 376 763 citoyens</b> selon <a href="https://data.worldbank.org/country/argentina" target="_blank">la Banque mondiale</a>, semble avoir un <b>TI approximatif de 7/1 000</b> en septembre.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-	    	4.2 - Subjects with a confirmed Covid-19 swab
+	    	4.2 - Sujets avec un prélèvement Covid-19 confirmé
 		</div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    The <b>214 subjects confirmed for Covid 19</b> by a swab & a PCR, to data cut-off on November 14, 2020, and satisfying the conditions for eligibility, are detailed below.
+		Les <b>214 sujets confirmés pour le Covid 19</b> par un écouvillon & une PCR, à date limite de données au 14 novembre 2020, et remplissant les conditions d'éligibilité, sont détaillés ci-dessous.
 		<div class="text_separator"></div>
-		When they haven't been included in the NEJM 170 subjects, they are highlighted in yellow.
+		Lorsqu'ils n'ont pas été inclus dans les 170 sujets du NEJM, ils sont surlignés en jaune.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:100%;word-break: break-word;overflow-x: auto;" id="positiveSwabsSubjects">
@@ -1420,37 +1426,39 @@
 	    </div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    While it is understandable that cases post November 11 could rarely be processed in time to have them at disposal when results were announced through the press, it is not transparent why they weren't included when the study was finalized, on December 16.
+	    S'il est compréhensible que les cas postérieurs au 11 novembre aient rarement pu être traités à temps pour les avoir à disposition lorsque les résultats ont été annoncés par la presse, la raison pour laquelle ils n'ont pas été inclus lorsque l'étude a été finalisée, le 16 décembre, nous échappe.
 	    <div class="text_separator"></div>
-	    Furthermore, it is deeply unclear why subjects such as 10091005, 10111148, 10951098 or others weren't included, as they have no preliminary exclusion documented.
+		De plus, il est profondément difficile de comprendre pourquoi des sujets tels que 10091005, 10111148, 10951098 ou d'autres n'ont pas été inclus, dans la mesure où ils n'ont aucune exclusion préliminaire documentée.
 	    <div class="text_separator"></div>
-	    We will study these deeper in a next article.
+		Nous les étudierons plus en profondeur dans un prochain article.
 	    <div class="text_separator"></div>
-	    More concerning, it seems hardly understandable how <b>site 1231 was able to provide 8 cases in a row, each of them being contaminated 2 to 8 days after being eligible for the efficacy subset.</b>
+		Plus inquiétant, il semble particulièrement frappant que <b>le site 1231 ait pu fournir 8 cas d'affilée, chacun d'eux étant contaminé 2 à 8 jours après avoir été éligible au sous-ensemble efficacité.</b>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-	    <div onclick="openInNewTab('/doc/pfizer_trials/Site1231Exposure.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
-	    	<img src="/doc/pfizer_trials/Site1231Exposure.png" style="width:800px;display:block;margin:auto;">
+	    <div onclick="openInNewTab('/doc/pfizer_trials/Site1231ExposureFR.png');return;" style="width:800px;display:block;margin:auto;cursor: pointer;">
+	    	<img src="/doc/pfizer_trials/Site1231ExposureFR.png" style="width:800px;display:block;margin:auto;">
 			<div class="text_separator"></div>
-			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+			<div class="image_caption">
+				Cliquez pour ouvrir l'image en plein écran dans un nouvel onglet.
+			</div>
 	    </div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The study protocol was planning for an incidence rate of 1.3% in the Placebo group a year - but the real life observation - aside for Argentina's September's anomaly, appear to show an higher incidence rate.
+		Le protocole de l'étude prévoyait un taux d'incidence de 1,3 % dans le groupe placebo par an - mais l'observation réelle semble montrer un taux d'incidence plus élevé.
 		<div class="text_separator"></div>
-		To provide a raw approximate of the odds of 8 cases in a row appearing only in Argentina, while the other sites were silent, we ran a <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">Monte Carlo simulation</a>, based on an incidence rate of :
+		Pour fournir une approximation de la probabilité que 8 cas consécutifs n'apparaissent qu'en Argentine, alors que les autres sites étaient silencieux, nous avons exécuté une <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/monte_carlo_cases.pl" target="_blank">simulation de Monte Carlo</a>, basée sur un taux d'incidence de :
 		<ul>
-			<li>3.5 cases / 1000 subjects / month for USA</li>
-			<li>7 cases / 1000 subjects / month for Argentina</li>
-			<li>3 cases / 1000 subjects / month for the other less represented country</li>
+			<li>3.5 cas / 1000 sujets / mois pour les Etats-Unis</li>
+			<li>7 cas / 1000 sujets / mois pour l'Argentine</li>
+			<li>3 cas / 1000 sujets / mois pour les pays moins représentés</li>
 		</ul>
-		Simulations are summarized in the following table; resulting in a <b>0.2488% chance of this result occuring</b>.
+		Les simulations sont résumées dans le tableau suivant ; résultant en une probabilité de <b>0,2488% que ce résultat se produise</b>.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="table-container" style="height:auto;min-width: 760px;">
 			<div class="table-header">
 				<div class="table-cell-1" style="width:60%;">
-					Global Cases
+					Cas Globaux
 				</div>
 				<div class="table-cell-1" style="width:40%;">
 					Site 1231
@@ -1458,7 +1466,7 @@
 			</div>
 			<div class="table-header">
 				<div class="table-cell-1" style="width:20%;">
-					Total Simulations
+					Simulations Totales
 				</div>
 				<div class="table-cell-2" style="width:10%;">
 					Min
@@ -1467,13 +1475,13 @@
 					Max
 				</div>
 				<div class="table-cell-4" style="width:10%;">
-					Average
+					Moyenne
 				</div>
 				<div class="table-cell-4">
-					8 cases in a row in site 1231
+					8 cas d'affilée au site 1231
 				</div>
 				<div class="table-cell-4" style="width:10%;padding-left: 5px;">
-					Probability (%)
+					Probabilité (%)
 				</div>
 			</div>
 			<div class="table-row-1" style="min-width: 760px;">
@@ -1500,14 +1508,14 @@
 		</div> 
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		An imperfect evaluation, of course, as the high Argentinian Incidence rate is balanced by various unknown (couples among subjects, over-exposed healhcare workers, local variants).
+		Une évaluation imparfaite, bien sûr, car le taux d'incidence élevé de l'Argentine est contrebalancé par diverses inconnues (couples entre sujets, soignants surexposés, variantes locales).
 		<div class="text_separator"></div>
-		We will refine the model used to take into account incidence rate by US state - data at city granularity being, unfortunately, very hard to find. How accurate is the fact of using John Hopkins' data to evaluate trial sites infection trends also requires further examination.
+		Nous affinerons le modèle utilisé pour prendre en compte le taux d'incidence par État américain - les données au niveau de la granularité de la ville étant malheureusement très difficiles à trouver. La précision du fait d'utiliser les données de John Hopkins pour évaluer les tendances d'infection des sites d'essai nécessite également un examen plus approfondi.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    4.3 - Cases up to November 7, dose 2 within 19 to 42 days post dose 1, without Covid 7 days post dose 2, Week by week 
+		    4.3 - Cas jusqu'au 7 novembre, dose 2 dans les 19 à 42 jours après la dose 1, sans Covid 7 jours après la dose 2, semaine par semaine
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
@@ -1516,6 +1524,7 @@
 	        % for my $totalSubjects (sort{$b <=> $a} keys %casesSites) {
 	            % for my $trialSiteId (sort{$a <=> $b} keys %{$casesSites{$totalSubjects}}) {
 	                % my $trialSiteName = $casesSites{$totalSubjects}->{$trialSiteId}->{'trialSiteName'} // die;
+	                % $trialSiteName = 'Tous les sites' if $trialSiteName eq 'All Sites';
 	                % my $trialSitePostalCode = $casesSites{$totalSubjects}->{$trialSiteId}->{'trialSitePostalCode'};
 	                % if ($trialSitePostalCode) {
 	                <option value="<%=$trialSiteId%>"><%=$trialSiteId%> | <%=$trialSiteName%>, <%=$trialSitePostalCode%> | <%=$totalSubjects%> subjects</option>
@@ -1534,96 +1543,96 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 1.6875rem;font-weight: bold;">
-		    5 - Methodology Details
+		    5 - Détails de Méthodologie
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    5.1 - PHPMT Files Download & Extraction
+		    5.1 - Téléchargement et extraction de fichiers PHPMT
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		You'll need the <a href="https://www.xpdfreader.com/download.html" target="_blank">XPDF version corresponding to your OS</a>. Place the file (either pdftohtml on Linux or pdftohtml.exe on Windows) in your project repository.
+		Vous aurez besoin de la <a href="https://www.xpdfreader.com/download.html" target="_blank">version XPDF correspondant à votre système d'exploitation</a>. Placez le fichier (soit pdftohtml sous Linux, soit pdftohtml.exe sous Windows) à la racine de votre projet.
 		<div class="text_separator"></div>
-		You must answer "Y" when the script asks you if it should proceed with the extraction of the .PDF files, if you want to reproduce the global PDF statistics.
+		Vous devrez répondre "Y" lorsque le script vous demandera s'il doit procéder à l'extraction des fichiers .PDF, si vous souhaitez reproduire les statistiques PDF globales.
 		<div class="text_separator"></div>
-		We automatically downloaded the documents from the Pfizer trials made available on <a href="https://phmpt.org/pfizers-documents/" target="_blank">PHMPT.org</a>, using the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_documents/get_documents.pl" target="_blank">tasks/pfizer_documents/get_documents.pl</a> (Github), and converted the .PDF files to .HTML using the same script.
+		Nous avons automatiquement téléchargé les documents des essais Pfizer/BioNTech mis à disposition sur <a href="https://phmpt.org/pfizers-documents/" target="_blank">PHMPT.org</a>, en utilisant le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_documents/get_documents.pl" target="_blank">tasks/pfizer_documents/get_documents.pl</a> (Github), et converti les fichiers .PDF en .HTML en utilisant le même script.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    5.2 - Global files analysis
+		    5.2 - Analyse globale des fichiers
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		The original data from the trial was generated from the Software "SAS", and is delivered in several .XPT files.
+		Les données originales de l'essai ont été générées à partir du logiciel "SAS", et sont livrées dans plusieurs fichiers .XPT.
 		<div class="text_separator"></div>
-		XPT is a proprietary format constraining you to have SAS installed.
+		XPT est un format propriétaire qui vous oblige à installer SAS.
 		<div class="text_separator"></div>
-		We extracted all the XPT files prefixed "FDA-CBER-2021-5683" (Documented on <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_bnt162-01-A-adrg.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">this PDF document, page 17 & following</a>), using the Github project <a href="https://github.com/WizardMac/ReadStat" target="_blank">ReadStat</a>.
+		Nous avons extrait tous les fichiers XPT préfixés "FDA-CBER-2021-5683" (Documenté sur <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_bnt162-01-A-adrg.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">ce document PDF, page 17 & suivantes</a>), en utilisant le projet Github <a href="https://github.com/WizardMac/ReadStat" target="_blank">ReadStat</a>.
 		<div class="text_separator"></div>
-		We used the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/subjects_in_sas_files.pl" target="_blank">tasks/pfizer_trials/subjects_in_sas_files.pl</a> to analyze the XPT files (having converted these to .CSV first) and build an overview of the data available on each of the <b>48 091 subjects</b> present in the 80 XPT files.
+		Nous avons utilisé le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/subjects_in_sas_files.pl" target="_blank">tasks/pfizer_trials/subjects_in_sas_files.pl</a> pour analyser les fichiers XPT (après les avoir convertis en .CSV) et construire un aperçu des données disponibles sur chacun des <b>48 091 sujets</b> présents dans les 80 fichiers XPT.
 		<div class="text_separator"></div>
-		We used the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/subjects_in_pdf_files_from_sas.pl" target="_blank">tasks/pfizer_trials/subjects_in_pdf_files_from_sas.pl</a> to analyze the PDF files (having converted these to .html first) and build an overview of the data available on each of the <b>46 959 subjects</b> present in the 260 PDF files.
+		Nous avons utilisé le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/subjects_in_pdf_files_from_sas.pl" target="_blank">tasks/pfizer_trials/subjects_in_pdf_files_from_sas.pl</a> pour analyser les fichiers PDF (après les avoir convertis en .html au préalable) et construire un aperçu des données disponibles sur chacun des <b>46 959 sujets</b> présents dans les 260 fichiers PDF.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
-		    5.3 - Key Files Extraction
+		    5.3 - Extraction de fichiers clés
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		Several files, have been sustained as key in the analysis.
+		Plusieurs dossiers ont été retenus comme essentiels à l'analyse.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 75px);padding-left: 75px;font-size: 1.35rem;font-weight: bold;">
-		    5.3.1 - XPT Files
+		    5.3.1 - Fichiers XPT
 		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<a href="https://pdata0916.s3.us-east-4.amazonaws.com/pdocs/050222/FDA-CBER-2021-5683-0123168+to+-0126026_125742_S1_M5_c4591001-A-D-adva.zip" target="_blank">FDA-CBER-2021-5683-0123168+to+-0126026_125742_S1_M5_c4591001-A-D-adva.zip</a> results in a .csv file (114 365 entry points, on <b>46 448 patients</b>), which we converted to <a href="/doc/pfizer_trials/pfizer_adva_patients.json" download>.JSON</a>, using the <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_adva_data.pl" target="_blank">tasks/pfizer_trials/extract_adva_data.pl</a> script.
+		<a href="https://pdata0916.s3.us-east-4.amazonaws.com/pdocs/050222/FDA-CBER-2021-5683-0123168+to+-0126026_125742_S1_M5_c4591001-A-D-adva.zip" target="_blank">FDA-CBER-2021-5683-0123168+to+-0126026_125742_S1_M5_c4591001-A-D-adva.zip</a> résulte en un fichier .csv (114 365 points d'entrée, sur <b>46 448 patients</b>), que nous avons converti en <a href="/doc/pfizer_trials/pfizer_adva_patients.json" download>.JSON</a>, en utilisant le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_adva_data.pl" target="_blank">tasks/pfizer_trials/extract_adva_data.pl</a>.
 		<div class="text_separator"></div>
-		<a href="https://icandecide.org/wp-content/uploads/2022/06/FDA-CBER-2021-5683-0171524-to-0174606_125742_S1_M5_c4591001-S-D-suppds.zip" target="_blank">FDA-CBER-2021-5683-0171524-to-0174606_125742_S1_M5_c4591001-S-D-suppds.zip</a> results in a .csv file (114 365 entry points, on <b>48 091 patients</b>), which we converted to <a href="/doc/pfizer_trials/pfizer_suppds_patients.json" download>.JSON</a>, using the <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_s_d_suppds.pl" target="_blank">tasks/pfizer_trials/extract_s_d_suppds.pl</a> script.
+		<a href="https://icandecide.org/wp-content/uploads/2022/06/FDA-CBER-2021-5683-0171524-to-0174606_125742_S1_M5_c4591001-S-D-suppds.zip" target="_blank">FDA-CBER-2021-5683-0171524-to-0174606_125742_S1_M5_c4591001-S-D-suppds.zip</a> résulte en un fichier .csv (114 365 points d'entrée, sur <b>48 091 patients</b>), que nous avons converti en <a href="/doc/pfizer_trials/pfizer_suppds_patients.json" download>.JSON</a>, en utilisant le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_s_d_suppds.pl" target="_blank">tasks/pfizer_trials/extract_s_d_suppds.pl</a>.
 		<div class="text_separator"></div>
-		All the .XPT files converted to .CSV can be <a href="https://drive.google.com/file/d/1iqO6-s62wpnEdNq2LDh_YFyvlbuB0RXj/view?usp=sharing" target="_blank">downloaded here in .ZIP format</a> (10.7 Go unzipped, 243 Mo zipped).
+		Tous les fichiers .XPT convertis en .CSV sont <a href="https://drive.google.com/file/d/1iqO6-s62wpnEdNq2LDh_YFyvlbuB0RXj/view?usp=sharing" target="_blank">téléchargeables ici au format .ZIP</a> (10,7 Go décompressés, 243 Mo compressés).
 		<div class="text_separator"></div>
-		You must decompress this archive in <a href="https://github.com/OpenVaet/openvaet" target="_blank">your project root folder</a> if you want to reproduce this analysis. 
+		Vous devez décompresser cette archive dans le dossier racine de <a href="https://github.com/OpenVaet/openvaet" target="_blank">votre projet</a> si vous souhaitez reproduire cette analyse.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 75px);padding-left: 75px;font-size: 1.35rem;font-weight: bold;">
-		    5.3.2 - PDF Files
+		    5.3.2 - Fichiers PDF
 		</div>
 		<div class="text_separator"></div>
-		Something one has to understand about the Pfizer trial documents released by PHMPT is that we have several editions of the same tables, which are completed by Pfizer & communicated to the FDA as the trial went along.
+		Il est important de comprendre, à propos des documents de l'essai Pfizer publiés par PHMPT, que plusieurs éditions des mêmes tableaux, qui sont complétés par Pfizer et communiqués à la FDA au fur et à mesure de l'essai, sont présents.
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		For example, there are several editions of the table "16.2.8.1":
+		Par exemple, il existe plusieurs éditions du tableau "16.2.8.1":
 		<div class="text_separator"></div>
-		- One is labelled <i>"16.2.8.1 Listing of Subjects With Postvaccination SARS-CoV-2 NAAT-Positive Nasal Swab and COVID-19 Signs andSymptoms – Dose 1 All-Available Efficacy Population"</i>, which you can find in the file "pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf", finalized on November 24, 2020.
+		- L'une est intitulée <i>"16.2.8.1 Listing of Subjects With Postvaccination SARS-CoV-2 NAAT-Positive Nasal Swab and COVID-19 Signs andSymptoms – Dose 1 All-Available Efficacy Population"</i>, que vous pouvez trouver dans le fichier "pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf", finalisé le 14 Novembre 2020.
 		<div class="text_separator"></div>
-		- One is labelled <i>"16.2.8.1 Listing of Subjects With First COVID-19 Occurrence After Dose 1 – Blinded Placebo-Controlled Follow-up Period – Dose 1 All-Available Efficacy Population"</i>, which you can find in the file "pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf", finalized on April 1, 2021
+		- Une autre est intitulée <i>"16.2.8.1 Listing of Subjects With First COVID-19 Occurrence After Dose 1 – Blinded Placebo-Controlled Follow-up Period – Dose 1 All-Available Efficacy Population"</i>, que vous pouvez trouver dans le fichier "pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf", finalisé le 1er Avril 2021
 		<div class="text_separator"></div>
-		The files extracted are summarized in the table below.
+		Les fichiers extraits sont résumés dans le tableau ci-dessous.
 		<div class="text_separator"></div>
 		<div style="width: 100%;overflow-x: auto;overflow-y: auto;text-align: center;border: 1px solid black;box-sizing: border-box;font-size: 13px;">
 			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;font-weight: bold;padding-top: 15px;">
 				<div style="width: 20%;">
-					File Name
+					Nom de fichier
 				</div>
 				<div style="width: 20%;">
-					Table Name
+					Nom de la table
 				</div>
 				<div style="width: 10%;">
 					Pages
 				</div>
 				<div style="width: 15%;">
-					Extraction Script (Github)
+					Script d'extraction (Github)
 				</div>
 				<div style="width: 25%;">
 					Notes
 				</div>
 				<div style="width: 10%;">
-					Output
+					Résultats
 				</div>
 			</div>
 			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
@@ -1634,13 +1643,13 @@
 					16.2.4 Listing of Demographic Characteristics – All Subjects ≥16 Years of Age
 				</div>
 				<div style="width: 10%;">
-					1 to 2951
+					1 à 2951
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_trial_demographics_1.pl" target="_blank">tasks/pfizer_trials/extract_trial_demographics_1.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Demographic table containing 44 257 subjects data (aged 16 or older).
+					Tableau démographique contenant 44 257 données sur les sujets (âgés de 16 ans ou plus).
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_demographics_1.csv" download>.CSV</a>
@@ -1657,13 +1666,13 @@
 					16.2.4.4 Listing of Demographic Characteristics – All Subjects
 				</div>
 				<div style="width: 10%;">
-					22 to 3139
+					22 à 3139
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_trial_demographics_2.pl" target="_blank">tasks/pfizer_trials/extract_trial_demographics_2.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Demographic table containing 43 646 subjects data (aged 16 or older).
+					Tableau démographique contenant 43 646 données de sujets (âgés de 16 ans ou plus).
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_demographics_2.csv" download>.CSV</a>
@@ -1680,13 +1689,13 @@
 					16.1.7.2 Listing of Randomization Scheme and Actual Vaccine Received – Phase 2
 				</div>
 				<div style="width: 10%;">
-					1 to 4412
+					1 à 4412
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_randomization_scheme_1.pl" target="_blank">tasks/pfizer_trials/extract_randomization_scheme_1.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Randomization table containing 44 106 subjects assigned groups & doses received.
+					Tableau de randomisation contenant 44 106 sujets assignés aux groupes et aux doses reçues.
 				</div>
 				<div style="width: 5%;">
 				</div>
@@ -1702,13 +1711,13 @@
 					16.1.7.1 Listing of Randomization Scheme and Actual Vaccine Received – All Subjects ≥16 Years of Age
 				</div>
 				<div style="width: 10%;">
-					1 to 4376
+					1 à 4376
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_randomization_scheme_2.pl" target="_blank">tasks/pfizer_trials/extract_randomization_scheme_2.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Randomization table containing 44 360 subjects assigned groups & doses received.
+					Tableau de randomisation contenant 44 360 sujets assignés aux groupes et aux doses reçues.
 				</div>
 				<div style="width: 5%;">
 				</div>
@@ -1724,13 +1733,13 @@
 					16.2.1.1 Listing of Subjects Discontinued From Vaccination and/or From the Study – All Subjects ≥16 Years of Age
 				</div>
 				<div style="width: 10%;">
-					1 to 229
+					1 à 229
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_exclusions_1.pl" target="_blank">tasks/pfizer_trials/extract_exclusions_1.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Exclusions Table containing 1 862 exclusions.
+					Tableau contenant 1 862 exclusions.
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_exclusions_1.csv" download>.CSV</a>
@@ -1747,13 +1756,13 @@
 					16.2.1.2 Listing of Subjects Discontinued From Vaccination and/or From the Study – Subjects Enrolled in Multiple Sites – All Subjects ≥16 Years of Age
 				</div>
 				<div style="width: 10%;">
-					231 to 232
+					231 à 232
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_exclusions_2.pl" target="_blank">tasks/pfizer_trials/extract_exclusions_2.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Exclusions Table containing 8 valid exclusions, and a few without dates details.
+					Tableau contenant 8 exclusions valides, et quelques-unes sans détails de dates.
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_exclusions_2.csv" download>.CSV</a>
@@ -1770,13 +1779,13 @@
 					16.2.8.2.IA1 Listing of Subjects With First COVID-19 Occurrence From 7 Days After Dose 2 and Without Evidence of Infection Prior to 7 Days After Dose 2 – Evaluable Efficacy Population (7 Days) – Interim Analysis 1
 				</div>
 				<div style="width: 10%;">
-					586 to 602
+					586 à 602
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_efficacy_cases_2.pl" target="_blank">tasks/pfizer_trials/extract_efficacy_cases_2.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Interim Lab Measurements file containing 94 positive cases, sustained for efficacy calculation when the file was edited.
+					Fichier Interim Lab Measurements contenant 94 cas positifs, conservés pour le calcul de l'efficacité lors de l'édition du fichier.
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_efficacy_cases_2.csv" download>.CSV</a>
@@ -1793,15 +1802,15 @@
 					16.2.8.2 Listing of Subjects With First COVID-19 Occurrence From 7 Days After Dose 2 and Without Evidence of Infection Prior to 7 Days After Dose 2 – Evaluable Efficacy (7 Days) Population
 				</div>
 				<div style="width: 10%;">
-					66 to 99
+					66 à 99
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_efficacy_cases_1.pl" target="_blank">tasks/pfizer_trials/extract_efficacy_cases_1.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Interim Lab Measurements file containing 170 positive cases, sustained for efficacy calculation when the file was edited.
+					Fichier Interim Lab Measurements contenant 170 cas positifs, retenus pour le calcul de l'efficacité lors de l'édition du fichier.
 					<div class="text_separator"></div>
-					Subject <b>[C4591001 1093 10931122]</b> doesn't appear in this table while page 591 of the previous file, and we found no satisfying explanation to her disappearance.
+					Le sujet <b>[C4591001 1093 10931122]</b> n'apparaît pas dans ce tableau alors qu'il est présent à la page 591 du dossier précédent, et nous n'avons trouvé aucune explication satisfaisante à sa disparition.
 				</div>
 				<div style="width: 5%;">
 					<a href="/doc/pfizer_trials/pfizer_trial_efficacy_cases.csv" download>.CSV</a>
@@ -1818,13 +1827,13 @@
 					16.2.8.1 Listing of Subjects With Postvaccination SARS-CoV-2 NAAT-Positive Nasal Swab and COVID-19 Signs and Symptoms – Dose 1 All-Available Efficacy Population
 				</div>
 				<div style="width: 10%;">
-					1 to 65
+					1 à 65
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_all_covid_cases.pl" target="_blank">tasks/pfizer_trials/extract_all_covid_cases.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Table containing 1023 Covid cases accrued during the trial.
+					Tableau contenant 1 023 cas de Covid accumulés pendant le procès.
 				</div>
 				<div style="width: 5%;">
 				</div>
@@ -1840,13 +1849,13 @@
 					16.2.8.1 Listing of Subjects With First COVID-19 Occurrence After Dose 1 – Blinded Placebo-Controlled Follow-up Period – Dose 1 All-Available Efficacy Population
 				</div>
 				<div style="width: 10%;">
-					1 to 430
+					1 à 430
 				</div>
 				<div style="width: 15%;">
 					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_all_covid_cases_april_2021.pl" target="_blank">tasks/pfizer_trials/extract_all_covid_cases_april_2021.pl</a>
 				</div>
 				<div style="width: 25%;">
-					Table containing 1168 Covid cases accrued during the trial.
+					Tableau contenant 1 168 cas de Covid accumulés pendant le procès.
 				</div>
 				<div style="width: 5%;">
 				</div>
@@ -1859,25 +1868,23 @@
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 	    <div style="width:calc(100% - 75px);padding-left: 75px;font-size: 1.35rem;font-weight: bold;">
-		    5.3.3 - Data Merging & Analysis
+		    5.3.3 - Fusion et analyse des données
 		</div>
 		<div class="text_separator"></div>
-		The following merge operations have been performed on the .JSON resulting from the SAS & .PDF files parsing.
+		Les opérations de fusion suivantes ont été effectuées sur les .JSON résultant de l'extraction des fichiers SAS et .PDF.
 		<div class="text_separator"></div>
 		<ul>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_pdf_demographics.pl" target="_blank">tasks/pfizer_trials/compare_pdf_demographics.pl</a> script merges the demographic data available in a single <a href="/doc/pfizer_trials/pfizer_trial_demographics_merged.json" download>.JSON</a> file.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_pdf_demographics.pl" target="_blank">tasks/pfizer_trials/compare_pdf_demographics.pl</a> fusionne les données démographiques disponibles dans un <a href="/doc/pfizer_trials/pfizer_trial_demographics_merged.json" download>fichier .JSON</a> unifié</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> script generates approximate screening dates when none were available, and dispose of a single file for all subjects' screening dates, generating another <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>.JSON</a> file.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> génère des dates approximatives de revue pour les sujets, quand aucune n'est disponible, et permet de disposer d'une seule source pour toutes les dates de revue, générant un autre <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>fichier .JSON</a>.</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyse_adva_file.pl" target="_blank">tasks/pfizer_trials/analyse_adva_file.pl</a> script merges the randomization dates available, and extrapolate approximate one when none were available, resulting in the following <a href="/doc/pfizer_trials/subjects_randomization_dates_merged.json" download>.JSON</a> file.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyse_adva_file.pl" target="_blank">tasks/pfizer_trials/analyse_adva_file.pl</a> fusionne les dates de randomisation disponibles, et extrapole celles-ci quand aucune date n'est disponible, résultant dans <a href="/doc/pfizer_trials/subjects_randomization_dates_merged.json" download>le fichier .JSON suivant</a>.</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl" target="_blank">tasks/pfizer_trials/eval_screening_from_sas_to_pdf.pl</a> script merges the randomization dates available, and extrapolate approximate one when none were available, resulting in the following <a href="/doc/pfizer_trials/subjects_screening_dates.json" download>.JSON</a> file.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_covid_cases.pl" target="_blank">tasks/pfizer_trials/compare_covid_cases.pl</a> fusionne les cas de Covid détectés, résultant dans le <a href="/doc/pfizer_trials/pfizer_trial_cases_merged.json" download>fichier .JSON</a> suivant.</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/compare_covid_cases.pl" target="_blank">tasks/pfizer_trials/compare_covid_cases.pl</a> script merges the covid cases resulting in the following <a href="/doc/pfizer_trials/pfizer_trial_cases_merged.json" download>.JSON</a> file.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/merge_doses.pl" target="_blank">tasks/pfizer_trials/merge_doses.pl</a> fusionne les dates d'injection dans le <a href="/doc/pfizer_trials/merged_doses_data.json" download>fichier .JSON</a> suivant.</li>
 			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/merge_doses.pl" target="_blank">tasks/pfizer_trials/merge_doses.pl</a> script merges the doses injections dates in the following <a href="/doc/pfizer_trials/merged_doses_data.json" download>.JSON</a> file.</li>
-			<div class="text_separator"></div>
-			<li>The <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> script generates most of the end-usage statistics featured in this page, resulting, among other files, in this unified <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> containing the merged subjects screened data.</li>
+			<li>Le script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/analyze_efficacy.pl" target="_blank">tasks/pfizer_trials/analyze_efficacy.pl</a> génère la plupart des statistiques finales affichées sur cette page, générant, entre autres fichiers, ce fichier unifié au format <a href="/doc/pfizer_trials/all_patients.csv" download>.CSV</a> qui contient les données disponibles des sujets revus.</li>
 		</ul>
     % }
 	
