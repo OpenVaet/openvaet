@@ -14,6 +14,23 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.3</a>, published on 2022-12-15, 01:00 CET
+	</div>
+	<ul>
+	    <div class="text_separator"></div>
+		<li><i>Identified that 23 patients believed to be screened were MedDRA codes also coincidentally being subject ids, and adjusted text & diagrams accordingly:</i></li>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/4.png">
+		</div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/5.png">
+		</div>
+	</ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
 		Version 1.2</a>, published on 2022-12-11, 02:00 CET
 	</div>
 	<ul>
@@ -52,7 +69,64 @@
 	</ul>
 	% } else {
     <div class="url-link noselect" onclick="openLocation('/studies/review_nejm_fda_data');return;">&#10229; Return to study</div>
-
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.3</a>, published on 2022-12-15, 01:00 CET
+	</div>
+	<ul>
+	    <div class="text_separator"></div>
+		<li><i>Identified that 23 patients believed to be screened were MedDRA codes also coincidentally being subject ids, and adjusted text & diagrams accordingly:</i></li>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/4.png">
+		</div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/5.png">
+		</div>
+	</ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.2</a>, published on 2022-12-11, 02:00 CET
+	</div>
+	<ul>
+	    <div class="text_separator"></div>
+	    <li>Added changelog.</li>
+	    <div class="text_separator"></div>
+		<li><i>Clarified text in 4.2:</i></li>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/1.png">
+		</div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/2.png">
+		</div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;overflow-x: auto;">
+			<img src="/doc/pfizer_trials/edits/3.png">
+		</div>
+	</ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.1</a>, published on 2022-12-09, 16:00 CET
+	</div>
+	<ul>
+		<li>Fixed an error: subjects highlighted in <b>4.2 - Subjects with a confirmed Covid-19 swab</b> were the subjects missing from the <i>pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf</i> yet present in <i>pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf</i>. Highlights of the "missing in 170 subjects" was therefore incomplete (yet subjects highlighted were indeed missing).</li>
+	</ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.0</a>, published on 2022-12-09, 07:00 CET
+	</div>
+	<ul>
+		<li>Original version</li>
+	</ul>
 	% }
 	<div class="text_separator"></div>
 	<div class="text_separator"></div>

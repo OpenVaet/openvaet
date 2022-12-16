@@ -82,45 +82,10 @@ for my $subjectId (sort{$a <=> $b} keys %sdSuppDs) {
 					$subjectsToRepair{$subjectId} = $screeningOrder;
 					$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'total'}++;
 					$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf'}++;
-			} else {
-				for my $file (sort keys %{$pdfData{'subjects'}->{$subjectId}->{'files'}}) {
-					if (
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-any-malignancy.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-cerebrovascular.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-chf.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-leukemia.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-metastatic-tumour.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-periph-vasc.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-rheumatic.pdf' ||
-						$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_c4591001-A-report-cci-lymphoma.pdf') {
-						$subjectsToRepair{$subjectId} = $screeningOrder;
-						$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'labMeasurments'}->{'total'}++;
-						$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'labMeasurments'}->{$file}++;
-						last;
-					}
-				}
-				if (!exists $subjectsToRepair{$subjectId}) {
-					for my $file (sort keys %{$pdfData{'subjects'}->{$subjectId}->{'files'}}) {
-						if (
-							$file eq 'pfizer_documents/native_files/pd-production-040122/125742_S1_M5_5351_c4591001-fa-interim-randomization-sensitive.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_c4591001-interim-mth6-randomization-sensitive.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-fa-interim-discontinued-patients.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-excluded-patients.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-excluded-patients.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-fa-interim-adverse-events.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-protocol-deviations.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-fa-interim-narrative-sensitive.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-fa-interim-protocol-deviations-sensitive.pdf' ||
-							$file eq 'pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements.pdf')
-						{
-							$subjectsToRepair{$subjectId} = $screeningOrder;
-							$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'total'}++;
-							$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{$file}++;
-						}
-					}
-				}
+			} elsif (exists $pdfData{'subjects'}->{$subjectId}->{'files'}->{'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf'}) {
+					$subjectsToRepair{$subjectId} = $screeningOrder;
+					$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'total'}++;
+					$stats{'screeningDate'}->{'repaired'}->{'fromPdfs'}->{'pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-lab-measurements-sensitive.pdf'}++;
 			}
 			if (!exists $subjectsToRepair{$subjectId} && exists $randomization{$subjectId}) {
 				$subjectsToRepair{$subjectId} = $screeningOrder;

@@ -633,6 +633,7 @@ sub verify_randomization {
 																		# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCasesSeptember'}++;
 																		# }
 																		$positiveSubjectsExposureByCountries{$trialSiteCountry}->{'totalCasesSeptember'}++;
+																		$positiveSubjectsExposureByTrialSites{$trialSiteId}->{'totalCasesSeptember'}++;
 																	}
 																	# if ($trialSiteState) {
 																	# 	$positiveSubjectsExposureByCountries{$trialSiteState}->{'totalCases'}++;
