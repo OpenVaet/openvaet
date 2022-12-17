@@ -322,6 +322,7 @@ sub startup {
     $r->get('/studies/vaers_fertility')->to('studies#vaers_fertility');
     $r->get('/studies/verifying_170_cases')->to('verifying_170_cases#verifying_170_cases');
     $r->get('/studies/review_nejm_fda_data')->to('review_nejm_fda_data#review_nejm_fda_data');
+    $r->get('/studies/vaers_data_deletion')->to('vaers_data_deletion#vaers_data_deletion');
     $r->get('/review_nejm_fda_data/study_changelog')->to('review_nejm_fda_data#study_changelog');
     $r->post('/review_nejm_fda_data/load_dose_1_mapping')->to('review_nejm_fda_data#load_dose_1_mapping');
     $r->post('/review_nejm_fda_data/load_dose_1_week_by_week')->to('review_nejm_fda_data#load_dose_1_week_by_week');

@@ -1065,7 +1065,11 @@ sub get_telegram_updates {
                 if (%$result{$channelLabel}->{'forward_from_chat'}) {
                     my $from  = %$result{$channelLabel}->{'forward_from_chat'}->{'title'}    // die;
                     my $uName = %$result{$channelLabel}->{'forward_from_chat'}->{'username'} // die;
-                    $text     = "This message was forwarded from $from [https://t.me/$uName]\n\n" . $text;
+                    if (defined $text) {
+                        $text = "This message was forwarded from $from [https://t.me/$uName]\n\n" . $text;
+                    } else {
+                        $text = "This message was forwarded from $from [https://t.me/$uName]\n\n";
+                    }
                 }
                 $messages{$channelName}->{$messageId}->{'text'}      = $text if $text;
                 if (%$result{$channelLabel}->{'document'}) {
