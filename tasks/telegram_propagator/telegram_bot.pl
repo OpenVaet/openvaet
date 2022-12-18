@@ -361,14 +361,12 @@ sub post_on_gab {
         $params{'sensitive'}      = 'false';
         $params{'spoiler_text'}   = '';
         $params{'status'}         = $text;
-        # p%params;
         my $params = encode_json\%params;
         $request->header(@headers);
         $request->content($params);
         my $res     = $ua->request($request);
         my $content = $res->decoded_content;
         my $cJson   = decode_json($content);
-        # p$cJson;
         $postId     = %$cJson{'id'} // die "Failed posting to Gab";
         print_log("Successfully Posted Message to Gab ...");
     }
@@ -1013,7 +1011,6 @@ sub get_telegram_updates {
             }
         }
         for my $result (@{%$updates{'result'}}) {
-            # p$result;
             if (%$result{'channel_post'} || %$result{'edited_channel_post'}) {
                 my $channelLabel;
                 if (%$result{'channel_post'}) {
@@ -1059,6 +1056,13 @@ sub get_telegram_updates {
                             $text =~ s/\Q$textBefore\E/$textBeforeReplaced/;
                         }
                     }
+                }
+
+                # If the message is a poll, fetching the question, and adding a redirection to Telegram to the text.
+                if (%$result{$channelLabel}->{'poll'}) {
+                    die if $text;
+                    my $question = %$result{$channelLabel}->{'poll'}->{'question'} // die;
+                    $text = "$question\n\nYou can vote on this poll on Telegram: https://t.me/c/$channelId/$messageId";
                 }
                 $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
                 $messages{$channelName}->{$messageId}->{'editUts'}   = $editUts if $editUts;
