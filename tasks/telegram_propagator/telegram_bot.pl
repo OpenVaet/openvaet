@@ -1062,7 +1062,7 @@ sub get_telegram_updates {
                 if (%$result{$channelLabel}->{'poll'}) {
                     die if $text;
                     my $question = %$result{$channelLabel}->{'poll'}->{'question'} // die;
-                    $text = "$question\n\nYou can vote on this poll on Telegram: https://t.me/c/$channelId/$messageId";
+                    $text = "$question\n\nYou can vote on this poll on Telegram: https://t.me/$channelName/$messageId";
                 }
                 $messages{$channelName}->{$messageId}->{'uts'}       = $uts;
                 $messages{$channelName}->{$messageId}->{'editUts'}   = $editUts if $editUts;
