@@ -10,6 +10,20 @@
     % } else {
 
     % }
+    <h2 style="margin-left: 15px;">v 1.34</h2>
+    % if ($currentLanguage eq 'en') {
+    <ul>
+        <li>Added a new tab "Restored" to the Twitter Thought Police page.</li>
+    </ul>
+    % } elsif ($currentLanguage eq 'fr') {
+    <ul>
+        <li>Ajout d'une nouvelle tab "Restorés" à la page "Police de la pensée sur Twitter".</li>
+    </ul>
+    % } else {
+        % die;
+    % }
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
     <h2 style="margin-left: 15px;">v 1.33</h2>
     % if ($currentLanguage eq 'en') {
     <ul>

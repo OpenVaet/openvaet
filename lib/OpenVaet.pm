@@ -369,6 +369,7 @@ sub startup {
     $r->get('/twitter_thought_police')->to('twitter_thought_police#twitter_thought_police');
     $r->post('/twitter_thought_police/twitter_followed_users')->to('twitter_thought_police#twitter_followed_users');
     $r->post('/twitter_thought_police/twitter_banned_users')->to('twitter_thought_police#twitter_banned_users');
+    $r->post('/twitter_thought_police/twitter_restored_users')->to('twitter_thought_police#twitter_restored_users');
     $r->get('/twitter_thought_police/open_user_tweets')->to('twitter_thought_police#open_user_tweets');
     $r->post('/twitter_thought_police/twitter_banned_users_by_network')->to('twitter_thought_police#twitter_banned_users_by_network');
     $r->post('/twitter_thought_police/tag_username')->to('twitter_thought_police#tag_username');

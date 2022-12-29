@@ -149,6 +149,8 @@ sub twitter_banned_users {
     for my $userObj (@$twitterUsersBansJson) {
         my %obj = %$userObj;
         my $banSpecificReasons = $obj{'banSpecificReasons'} // die;
+        my $restorationDate = $obj{'restorationDate'};
+        next if $restorationDate;
         # p%obj;
         if ($sortCriterion eq 'banned-users') {
             my $twitterUserName = $obj{'twitterUserName'} // die;
@@ -167,6 +169,75 @@ sub twitter_banned_users {
             my $followersCount = $obj{'followersCount'} // die;
             push @{$twitterUsers{$followersCount}}, \%obj;
         } elsif ($sortCriterion eq 'banned-contact-known') {
+            my $hasAltContact = $obj{'hasAltContact'} // die;
+            push @{$twitterUsers{$hasAltContact}}, \%obj;
+        } else {
+            die "sortCriterion : $sortCriterion"
+        }
+        # p%obj;
+        # p%obj;
+        # last;
+    }
+
+    # p%twitterUsers;
+
+    # p$twitterUsersBansJson;
+
+    $self->render(
+        currentLanguage    => $currentLanguage,
+        sortCriterion      => $sortCriterion,
+        sortCriterionOrder => $sortCriterionOrder,
+        languages          => \%languages,
+        twitterUsers       => \%twitterUsers
+    );
+}
+
+sub twitter_restored_users {
+    my $self = shift;
+
+    my $currentLanguage    = $self->param('currentLanguage')    // die;
+    my $sortCriterion      = $self->param('sortCriterion')      // die;
+    my $sortCriterionOrder = $self->param('sortCriterionOrder') // die;
+    # say "sortCriterion      : $sortCriterion";
+    # say "sortCriterionOrder : $sortCriterionOrder";
+
+    # Loggin session if unknown.
+    session::session_from_self($self);
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+    # Fetching twitter users & metrics.
+    my $twitterUsersBansFile = 'twitter_data/twitter_users_bans_finalized.json';
+    my $twitterUsersBansJson = json_from_file($twitterUsersBansFile);
+    # p$twitterUsersBansJson;
+
+    my %twitterUsers = ();
+    for my $userObj (@$twitterUsersBansJson) {
+        my %obj = %$userObj;
+        my $banSpecificReasons = $obj{'banSpecificReasons'} // die;
+        my $restorationDate = $obj{'restorationDate'};
+        next unless $restorationDate;
+        # p%obj;
+        if ($sortCriterion eq 'restored-users') {
+            my $twitterUserName = $obj{'twitterUserName'} // die;
+            push @{$twitterUsers{$twitterUserName}}, \%obj;
+        } elsif ($sortCriterion eq 'restored-date') {
+            my $banDate = $obj{'banDate'} // die;
+            my $banUts  = time::datetime_to_timestamp($banDate);
+            push @{$twitterUsers{$banUts}}, \%obj;
+        } elsif ($sortCriterion eq 'restoration-date') {
+            my $restorationDate = $obj{'restorationDate'} // die;
+            my $restorationUts  = time::datetime_to_timestamp("$restorationDate 12:00:00");
+            push @{$twitterUsers{$restorationUts}}, \%obj;
+        } elsif ($sortCriterion eq 'restored-indexed-tweets') {
+            my $totalTweets = $obj{'tweetsArchived'} // 0;
+            push @{$twitterUsers{$totalTweets}}, \%obj;
+        } elsif ($sortCriterion eq 'restored-followers') {
+            my $followersCount = $obj{'followersCount'} // die;
+            push @{$twitterUsers{$followersCount}}, \%obj;
+        } elsif ($sortCriterion eq 'restored-contact-known') {
             my $hasAltContact = $obj{'hasAltContact'} // die;
             push @{$twitterUsers{$hasAltContact}}, \%obj;
         } else {
