@@ -76,8 +76,8 @@ my $sleepSeconds         = 900;       # Defines how long we will sleep on a "Too
 my $delayBetweenUpdates  = 3600 * 1;  # Time we wait (in seconds) between followers updates on a given profile.
 my $mainTwitterId;
 
-finalize_banned_users();
-die;
+# finalize_banned_users();
+# die;
 
 while (1) {
 
