@@ -39,6 +39,8 @@ my $twitterUsersFile     = 'twitter_data/twitter_users.json';
 my $twitterRelsFile      = 'twitter_data/twitter_users_relations.csv';
 my $twitterBansFile      = 'twitter_data/twitter_users_bans.csv';
 my $twitterTweetsFolder  = 'twitter_data/tweets';
+my $twitterUsersBansFile = 'twitter_data/twitter_users_bans_finalized.json';
+my $twitterUsersBansJson = json_from_file($twitterUsersBansFile); # Loads users known to have been banned.
 my $configurationFile    = 'tasks/twitter/api_config.cfg';
 my %apiConfig            = ();
 get_config();
@@ -61,6 +63,7 @@ my @headers = (
 );
 
 # Initiates values stored.
+my %twitterUsersBans     = ();
 my %twitterUserRelations = ();
 my %currentUserRelations = ();
 my %twitterUsersLookedAt = ();
@@ -73,13 +76,14 @@ my $sleepSeconds         = 900;       # Defines how long we will sleep on a "Too
 my $delayBetweenUpdates  = 3600 * 1;  # Time we wait (in seconds) between followers updates on a given profile.
 my $mainTwitterId;
 
-# finalize_banned_users();
-# die;
+finalize_banned_users();
+die;
 
 while (1) {
 
     # Retrieves Twitter users who already have been archived.
     %twitterUsers            = ();
+    %twitterUsersBans        = ();
     twitter_user();
 
     # Retrieves the user data of the configured twitter profile.
@@ -100,6 +104,14 @@ while (1) {
     %twitterUsersArchived    = ();
     verify_twitter_user_existing_relations();
 
+    # For each account known but which hasn't been verified through relations,
+    # or isn't known to be banned, verify the status every 48 hours.
+    organize_bans();
+    verify_known_users();
+
+    # Updates known users data.
+    print_user_data();
+
     # Listing users of interest & archiving their tweets.
     archive_twitter_users_tweets();
 
@@ -119,9 +131,53 @@ while (1) {
     sleep $sleepSeconds;
 }
 
+sub organize_bans {
+    if ($twitterUsersBansJson) {
+        for my $uData (@$twitterUsersBansJson) {
+            my $twitterName    = %$uData{'twitterName'} // die;
+            $twitterUsersBans{$twitterName} = 1;
+        }
+    }
+}
+
+sub verify_known_users {
+    my ($current, $total) = (0, 0);
+    for my $twitterUserId (sort keys %twitterUsers) {
+        my $twitterUserName    = $twitterUsers{$twitterUserId}->{'twitterUserName'} // die;
+        next if exists $twitterUsersArchived{$twitterUserId};
+        next if exists $twitterUsersBans{$twitterUserName};
+        my $latestStatusUpdate = $twitterUsers{$twitterUserId}->{'latestStatusUpdate'};
+        my $currentUts         = time::current_timestamp();
+        if (!$latestStatusUpdate || ($latestStatusUpdate && ($latestStatusUpdate + 86400 < $currentUts))) {
+            $total++;
+        }
+    }
+    for my $twitterUserId (sort keys %twitterUsers) {
+        my $twitterUserName    = $twitterUsers{$twitterUserId}->{'twitterUserName'} // die;
+        next if exists $twitterUsersArchived{$twitterUserId};
+        next if exists $twitterUsersBans{$twitterUserName};
+        my $latestStatusUpdate = $twitterUsers{$twitterUserId}->{'latestStatusUpdate'};
+        my $currentUts         = time::current_timestamp();
+        if (!$latestStatusUpdate || ($latestStatusUpdate && ($latestStatusUpdate + 86400 < $currentUts))) {
+            $current++;
+            STDOUT->printflush("\rRefreshing non related users [$current / $total]");
+            my $currentDatetime  = time::current_datetime();
+            my $isBanned         = verify_user_ban($twitterUserId, $twitterUserName);
+            if ($isBanned == 1) {
+                say "\n$currentDatetime - [$twitterUserName] has been suspended.";
+                open my $out, '>>:utf8', $twitterBansFile;
+                say $out "$currentDatetime;$twitterUserId;$twitterUserName;";
+                close $out;
+            } else {
+                $twitterUsersArchived{$twitterUserId} = $twitterUserName;
+            }
+            $twitterUsers{$twitterUserId}->{'latestStatusUpdate'} = $currentUts;
+        }
+    }
+    say "" if $total;
+}
+
 sub finalize_banned_users {
-    my $twitterUsersBansFile = 'twitter_data/twitter_users_bans_finalized.json';
-    my $twitterUsersBansJson = json_from_file($twitterUsersBansFile);
     my @cleanedUsers;
     my $hasChanged = 0;
     my %bannedUsers = ();
@@ -525,14 +581,40 @@ sub verify_user_ban {
     my $twitterProfileUrl         = "https://api.twitter.com/2/users/by/username/$twitterUserName?user.fields=" .
                                     "created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url," .
                                     "protected,public_metrics,url,username,verified,withheld";
-    say "Getting  [$twitterUserName] data";
-    my $res = $ua->get($twitterProfileUrl, @headers);
-    unless ($res->is_success)
-    {
-        p$res;
-        die "failed to get [$twitterProfileUrl]";
+    # say "Getting  [$twitterUserName] data";
+    my $fetched = 0;
+    my $content;
+    while ($fetched == 0) {
+        my $res = $ua->get($twitterProfileUrl, @headers);
+        unless ($res->is_success)
+        {
+            my $message = $res->message();
+            if ($message eq 'Too Many Requests') {
+                # say "message : $message";
+                say "\nSleeping $sleepSeconds seconds before to try again.";
+                for my $sleep (1 .. $sleepSeconds) {
+                    STDOUT->printflush("\rSleeping [$sleep / $sleepSeconds]");
+                    sleep 1;
+                }
+                say "";
+            } elsif ($message eq 'Service Unavailable') {
+                # say "message : $message";
+                say "\nSleeping $sleepSecondsOnFail seconds before to try again.";
+                for my $sleep (1 .. $sleepSecondsOnFail) {
+                    STDOUT->printflush("\rSleeping [$sleep / $sleepSecondsOnFail]");
+                    sleep 1;
+                }
+                say "";
+            } else {
+                p$res;
+                say "message : [$message]";
+                die "failed to get [$twitterProfileUrl]";
+            }
+        } else {
+            $fetched = 1;
+            $content = $res->decoded_content;
+        }
     }
-    my $content = $res->decoded_content;
     my $contentJson;
     eval {
         $contentJson = decode_json($content);

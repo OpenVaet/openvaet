@@ -1,0 +1,241 @@
+
+
+% my %twitterUsers = %$twitterUsers;
+% use Data::Printer;
+% if ($sortCriterionOrder eq 'desc') {
+    % if ($sortCriterion eq 'restored-users') {
+        % for my $criterion (reverse sort keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % # p $obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $hasMotive       = $obj{'hasMotive'}       // die;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $banDate  = $obj{'banDate'}  // die;
+                % my $restorationDate  = $obj{'restorationDate'}  // die;
+                % my $timeBetweenBans  = $obj{'timeBetweenBans'}  // die;
+                % my $tweetsArchived  = $obj{'tweetsArchived'} // 0;
+                % my $hasAltContact   = $obj{'hasAltContact'}  // 0;
+                % if ($tweetsArchived) {
+                    % my $twitterId     = $obj{'twitterId'}     // die;
+            <div class="clickable-user" onclick="openUserTweets('<%=$twitterUserName%>', '<%=$twitterId%>');return;">
+                % } else {
+            <div style="width: 100%;min-width: 846px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: lightgrey;">
+                % }
+                <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$banDate%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$restorationDate%> (<%=$timeBetweenBans%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:13%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsArchived%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        % if ($hasAltContact) {
+                        <div style="margin: auto;"><img style="width:15px;height:15px;" src="/images/valid.png"></div>
+                        % } else {
+                        <div style="margin: auto;"><img style="width:15px;height:15px;" src="/images/invalid.png"></div>
+                        % }
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % } else {
+        % for my $criterion (sort{$b <=> $a} keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % # p $obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $restorationDate  = $obj{'restorationDate'}  // die;
+                % my $timeBetweenBans  = $obj{'timeBetweenBans'}  // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % my $hasMotive       = $obj{'hasMotive'}       // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $banDate  = $obj{'banDate'}  // die;
+                % my $tweetsArchived  = $obj{'tweetsArchived'} // 0;
+                % my $hasAltContact   = $obj{'hasAltContact'}  // 0;
+                % my $twitterId       = $obj{'twitterId'};
+            <div class="clickable-user" onclick="openUserTweets('<%=$twitterUserName%>', '<%=$twitterId%>');return;">
+                <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$banDate%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$restorationDate%> (<%=$timeBetweenBans%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:13%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                % if ($tweetsArchived) {
+                <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;border-right: 1px solid #fff;">
+                % } else {
+                <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;border-right: 1px solid #fff;background: lightgrey;">
+                % }
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsArchived%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        % if ($hasAltContact) {
+                        <div style="margin: auto;"><img style="width:15px;height:15px;" src="/images/valid.png"></div>
+                        % } else {
+                        <div style="margin: auto;"><img style="width:15px;height:15px;" src="/images/invalid.png"></div>
+                        % }
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % }
+% } elsif ($sortCriterionOrder eq 'asc') {
+    % if ($sortCriterion eq 'restored-users') {
+        % for my $criterion (sort keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $restorationDate  = $obj{'restorationDate'}  // die;
+                % my $timeBetweenBans  = $obj{'timeBetweenBans'}  // die;
+                % my $tweetsArchived  = $obj{'tweetsArchived'}  // 0;
+                % my $hasMotive       = $obj{'hasMotive'}       // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $banDate  = $obj{'banDate'}  // die;
+                % my $hasAltContact   = $obj{'hasAltContact'}  // 0;
+                % if ($tweetsArchived) {
+                    % my $twitterId     = $obj{'twitterId'}     // die;
+            <div class="clickable-user" onclick="openUserTweets('<%=$twitterUserName%>', '<%=$twitterId%>');return;">
+                % } else {
+            <div style="width: 100%;min-width: 846px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: lightgrey;">
+                % }
+                <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$banDate%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$restorationDate%> (<%=$timeBetweenBans%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:13%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsArchived%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$hasAltContact%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % } else {
+        % for my $criterion (sort{$a <=> $b} keys %twitterUsers) {
+            % for my $obj (@{$twitterUsers{$criterion}}) {
+                % my %obj = %$obj;
+                % my $twitterName     = $obj{'twitterName'}     // die;
+                % my $twitterUserName = $obj{'twitterUserName'} // die;
+                % my $restorationDate  = $obj{'restorationDate'}  // die;
+                % my $timeBetweenBans  = $obj{'timeBetweenBans'}  // die;
+                % my $hasMotive       = $obj{'hasMotive'}       // die;
+                % my $localUrl        = $obj{'localUrl'}        // die;
+                % $localUrl           =~ s/public//;
+                % my $followersCount  = $obj{'followersCount'}  // die;
+                % my $banDate  = $obj{'banDate'}  // die;
+                % my $tweetsArchived  = $obj{'tweetsArchived'} // 0;
+                % my $hasAltContact   = $obj{'hasAltContact'}  // 0;
+                % if ($tweetsArchived) {
+                    % my $twitterId     = $obj{'twitterId'}     // die;
+            <div class="clickable-user" onclick="openUserTweets('<%=$twitterUserName%>', '<%=$twitterId%>');return;">
+                % } else {
+            <div style="width: 100%;min-width: 846px;display: flex;flex-wrap: wrap;border-bottom: 1px solid #fff;border-top: 1px solid #fff;background: lightgrey;">
+                % }
+                <div style="width:calc(30% - 3px);min-width: 200px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <img src="<%=$localUrl%>" style="margin-left: 15px;width: 46px;height: 46px;">
+                        <div style="margin: auto;max-width: calc(100% - 61px);"><b><%=$twitterName%> (@<%=$twitterUserName%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:14%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$banDate%> (<%=$timeBetweenBans%>)</b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$restorationDate%></b></div>
+                    </div>
+                </div>
+                <div style="width:13%;min-width: 110px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$followersCount%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(15% - 1px);;min-width: 120px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$tweetsArchived%></b></div>
+                    </div>
+                </div>
+                <div style="width:calc(14% - 1px);;min-width: 115px;padding-top: 20px;border-right: 1px solid #fff;">
+                    <div style="width:100%;height:46px;display: flex;flex-wrap: wrap;">
+                        <div style="margin: auto;"><b><%=$hasAltContact%></b></div>
+                    </div>
+                </div>
+            </div>
+            % }
+        % }
+    % }
+% } else {
+
+% }
