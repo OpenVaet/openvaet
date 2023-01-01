@@ -1,12 +1,10 @@
 % layout 'default';
-% title 'OPENVAET - Home';
+% title 'OPENVAET - Open Vaccine Adverse Effects Tracker';
 
 <head>
     <link href="/css/select2.min.css" rel="stylesheet" />
     <script src="/js/select2.min.js"></script>
     <!-- Primary Meta Tags -->
-    <title>OPENVAET - Open Vaccine Adverse Effects Tracker</title>
-    <meta name="title" content="OPENVAET - Open Vaccine Adverse Effects Tracker">
     <meta name="description" content="This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations.">
 
     <!-- Open Graph / Facebook -->

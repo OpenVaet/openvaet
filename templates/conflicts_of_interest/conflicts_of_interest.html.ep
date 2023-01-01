@@ -1,5 +1,25 @@
 % layout 'default';
 % title 'OPENVAET - Conflicts Of Interests';
+<head>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="OPENVAET - Conflits d'intérêts">
+    <meta name="description" content="Verification des conflits d'intérêts des Professionnels de santé opérant en France.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://openvaet.org/twitter_thought_police?currentLanguage=en">
+    <meta property="og:title" content="OPENVAET - Conflits d'intérêts">
+    <meta property="og:description" content="Verification des conflits d'intérêts des Professionnels de santé opérant en France.">
+    <meta property="og:image" content="https://openvaet.org/doc/conflicts_of_interest/sample.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://openvaet.org/twitter_thought_police?currentLanguage=en">
+    <meta property="twitter:title" content="OPENVAET - Conflits d'intérêts">
+    <meta property="twitter:description" content="Verification des conflits d'intérêts des Professionnels de santé opérant en France.">
+    <meta property="twitter:image" content="https://openvaet.org/doc/conflicts_of_interest/sample.png">
+</head>
 
 <style type="text/css">
     .search_container {
