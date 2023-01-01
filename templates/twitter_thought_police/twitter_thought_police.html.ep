@@ -1,6 +1,28 @@
 % layout 'default';
 % title 'OPENVAET - Twitter Thought Police';
 
+<head>
+
+    <!-- Primary Meta Tags -->
+    <title>OPENVAET - Twitter Thought Police</title>
+    <meta name="title" content="OPENVAET - Twitter Thought Police">
+    <meta name="description" content="We feature here the confirmed cases of censorship, of qualified scientists or members of the public; whose accounts have been terminated by Twitter on the sole motive that they shared facts, jokes or opinions with the public, which were diverging from the authorised dogma.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://openvaet.org/twitter_thought_police?currentLanguage=en">
+    <meta property="og:title" content="OPENVAET - Twitter Thought Police">
+    <meta property="og:description" content="We feature here the confirmed cases of censorship, of qualified scientists or members of the public; whose accounts have been terminated by Twitter on the sole motive that they shared facts, jokes or opinions with the public, which were diverging from the authorised dogma.">
+    <meta property="og:image" content="https://openvaet.org/doc/thought_police/TweetBird.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://openvaet.org/twitter_thought_police?currentLanguage=en">
+    <meta property="twitter:title" content="OPENVAET - Twitter Thought Police">
+    <meta property="twitter:description" content="We feature here the confirmed cases of censorship, of qualified scientists or members of the public; whose accounts have been terminated by Twitter on the sole motive that they shared facts, jokes or opinions with the public, which were diverging from the authorised dogma.">
+    <meta property="twitter:image" content="https://openvaet.org/doc/thought_police/TweetBird.png">
+</head>
+
 <style type="text/css">
     .ndt_note {
         display: inline-block;

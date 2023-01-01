@@ -119,7 +119,7 @@ while (1) {
     archive_twitter_users_profile_pictures();
 
     # Verifying every tweet, and checking if medias are requiring to be downloaded.
-    verify_tweets_medias();
+    # verify_tweets_medias();
 
     # Updates known users data.
     print_user_data();
@@ -134,8 +134,8 @@ while (1) {
 sub organize_bans {
     if ($twitterUsersBansJson) {
         for my $uData (@$twitterUsersBansJson) {
-            my $twitterName    = %$uData{'twitterName'} // die;
-            $twitterUsersBans{$twitterName} = 1;
+            my $twitterUserName = %$uData{'twitterUserName'} // die;
+            $twitterUsersBans{$twitterUserName} = 1;
         }
     }
 }

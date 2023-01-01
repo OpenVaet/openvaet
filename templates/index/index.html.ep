@@ -4,6 +4,24 @@
 <head>
     <link href="/css/select2.min.css" rel="stylesheet" />
     <script src="/js/select2.min.js"></script>
+    <!-- Primary Meta Tags -->
+    <title>OPENVAET - Open Vaccine Adverse Effects Tracker</title>
+    <meta name="title" content="OPENVAET - Open Vaccine Adverse Effects Tracker">
+    <meta name="description" content="This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://openvaet.org">
+    <meta property="og:title" content="OPENVAET - Open Vaccine Adverse Effects Tracker">
+    <meta property="og:description" content="This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations.">
+    <meta property="og:image" content="https://openvaet.org/doc/index/index_preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://openvaet.org">
+    <meta property="twitter:title" content="OPENVAET - Open Vaccine Adverse Effects Tracker">
+    <meta property="twitter:description" content="This open source project aims at opening the adverse effects data to the public debate, and to improve its accessibility for the public & the professionals, in a easily usable format. Specificaly, in this first release, our target has been to compare the after effects reported for the most common vaccines (Diphteria, Tetanus, Hepatitis B, Poliomyelitis), administered to most of the american & european populations, and the COVID vaccines, now also administered to most of the american & european populations.">
+    <meta property="twitter:image" content="https://openvaet.org/doc/index/index_preview.png">
 </head>
 
 <style type="text/css">
