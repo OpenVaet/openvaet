@@ -392,6 +392,7 @@ sub startup {
     $r->get('/miscarriages_within_a_week')->to('miscarriages_within_a_week#miscarriages_within_a_week');
     $r->get('/census_data')->to('census_data#census_data');
     $r->get('/data_admin')->to('data_admin#data_admin');
+    $r->get('/pfizer_timeline')->to('pfizer_timeline#pfizer_timeline');
     $r->get('/data_admin/symptoms_sets')->to('data_admin#symptoms_sets');
     $r->get('/data_admin/edit_symptoms_set')->to('data_admin#edit_symptoms_set');
     $r->get('/data_admin/new_symptoms_set')->to('data_admin#new_symptoms_set');

@@ -1,0 +1,24 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer Trial Timeline';
+% } else {
+% title 'OPENVAET - Chronologie des essais Pfizer';
+% }
+<head>
+    <link href="/timeline3/css/timeline.css" rel="stylesheet" />
+    <script src="/timeline3/js/timeline.js"></script>
+</head>
+
+<div id='timeline-embed' style="width: 100%; height: 100%;"></div>
+
+<script type="text/javascript">
+    var additionalOptions = {
+      start_at_end: true,
+      default_bg_color: {r:0, g:0, b:0},
+      timenav_height: 250
+    }
+
+    timeline = new TL.Timeline('timeline-embed',
+    'https://docs.google.com/spreadsheets/d/1cWqQBZCkX9GpzFtxCWHoqFXCHg-ylTVUWlnrdYMzKUI/pubhtml',
+    additionalOptions);
+</script>
