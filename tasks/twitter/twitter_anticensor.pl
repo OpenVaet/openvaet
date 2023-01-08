@@ -85,6 +85,7 @@ while (1) {
     %twitterUsers            = ();
     %twitterUsersBans        = ();
     twitter_user();
+    $twitterUsersBansJson    = json_from_file($twitterUsersBansFile); # Loads users known to have been banned.
 
     # Retrieves the user data of the configured twitter profile.
     $mainTwitterId           = get_twitter_profile();

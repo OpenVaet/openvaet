@@ -47,8 +47,10 @@
   /* VCard
 	================================================== */
 }
+.tl-timeline h2  {
+  color:#fff;
+}
 .tl-timeline h1,
-.tl-timeline h2,
 .tl-timeline h3,
 .tl-timeline h4,
 .tl-timeline h5,

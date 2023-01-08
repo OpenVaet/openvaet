@@ -9,6 +9,12 @@
     <script src="/timeline3/js/timeline.js"></script>
 </head>
 
+<style>
+ h2 {
+    color:white;
+ }
+</style>
+
 <div id='timeline-embed' style="width: 100%; height: 100%;"></div>
 
 <script type="text/javascript">
@@ -18,7 +24,8 @@
       timenav_height: 250
     }
 
-    timeline = new TL.Timeline('timeline-embed',
-    'https://docs.google.com/spreadsheets/d/1cWqQBZCkX9GpzFtxCWHoqFXCHg-ylTVUWlnrdYMzKUI/pubhtml',
+    var timelineJson = '<%==$timelineJson%>';
+    timelineJson = JSON.parse(timelineJson);
+    timeline = new TL.Timeline('timeline-embed', timelineJson,
     additionalOptions);
 </script>
