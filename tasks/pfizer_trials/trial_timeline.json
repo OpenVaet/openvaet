@@ -152,6 +152,139 @@
                 "headline": "PHMPT docs release",
                 "text": "<b>Pfizer's Documents</b><p>Documents with a large file size are provided in a .zip file and will need to be uncompressed after download.</p>"
             }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 6",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/144245/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol6.png"
+            },
+            "start_date":
+            {
+                "day": "08",
+                "month": "09",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 6",
+                "text": "<b>Vaccines and Related Biological Products Advisory Committee Meeting - December 10, 2020</b><p>For any phase 3 participants who were not in the reactogenicity subset, local reactions and systemic events consistent with reactogenicity were detected and reported as unsolicited AEs. HIV-positive participants and adolescents 12 through 15 years of age were included in the reactogenicity subset with implementation of protocol amendment 6 (finalized on September 8, 2020) and amendment 7 (finalized on October 6, 2020), respectively.</p><br><p>&#10230; Population extended from 30.000 to 43.655 subjects.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 7",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/144245/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol7.png"
+            },
+            "start_date":
+            {
+                "day": "06",
+                "month": "10",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 7",
+                "text": "<b>Vaccines and Related Biological Products Advisory Committee Meeting - December 10, 2020</b><p>For any phase 3 participants who were not in the reactogenicity subset, local reactions and systemic events consistent with reactogenicity were detected and reported as unsolicited AEs. HIV-positive participants and adolescents 12 through 15 years of age were included in the reactogenicity subset with implementation of protocol amendment 6 (finalized on September 8, 2020) and amendment 7 (finalized on October 6, 2020), respectively.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Bourla plans results end October",
+                "credit": "<a style=\"color:white;\" href=\"https://endpts.com/covid-19-roundup-cdc-director-urges-states-to-ready-vaccine-distribution-sites-by-nov-1-researchers-say-steroids-can-reduce-mortality/\" target=\"_blank\">Endpts.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/endpts_20200903.png"
+            },
+            "start_date":
+            {
+                "day": "03",
+                "month": "09",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Bourla plans results end October",
+                "text": "<b>Covid-19 roundup: Albert Bourla says Pfizer PhIII is at 23,000 patients, submission coming end of October</b><p>\"By the end of October... we should have enough events to know if the product works or not,\" Bourla said, adding they would \"immediately\" submit for the vaccine approval. \"We've already worked on the rest of the file,\" he said.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Pfizer says no results end October",
+                "credit": "<a style=\"color:white;\" href=\"https://www.nytimes.com/2020/09/30/health/pfizer-covid-vaccine.html\" target=\"_blank\">Nytimes.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nytimes_20200930.png"
+            },
+            "start_date":
+            {
+                "day": "30",
+                "month": "09",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Pfizer says no results end October",
+                "text": "<b>All Eyes Are on Pfizer as Trump Pushes for Vaccine by October</b><p>Pfizer will not be anywhere near completion of its clinical trial by the end of October, according to a company spokeswoman. When Dr. Bourla referred to a \"conclusive readout\" next month, she said, he meant that it's possible the outside board of experts monitoring the trial would have by that date found promising signs that the vaccine works.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "First interim efficacy analysis",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/152253/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/fda_152253.png"
+            },
+            "start_date":
+            {
+                "day": "04",
+                "month": "11",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "First interim efficacy analysis",
+                "text": "<b>BLA, Original Application</b><p>To demonstrate efficacy of BNT162b2, the applicant provided the efficacy results from the interim analysis (cutoff date: November 4, 2020), the final analysis (cutoff date: November 14, 2020), and an updated analysis for cases accrued during blinded placebo-controlled follow-up (cutoff date: March 13, 2021) for Study C4591001. As the efficacy results from the interim and final analyses supported the issuance of an EUA and have been reviewed under EUA 27034, this statistical review primarily focuses on the updated efficacy results.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Efficacy Data Cut-off",
+                "credit": "<a style=\"color:white;\" href=\"https://www.nejm.org/doi/full/10.1056/nejmoa2034577\" target=\"_blank\">Nejm.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nejm_cutoff.png"
+            },
+            "start_date":
+            {
+                "day": "14",
+                "month": "11",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Efficacy Data Cut-off",
+                "text": "<b>Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine</b><p>Between July 27, 2020, and November 14, 2020, a total of 44,820 persons were screened, and 43,548 persons 16 years of age or older underwent randomization at 152 sites worldwide (United States, 130 sites; Argentina, 1; Brazil, 2; South Africa, 4; Germany, 6; and Turkey, 9) in the phase 2/3 portion of the trial.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Safety Data Cut-off",
+                "credit": "<a style=\"color:white;\" href=\"https://www.nejm.org/doi/full/10.1056/nejmoa2034577\" target=\"_blank\">Nejm.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nejm_safety_cutoff.png"
+            },
+            "start_date":
+            {
+                "day": "09",
+                "month": "10",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Safety Data Cut-off",
+                "text": "<b>Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine</b><p>At the data cut-off date of October 9, a total of 37,706 participants had a median of at least 2 months of safety data available after the second dose and contributed to the main safety data set.</p>"
+            }
         }
     ],
     "title":
