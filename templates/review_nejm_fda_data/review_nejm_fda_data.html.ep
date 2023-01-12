@@ -88,7 +88,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-			Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.3</a>, published on 2022-12-09
+			Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.4</a>, published on 2022-12-09, edited on 2023-01-12
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -111,7 +111,7 @@
 	    <div class="text_separator"></div>
 	    On December 11, 2020, a day later, <a href="https://www.cdc.gov/mmwr/volumes/69/wr/mm6950e2.htm?s_cid=mm6950e2_w" target="_blank">the EUA was granted by the FDA</a>.
 	    <div class="text_separator"></div>
-	    Some of the <b>key dates</b> are summarized in the Timeline below.
+	    Some of the <b>key dates</b> are summarized in the Timeline below. A more detailed version of the timeline can be browsed on <a href="/pfizer_timeline?currentLanguage=<%=$currentLanguage%>" target="_blank">this dedicated page</a>.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;overflow-x: auto;">
@@ -119,9 +119,9 @@
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    In the paper <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine</a>, published on December 31, 2020 in the New England Journal of Medicine (NEJM.org), by Fernando P. Polack et al., the World saw for the first time some details on the numbers backing this claim.
+	    In the paper <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine</a>, published simultaneously on December 10, 2020 in the New England Journal of Medicine (NEJM.org), by Fernando P. Polack et al., the World saw for the first time some details on the numbers backing this claim.
 	    <div class="text_separator"></div>
-	    As established by the document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & following, the study was finalized on December 16, 2020. This document also includes the previous studies published.
+	    As established by the document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & following, the study was finalized on December 16, 2020 and edited in the NEJM on December 31. This document also includes the previous studies published.
 	    <div class="text_separator"></div>
 		<a href="https://phmpt.org/court-documents/" target="_blank">PHMPT's FOI & lawsuits</a> allowed the public to access the documents which were supposed to stay hidden for 75 years, and which are supporting the FDA EUA & the NEJM study.
 	    <div class="text_separator"></div>
@@ -996,7 +996,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-			Etude <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.3</a>, publiée le 9 Septembre 2022
+			Etude <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.4</a>, publiée le 9 Septembre 2022, éditée le 12 Janvier 2023
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -1019,7 +1019,7 @@
 	    <div class="text_separator"></div>
 	    Le 11 Décembre 2020, le lendemain, <a href="https://www.cdc.gov/mmwr/volumes/69/wr/mm6950e2.htm?s_cid=mm6950e2_w" target="_blank">l'EUA a été accordée par la FDA</a>.
 	    <div class="text_separator"></div>
-	    Quelques unes des dates clés sont résumées dans la chronologie ci-dessous.
+	    Quelques unes des dates clés sont résumées dans la chronologie ci-dessous. Une version plus détaillée de la timeline peut être parcourue sur <a href="/pfizer_timeline?currentLanguage=<%=$currentLanguage%>" target="_blank">cette page dédiée (en anglais)</a>.
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;overflow-x: auto;">
@@ -1027,9 +1027,9 @@
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
-	    C'est dans l'article <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Sûreté et Efficacité du BNT162b2 aRNM Vaccin Covid-19</a>, publié le 31 Décembre 2020 dans le New England Journal of Medicine (NEJM.org), par Fernando P. Polack et al., que le monde a découvert pour la première fois quelques détails plus précis sur les chiffres soutenant cette affirmation.
+	    C'est dans l'article <a href="https://www.nejm.org/doi/full/10.1056/nejmoa2034577" target="_blank">Sûreté et Efficacité du BNT162b2 aRNM Vaccin Covid-19</a>, publié simultanément le 10 Décembre 2020 dans le New England Journal of Medicine (NEJM.org), par Fernando P. Polack et al., que le monde a découvert pour la première fois quelques détails plus précis sur les chiffres soutenant cette affirmation.
 	    <div class="text_separator"></div>
-	    Comme établi dans le document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & suivantes, l'étude a été finalisée le 16 Décembre 2020. Ce document rappelle aussi les études précédemment publiées.
+	    Comme établi dans le document <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-060122/125742_S1_M5_5351_c4591001-interim-mth6-publications.pdf</a>, page 31 & suivantes, l'étude a été finalisée le 16 Décembre 2020 et éditée dans le NEJM le 31 Décembre 2020. Ce document rappelle aussi les études précédemment publiées.
 	    <div class="text_separator"></div>
 		Les <a href="https://phmpt.org/court-documents/" target="_blank">FOI & procès de PHMPT</a> ont permis au public d'accéder aux documents qui étaient supposés rester cachés pendant 75 ans, et qui soutiennent l'autorisation d'utilisation d'urgence de la FDA & l'étude du NEJM.
 	    <div class="text_separator"></div>

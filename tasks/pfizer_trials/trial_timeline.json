@@ -81,12 +81,12 @@
             "media":
             {
                 "caption": "Safety/Efficacy Study",
-                "credit": "<a style=\"color:white;\" href=\"https://www.nejm.org/doi/full/10.1056/nejmoa2034577\" target=\"_blank\">Nejm.org</a>",
+                "credit": "<a style=\"color:white;\" href=\"https://web.archive.org/web/20201210143620/https://www.nejm.org/doi/full/10.1056/nejmoa2034577\" target=\"_blank\">Nejm.org via Archive.org</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/nejm_20201210.png"
             },
             "start_date":
             {
-                "day": "31",
+                "day": "10",
                 "month": "12",
                 "year": "2020"
             },
@@ -285,6 +285,481 @@
                 "headline": "Safety Data Cut-off",
                 "text": "<b>Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine</b><p>At the data cut-off date of October 9, a total of 37,706 participants had a median of at least 2 months of safety data available after the second dose and contributed to the main safety data set.</p>"
             }
+        },
+        {
+            "media":
+            {
+                "caption": "Pfizer - BioNTech Partnership",
+                "credit": "<a style=\"color:white;\" href=\"https://www.pfizer.com/news/press-release/press-release-detail/pfizer-and-biontech-co-develop-potential-covid-19-vaccine-0\" target=\"_blank\">Pfizer.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/pfizer_20200317.png"
+            },
+            "start_date":
+            {
+                "day": "17",
+                "month": "03",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Pfizer - BioNTech Partnership",
+                "text": "<b>Pfizer and BioNTech to Co-develop Potential COVID-19 Vaccine</b><p>NEW YORK and MAINZ, Germany, March 17, 2020 (GLOBE NEWSWIRE) - Pfizer Inc. (NYSE: PFE, \"Pfizer\") and BioNTech SE (Nasdaq: BNTX, \"BioNTech) today announced that the companies have agreed to a letter of intent regarding the co-development and distribution (excluding China) of a potential mRNA-based coronavirus vaccine aimed at preventing COVID-19 infection. The companies have executed a Material Transfer and Collaboration Agreement to enable the parties to immediately start working together.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "BioNTech - Shanghai Fosun Pharmaceutical Partnership",
+                "credit": "<a style=\"color:white;\" href=\"https://www.nasdaq.com/articles/biontech-in-china-alliance-with-fosun-over-coronavirus-vaccine-candidate-2020-03-16\" target=\"_blank\">Nasdaq.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nasdaq_2020316.png"
+            },
+            "start_date":
+            {
+                "day": "16",
+                "month": "03",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "BioNTech - Shanghai Fosun Pharmaceutical Partnership",
+                "text": "<b>BioNTech in China alliance with Fosun over coronavirus vaccine candidate</b><p>FRANKFURT, March 16 (Reuters) - BioNTech 22UAy.F struck a collaboration deal with Shanghai Fosun Pharmaceutical 600196.SS over the German biotech firm's rights in China to its experimental coronavirus vaccine, aiming to start testing on humans from late April. Fosun will pay BioNTech up to $135 million in upfront and potential future investment and milestone payments for development achievement, BioNTech said in a statement on Monday, adding that the two companies will share future gross profits from the sale of the vaccine in China.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "ICON New Agreement With Pfizer",
+                "credit": "<a style=\"color:white;\" href=\"https://www.bloomberg.com/press-releases/2020-04-03/icon-signs-new-service-agreement-with-pfizer\" target=\"_blank\">Bloomberg.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/bloomberg_2020403.png"
+            },
+            "start_date":
+            {
+                "day": "03",
+                "month": "04",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "ICON New Agreement With Pfizer",
+                "text": "<b>ICON Signs New Service Agreement With Pfizer</b><p>ICON plc, (NASDAQ: ICLR) a leading global provider of drug and device development and commercialisation services to the pharmaceutical, biotechnology and medical device industries, today announced it has signed a three-year agreement with Pfizer Inc. (NYSE:PFE). Under the terms of the agreement, Pfizer has the right to extend the term for up to an additional two years. Financial details of the agreement were not disclosed. The agreement builds on the companies' existing relationship, under which ICON provides global expertise in the planning, execution, management and conduct of clinical trials.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Phase I begins",
+                "credit": "<a style=\"color:white;\" href=\"https://www.nature.com/articles/s41586-020-2639-4\" target=\"_blank\">Nature.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nature_phase1.png"
+            },
+            "start_date":
+            {
+                "day": "04",
+                "month": "05",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Phase I begins",
+                "text": "<b>Phase I/II study of COVID-19 RNA vaccine BNT162b1 in adults</b><p>Between 4 May 2020 and 19 June 2020, 76 participants were screened, and 45 participants were randomized and vaccinated. Per dose level (10 mcg and 30 mcg), 12 participants were vaccinated with BNT162b1 on days 1 and 21, 12 participants received a 100-mcg dose on day 1 and 9 participants received placebo (Fig. 1).</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "FDA 50% Efficacy Threshold",
+                "credit": "<a style=\"color:white;\" href=\"https://web.archive.org/web/20200630113854/https://www.wsj.com/articles/fda-to-issue-guidance-on-covid-19-vaccine-approval-11593516090\" target=\"_blank\">Wsj.com via archive.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/wsj_20200630.png"
+            },
+            "start_date":
+            {
+                "day": "30",
+                "month": "06",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "FDA 50% Efficacy Threshold",
+                "text": "<b>FDA to Issue Guidance on Covid-19 Vaccine Approval</b><p>WASHINGTON - The Food and Drug Administration plans to release guidance Tuesday outlining its conditions for approving a Covid-19 vaccine, including a requirement that any vaccine be at least 50% more effective than a placebo in preventing the disease. The FDA said that no vaccine would be approved unless a vaccine company had \"clearly demonstrated\" proof of a vaccine's safety and effectiveness through a clinical study, according to a summary of the guidance viewed by The Wall Street Journal...</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Phase 1 \"Promissing\" Result",
+                "credit": "<a style=\"color:white;\" href=\"https://www.medrxiv.org/content/10.1101/2020.06.30.20142570v1\" target=\"_blank\">Medrxiv.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/medrxiv_20200701.png"
+            },
+            "start_date":
+            {
+                "day": "01",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Phase 1 \"Promissing\" Result",
+                "text": "<b>Phase 1/2 Study to Describe the Safety and Immunogenicity of a COVID-19 RNA Vaccine Candidate (BNT162b1) in Adults 18 to 55 Years of Age: Interim Report</b><p>Assuming that neutralization titers induced by natural infection provide protection from COVID-19 disease, comparing vaccine-induced SARSCoV-2 neutralization titers to those from sera of convalescent humans quantifies the magnitude of the vaccine-elicited response and the vaccine's potential to provide protection. Since the 100 mcg dose level cohort was not boosted, no corresponding data for immunogenicity after a second vaccination are available however there were no substantial differences in immunogenicity between the 30 mcg and 100 mcg dose levels after Dose 1. This observation suggests that a well tolerated and immunogenic dose level may be between 10 mcg and 30 mcg for this vaccine candidate.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "FDA Fast Track Designation",
+                "credit": "<a style=\"color:white;\" href=\"https://www.pfizer.com/news/press-release/press-release-detail/pfizer-and-biontech-granted-fda-fast-track-designation-two\" target=\"_blank\">Medrxiv.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/pfizer_20200713.png"
+            },
+            "start_date":
+            {
+                "day": "13",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "FDA Fast Track Designation",
+                "text": "<b>Pfizer and BioNTech Granted FDA Fast Track Designation for Two Investigational mRNA-based Vaccine Candidates Against SARS-CoV-2</b><p>NEW YORK & MAINZ, Germany - (BUSINESS WIRE) -  Pfizer Inc. (NYSE: PFE) and BioNTech SE (Nasdaq: BNTX, \"BioNTech\") today announced that two of the companies' four investigational vaccine candidates from their BNT162 mRNA-based vaccine program (BNT162b1 and BNT162b2) being developed to help protect against SARS-CoV-2 (the virus that causes COVID-19), received Fast Track designation from the U.S. Food and Drug Administration (FDA). BNT162b1 and BNT162b2 are the two most advanced vaccine candidates in the BNT162 program currently being evaluated in ongoing Phase 1/2 clinical studies in the United States and Germany.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "ATI & Pfizer Military Agreement",
+                "credit": "<a style=\"color:white;\" href=\"https://s3.documentcloud.org/documents/22028603/pfizer-base-agreement.pdf\" target=\"_blank\">Documentcloud.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/ati_pfizer_20200720.png"
+            },
+            "start_date":
+            {
+                "day": "20",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "ATI & Pfizer Military Agreement",
+                "text": "<b>BASE AGREEMENT BETWEEN ADVANCED TECHNOLOGY INTERNATIONAL (ATI) AND Pfizer, Inc.</b><p>The U.S. Army Contracting Command-New Jersey (ACC-NJ) is entering into a Section 815 Prototype Other Transaction Agreement (OTA) with the Medical CBRN Defense Consortium, c/o Advanced Technology International 315 Sigma Drive, Summerville, SC 29486. The Joint Project Manager for Medical Countermeasure Systems (JPM-MCS) through the Joint Program Executive Office for Chemical and Biological Defense (JPEOCBD) seeks to collaborate with the MCDC to carry out a coordinated research and development program. An OTA is being proposed with the purpose of conducting Research and Development into medical, pharmaceutical, and diagnostic technologies to enhance mission effectiveness of military personnel. The MCDC was formed in response to the Government's expressed interest to engage with an industry consortium comprised of traditional and nontraditional government contractors, small and large businesses, for-profit and not-for-profit entities, academic organizations and their affiliates for the purpose of entering into an OTA for prototype projects.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "WarpSpeed 1.95 Billions funding",
+                "credit": "<a style=\"color:white;\" href=\"https://www.keionline.org/misc-docs/DOD-ATI-Pfizer-Technical-Direction-Letter-OTA-W15QKN-16-9-1002-21July2020.pdf\" target=\"_blank\">Keionline.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/warpspeed_20200721.png"
+            },
+            "start_date":
+            {
+                "day": "21",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "WarpSpeed 1.95 Billions funding",
+                "text": "<b>CONTRACTING COMMAND - NEW JERSEY PICATINNY ARSENAL, NEW JERSEY 07806-5000</b><p>The total approved cost to the Government for this effort is not to exceed $1,950,097,500.00. The break-out of the costs is as follows: $1,950,000,000.00 to perform project efforts included in the SOW and $97,500.00 for the Consortium Management Firm (CMF) Administrative Cost. The CMF Administrative Cost was approved as a \"Special Allocation\" for Operation Warp Speed (OWS) Prototype Projects executed under the MCDC OTA. The effort currently has $1,950,097,500.00 of available funding, comprised of $1,950,000,000.00 for the Project Agreement, $67,500.00 for the CMF Special Allocation, and $30,000 for other, non G&A, ATI costs, which will be incurred, tracked, and invoiced in accordance with Article V of the OTA. The COVID-19 work shall be tracked separately using the funding obligated via modification P00076.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Phase 3 Trials begin",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tandfonline.com/doi/pdf/10.1080/21645515.2021.2002083\" target=\"_blank\">Tandfonline.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/tandfonline_20221031.png"
+            },
+            "start_date":
+            {
+                "day": "27",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Phase 3 Trials begin",
+                "text": "<b>A comprehensive review of SARS-CoV-2 vaccines: Pfizer, Moderna & Johnson & Johnson</b><p>July 2020: Phase 3 study begins in collaboration with NIH and BARDA</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "FDA Requires 2 months of Satety Data",
+                "credit": "<a style=\"color:white;\" href=\"https://web.archive.org/web/20201006215432/https://www.fda.gov/media/142749/download\" target=\"_blank\">Fda.gov via Archive.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/fda_142749.png"
+            },
+            "start_date":
+            {
+                "day": "06",
+                "month": "10",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "FDA Requires 2 months of Satety Data",
+                "text": "<b>Emergency Use Authorization for Vaccines to Prevent COVID-19 - Guidance for Industry</b><p>Data from Phase 3 studies should include a median follow-up duration of at least two months after completion of the full vaccination regimen to help provide adequate information to assess a vaccine's benefit-risk profile, including: adverse events; cases of severe COVID-19 disease among study subjects; and cases of COVID-19 occurring during the timeframe when adaptive (rather than innate) and memory immune responses to the vaccine would be responsible for a protective effect.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 9",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/144245/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol9.png"
+            },
+            "start_date":
+            {
+                "day": "29",
+                "month": "10",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 9",
+                "text": "<b>Vaccines and Related Biological Products Advisory Committee Meeting - December 10, 2020</b><p>At the data cutoff date for the EUA, reactogenicity events were not collected from adolescents 16 to 17 years of age (enrolled prior to the implementation of Protocol Amendment 9, finalized on 29 October 2020) using an e-diary but were detected and reported as unsolicited AEs. For any phase 3 participants who were not in the reactogenicity subset, local reactions and systemic events consistent with reactogenicity were detected and reported as unsolicited AEs.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 5",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tga.gov.au/sites/default/files/foi-2389-03-1.pdf\" target=\"_blank\">Tga.gov.au</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol5.png"
+            },
+            "start_date":
+            {
+                "day": "24",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 5",
+                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>Following regulatory feedback:<ul><li>Renamed Stage 1 to Phase 1, removed Stage 2, and renamed Stage 3 to Phase 2/3.</li><li>Clarified that a single vaccine candidate, administered as 2 doses 21 days apart, will be studied in Phase 2/3.</li><li>Stated that the vaccine candidate selected for Phase 2/3 evaluation is BNT162b2 at a dose of 30 mcg.</li><li>Removed the potential to study BNT162b3.</li><li>Immunogenicity data will be summarized for the first 360 participants through 1 month after Dose 2, rather than through 21 days after Dose 1.</li><li>Provided further details of sponsor staff that will be unblinded in Phase 2/3.</li><li>Clarified which stopping rules apply to which phase of the study</li></ul></p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 4",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tga.gov.au/sites/default/files/foi-2389-03-1.pdf\" target=\"_blank\">Tga.gov.au</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol4.png"
+            },
+            "start_date":
+            {
+                "day": "30",
+                "month": "06",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 4",
+                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>Given the rapidly evolving pandemic situation, and the need to demonstrate VE as soon as possible, the protocol has been amended to be powered to meet new efficacy objectives. These new efficacy objectives and corresponding endpoints have been added to Section 3. Further nonclinical data are available to support the study of the BNT162b3 candidate in humans, and the candidate has been added to the protocol.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 3",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tga.gov.au/sites/default/files/foi-2389-03-1.pdf\" target=\"_blank\">Tga.gov.au</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol3.png"
+            },
+            "start_date":
+            {
+                "day": "10",
+                "month": "06",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 3",
+                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>To increase the number of doses that can be obtained from available vaccine vials, not all dose levels will result in a dosing volume of 0.5 mL. Precise dosing instructions will be provided in the IP manual. To facilitate the reporting of COVID-19 illness diagnoses and potential symptoms to the investigator, participants may utilize a COVID-19 illness e-diary.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 2",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tga.gov.au/sites/default/files/foi-2389-03-1.pdf\" target=\"_blank\">Tga.gov.au</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol2.png"
+            },
+            "start_date":
+            {
+                "day": "27",
+                "month": "05",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 2",
+                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>Given the urgent nature of the pandemic situation, the following changes allow determination of the appropriate human dose level for both younger and older adults to move speedily into the next phase of clinical evaluation:<ul><li>Added a new vaccine candidate, BNT162b3, modRNA encoding a membrane-anchored RBD</li><li>Added a 50-mcg dose level for vaccine candidates based on the modRNA platform (ie, BNT162b1, BNT162b2, and BNT162b3)</li><li>Modified the criteria required for the IRC to determine dose escalation in the 18- to 55-year</li></ul></p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 8",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/152256/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol8.png"
+            },
+            "start_date":
+            {
+                "day": "15",
+                "month": "10",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 8",
+                "text": "<b>BLA Clinical Review Memorandum</b><p>Amendment 8, dated October 15, 2020: Clarified that for participants who are not in the reactogenicity subset, local reactions and systemic events following vaccination should be detected and reported as AEs.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Protocol Amendment 1",
+                "credit": "<a style=\"color:white;\" href=\"https://www.tga.gov.au/sites/default/files/foi-2389-03-2.pdf\" target=\"_blank\">Tga.gov.au</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/protocol1.png"
+            },
+            "start_date":
+            {
+                "day": "13",
+                "month": "05",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Protocol Amendment 1",
+                "text": "<b>Protocol Amendment 5, 24 July 2020</b><p><ul><li>...</li><li>Clarified that the SARS-CoV-2 neutralizing assay does not employ wild-type virus</li><li>Clarified that the SARS-CoV-2 spike protein-binding antibody assay is specific for the S1 subunit</li><li>Clarified that efficacy against COVID-19 is based upon illness (not infection) rate ratio</li></ul></p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Pfizer selects Argentina for the trial",
+                "credit": "<a style=\"color:white;\" href=\"https://www.infobae.com/salud/2020/07/10/argentina-fue-seleccionada-para-probar-la-vacuna-de-pfizer-contra-el-coronavirus/\" target=\"_blank\">Infobae.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/infobae_20200710.png"
+            },
+            "start_date":
+            {
+                "day": "10",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Pfizer selects Argentina for the trial",
+                "text": "<b>Argentina was selected to test the Pfizer vaccine against coronavirus</b><p>After an extensive analysis of professionals from various countries of the world, a group of Argentine researchers were selected for their logistical capacity and knowledge in viral respiratory diseases, to test the vaccine that Pfizer manufactures in conjunction with the German company Biontech.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "SAP V1",
+                "credit": "<a style=\"color:white;\" href=\"/doc/pfizer_trials/assets/SAP_V1_20May2020.pdf\" target=\"_blank\">SAP_V1_20May2020.pdf</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/sap_v1.png"
+            },
+            "start_date":
+            {
+                "day": "20",
+                "month": "05",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "SAP V1",
+                "text": "<b>Statistical Analysis Plan (SAP)</b><p>This SAP provides the detailed methodology for summary and statistical analyses of the data collected in Study C4591001. This document may modify the plans outlined in the protocol; however, any major modifications of the primary endpoint definition or its analysis will also be reflected in a protocol amendment.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "SAP V2",
+                "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_bnt162-01-interim3-sap.pdf\" target=\"_blank\">SAP V4 Version History</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/sap_v2.png"
+            },
+            "start_date":
+            {
+                "day": "30",
+                "month": "07",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "SAP V2",
+                "text": "<b>1. VERSION HISTORY</b><p>Implemented the changes made in protocol amendments 2 through 5.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "SAP V3",
+                "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf\" target=\"_blank\">SAP_V3_02Nov2020.pdf</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/sap_v3.png"
+            },
+            "start_date":
+            {
+                "day": "02",
+                "month": "11",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "SAP V3",
+                "text": "<b>Statistical Analysis Plan (SAP)</b><p>This SAP provides the detailed methodology for summary and statistical analyses of the data collected in Study C4591001. This document may modify the plans outlined in the protocol; however, any major modifications of the primary endpoint definition or its analysis will also be reflected in a protocol amendment.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "SAP V4",
+                "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_bnt162-01-interim3-sap.pdf\" target=\"_blank\">SAP_V4_18Nov2020.pdf</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/sap_v4.png"
+            },
+            "start_date":
+            {
+                "day": "18",
+                "month": "11",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "SAP V4",
+                "text": "<b>Statistical Analysis Plan (SAP) - Version History</b><p><ul><li>Changed 'elderly' to 'older'</li><li>Clarified definition of concomitant medication</li></p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "90%+ Efficacy via Press",
+                "credit": "<a style=\"color:white;\" href=\"https://web.archive.org/web/20201110200754/https://www.nytimes.com/2020/11/10/business/biontech-covid-vaccine.html\" target=\"_blank\">Nytimes.com via Archive.org</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/nytimes_20201110.png"
+            },
+            "start_date":
+            {
+                "day": "10",
+                "month": "11",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "90%+ Efficacy via Press",
+                "text": "<b>The Husband-and-Wife Team Behind the Leading Vaccine to Solve Covid-19</b><p>The German company BioNTech, founded by two scientists, has partnered with Pfizer on a vaccine that was found to be more than 90 percent effective.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "VRBAC Meeting",
+                "credit": "<a style=\"color:white;\" href=\"https://www.youtube.com/watch?v=owveMJBTc2Il\" target=\"_blank\">Youtube.com</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/VRBAC_meeting_20201210.png"
+            },
+            "start_date":
+            {
+                "day": "10",
+                "month": "12",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "VRBAC Meeting",
+                "text": "<b>Vaccines and Related Biological Products Advisory Committee - 12/10/2020</b><p>The U.S. Food and Drug Administration has scheduled a meeting of its Vaccines and Related Biological Products Advisory Committee (VRBPAC) on Dec. 10 to discuss the request for emergency use authorization (EUA) of a COVID-19 vaccine from Pfizer, Inc. in partnership with BioNTech Manufacturing GmbH.</p>"
+            }
         }
     ],
     "title":
@@ -302,3 +777,4 @@
         }
     }
 }
+
