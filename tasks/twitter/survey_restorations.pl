@@ -69,7 +69,9 @@ sub verify_banned_users {
     my @cleanedUsers;
     my $hasChanged  = 0;
     my %bannedUsers = ();
+    my ($banned, $total) = (0, 0);
     for my $obj (@$twitterUsersBansJson) {
+        $total++;
         my %obj = %$obj;
         my $twitterUserName    = $obj{'twitterUserName'};
         my $twitterId          = $obj{'twitterId'};
@@ -77,7 +79,10 @@ sub verify_banned_users {
         my $banSpecificReasons = $obj{'banSpecificReasons'};
         my $localUrl           = $obj{'localUrl'};
         my $restorationDate    = $obj{'restorationDate'};
-        next if defined $restorationDate;
+        if (defined $restorationDate) {
+            push @cleanedUsers, \%obj;
+            next;
+        }
 
         # Verify if the user ban has been lifted.
         my $isBanned = verify_user_ban($twitterId, $twitterUserName);
@@ -103,6 +108,7 @@ sub verify_banned_users {
                 die "?";
             }
         } else {
+            $banned++;
             # Fix which can be removed once twitter_anticensor is adjusted to the fact people are coming back.
             unless (exists $obj{'restorationDate'}) {
                 $obj{'restorationDate'} = undef;
@@ -118,6 +124,7 @@ sub verify_banned_users {
         print $out encode_json\@cleanedUsers;
         close $out;
     }
+    say "[$banned / $total] accounts banned.";
     # p$twitterUsersBansJson;
     # die;
 }

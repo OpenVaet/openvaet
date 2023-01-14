@@ -1,0 +1,54 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Covid-19 Pandemic Timeline';
+% } else {
+% title 'OPENVAET - Chronologie de la pandémie Covid-19';
+% }
+<head>
+    <link href="/timeline3/css/timeline.css" rel="stylesheet" />
+    <script src="/timeline3/js/timeline.js"></script>
+    <!-- Primary Meta Tags -->
+    <title>OPENVAET - Covid-19 Pandemic Timeline</title>
+    <meta name="title" content="OPENVAET - Covid-19 Pandemic Timeline">
+    <meta name="description" content="This timeline features the important dates of the Covid-19 pandemic and directly related events.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+    <meta property="og:title" content="OPENVAET - Covid-19 Pandemic Timeline">
+    <meta property="og:description" content="This timeline features the important dates of the Covid-19 pandemic and directly related events.">
+    <meta property="og:image" content="https://openvaet.org/doc/pandemic_timeline/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+    <meta property="twitter:title" content="OPENVAET - Covid-19 Pandemic Timeline">
+    <meta property="twitter:description" content="This timeline features the important dates of the Covid-19 pandemic and directly related events.">
+    <meta property="twitter:image" content="https://openvaet.org/doc/pandemic_timeline/preview.png">
+</head>
+
+<style>
+ h2 {
+    color:white;
+ }
+</style>
+
+<div id='timeline-embed' style="width: 100%; height: 100%;"></div>
+
+<script type="text/javascript">
+    // var additionalOptions = {
+    //   start_at_end: true,
+    //   default_bg_color: {r:0, g:0, b:0}
+    // }
+    var additionalOptions = {
+        default_bg_color: {r:0, g:0, b:0},
+        timenav_height: 250,
+        initial_zoom: 1,
+        timenav_height: 250
+    }
+
+    var timelineJson = '<%==$timelineJson%>';
+    timelineJson     = JSON.parse(timelineJson);
+    timeline         = new TL.Timeline('timeline-embed', timelineJson,
+    additionalOptions);
+</script>

@@ -1,0 +1,191 @@
+{
+    "events":
+    [
+        {
+            "media":
+            {
+                "caption": "1st C19 case from Wuhan to Melbourne",
+                "credit": "<a style=\"color:white;\" href=\"https://geoffpain.substack.com/p/first-detected-covid19-case-arrived\" target=\"_blank\">Geoffpain.substack.com</a>",
+                "url": "/doc/pandemic_timeline/melbourne_20200128.png"
+            },
+            "start_date":
+            {
+                "day": "19",
+                "month": "01",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "1st C19 case from Wuhan to Melbourne",
+                "text": "<b>First detected Covid19 case arrived in Melbourne from Wuhan on 19 January 2020</b><p>This is a brief summary of the first isolation and successful culture of Covid19 from Wuhan outside China and export of the live virus to numerous labs in the world. The 58-year-old man from China was admitted to the Monash Medical Centre, Melbourne, from the emergency department on 24 January 2020 with fever, cough, and progressive dyspnoea.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Tris allowance without testing",
+                "credit": "<a style=\"color:white;\" href=\"https://www.fda.gov/media/150386/download\" target=\"_blank\">Fda.gov</a>",
+                "url": "/doc/pandemic_timeline/fda_tris_allowance.png"
+            },
+            "start_date":
+            {
+                "day": "29",
+                "month": "10",
+                "year": "2021"
+            },
+            "text":
+            {
+                "headline": "Tris allowance without testing",
+                "text": "<b>Letter to Gosia Mineo M.S., Pearl River, NY 10965</b><p>In the October 29, 2021 revision, FDA authorized: 1) the use of Pfizer-BioNTech COVID-19 Vaccine for children 5 through 11 years of age; and 2) a manufacturing change to include an additional formulation of the Pfizer-BioNTech COVID-19 Vaccine that uses tromethamine (Tris) buffer instead of phosphate buffered saline (PBS) used in the originally authorized Pfizer-BioNTech COVID-19 Vaccine. The formulation of the Pfizer-BioNTech COVID-19 Vaccine that uses Tris buffer was authorized in two presentations: 1) multiple dose vials, with gray caps and labels with a gray border, formulated to provide, without need for dilution, doses (each 0.3 mL dose containing 30 microgram (mcg) nucleoside- modified messenger RNA (modRNA)) for individuals 12 years of age and older; and 2) multiple dose vials, with orange caps and labels with an orange border, formulated to provide, after dilution, doses (each 0.2 mL dose containing 10 mcg modRNA) for individuals 5 through 11 years of age. The formulation that uses Tris buffer is the only formulation that is authorized for use in individuals 5 through 11 years of age.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Baric et al. 2003 paper",
+                "credit": "<a style=\"color:white;\" href=\"https://www.pnas.org/doi/abs/10.1073/pnas.1735582100\" target=\"_blank\">Pnas.org</a>",
+                "url": "/doc/pandemic_timeline/pnas_20031020.png"
+            },
+            "start_date":
+            {
+                "day": "20",
+                "month": "10",
+                "year": "2003"
+            },
+            "text":
+            {
+                "headline": "Baric et al. 2003 paper",
+                "text": "<b>Reverse genetics with a full-length infectious cDNA of severe acute respiratory syndrome coronavirus</b><p>A previously undescribed coronavirus (CoV) is the etiologic agent responsible for severe acute respiratory syndrome (SARS). Using a panel of contiguous cDNAs that span the entire genome, we have assembled a full-length cDNA of the SARS-CoV Urbani strain, and have rescued molecularly cloned SARS viruses (infectious clone SARS-CoV) that contained the expected marker mutations inserted into the component clones. Recombinant viruses replicated as efficiently as WT virus and both were inhibited by treatment with the cysteine proteinase inhibitor (2S,3S)-transepoxysuccinyl-l-leucylamido-3-methylbutane ethyl ester. In addition, subgenomic transcripts were initiated from the consensus sequence ACGAAC in both the WT and infectious clone SARS-CoV. Availability of a SARS-CoV full-length cDNA provides a template for manipulation of the viral genome, allowing for the rapid and rational development and testing of candidate vaccines and therapeutics against this important human pathogen.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Peter Barton Hutt resigns as Moderna CEO",
+                "credit": "<a style=\"color:white;\" href=\"https://www.sec.gov/Archives/edgar/data/1682852/000119312519311662/d842317d8k.htm\" target=\"_blank\">Sec.gov</a>",
+                "url": "/doc/pandemic_timeline/moderna_20191209.png"
+            },
+            "start_date":
+            {
+                "day": "09",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "Peter Barton Hutt resigns as Moderna CEO",
+                "text": "<b>Item 5.02 Departure of Directors or Principal Officers; Election of Directors; Appointment of Principal Officers; Compensatory Arrangements of Certain Officers.</b><p>Peter Barton Hutt, a member of the Board of Directors (the \"Board\") of Moderna, Inc. (the \"Company\"), notified the Company of his resignation from the Board, including the Product Development Committee of the Board, effective December 9, 2019. Mr. Hutt's decision to resign was not the result of any disagreement with the Company on any matters relating to the Company's operations, policies or practices. Beginning December 10, 2019, Mr. Hutt will provide consulting services to the Company, during which period Mr. Hutt's outstanding stock options will continue to vest. </p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Francois Nader named as Moderna CEO",
+                "credit": "<a style=\"color:white;\" href=\"https://www.sec.gov/Archives/edgar/data/1682852/000119312519311662/d842317d8k.htm\" target=\"_blank\">Sec.gov</a>",
+                "url": "/doc/pandemic_timeline/moderna_20191210.png"
+            },
+            "start_date":
+            {
+                "day": "10",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "Francois Nader named as Moderna CEO",
+                "text": "<b>Item 5.02 Departure of Directors or Principal Officers; Election of Directors; Appointment of Principal Officers; Compensatory Arrangements of Certain Officers.</b><p>On December 10, 2019, the Board, upon the recommendation of the Nominating and Corporate Governance Committee, appointed Francois Nader, M.D. to the Board, to fill the vacancy resulting from Mr. Hutt's resignation. Dr. Nader will serve as a Class I director of the Company, to hold office until the 2022 annual meeting of stockholders or until his earlier death, resignation or removal. Dr. Nader was also appointed to serve on the Product Development Committee.<br>Dr. Nader served as President, Chief Executive Officer and Executive Director of NPS Pharmaceuticals Inc. from 2008 until 2015, when the company was acquired by Shire. Prior to NPS, Dr. Nader was a venture partner at Care Capital, a venture capital firm. He previously served on Aventis Pharma's North America Leadership Team, holding a number of executive positions in integrated healthcare markets and medical and regulatory affairs. Dr. Nader previously led global commercial operations at the Pasteur Vaccines division of Rhone-Poulenc.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Baric & Graham (NIAID) sign MTA for mRNA Coronavirus Vaccines owned by NIAID & Moderna",
+                "credit": "<a style=\"color:white;\" href=\"https://www.documentcloud.org/documents/6935295-NIH-Moderna-Confidential-Agreements.html#document/p105/a568569\" target=\"_blank\">Documentcloud.org</a> via <a style=\"color:white;\" href=\"https://www.citizen.org/article/the-nih-vaccine/\" target=\"_blank\">Citizen.org</a>",
+                "url": "/doc/pandemic_timeline/mta_niaid_moderna_1.png"
+            },
+            "start_date":
+            {
+                "day": "12",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "Baric & Graham (NIAID) sign MTA for mRNA Coronavirus Vaccines owned by NIAID & Moderna",
+                "text": "<b>Material Transfer Agreement</b><p>This Material Transfer Agreement (\"MTA\") has been adopted for use by the National Institutes of Health, the Food and Drug Administration and the Centers for Disease Control and Prevention, collectively referred to herein as the Public Health Service (\"PHS\") in all transfers of research material (Research Material) whether PHS is identified below as its Provider or Recipient.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Quay (Moderna) sign MTA for mRNA Coronavirus Vaccines owned by NIAID & Moderna",
+                "credit": "<a style=\"color:white;\" href=\"https://www.documentcloud.org/documents/6935295-NIH-Moderna-Confidential-Agreements.html#document/p105/a568569\" target=\"_blank\">Documentcloud.org</a> via <a style=\"color:white;\" href=\"https://www.citizen.org/article/the-nih-vaccine/\" target=\"_blank\">Citizen.org</a>",
+                "url": "/doc/pandemic_timeline/mta_niaid_moderna_1.png"
+            },
+            "start_date":
+            {
+                "day": "17",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "Quay (Moderna) sign MTA for mRNA Coronavirus Vaccines owned by NIAID & Moderna",
+                "text": "<b>Material Transfer Agreement</b><p>This Material Transfer Agreement (\"MTA\") has been adopted for use by the National Institutes of Health, the Food and Drug Administration and the Centers for Disease Control and Prevention, collectively referred to herein as the Public Health Service (\"PHS\") in all transfers of research material (Research Material) whether PHS is identified below as its Provider or Recipient.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "China's first COVID-19 case",
+                "credit": "<a style=\"color:white;\" href=\"https://www.businessinsider.com/coronavirus-patients-zero-contracted-case-november-2020-3?r=US&IR=T\" target=\"_blank\">Businessinsider.com</a>",
+                "url": "/doc/pandemic_timeline/china_case_1.png"
+            },
+            "start_date":
+            {
+                "day": "17",
+                "month": "11",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "China's first COVID-19 case",
+                "text": "<b>Material Transfer Agreement</b><p>The first case of the novel coronavirus emerged on November 17, according to Chinese government data reviewed by the South China Morning Post.<br>It wasn't until late December that Chinese officials realized they had a new virus on their hands. But even then, China's government clamped down on sharing information about it with the public, according to The Wall Street Journal.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "China notifies WHO of unknown pneumonia",
+                "credit": "<a style=\"color:white;\" href=\"https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229\" target=\"_blank\">Who.int</a>",
+                "url": "/doc/pandemic_timeline/who_china_december_2019.png"
+            },
+            "start_date":
+            {
+                "day": "31",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "China notifies WHO of unknown pneumonia",
+                "text": "<b>COVID-19 - China</b><p>On 31 December 2019, the WHO China Country Office was informed of cases of pneumonia of unknown etiology (unknown cause) detected in Wuhan City, Hubei Province of China. As of 3 January 2020, a total of 44 patients with pneumonia of unknown etiology have been reported to WHO by the national authorities in China. Of the 44 cases reported, 11 are severely ill, while the remaining 33 patients are in stable condition. According to media reports, the concerned market in Wuhan was closed on 1 January 2020 for environmental sanitation and disinfection.</p>"
+            }
+        }
+    ],
+    "title":
+    {
+        "media":
+        {
+            "caption": "Covid-19 Pandemic Timeline",
+            "credit": "<a href=\"https://rumble.com/v1y5rak-streaming-with-walter-chesnut-sudden-adult-death-syndrome.html\" target=\"_blank\" style=\"color:white;\">Kevin McCairn, PHD, Rumble</a>",
+            "url": "/doc/pandemic_timeline/cover.png"
+        },
+        "text":
+        {
+            "headline": "<b>Covid-19 Pandemic</b>",
+            "text": "<p>This timeline features the important dates of the Covid-19 pandemic and directly related events.</p>"
+        }
+    }
+}
+

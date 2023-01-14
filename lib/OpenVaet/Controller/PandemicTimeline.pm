@@ -1,4 +1,4 @@
-package OpenVaet::Controller::PfizerTimeline;
+package OpenVaet::Controller::PandemicTimeline;
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Log;
 use JSON;
@@ -10,7 +10,7 @@ use session;
 use data_formatting;
 no autovivification;
 
-sub pfizer_timeline {
+sub pandemic_timeline {
     my $self = shift;
 
     my $currentLanguage = $self->param('currentLanguage') // 'fr';
@@ -25,7 +25,7 @@ sub pfizer_timeline {
     # Loading timeline json.
     my $timelineJson;
     # open my $in, '<:utf8', 'raw_data/pfizer_trials/timelines/example.json';
-    open my $in, '<:utf8', 'templates/pfizer_timeline/pfizer_timeline.json';
+    open my $in, '<:utf8', 'templates/pandemic_timeline/pandemic_timeline.json';
     while (<$in>) {
     	$timelineJson .= $_;
     }

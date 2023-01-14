@@ -530,7 +530,7 @@
             "text":
             {
                 "headline": "Protocol Amendment 5",
-                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>Following regulatory feedback:<ul><li>Renamed Stage 1 to Phase 1, removed Stage 2, and renamed Stage 3 to Phase 2/3.</li><li>Clarified that a single vaccine candidate, administered as 2 doses 21 days apart, will be studied in Phase 2/3.</li><li>Stated that the vaccine candidate selected for Phase 2/3 evaluation is BNT162b2 at a dose of 30 mcg.</li><li>Removed the potential to study BNT162b3.</li><li>Immunogenicity data will be summarized for the first 360 participants through 1 month after Dose 2, rather than through 21 days after Dose 1.</li><li>Provided further details of sponsor staff that will be unblinded in Phase 2/3.</li><li>Clarified which stopping rules apply to which phase of the study</li></ul></p>"
+                "text": "<b>A PHASE 1/2/3, PLACEBO-CONTROLLED, RANDOMIZED, OBSERVER-BLIND, DOSE-FINDING STUDY TO EVALUATE THE SAFETY, TOLERABILITY, IMMUNOGENICITY, AND EFFICACY OF SARS-COV-2 RNA VACCINE CANDIDATES AGAINST COVID-19 IN HEALTHY ADULTS</b><p>Following regulatory feedback:<ul><li>Renamed Stage 1 to Phase 1, removed Stage 2, and renamed Stage 3 to Phase 2/3.</li><li>Clarified that a single vaccine candidate, administered as 2 doses 21 days apart, will be studied in Phase 2/3.</li><li>Stated that the vaccine candidate selected for Phase 2/3 evaluation is BNT162b2 at a dose of 30 mcg.</li><li>Removed the potential to study BNT162b3.</li><li>Immunogenicity data will be summarized for the first 360 participants through 1 month after Dose 2, rather than through 21 days after Dose 1.</li><li>Provided further details of sponsor staff that will be unblinded in Phase 2/3.</li><li>Clarified which stopping rules apply to which phase of the study</li></ul><br><br>&#10230; BNT162b2 is sustained as candidate</p>"
             }
         },
         {
@@ -650,7 +650,7 @@
         {
             "media":
             {
-                "caption": "SAP V1",
+                "caption": "P3 SAP V1",
                 "credit": "<a style=\"color:white;\" href=\"/doc/pfizer_trials/assets/SAP_V1_20May2020.pdf\" target=\"_blank\">SAP_V1_20May2020.pdf</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/sap_v1.png"
             },
@@ -662,15 +662,15 @@
             },
             "text":
             {
-                "headline": "SAP V1",
+                "headline": "P3 SAP V1",
                 "text": "<b>Statistical Analysis Plan (SAP)</b><p>This SAP provides the detailed methodology for summary and statistical analyses of the data collected in Study C4591001. This document may modify the plans outlined in the protocol; however, any major modifications of the primary endpoint definition or its analysis will also be reflected in a protocol amendment.</p>"
             }
         },
         {
             "media":
             {
-                "caption": "SAP V2",
-                "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_bnt162-01-interim3-sap.pdf\" target=\"_blank\">SAP V4 Version History</a>",
+                "caption": "P3 SAP V2",
+                "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_bnt162-01-interim3-sap.pdf\" target=\"_blank\">P3 SAP V4 Version History</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/sap_v2.png"
             },
             "start_date":
@@ -681,14 +681,14 @@
             },
             "text":
             {
-                "headline": "SAP V2",
+                "headline": "P3 SAP V2",
                 "text": "<b>1. VERSION HISTORY</b><p>Implemented the changes made in protocol amendments 2 through 5.</p>"
             }
         },
         {
             "media":
             {
-                "caption": "SAP V3",
+                "caption": "P3 SAP V3",
                 "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-030122/125742_S1_M5_5351_c4591001-fa-interim-lab-measurements-sensitive.pdf\" target=\"_blank\">SAP_V3_02Nov2020.pdf</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/sap_v3.png"
             },
@@ -700,14 +700,14 @@
             },
             "text":
             {
-                "headline": "SAP V3",
+                "headline": "P3 SAP V3",
                 "text": "<b>Statistical Analysis Plan (SAP)</b><p>This SAP provides the detailed methodology for summary and statistical analyses of the data collected in Study C4591001. This document may modify the plans outlined in the protocol; however, any major modifications of the primary endpoint definition or its analysis will also be reflected in a protocol amendment.</p>"
             }
         },
         {
             "media":
             {
-                "caption": "SAP V4",
+                "caption": "P1/2 SAP V4",
                 "credit": "<a style=\"color:white;\" href=\"/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-050222/125742_S1_M5_5351_bnt162-01-interim3-sap.pdf\" target=\"_blank\">SAP_V4_18Nov2020.pdf</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/sap_v4.png"
             },
@@ -719,7 +719,7 @@
             },
             "text":
             {
-                "headline": "SAP V4",
+                "headline": "P1/2 SAP V4",
                 "text": "<b>Statistical Analysis Plan (SAP) - Version History</b><p><ul><li>Changed 'elderly' to 'older'</li><li>Clarified definition of concomitant medication</li></p>"
             }
         },
@@ -745,7 +745,7 @@
         {
             "media":
             {
-                "caption": "VRBAC Meeting",
+                "caption": "VRBPAC Meeting",
                 "credit": "<a style=\"color:white;\" href=\"https://www.youtube.com/watch?v=owveMJBTc2Il\" target=\"_blank\">Youtube.com</a>",
                 "url": "/doc/pfizer_trials/trial_timeline/VRBAC_meeting_20201210.png"
             },
@@ -757,8 +757,141 @@
             },
             "text":
             {
-                "headline": "VRBAC Meeting",
+                "headline": "VRBPAC Meeting",
                 "text": "<b>Vaccines and Related Biological Products Advisory Committee - 12/10/2020</b><p>The U.S. Food and Drug Administration has scheduled a meeting of its Vaccines and Related Biological Products Advisory Committee (VRBPAC) on Dec. 10 to discuss the request for emergency use authorization (EUA) of a COVID-19 vaccine from Pfizer, Inc. in partnership with BioNTech Manufacturing GmbH.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "Comirnaty EU Marketing Authorization",
+                "credit": "<a style=\"color:white;\" href=\"https://www.ema.europa.eu/en/medicines/human/EPAR/comirnaty\" target=\"_blank\">Ema.europa.eu</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/eu_20201221.png"
+            },
+            "start_date":
+            {
+                "day": "21",
+                "month": "12",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "Comirnaty EU Marketing Authorization",
+                "text": "<b>Publication details</b><p>Date of issue of marketing authorisation valid throughout the European Union  - 21/12/2020</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "BioNTech study starts - Luciferase-Encoding ModRNA",
+                "credit": "<a style=\"color:white;\" href=\"https://phmpt.org/wp-content/uploads/2022/03/125742_S1_M4_4223_R-20-0072.pdf\" target=\"_blank\">Phmpt.org/</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/phmpt_20200114.png"
+            },
+            "start_date":
+            {
+                "day": "14",
+                "month": "01",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "BioNTech study starts - Luciferase-Encoding ModRNA",
+                "text": "<b>Background</b><p>In December 2019, an outbreak of pneumonia of unknown cause in Wuhan, Hubei province in China started. The disease spread rapidly and in January 2020, the agent was identified. By 1 April 2020, infection with the novel coronavirus (SARS-CoV-2) was confirmed in approximately 820,000 people with more than 40,000 casualties1. A vaccine is urgently needed and BioNTech decided to develop a rapid vaccine project (BNT162) with the surface or spike protein (S protein) of the virus as the viral antigen.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "First Official SARS-COV-2 Sequencing",
+                "credit": "<a style=\"color:white;\" href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7180649/\" target=\"_blank\">Nih.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/originalsequence.png"
+            },
+            "start_date":
+            {
+                "day": "14",
+                "month": "01",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "First Official SARS-COV-2 Sequencing",
+                "text": "<b>The genetic sequence, origin, and diagnosis of SARS-CoV-2</b><p>Coronavirus disease 2019 (COVID-19), caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2), is a new infectious disease that first emerged in Hubei province, China, in December 2019, which was found to be associated with a large seafood and animal market in Wuhan. Airway epithelial cells from infected patients were used to isolate a novel coronavirus, named the SARS-CoV-2, on January 12, 2020, which is the seventh member of the coronavirus family to infect humans.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "China notifies WHO of unknown pneumonia",
+                "credit": "<a style=\"color:white;\" href=\"https://www.who.int/emergencies/disease-outbreak-news/item/2020-DON229\" target=\"_blank\">Who.int</a>",
+                "url": "/doc/pandemic_timeline/who_china_december_2019.png"
+            },
+            "start_date":
+            {
+                "day": "31",
+                "month": "12",
+                "year": "2019"
+            },
+            "text":
+            {
+                "headline": "China notifies WHO of unknown pneumonia",
+                "text": "<b>COVID-19 - China</b><p>On 31 December 2019, the WHO China Country Office was informed of cases of pneumonia of unknown etiology (unknown cause) detected in Wuhan City, Hubei Province of China. As of 3 January 2020, a total of 44 patients with pneumonia of unknown etiology have been reported to WHO by the national authorities in China. Of the 44 cases reported, 11 are severely ill, while the remaining 33 patients are in stable condition. According to media reports, the concerned market in Wuhan was closed on 1 January 2020 for environmental sanitation and disinfection.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "EU CTR DB for BNT162-01",
+                "credit": "<a style=\"color:white;\" href=\"https://www.clinicaltrialsregister.eu/ctr-search/trial/2020-001038-36/DE\" target=\"_blank\">Clinicaltrialsregister.eu</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/clinicaltrialsregister_20200414.png"
+            },
+            "start_date":
+            {
+                "day": "14",
+                "month": "04",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "EU CTR DB for BNT162-01",
+                "text": "<b>D.3 Description of the IMP</b><p>Product name - BNT162a1</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "First Trial Injection",
+                "credit": "<a style=\"color:white;\" href=\"https://impfung.biontech.de/en/impfung/project-lightspeed.html\" target=\"_blank\">Biontech.de</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/biontech_20200423.png"
+            },
+            "start_date":
+            {
+                "day": "23",
+                "month": "04",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "First Trial Injection",
+                "text": "<b>April 23, 2020</b><p>The first study subject is vaccinated with the BioNTech mRNA vaccine candidate.</p>"
+            }
+        },
+        {
+            "media":
+            {
+                "caption": "First Cohort Completed Press Release",
+                "credit": "<a style=\"color:white;\" href=\"https://https://www.sec.gov/Archives/edgar/data/1776985/000156459020019419/bntx-6k_20200429.htm\" target=\"_blank\">Sec.gov</a>",
+                "url": "/doc/pfizer_trials/trial_timeline/sec_20200429.png"
+            },
+            "start_date":
+            {
+                "day": "29",
+                "month": "04",
+                "year": "2020"
+            },
+            "text":
+            {
+                "headline": "First Cohort Completed Press Release",
+                "text": "<b>DOCUMENTS INCLUDED AS PART OF THIS FORM 6-K</b><p>On April 29, 2020, BioNTech SE (the \"Company\") issued a press release, announcing that the Company and Pfizer Inc. completed dosing of the first cohort of Phase 1/2 clinical trial of COVID-19 vaccine candidates in Germany. The press release is attached hereto as Exhibit 99.1.</p>"
             }
         }
     ],
@@ -773,7 +906,7 @@
         "text":
         {
             "headline": "<b>Pfizer/BioNTech C4591001 Trial</b>",
-            "text": "<p>This timeline features the important dates of the Pfizer/BioNTech C4591001 Trial, which led to the EUA Approval and assumed efficacy.</p>"
+            "text": "<p>This timeline features the important dates of the Pfizer/BioNTech C4591001 Trial and directly related events, which led to the EUA Approval and assumed efficacy.</p>"
         }
     }
 }
