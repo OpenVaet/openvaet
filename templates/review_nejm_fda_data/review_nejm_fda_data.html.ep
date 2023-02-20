@@ -88,7 +88,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-			Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.4</a>, published on 2022-12-09, edited on 2023-01-12
+			Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.5</a>, published on 2022-12-09, edited on 2023-02-20
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
@@ -996,7 +996,7 @@
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>
 		<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
-			Etude <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.4</a>, publiée le 9 Septembre 2022, éditée le 12 Janvier 2023
+			Etude <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.5</a>, publiée le 9 Septembre 2022, éditée le 20 Février 2023
 		</div>
 	    <div class="text_separator"></div>
 	    <div class="text_separator"></div>

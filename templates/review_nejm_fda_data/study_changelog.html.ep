@@ -13,6 +13,14 @@
     <div class="text_separator"></div>
     <div class="text_separator"></div>
 	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
+		Version 1.5</a>, published on 2023-02-20, 04:50 CET
+	</div>
+	<ul>
+		<li><i>Fixed an error in English assets introduced with the French translation</i></li>
+	</ul>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;font-size: 1.35rem;font-weight: bold;line-height: 34px;">
 		Version 1.4</a>, published on 2023-01-12, 17:00 CET
 	</div>
 	<ul>
