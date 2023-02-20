@@ -66,34 +66,6 @@ extract_all_subjects_table();
 # p%patients;
 say "totalPatients   : $totalPatients";
 
-# # Generates weekly stats, prints .CSV.
-# my %stats = ();
-# my $patientsToSept6 = 0;
-# open my $out, '>:utf8', "$outputFolder/pfizer_trial_cases.csv";
-# say $out "number;patient id;sex;age (years);screening date;week number;";
-# for my $uSubjectId (sort keys %patients) {
-# 	my $casesMonth      = $patients{$uSubjectId}->{'casesMonth'}      // die;
-# 	my $casesDate       = $patients{$uSubjectId}->{'casesDate'}       // die;
-# 	my $casesWeekNumber = $patients{$uSubjectId}->{'casesWeekNumber'} // die;
-# 	$stats{$casesWeekNumber}->{'cases'}++;
-# 	$stats{$casesWeekNumber}->{'month'} = $casesMonth if !exists $stats{$casesWeekNumber}->{'month'};
-# 	if ($casesDate >= '20200720' && $casesDate <= '20200906') {
-# 		$patientsToSept6++;
-# 	}
-# }
-# close $out;
-# say "patientsToSept6 : $patientsToSept6";
-
-# # Prints weekly stats.
-# open my $out2, '>:utf8', "$outputFolder/cases_weekly_recruitment.csv";
-# say $out2 "month;week number;cases;";
-# for my $weekNumber (sort{$a <=> $b} keys %stats) {
-# 	my $cases = $stats{$weekNumber}->{'cases'} // die;
-# 	my $month = $stats{$weekNumber}->{'month'} // die;
-# 	say $out2 "$month;$weekNumber;$cases;";
-# }
-# close $out2;
-
 # Prints patients JSON.
 open my $out3, '>:utf8', "$outputFolder/pfizer_trial_positive_cases_april_2021.json";
 print $out3 encode_json\%patients;
@@ -142,6 +114,9 @@ sub extract_all_subjects_table {
 
 		# We then look for symptoms dates & swab dates.
 		my %casesDates = parse_cases_dates($pageTotalPatients, @divs);
+
+		# Fetching first swabs diagnoses.
+		my %firstSwabs = parse_swabs($pageTotalPatients, @divs);
 		# p%casesDates;
 
 		# # We then look for the cases groups.
@@ -387,11 +362,11 @@ sub extract_all_subjects_table {
 			}
 			die unless $symptomstartDate && $swabDate;
 			die unless $centralLabTest =~ /Pos/;
-			my ($visit1NBindingAssayTest, $nucleicAcidAmplificationTest1, $nucleicAcidAmplificationTest2) = $visit1Tests =~ /(.*)\/(.*)\/(.*)/;
-			die unless $visit1NBindingAssayTest && $nucleicAcidAmplificationTest1 && $nucleicAcidAmplificationTest2;
-			die unless $visit1NBindingAssayTest eq 'Pos' || $visit1NBindingAssayTest eq 'Neg' || $visit1NBindingAssayTest eq 'Unk';
-			die unless $nucleicAcidAmplificationTest1 eq 'Pos' || $nucleicAcidAmplificationTest1 eq 'Neg' || $nucleicAcidAmplificationTest1 eq 'Unk';
-			die unless $nucleicAcidAmplificationTest2 eq 'Pos' || $nucleicAcidAmplificationTest2 eq 'Neg' || $nucleicAcidAmplificationTest2 eq 'Unk';
+			my ($visit1NBindAssay, $visit1NaaT, $visit2NaaT) = $visit1Tests =~ /(.*)\/(.*)\/(.*)/;
+			die unless $visit1NBindAssay && $visit1NaaT && $visit2NaaT;
+			die unless $visit1NBindAssay eq 'Pos' || $visit1NBindAssay eq 'Neg' || $visit1NBindAssay eq 'Unk';
+			die unless $visit1NaaT eq 'Pos' || $visit1NaaT eq 'Neg' || $visit1NaaT eq 'Unk';
+			die unless $visit2NaaT eq 'Pos' || $visit2NaaT eq 'Neg' || $visit2NaaT eq 'Unk';
 			die unless $centralLabTest =~ /Pos/;
 			if ($localLabTest) {
 				die unless $localLabTest =~ /Pos/ || $localLabTest =~ /Neg/;
@@ -416,12 +391,12 @@ sub extract_all_subjects_table {
 			$patients{$subjectId}->{'centralLabTest'} = $centralLabTest;
 			$patients{$subjectId}->{'localLabTest'} = $localLabTest;
 			$patients{$subjectId}->{'swabDate'} = $swabDate;
-			$patients{$subjectId}->{'visit1NBindingAssayTest'} = $visit1NBindingAssayTest;
-			$patients{$subjectId}->{'nucleicAcidAmplificationTest1'} = $nucleicAcidAmplificationTest1;
-			$patients{$subjectId}->{'nucleicAcidAmplificationTest2'} = $nucleicAcidAmplificationTest2;
+			$patients{$subjectId}->{'visit1NBindAssay'} = $visit1NBindAssay;
+			$patients{$subjectId}->{'visit1NaaT'} = $visit1NaaT;
+			$patients{$subjectId}->{'visit2NaaT'} = $visit2NaaT;
 			# p%patients;
 			# die;
-			say "$subjectId - $symptomstartDate, $symptomsEndDate, $centralLabTest, $swabDate -> $visit1NBindingAssayTest, $nucleicAcidAmplificationTest1, $nucleicAcidAmplificationTest2";
+			# say "$subjectId - $symptomstartDate, $symptomsEndDate, $centralLabTest, $swabDate -> $visit1NBindAssay, $visit1NaaT, $visit2NaaT";
 		}
 		last if $pageNum == 224;
 	}
@@ -580,4 +555,33 @@ sub convert_month {
 	return '11' if $m eq 'NOV';
 	return '12' if $m eq 'DEC';
 	die "failed to convert month [$m]";
+}
+
+sub parse_swabs {
+	my ($pageTotalPatients, @divs) = @_;
+	my %firstSwabs = ();
+	my ($dNum, $entryNum) = (0, 0);
+
+	# The date has two possible formats ; date alone, or age group & date collated.
+	for my $div (@divs) {
+		my $text = $div->as_trimmed_text;
+		last if $text =~ /Abbreviations:/;
+		$dNum++;
+		my @words = split ' ', $text;
+		for my $word (@words) {
+			if ($word =~ /(...)\/(...)\/(...)/) {
+				my ($visit1Diagnose, $visit2Diagnose, $visit3Diagnose) = $word =~ /(...)\/(...)\/(...)/;
+				$entryNum++;
+				# say "$visit1Diagnose, $visit2Diagnose, $visit3Diagnose";
+				my $style = $div->attr_get_i('style');
+				my ($topMargin) = $style =~ /top:(.*)px;/;
+				die unless looks_like_number $topMargin;
+				$firstSwabs{$topMargin}->{'visit1Diagnose'} = $visit1Diagnose;
+				$firstSwabs{$topMargin}->{'visit2Diagnose'} = $visit2Diagnose;
+				$firstSwabs{$topMargin}->{'visit3Diagnose'} = $visit3Diagnose;
+			}
+			# say "word : [$word]";
+		}
+	}
+	return %firstSwabs;
 }

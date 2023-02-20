@@ -73,7 +73,8 @@
 % my $placebo = $demographics{'armGroups'}->{'Placebo'} // die;
 
 <div class="table-container">
-	% if ($currentLanguage eq 'En') {
+% say "currentLanguage : $currentLanguage";
+	% if ($currentLanguage eq 'en') {
 	<div class="table-header">
 		<div class="table-cell-1">
 			Characteristics
@@ -133,7 +134,7 @@
 		% my $bNT162b2 = $demographics{'sexGroups'}->{$sexId}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'sexGroups'}->{$sexId}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
-			% if ($currentLanguage eq 'En') {
+			% if ($currentLanguage eq 'en') {
 			<div class="table-cell-1">
 				<%=$sexName%>
 			</div>
@@ -162,7 +163,7 @@
 		</div>
 	% }
 	<hr>
-	% if ($currentLanguage eq 'En') {
+	% if ($currentLanguage eq 'en') {
 	<div class="table-sub-header">
 		Age Groups
 	</div>
@@ -182,7 +183,7 @@
 		% my $bNT162b2 = $demographics{'ageGroups'}->{$ageGroupId}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'ageGroups'}->{$ageGroupId}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
-			% if ($currentLanguage eq 'En') {
+			% if ($currentLanguage eq 'en') {
 				<div class="table-cell-1">
 					<%=$ageGroupName%>
 				</div>
@@ -204,7 +205,7 @@
 			</div>
 		</div>
 	% }
-	% if ($currentLanguage eq 'En') {
+	% if ($currentLanguage eq 'en') {
 	<div class="table-sub-header">
 		Trial Site Countries
 	</div>
@@ -223,7 +224,7 @@
 		% my $bNT162b2 = $demographics{'countries'}->{$trialSiteCountry}->{'BNT162b2'} // 0;
 		% my $placebo = $demographics{'countries'}->{$trialSiteCountry}->{'Placebo'} // 0;
 		<div class="table-row-<%=$rowNum%>">
-			% if ($currentLanguage eq 'En') {
+			% if ($currentLanguage eq 'en') {
 				<div class="table-cell-1">
 					<%=$trialSiteCountry%>
 				</div>

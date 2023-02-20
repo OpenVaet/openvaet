@@ -5,7 +5,7 @@
 	<div style="width:80%;">
 		<div id="map1" style="height: 500px;width: 100%;z-index: 1;"></div>
 		<div class="text_separator"></div>
-		% if ($currentLanguage eq 'En') {
+		% if ($currentLanguage eq 'en') {
 		<div class="image_caption">1 subject = 250 meter radius</div>
 		% } else {
 		<div class="image_caption">1 sujet = 250 metres de diamètre</div>
@@ -23,7 +23,7 @@
 	<div style="width:100%;">
 		<div id="map1" style="height: 250px;width: 100%;z-index: 1;"></div>
 		<div class="text_separator"></div>
-		% if ($currentLanguage eq 'En') {
+		% if ($currentLanguage eq 'en') {
 		<div class="image_caption">1 subject = 250 meter radius</div>
 		% } else {
 		<div class="image_caption">1 sujet = 250 metres de diamètre</div>
@@ -103,7 +103,7 @@
     	let trialSiteCity = this.options.trialSiteCity;
     	let trialSiteInvestigator = this.options.trialSiteInvestigator;
 	    // alert(this.getLatLng() + ', trialSiteName : ' + trialSiteName + ', trialSiteId : ' + trialSiteId + ', totalSubjects : ' + totalSubjects);
-		% if ($currentLanguage eq 'En') {
+		% if ($currentLanguage eq 'en') {
 	    $('#currentMouseOver1').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + trialSiteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + trialSiteAddress + ', '+ trialSitePostalCode + ', '+ trialSiteCity + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + trialSiteInvestigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjects + ' Subjects</div>')
 		% } else {
 	    $('#currentMouseOver1').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + trialSiteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Code Site :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Addresse :</b>' + trialSiteAddress + ', '+ trialSitePostalCode + ', '+ trialSiteCity + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigateur :</b>' + trialSiteInvestigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjects + ' Sujets</div>')

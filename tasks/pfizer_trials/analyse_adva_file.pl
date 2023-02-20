@@ -16,16 +16,16 @@ use time;
 my $adverseFile       = "public/doc/pfizer_trials/pfizer_adfacevd_patients.json";
 my $randomizationFile = "public/doc/pfizer_trials/pfizer_trial_randomizations_merged.json";
 my $allFilesFile      = "public/doc/pfizer_trials/pfizer_sas_data_patients.json";
-my $advaFile          = "public/doc/pfizer_trials/pfizer_adva_patients.json";
 my $addvFile          = "public/doc/pfizer_trials/pfizer_addv_patients.json";
+my $advaFile          = "public/doc/pfizer_trials/pfizer_adva_patients.json";
+my %advaData = ();
+my %addvData = ();
 my %randomizationData = ();
 my %allFilesData      = ();
 my %adverseData       = ();
 adverse_data();        # Loads the JSON formatted adverse effects data.
 randomization_data();  # Loads the JSON formatted randomization data.
 all_files_data();      # Loads the JSON formatted files summary data.
-my %advaData = ();
-my %addvData = ();
 adva_data();
 addv_data();
 
@@ -142,7 +142,7 @@ for my $subjectId (sort keys %advaData) {
 			$stats{'totalPatientsNotPhase1WithArmGroupWithDose1Nov14'}->{'notInRandomizationFileButHasExlusion'}++;
 			next;
 		}
-		p$advaData{$subjectId};
+		# p$advaData{$subjectId};
 		# p$allFilesData{'subjects'}->{$subjectId};
 		# p$addvData{$subjectId};
 		$stats{'totalPatientsNotPhase1WithArmGroupWithDose1Nov14'}->{'notInRandomizationFileAndNoExlusion'}->{'total'}++;
@@ -167,6 +167,7 @@ for my $subjectId (sort keys %advaData) {
 for my $subjectId (sort{$a <=> $b} keys %randomizationData) {
 	my $randomizationDate = $randomizationData{$subjectId}->{'randomizationDate'} // die;
 	next unless $randomizationDate <= 20201114;
+	next if exists $subjects{$subjectId};
 	$subjects{$subjectId}->{'randomizationDate'} = $randomizationDate;
 	$subjects{$subjectId}->{'randomizationDateOrigin'} = 'Randomization file only';
 }
@@ -177,7 +178,7 @@ for my $subjectId (sort{$a <=> $b} keys %subjects) {
 
 		$stats{'totalPatientsWithDose1July20ToNov14'}->{'total'}++;
 		unless (exists $randomizationData{$subjectId}) {
-			p$advaData{$subjectId};
+			# p$advaData{$subjectId};
 			$stats{'totalPatientsWithDose1July20ToNov14'}->{'notInRandomizationFile'}++;
 		} else {
 			unless (exists $advaData{$subjectId}) {

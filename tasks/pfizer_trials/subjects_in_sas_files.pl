@@ -23,7 +23,7 @@ use time;
 
 # Fetching XPT files details provided.
 my $dataCsv        = Text::CSV_XS->new ({ binary => 1 });
-my $xptDetailsFile = 'tasks/pfizer_trials/abstractor_xpt_documentation_202301080000.csv';
+my $xptDetailsFile = 'tasks/pfizer_trials/abstractor_xpt_documentation_202302070200.csv';
 my %xptDetails     = ();
 my %subjects       = ();
 my $outputFolder   = "public/doc/pfizer_trials";
@@ -115,6 +115,7 @@ sub load_xpt_details {
 sub parse_xpt_files {
 	my %filesAttributed = ();
 	for my $file (glob "raw_data/pfizer_trials/xpt_files_to_csv/*") {
+
 		# This doesn't contain subjects data.
 		next if $file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0593482-0593595-125742_S1_M5_bnt162-01-S-D-pe.csv';
 		next if $file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0593327-0593481-125742_S1_M5_bnt162-01-S-D-ce.csv';

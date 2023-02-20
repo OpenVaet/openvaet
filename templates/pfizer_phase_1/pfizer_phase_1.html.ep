@@ -1,0 +1,587 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures';
+<head>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+    <!-- Primary Meta Tags -->
+	<title>OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures</title>
+	<meta name="title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta name="description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="og:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="og:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="og:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="twitter:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="twitter:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="twitter:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+</head>
+% } else {
+% title 'Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA';
+<head>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+    <!-- Primary Meta Tags -->
+	<title>OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA</title>
+	<meta name="title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta name="description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="og:title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta property="og:description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+	<meta property="og:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="twitter:title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta property="twitter:description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+	<meta property="twitter:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+</head>
+% }
+
+<style>
+	.image_caption {
+		width: 100%;
+		text-align: right;
+		font-size:12px;
+		color:darkgrey;
+		font-style: italic;
+	}
+</style>
+
+% my %phase1Subjects = %$phase1Subjects;
+
+<div class="content-container" style="padding-left:30px;padding-right: 30px;width: calc(100% - 60px);max-width: 1400px;line-height: 26px;text-justify: inter-word;font-size: 1.1875rem;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+	    <div class="url-link noselect" onclick="openLocation('/studies');return;">&#10229; Return to studies</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;text-align: center;font-size: 2.175rem;font-weight: bold;line-height: 34px;">
+			Pfizer/BioNTech phase 1/2 Trial - Reproducing the study demographics
+		</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<div style="width:100%;text-align: center;font-size: 1.65rem;font-weight: bold;line-height: 34px;">
+			Study <a href="/review_nejm_fda_data/study_changelog?currentLanguage=<%=$currentLanguage%>">version 1.0</a>, published on 2023-01-19
+		</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Introduction</h2>
+	    We review, in this article, the demographics & adverse events experienced by the subjects in the Pfizer/BioNTech C4591001 phase 1/2 trial, as featured in the Sponsor's data obtained and shared by the <a href="https://phmpt.org/" target="_blank">Public Health and Medical Professionals for Transparency (PHMPT)</a>.
+	    <div class="text_separator"></div>
+		Two studies are presenting results of interest:
+		<ul>
+			<li>A nature study by Mark J. Mulligan et al., published on August 12, 2020, <a href="https://www.nature.com/articles/s41586-020-2639-4" target="_blank">Phase I/II study of COVID-19 RNA vaccine BNT162b1 in adults"</a> presents the results for BNT162b1 for the 18 to 55 age group.</li>
+			<div class="text_separator"></div>
+			<li>A medrxiv.org study by Edward E. Walsh et al. (among whom, Uğur Şahin), published a few days later, on August 28, 2020, <a href="https://www.medrxiv.org/content/10.1101/2020.08.17.20176651v2" target="_blank">RNA-Based COVID-19 Vaccine BNT162b2 Selected for a Pivotal Efficacy Study"</a> presents the results for BNT162b1 & BNT162b2, for the 18-55 & 65 - 85 age groups.
+	    	<div class="text_separator" style="height:2px;"></div>
+			On October 14, 2020, it was published in the New England Journal of Medicine, under the name <a href="https://www.nejm.org/doi/10.1056/NEJMoa2027906">"Safety and Immunogenicity of Two RNA-Based Covid-19 Vaccine Candidates"</a>.</li>
+		</ul>
+	    <div class="text_separator"></div>
+		We will focus here on the later in its NEJM version, which provided a comprehensive overview on the demographics of the subjects of the trial. For a broader view on the trials generated by the BNT162, you can refer to this comprehensive overview by Geoff Pain, <a href="https://geoffpain.substack.com/p/pfizer-biontech-covid19-jab-multiple">Pfizer BioNTech Covid19 Jab Multiple Trials Trail</a>.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Results</h2>
+	    The phase 1/2 was initiated, officially, on May 4, 2020 (as detailed below, it in fact began at least 5 days before, on <b>April 29, 2020</b>, date of the first subject's - 10021003 - screening).
+	    <div class="text_separator"></div>
+	    This first screening took place 6 days after the first injection being performed in the German trial, as documented in this other Nature study by <a href="https://www.nature.com/articles/s41586-020-2814-7" target="_blank">COVID-19 vaccine BNT162b1 elicits human antibody and TH1T cell responses</a> by Ugur Sahin et al..
+	    <div class="text_separator"></div>
+	    The screening ended offically on June 22, 2020 (again, as detailed below, a week before the last screening used, 10031087, screened on <b>June 29, 2020</b>).
+		<div class="text_separator"></div>
+		Aside for these dates abnomalies, we highlight here deviations on the protocol, adverse effects which aren't mentioned in the study, and incorrect statements on key factors used to justify the determination of the Bnt162b2 against the Bnt162b1.
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Methodology</h2>
+	    Data has been automatically downloaded from the PHMPT's website, extracted & converted to processible files. The code has been written <a href="https://www.perl.org/" target="_blank">using Perl 5</a>, and the dependencies required are documented on <a href="/data?currentLanguage=<%=$currentLanguage%>" target="_blank">this page</a>.
+	    <div class="text_separator"></div>
+	    The scripts & data are freely accessible, and detailed further in the <b>Methodology Details</b> section. Additional libraries (also open source & freely accessible) have been documented when required.
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Study Demographics</h2>
+		The protocol has been communicated to the NEJM, and <a href="https://www.nejm.org/doi/suppl/10.1056/NEJMoa2027906/suppl_file/nejmoa2027906_protocol.pdf" target="_blank">can be accessed here</a>. Among other useful details, it specified page 65 & following of the PDF the "study's procedures" (8.11. Study Procedures).
+	    <div class="text_separator"></div>
+		The study presents, <a href="https://www.nejm.org/doi/pdf/10.1056/NEJMoa2027906?articleTools=true" target="_blank">page 4 of its .PDF version</a>, these 332 subjects screened & 195 subjects randomized, and explains the 137 subjects offset by the fact that 54 subjects weren't assigned (enrollment was closed once the desired cohort was reached), while 83 subjects failed to satisfy the screening conditions.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/pfizer_phase_1/nejm_demographic.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;">
+	    	<img src="/doc/pfizer_phase_1/nejm_demographic.png" style="width:400px;display:block;margin:auto;">
+			<div class="text_separator"></div>
+			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		As exposed in the study, 7 products were tested on groups of 12 subjects, while 3 subjects in each group received a Placebo (<a href="https://geoffpain.substack.com/p/nickel-not-nocebo-explains-a-lot" target="_blank">provided by Hospira & Fresenius Kabi</a>) for each cohort of 15.
+		<div class="text_separator"></div>
+		Using the ADVA file, we were able to identify the precise cohort attributed to each subject. We verified the demographic base figures in the following diagram.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div onclick="openInNewTab('/doc/pfizer_phase_1/Phase1Demographic.png');return;" style="width:400px;display:block;margin:auto;cursor: pointer;">
+	    	<img src="/doc/pfizer_phase_1/Phase1Demographic.png" style="width:400px;display:block;margin:auto;">
+			<div class="text_separator"></div>
+			<div class="image_caption">You can open the picture in full screen in another tab by clicking it.</div>
+	    </div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		The subjects were enrolled on 4 sites : 1001, 1002, 1003, 1007 (surprisingly no Covid case was observed on any of these sites on the November 14 efficacy cut-off).
+	    <div class="text_separator"></div>
+		We extracted the demographic & randomization PDF data, the adverse effects PDF data, the XPT deviations, ADVA tests results & MB tests results for the 195 subjects who underwent randomization, and represented them in the table below among the 332 total subjects, sorted by screening date.
+	    <div class="text_separator"></div>
+	    You can click on a subject who has detailed deviations or adverse effects by clicking it in the scrollable table below to display more data.
+	    <div class="text_separator"></div>
+	    Use your browser search (CTRL + F in most browsers) if you wish to search for a specific subject id.
+	    <div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div style="width: 100%;height:500px;overflow-x: auto;overflow-y: auto;text-align: center;border: 1px solid black;box-sizing: border-box;font-size: 13px;">
+			<div style="min-width:2600px;width:100%;display: flex;flex-wrap: wrap;font-weight: bold;padding-top: 15px;">
+				<div style="width: 250px;">
+					Unique Subject Id
+				</div>
+				<div style="width: 250px;">
+					Subject Id
+				</div>
+				<div style="width: 200px;">
+					Screening Date
+				</div>
+				<div style="width: 200px;">
+					Sex
+				</div>
+				<div style="width: 100px;">
+					Age
+					<div style="width:100%;height:2px;"></div>
+					(Years)
+				</div>
+				<div style="width: 100px;">
+					AEs
+				</div>
+				<div style="width: 100px;">
+					Deviations
+				</div>
+				<div style="width: 100px;">
+					N-Binding Pos.
+				</div>
+				<div style="width: 100px;">
+					PCR Pos.
+				</div>
+				<div style="width: 200px;">
+					Randomization Date
+				</div>
+				<div style="width: 200px;">
+					Arm
+				</div>
+				<div style="width: 200px;">
+					Dose 1 Date
+				</div>
+				<div style="width: 200px;">
+					Screening &#10230; Dose 1
+					<div style="width:100%;height:2px;"></div>
+					(Days)
+				</div>
+				<div style="width: 200px;">
+					Dose 2 Date
+				</div>
+				<div style="width: 200px;">
+					Dose 1 &#10230; Dose 2
+					<div style="width:100%;height:2px;"></div>
+					(Days)
+				</div>
+			</div>
+			% for my $compScreening (sort{$a <=> $b} keys %phase1Subjects) {
+				% for my $subjectId (sort{$a <=> $b} keys %{$phase1Subjects{$compScreening}}) {
+					% my $uSubjectId = $phase1Subjects{$compScreening}->{$subjectId}->{'uSubjectId'};
+					% my $screeningDate = $phase1Subjects{$compScreening}->{$subjectId}->{'screeningDate'} // die;
+					% my $randomizationDate = $phase1Subjects{$compScreening}->{$subjectId}->{'randomizationDate'};
+					% if ($randomizationDate) {
+						% my $actArm = $phase1Subjects{$compScreening}->{$subjectId}->{'actArm'} // die;
+						% my $positivePCR = $phase1Subjects{$compScreening}->{$subjectId}->{'positivePCR'} // die;
+						% my $positiveNBinding = $phase1Subjects{$compScreening}->{$subjectId}->{'positiveNBinding'} // die;
+						% my $ageYears = $phase1Subjects{$compScreening}->{$subjectId}->{'ageYears'} // die;
+						% my $sex = $phase1Subjects{$compScreening}->{$subjectId}->{'sex'} // die;
+						% my $dose1Date = $phase1Subjects{$compScreening}->{$subjectId}->{'dose1Date'} // die;
+						% my $dose2Date = $phase1Subjects{$compScreening}->{$subjectId}->{'dose2Date'} // die;
+						% my $totalAdverseEffects = $phase1Subjects{$compScreening}->{$subjectId}->{'totalAdverseEffects'} // die;
+						% my $totalDeviations = $phase1Subjects{$compScreening}->{$subjectId}->{'totalDeviations'} // die;
+						% my $daysBetweenScreeningAndDose1 = $phase1Subjects{$compScreening}->{$subjectId}->{'daysBetweenScreeningAndDose1'} // die;
+						% my $daysBetweenDose1Dose2 = $phase1Subjects{$compScreening}->{$subjectId}->{'daysBetweenDose1Dose2'} // die;
+					<div style="min-width:2600px;width:100%;display: flex;flex-wrap: wrap;border-top: 1px solid black;cursor: pointer;" onclick="phase1SubjectDetails('<%=$subjectId%>');return;">
+						<div style="width: 250px;">
+							<%=$uSubjectId%>
+						</div>
+						<div style="width: 250px;">
+							<%=$subjectId%>
+						</div>
+						<div style="width: 200px;">
+							<%=$screeningDate%>
+						</div>
+						<div style="width: 200px;">
+							<%=$sex%>
+						</div>
+						<div style="width: 100px;">
+							<%=$ageYears%>
+						</div>
+					% if ($totalAdverseEffects) {
+						<div style="width: 100px;background: darkred;color:white;">
+							<%=$totalAdverseEffects%>
+						</div>
+					% } else {
+						<div style="width: 100px;">
+							<%=$totalAdverseEffects%>
+						</div>
+					% }
+					% if ($totalDeviations) {
+						<div style="width: 100px;background: darkred;color:white;">
+							<%=$totalDeviations%>
+						</div>
+					% } else {
+						<div style="width: 100px;">
+							<%=$totalDeviations%>
+						</div>
+					% }
+					% if ($positiveNBinding) {
+						<div style="width: 100px;background: darkred;color:white;">
+							<%=$positiveNBinding%>
+						</div>
+					% } else {
+						<div style="width: 100px;">
+							<%=$positiveNBinding%>
+						</div>
+					% }
+					% if ($positivePCR) {
+						<div style="width: 100px;background: darkred;color:white;">
+							<%=$positivePCR%>
+						</div>
+					% } else {
+						<div style="width: 100px;">
+							<%=$positivePCR%>
+						</div>
+					% }
+						<div style="width: 200px;">
+							<%=$randomizationDate%>
+						</div>
+						<div style="width: 200px;">
+							<%=$actArm%>
+						</div>
+						<div style="width: 200px;">
+							<%=$dose1Date%>
+						</div>
+					% if ($daysBetweenScreeningAndDose1 > 14) {
+						<div style="width: 200px;background: darkred;color:white;">
+							<%=$daysBetweenScreeningAndDose1%>
+						</div>
+					% } else {
+						<div style="width: 200px;">
+							<%=$daysBetweenScreeningAndDose1%>
+						</div>
+					% }
+						<div style="width: 200px;">
+							<%=$dose2Date%>
+						</div>
+					% if ($daysBetweenDose1Dose2 > 23) {
+						<div style="width: 200px;background: darkred;color:white;">
+							<%=$daysBetweenDose1Dose2%>
+						</div>
+					% } else {
+						<div style="width: 200px;">
+							<%=$daysBetweenDose1Dose2%>
+						</div>
+					% }
+					</div>
+					% } else {
+					<div style="min-width:2600px;width:100%;display: flex;flex-wrap: wrap;border-top: 1px solid black;background: lightgrey;">
+						<div style="width: 250px;">
+							-
+						</div>
+						<div style="width: 250px;">
+							<%=$subjectId%>
+						</div>
+						<div style="width: 200px;">
+							<%=$screeningDate%>
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 100px;">
+							-
+						</div>
+						<div style="width: 100px;">
+							-
+						</div>
+						<div style="width: 100px;">
+							-
+						</div>
+						<div style="width: 100px;">
+							-
+						</div>
+						<div style="width: 100px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+						<div style="width: 200px;">
+							-
+						</div>
+					</div>
+					% }
+				% }
+			% }
+		</div>
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    As illustrated in this table, only one subject (10071066) tested positive for Covid (visit 6 on January 6, 2021), from the BNT162b2 Phase 1 (30 mcg) cohort.
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Screening to dose 1</h2>
+	    2 subjects (on site 1007) had deviations from the window specified page 65 of the protocol of 0 to 14 days between screening & dose 1: one patient at 15 days (10071057) and one at 18 days (10071051).
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Interval Between Doses</h2>
+		The 195 subjects received, according to the study, their two doses at an interval of 21 days apart between dose 1 and dose 2 (the protocol doesn't include any mention of the 19 to 42 days "allowed window" which would later apply in phase 3, but does plan for a 19 to 23 days window).
+		<div class="text_separator"></div>
+		We measured the actual days between doses 1 & 2 for these subjects.
+		<div class="text_separator"></div>
+		The subjects received their injections as scheduled for the BNT162b2 Phase 1 (10 mcg), BNT162b2 Phase 1 (20 mcg), BNT162b2 Phase 1 (30 mcg), BNT162b1 Phase 1 (10 mcg), BNT162b1 Phase 1 (20 mcg), BNT162b1 Phase 1 (30 mcg).
+		<div class="text_separator"></div>
+		The 12 <b>BNT162b1 Phase 1 (100/10 mcg)</b> subjects represented most of the deviations out of the 19 to 23 days window, with <b>all subjects receiving their second doses between 85 to 105 days after dose 1</b>.
+		<div class="text_separator"></div>
+		3 subjects from the placebo arm (10021041, 10011021, 10011013 - those assigned to the 100/10 mcg group) were again (far) outside of the 19 to 23 days window.
+		<div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <h2>Adverse Effects</h2>
+		<div class="text_separator"></div>
+	    The study states that <i>"Participants 18 to 55 years of age who had been assigned to receive 100 μg of BNT162b1 or placebo received one dose; the second dose was not administered because of reactogenicity in the participants who received active vaccine"</i>, and references as source for that claim the Mulligan et al. study, <a href="https://www.nature.com/articles/s41586-020-2639-4" target="_blank">Phase I/II study of COVID-19 RNA vaccine BNT162b1 in adults"</a>.
+		<div class="text_separator"></div>
+		The Mulligan study states (page 2 of the .PDF version) that <i>"All local reactions were mild or moderate in severity except for one report of severe pain after the first dose of 100 μg BNT162b1 (Fig. 2)"</i>.
+	    <div class="text_separator"></div>
+	    This first statement relies exclusively on the interpretation made by the lead investigator of each site (sole arbiter of the fact that an adverse effect is or isn't related to the product), as several subjects have reported a wilde range of adverse effects. To quote a few examples:
+	    <div class="text_separator"></div>
+	    <b>Subject 10011015</b>, a 28 years old white male from the BNT162b1 (30 mcg) arm, had 9 reported adverse effects, all identified as "vaccine" related by the healthcare professional in charge.
+	    <div class="text_separator"></div>
+		2 days after his first dose, he reported:
+		<ul>
+			<li>Tachycardia, which lasted 7 days</li>
+	    	<div class="text_separator"></div>
+			<li>Fatigue</li>
+	    	<div class="text_separator"></div>
+			<li>Injection site swelling</li>
+	    	<div class="text_separator"></div>
+			<li>Diarrhoea</li>
+		</ul>
+		The day following his second dose, he reported:
+		<ul>
+			<li>Decreased appetite</li>
+		</ul>
+	    <div class="text_separator"></div>
+		Two days after his second dose, he reported:
+		<ul>
+			<li>Diarrhoea</li>
+	    	<div class="text_separator"></div>
+			<li>Chills</li>
+	    	<div class="text_separator"></div>
+			<li>Fatigue</li>
+	    	<div class="text_separator"></div>
+			<li>Pyrexia (fever)</li>
+	    	<div class="text_separator"></div>
+			<li>Headache</li>
+		</ul>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+		<b>Subject 10011034</b>, a 26 years old asian female from the BNT162b1 (100/10 mcg) arm, had a presyncope ("Vaso-vagal reaction with finger prick") 5 days prior her dose 1.
+	    <div class="text_separator"></div>
+		A day after her first dose, she reported:
+		<ul>
+			<li>Nausea</li>
+	    	<div class="text_separator"></div>
+			<li>Sleep disturbance</li>
+		</ul>
+		2 days after her first dose, she reported a Decreased appetite.
+	    <div class="text_separator"></div>
+		51 days after her first dose, she had another Presyncope.
+	    <div class="text_separator"></div>
+		A day after her second dose, she reported Fatigue (lasting 9 days).
+	    <div class="text_separator"></div>
+		2 days after her second dose, she reported Nausea.
+	    <div class="text_separator"></div>
+		91 days after her second dose, she reported Dysphagia.
+	    <div class="text_separator"></div>
+		107 days after her second dose, she reported Gastric polyps & Gastritis - both unresolved.
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    The study further states that <i>"After the first dose, fever (defined as ≥38.0°C) was reported by 8.3% (1 out of 12) of participants who received 10 μg and 30 μg BNT162b1 and by 50.0% (6 out of 12) of individuals who received 100 μg BNT162b1."</i>
+	    <div class="text_separator"></div>
+	    Verifying this statement proved more difficult than expected:
+	    <ul>
+	    	<li>No fever figures for a phase 1/2 subject, in the .PDF <a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf</a> file's table, <i>"16.2.7.4.1 Listing of Adverse Events – All Subjects ≥16 Years of Age"</i></li>
+	    	<li>Fevers are appearing multiple times in the Adverse Events .XPT file (FDA-CBER-2021-5683-0764727-0765714-125742_S1_M5_c4591001-S-Supp-D-ae-supp.xpt, <i>"dataset of Adverse Events (AE) - observations made during the clinical trial describing untoward medical occurrences in subjects that are given a pharmaceutical product."</i>) but none for phase 1/2 subjects.</li>
+	    	<li>We located these in the Clinical Events .XPT file (FDA-CBER-2021-5683-0149082-to-0158559_125742_S1_M5_c4591001-S-D-ce.xpt, <i>"dataset (CE) contains information about events that are of clinical interest but which are not classified as Adverse Events.  In this case, examples are chills, fever, fatigue, vomiting."</i>)</li>
+	    </ul>
+	    The second part of the sentence appears true from the data, 6 subjects indeed reported mild (5) to moderate (1) fevers in the BNT162b1 100/10 mcg arm (<i>10011026, 10011030, 10021023, 10021027, 10021034, 10021038</i>).
+	    <div class="text_separator"></div>
+	    1 subject (<i>10011009</i>) reported fever (moderate) after the BNT162b1 10 mcg first dose.
+	    <div class="text_separator"></div>
+	    No subject reported Fever post dose 1 in the BNT162b1 20 mcg arm, but 8 on 12 reported fevers post dose 2.
+	    <div class="text_separator"></div>
+	    The statement on the BNT162b1 30 mcg arm is simply false. 4 subjects, not one, reported fevers after the dose 1 (<i>10011024, 10021062, 10021074, 10021077</i>) - and 11 subjects reported fevers after their second dose (<i>10011011, 10011012, 10011015, 10011017, 10011019, 10011046, 10011048, 10011058, 10021006, 10021014, 10021015</i>).
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+	    <i><b>Verifying all the statements made in the study in light of the data is an ongoing effort by multiple researchers. This study will be further updated as we progress.</b></i>
+	    <div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width:calc(100% - 15px);padding-left: 15px;font-size: 1.6875rem;font-weight: bold;">
+		    5 - Methodology Details
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
+		    5.1 - PHPMT Files Download & Extraction
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		You'll need the <a href="https://www.xpdfreader.com/download.html" target="_blank">XPDF version corresponding to your OS</a>. Place the file (either pdftohtml on Linux or pdftohtml.exe on Windows) in your project repository.
+		<div class="text_separator"></div>
+		You must answer "Y" when the script asks you if it should proceed with the extraction of the .PDF files, if you want to reproduce the global PDF statistics.
+		<div class="text_separator"></div>
+		We automatically downloaded the documents from the Pfizer trials made available on <a href="https://phmpt.org/pfizers-documents/" target="_blank">PHMPT.org</a>, using the script <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_documents/get_documents.pl" target="_blank">tasks/pfizer_documents/get_documents.pl</a> (Github), and converted the .PDF files to .HTML using the same script.
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+	    <div style="width:calc(100% - 45px);padding-left: 45px;font-size: 1.475rem;font-weight: bold;">
+		    5.2 - Files used.
+		</div>
+		<div class="text_separator"></div>
+		In addition to the documents used in <a href="/studies/review_nejm_fda_data?currentLanguage=en" target="_blank">our Phase 3 review</a>, we have three files, in the PHMPT dump, useful to identify the phase 1 subjects volume and which are requiring a few explanations:
+		<ul>
+			<li>
+				<b><a href="https://phmpt.org/wp-content/uploads/2022/03/FDA-CBER-2021-5683-0023500-to-0023507_125742_S1_M5_c4591001-A-c4591001-phase-1-subjects-from-dmw.xlsx" target="_blank">pd-production-030122/FDA-CBER-2021-5683-0023500 to -0023507_125742_S1_M5_c4591001-A-c4591001-phase-1-subjects-from-dmw.xlsx</a></b>
+				<div class="text_separator"></div>
+				Contains 332 subjects referenced as "STAGE 1 SENTINEL COHORT".
+			</li>
+			<div class="text_separator"></div>
+			<li>
+				<b><a href="https://phmpt.org/wp-content/uploads/2022/04/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf" target="_blank">pd-production-040122/125742_S1_M5_5351_c4591001-interim-mth6-demographics.pdf</a></b>
+				<div class="text_separator"></div>
+				Contains identifiers for 195 subjects phase 1 subjects, marked by a "^" symbol collated to the subject id.
+			</li>
+			<div class="text_separator"></div>
+			<li>
+				<b><a href="https://phmpt.org/pfizers-documents/" target="_blank">FDA-CBER-2021-5683-0123168 to -0126026_125742_S1_M5_c4591001-A-D-adva.xpt</a></b> (<i>ADVA File</i>, "dataset tailored to support the analysis of the ability of a substance is able to stimulate an immune response.  In this case, the immune response is assessed using blood-related tests such as COVID-19 RBD IgG (U/mL) - Luminex Immunoassay and N-binding antibody - N-binding Antibody Assay.")
+			</li>
+		</ul>
+		Another file was parsed to identify the PCR tests results (thanks to researcher <a href="https://twitter.com/joshg99" target="_blank">Josh Guetzkow</a> for pointing us in that direction):
+		<ul>
+			<li>
+				<b><a href="https://phmpt.org/pfizers-documents/" target="_blank">FDA-CBER-2021-5683-0282366 to -0285643_125742_S1_M5_c4591001-S-D-mb.xpt</a></b> (<i>MB File</i>, "dataset that represents non-host organisms identified including bacteria, viruses, parasites, protozoa and fungi. In this case, the data detail PCR tests used in connection with SARS-CoV-2 such as Cepheid RT-PCR assay for SARS-CoV-2 collected via nasal swab or swabbed material.")
+				<div class="text_separator"></div>
+				One subject's record in this file stands out as having no date (11341369, V102_VAX4 for a nasal swab not done) and this row has been skipped (data integrity flaw worth noting as the only entry among 131 139 with such anomaly).
+				<div class="text_separator"></div>
+				Two other records been skipped as having no visit name provided (10021006 on 2020-05-05, 10021010 on 2020-05-05 - both for Hepatitis B Virus Core Antibody - one negative, one positive).
+				<div class="text_separator"></div>
+				We converted the file to <a href="/doc/pfizer_trials/pfizer_mb_patients.json" download>.JSON</a>, using the <a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_mb_data.pl" target="_blank">tasks/pfizer_trials/extract_mb_data.pl</a> script.
+			</li>
+		</ul>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div style="width: 100%;overflow-x: auto;overflow-y: auto;text-align: center;border: 1px solid black;box-sizing: border-box;font-size: 13px;">
+			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;font-weight: bold;padding-top: 15px;">
+				<div style="width: 20%;">
+					File Name
+				</div>
+				<div style="width: 20%;">
+					Table Name
+				</div>
+				<div style="width: 10%;">
+					Pages
+				</div>
+				<div style="width: 15%;">
+					Extraction Script (Github)
+				</div>
+				<div style="width: 25%;">
+					Notes
+				</div>
+				<div style="width: 10%;">
+					Output
+				</div>
+			</div>
+			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
+				<div style="width: 20%;">
+					<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf</a>
+				</div>
+				<div style="width: 20%;">
+					16.2.7.4.1 Listing of Adverse Events – All Subjects ≥16 Years of Age
+				</div>
+				<div style="width: 10%;">
+					77 to 3513
+				</div>
+				<div style="width: 15%;">
+					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_after_effects.pl" target="_blank">tasks/pfizer_trials/extract_after_effects.pl</a>
+				</div>
+				<div style="width: 25%;">
+					All potential after-effects registered for the subjects up to April 1st 2021.
+				</div>
+				<div style="width: 10%;">
+					<a href="/doc/pfizer_trials/pfizer_trial_demographics_1.json" download>.JSON</a>
+				</div>
+			</div>
+			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
+				<div style="width: 20%;">
+					<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf</a>
+				</div>
+				<div style="width: 20%;">
+					16.2.7.5 Listing of Serious Adverse Events – All Subjects ≥16 Years of Age
+				</div>
+				<div style="width: 10%;">
+					3518 to 3618
+				</div>
+				<div style="width: 15%;">
+					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_severe_ae.pl" target="_blank">tasks/pfizer_trials/extract_severe_ae.pl</a>
+				</div>
+				<div style="width: 25%;">
+					Serious potential after-effects registered for the subjects up to April 1st 2021.
+				</div>
+				<div style="width: 10%;">
+					<a href="/doc/pfizer_trials/pfizer_trial_demographics_1.json" download>.JSON</a>
+				</div>
+			</div>
+		</div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    % }
+</div>
+
+<script type="text/javascript">
+	function phase1SubjectDetails(subjectId) {
+        window.location.href = '/phase_1_subject?currentLanguage=' + currentLanguage + '&subjectId=' + subjectId;
+	}
+</script>

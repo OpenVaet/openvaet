@@ -60,9 +60,11 @@ verify_pdf_structure();
 # We then extract pages 1 to 2951 (table "All Subjects").
 my %patients = ();
 my $totalPatients = 0;
+my $totalPhase1Patients = 0;
 extract_all_subjects_table();
 # p%patients;
-say "totalPatients   : $totalPatients";
+say "totalPatients       : $totalPatients";
+say "totalPhase1Patients : $totalPhase1Patients";
 
 # Generates weekly stats, prints .CSV.
 my %stats = ();
@@ -165,6 +167,7 @@ sub extract_all_subjects_table {
 			my $month           = $screeningDates{$pNum}->{'month'}             // die;
 			my $weekNumber      = $screeningDates{$pNum}->{'weekNumber'}        // die;
 			$totalPatients++;
+			$totalPhase1Patients++ if $isPhase1;
 			$patients{$subjectId}->{'pageNum'}         = $pageNum;
 			$patients{$subjectId}->{'uSubjectId'} = $uSubjectId;
 			$patients{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;

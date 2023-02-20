@@ -362,7 +362,7 @@ sub load_efficacy_cases {
 
     my $efficacySubjectsSustainedFile = 'public/doc/pfizer_trials/170_positive_efficacy.json';
     my %efficacySubjectsSustained = json_from_file($efficacySubjectsSustainedFile);
-    p%efficacySubjectsSustained;
+    # p%efficacySubjectsSustained;
 
     my $efficacySubjectsFile = 'public/doc/pfizer_trials/efficacy_subjects.json';
     my %efficacySubjects = json_from_file($efficacySubjectsFile);

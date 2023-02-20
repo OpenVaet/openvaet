@@ -144,7 +144,8 @@ sub verify_randomization {
 			$ageGroupName, $sexGroupId, $uSubjectId, $trialSiteCountry, $daysOfExposure,
 			$trialSiteState, $trialSiteName, $trialSitePostalCode, $trialSiteAddress, $trialSiteCity,
 			$trialSiteInvestigator, $trialSiteLatitude, $trialSiteLongitude, $dose1WeekNumber, $dose2Date,
-			$sourceFile, $sourceTable, $swabDate, $daysDifferenceBetweenPosTestAnd2, $swabNumber
+			$sourceFile, $sourceTable, $swabDate, $daysDifferenceBetweenPosTestAnd2, $swabNumber,
+			$visit1NBindAssay, $visit1NaaT, $visit2NaaT
 		);
 		unless ($randomizationDate) {
 			$stats{'0_preliminaryExclusions'}->{'noRandomizationDate'}++;
@@ -355,22 +356,40 @@ sub verify_randomization {
 																} else {
 																	$swabInDelay = 1;
 																	# say "Tested positive after dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																	$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-																	$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-																	$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
 																	if (exists $efficacy{$subjectId}) {
+																		$visit1NBindAssay = $cases{$subjectId}->{'visit1NBindAssay'} // die;
+																		$visit1NaaT = $cases{$subjectId}->{'visit1NaaT'} // die;
+																		$visit2NaaT = $cases{$subjectId}->{'visit2NaaT'} // die;
+																		if ($visit1NBindAssay ne 'Neg' || $visit1NaaT ne 'Neg' || $visit2NaaT ne 'Neg') {
+																			p$cases{$subjectId};
+																			die "error";
+																		}
 																		say "Tested positive after dose 2 + 7 days, in efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
 																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'totalSubjects'}++;
 																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
 																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
+																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
+																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
 																	} else {
-																		say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																		$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'totalSubjects'}++;
-																		$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
-																		# $stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'subjects'}->{$subjectId} = 1;
-																		$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-																		# p$randomization{$subjectId};
-																		# p$screening{$subjectId};
+																		$visit1NBindAssay = $cases{$subjectId}->{'visit1NBindAssay'} // die;
+																		$visit1NaaT = $cases{$subjectId}->{'visit1NaaT'} // die;
+																		$visit2NaaT = $cases{$subjectId}->{'visit2NaaT'} // die;
+																		if ($visit1NBindAssay ne 'Neg' || $visit1NaaT ne 'Neg' || $visit2NaaT ne 'Neg') {
+																			say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'earlySwabPositives'}++;
+																		} else {
+																			say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
+																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'totalSubjects'}++;
+																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
+																			# $stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'subjects'}->{$subjectId} = 1;
+																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
+																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
+																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
+																			# p$randomization{$subjectId};
+																			# p$screening{$subjectId};
+																		}
 																	}
 																	unless (exists $casesStats{$trialSiteId}) {
 
@@ -639,6 +658,9 @@ sub verify_randomization {
 		say $out $line;
 
 		# Formatting subject object.
+		$subjectObjects{$subjectId}->{'visit1NBindAssay'} = $visit1NBindAssay;
+		$subjectObjects{$subjectId}->{'visit1NaaT'} = $visit1NaaT;
+		$subjectObjects{$subjectId}->{'visit2NaaT'} = $visit2NaaT;
 		$subjectObjects{$subjectId}->{'screeningDate'} = $screeningDate;
 		$subjectObjects{$subjectId}->{'screeningDateOrigin'} = $screeningDateOrigin;
 		$subjectObjects{$subjectId}->{'isPhase1'} = $isPhase1;

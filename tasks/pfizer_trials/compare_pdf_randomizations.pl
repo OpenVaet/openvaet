@@ -15,9 +15,8 @@ use time;
 
 my $randomizationFile1 = 'public/doc/pfizer_trials/pfizer_trial_randomization_1.json';
 my $randomizationFile2 = 'public/doc/pfizer_trials/pfizer_trial_randomization_2.json';
-
-my %randomization1 = ();
-my %randomization2 = ();
+my %randomization1     = ();
+my %randomization2     = ();
 
 load_randomization_subjects_1();
 load_randomization_subjects_2();
@@ -32,6 +31,10 @@ for my $subjectId (sort{$a <=> $b} keys %randomization1) {
 	unless (exists $randomization2{$subjectId}) {
 		say "[$subjectId] is present in [1] but not in [2]";
 	}
+	p$randomization1{$subjectId};
+	p$randomization2{$subjectId};
+	say "subjectId : [$subjectId]";
+	die;
 	$randomizations{$subjectId} = \%{$randomization1{$subjectId}};
 }
 for my $subjectId (sort{$a <=> $b} keys %randomization2) {

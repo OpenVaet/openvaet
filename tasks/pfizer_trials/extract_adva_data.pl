@@ -80,11 +80,14 @@ while (<$in>) {
 		my $age         = $values{'AGE'}     // die;
 		my $sex         = $values{'SEX'}     // die;
 		($age) = split '\.', $age;
+		my $race        = $values{'RACE'}    // die;
 		my $ageUnit     = $values{'AGEU'}    // die;
 		die unless $ageUnit eq 'YEARS';
 		my $phase       = $values{'PHASE'}   // die;
 		my $isDtc       = $values{'ISDTC'}   // die;
+		my $visit       = $values{'VISIT'}   // die;
 		my $actArm      = $values{'ACTARM'}  // die;
+		my $cohort      = $values{'COHORT'}  // die;
 		my $param       = $values{'PARAM'}   // die;
 		my $avaLc       = $values{'AVALC'}   // die;
 		my ($siteCode)  = $uSubjectId =~ /........ (....) ......../;
@@ -122,17 +125,19 @@ while (<$in>) {
 		}
 		$subjects{$subjectId}->{'actArm'}        = $actArm;
 		$subjects{$subjectId}->{'phase'}         = $phase;
-		$subjects{$subjectId}->{'param'}         = $param;
+		$subjects{$subjectId}->{'cohort'}        = $cohort;
 		$subjects{$subjectId}->{'trialSiteId'}   = $trialSiteId;
 		$subjects{$subjectId}->{'subjectId'}     = $subjectId;
 		$subjects{$subjectId}->{'uSubjectId'}    = $uSubjectId;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'sex'}           = $sex;
+		$subjects{$subjectId}->{'race'}          = $race;
 		$subjects{$subjectId}->{'age'}           = $age;
 		$subjects{$subjectId}->{'isDtc'}         = $isDtc;
 		$subjects{$subjectId}->{'dose1Datetime'} = $dose1Datetime;
 		$subjects{$subjectId}->{'dose2Datetime'} = $dose2Datetime;
-		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{$param} = $avaLc;
+		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{'visit'} = $visit;
+		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{$param}  = $avaLc;
 		$subjects{$subjectId}->{'totalAdvaRows'}++;
 		# p$subjects{$uSubjectId};
 		# p%values;

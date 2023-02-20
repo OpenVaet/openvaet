@@ -914,7 +914,8 @@ sub archive_twitter_users_profile_pictures {
             STDOUT->printflush("\rGetting  [users profile pictures] - [$current / $total]   ");
             my $rc = getstore($profileImageUrl, $localUrl);
             if (is_error($rc)) {
-                die "getstore of <$profileImageUrl> failed with $rc";
+                say "getstore of <$profileImageUrl> failed with $rc";
+                next;
             }
         }
     }

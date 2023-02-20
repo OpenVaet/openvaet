@@ -60,39 +60,12 @@ my %htmlPages = ();
 verify_pdf_structure();
 
 # We then extract pages 22 to 4376 (table "All Subjects").
-my %patients = ();
+my %patients      = ();
 my $totalPatients = 0;
+my %patientsIds   = ();
 extract_all_subjects_table();
 # p%patients;
 say "totalPatients   : $totalPatients";
-
-# # Generates weekly stats, prints .CSV.
-# my %stats = ();
-# my $patientsToSept6 = 0;
-# open my $out, '>:utf8', "$outputFolder/pfizer_trial_cases.csv";
-# say $out "number;patient id;sex;age (years);screening date;week number;";
-# for my $uSubjectId (sort keys %patients) {
-# 	my $casesMonth      = $patients{$uSubjectId}->{'casesMonth'}      // die;
-# 	my $casesDate       = $patients{$uSubjectId}->{'casesDate'}       // die;
-# 	my $casesWeekNumber = $patients{$uSubjectId}->{'casesWeekNumber'} // die;
-# 	$stats{$casesWeekNumber}->{'cases'}++;
-# 	$stats{$casesWeekNumber}->{'month'} = $casesMonth if !exists $stats{$casesWeekNumber}->{'month'};
-# 	if ($casesDate >= '20200720' && $casesDate <= '20200906') {
-# 		$patientsToSept6++;
-# 	}
-# }
-# close $out;
-# say "patientsToSept6 : $patientsToSept6";
-
-# # Prints weekly stats.
-# open my $out2, '>:utf8', "$outputFolder/cases_weekly_recruitment.csv";
-# say $out2 "month;week number;cases;";
-# for my $weekNumber (sort{$a <=> $b} keys %stats) {
-# 	my $cases = $stats{$weekNumber}->{'cases'} // die;
-# 	my $month = $stats{$weekNumber}->{'month'} // die;
-# 	say $out2 "$month;$weekNumber;$cases;";
-# }
-# close $out2;
 
 # Prints patients JSON.
 open my $out3, '>:utf8', "$outputFolder/pfizer_trial_cases_1.json";
@@ -112,8 +85,10 @@ sub verify_pdf_structure {
 
 sub extract_all_subjects_table {
 	for my $pageNum (sort{$a <=> $b} keys %htmlPages) {
+		%patientsIds = ();
 		my $htmlFile = "$casesPdfFolder/page$pageNum.html";
-		say "htmlFile : $htmlFile";
+		# say "*" x 50;
+		# say "htmlFile : $htmlFile";
 		my $content;
 		open my $in, '<:utf8', $htmlFile;
 		while (<$in>) {
@@ -131,54 +106,50 @@ sub extract_all_subjects_table {
 		close $out;
 
 		# We first extract all the patient ids in the page, so we known how many to expect.
-		my %patientsIds        = parse_patients_ids(@divs);
+		%patientsIds           = parse_patients_ids(@divs);
 		my $pageTotalPatients  = keys %patientsIds;
 		die unless $pageTotalPatients;
-		p%patientsIds;
 
-		# # We then look for cases dates.
-		# my %casesDates = parse_cases_dates($pageTotalPatients, @divs);
+		# Fetching first swabs diagnoses.
+		my %firstSwabs = parse_swabs($pageTotalPatients, @divs);
 
-		# # We then look for the cases groups.
-		# my %casesData  = parse_cases_groups($pageNum, $pageTotalPatients, @divs);
-		# # p%patientsIds;
-		# # p%casesDates;
-		# # p%casesData;
+		# We then look for cases dates.
+		my %swabDates = parse_swab_dates($pageTotalPatients, @divs);
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $uSubjectId              = $patientsIds{$topMargin}->{'uSubjectId'}                     // die;
+			my $uSubjectId              = $patientsIds{$topMargin}->{'uSubjectId'} // die;
 			my ($subjectId) = $uSubjectId =~ /^C\d\d\d\d\d\d\d \d\d\d\d (\d\d\d\d\d\d\d\d)/;
 			die unless $subjectId;
-			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}                      // die;
-		# 	my $casesDate       = $casesDates{$topMargin}->{'casesDate'}       // die;
-		# 	my $casesMonth      = $casesDates{$topMargin}->{'casesMonth'}      // die;
-		# 	my $casesWeekNumber = $casesDates{$topMargin}->{'casesWeekNumber'} // die;
-		# 	my $casesYear       = $casesDates{$topMargin}->{'casesYear'}       // die;
-		# 	my $casesGroup      = $casesData{$topMargin}->{'casesGroup'};
-		# 	# p$casesData{$topMargin};
-			$patients{$subjectId}->{'uSubjectId'}  = $uSubjectId;
-			$patients{$subjectId}->{'pageNum'}  = $pageNum;
-			$patients{$subjectId}->{'entryNum'} = $entryNum;
-		# 	$patients{$uSubjectId}->{'casesDate'}       = $casesDate;
-		# 	$patients{$uSubjectId}->{'casesMonth'}      = $casesMonth;
-		# 	$patients{$uSubjectId}->{'casesWeekNumber'} = $casesWeekNumber;
-		# 	$patients{$uSubjectId}->{'casesYear'}       = $casesYear;
-		# 	$patients{$uSubjectId}->{'casesGroup'}      = $casesGroup;
-		# 	for my $doseNum (sort{$a <=> $b} keys %{$casesData{$topMargin}->{'doses'}}) {
-		# 		my $dose       = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'dose'}       // next;
-		# 		my $month      = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'month'}      // next;
-		# 		my $dosage     = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'dosage'};
-		# 		my $doseDate   = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'doseDate'};
-		# 		my $weekNumber = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'weekNumber'} // die;
-		# 		my $year       = $casesData{$topMargin}->{'doses'}->{$doseNum}->{'year'}       // die;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'dose'}       = $dose;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'month'}      = $month;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'dosage'}     = $dosage;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'doseDate'}   = $doseDate;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'weekNumber'} = $weekNumber;
-		# 		$patients{$uSubjectId}->{'doses'}->{$doseNum}->{'year'}       = $year;
-		# 	}
+			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}    // die;
+
+			# Incrementing earlier swabs data.
+			die unless keys %{$firstSwabs{$topMargin}} == 3;
+			for my $tM (sort keys %{$firstSwabs{$topMargin}}) {
+				my $visit1NBindAssay = $firstSwabs{$topMargin}->{'visit1NBindAssay'} // die;
+				my $visit1NaaT = $firstSwabs{$topMargin}->{'visit1NaaT'} // die;
+				my $visit2NaaT = $firstSwabs{$topMargin}->{'visit2NaaT'} // die;
+				$patients{$subjectId}->{'visit1NBindAssay'} = $visit1NBindAssay;
+				$patients{$subjectId}->{'visit1NaaT'} = $visit1NaaT;
+				$patients{$subjectId}->{'visit2NaaT'} = $visit2NaaT;
+			}
+			die unless
+				$patients{$subjectId}->{'visit1NBindAssay'} &&
+				$patients{$subjectId}->{'visit1NaaT'} &&
+				$patients{$subjectId}->{'visit2NaaT'};
+			my $swabDate        = $swabDates{$topMargin}->{'swabDate'}        // die;
+			my $casesMonth      = $swabDates{$topMargin}->{'casesMonth'}      // die;
+			my $casesWeekNumber = $swabDates{$topMargin}->{'casesWeekNumber'} // die;
+			my $casesYear       = $swabDates{$topMargin}->{'casesYear'}       // die;
+			$patients{$subjectId}->{'uSubjectId'}      = $uSubjectId;
+			$patients{$subjectId}->{'swabDate'}        = $swabDate;
+			$patients{$subjectId}->{'pageNum'}         = $pageNum;
+			$patients{$subjectId}->{'entryNum'}        = $entryNum;
+			$patients{$subjectId}->{'swabDate'}        = $swabDate;
+			$patients{$subjectId}->{'casesMonth'}      = $casesMonth;
+			$patients{$subjectId}->{'casesWeekNumber'} = $casesWeekNumber;
+			$patients{$subjectId}->{'casesYear'}       = $casesYear;
+			# p$patients{$subjectId};
 		}
 		# last if $pageNum == 65;
 		last if $pageNum == 216;
@@ -207,9 +178,7 @@ sub parse_patients_ids {
 				die unless looks_like_number $topMargin;
 				$trialAndSiteData = $text;
 				$init++;
-				# say "trialAndSiteData : $trialAndSiteData";
 			} else {
-				# say "text : $text";
 				if ($trialAndSiteData) {
 					my $uSubjectId = "$trialAndSiteData $text";
 					$uSubjectId =~ s/\^//;
@@ -217,23 +186,19 @@ sub parse_patients_ids {
 						$uSubjectId =~ s/†//;
 						unless (length $uSubjectId == 22) {
 							($uSubjectId) = split ' \(', $uSubjectId;
-							# say "uSubjectId : [$uSubjectId]";
 							die "uSubjectId : [$uSubjectId]" unless (length $uSubjectId == 22);
 						}
 					}
-					# die;
 					$entryNum++;
-					$patientsIds{$topMargin}->{'entryNum'}               = $entryNum;
+					$patientsIds{$topMargin}->{'entryNum'}            = $entryNum;
 					$patientsIds{$topMargin}->{'uSubjectId'}          = $uSubjectId;
 					$patientsIds{$topMargin}->{'uSubjectIdTopMargin'} = $topMargin;
-					# say "$entryNum | $uSubjectId";
 					$trialAndSiteData = undef;
 					$topMargin = undef;
 				}
 			}
 		}
 	}
-	# p%patientsIds;
 	unless ($init == keys %patientsIds) {
 		p%patientsIds;
 		die "$init != " . keys %patientsIds;
@@ -241,9 +206,9 @@ sub parse_patients_ids {
 	return %patientsIds;
 }
 
-sub parse_cases_dates {
+sub parse_swab_dates {
 	my ($pageTotalPatients, @divs) = @_;
-	my %casesDates = ();
+	my %swabDates = ();
 	my ($dNum, $entryNum) = (0, 0);
 
 	# The date has two possible formats ; date alone, or age group & date collated.
@@ -251,55 +216,53 @@ sub parse_cases_dates {
 		my $text = $div->as_trimmed_text;
 		last if $text =~ /Note:/;
 		$dNum++;
-		# say "$dNum | $text";
-		if ((
-				(
-					$text =~ /^.....2020$/ ||
+		my @words = split ' ', $text;
+		for my $word (@words) {
+			# say "$dNum | $word";
+			if ((
 					(
-						$text =~ /^..-.. .....2020$/ ||
-						$text =~ />.. .....2020$/
+						$word =~ /^.....2020$/ ||
+						(
+							$word =~ /^..-.. .....2020$/ ||
+							$word =~ />.. .....2020$/
+						) ||
+						(
+							$word =~ /^^..-.. .....2020 \d\d\d\d\d\d/ ||
+							$word =~ />.. .....2020 \d\d\d\d\d\d/
+						)
 					) ||
 					(
-						$text =~ /^^..-.. .....2020 \d\d\d\d\d\d/ ||
-						$text =~ />.. .....2020 \d\d\d\d\d\d/
+						$word =~ /^.....2021$/ ||
+						(
+							$word =~ /^..-.. .....2021$/ ||
+							$word =~ />.. .....2021$/
+						) ||
+						(
+							$word =~ /^^..-.. .....2021 \d\d\d\d\d\d/ ||
+							$word =~ />.. .....2021 \d\d\d\d\d\d/
+						)
 					)
-				) ||
-				(
-					$text =~ /^.....2021$/ ||
-					(
-						$text =~ /^..-.. .....2021$/ ||
-						$text =~ />.. .....2021$/
-					) ||
-					(
-						$text =~ /^^..-.. .....2021 \d\d\d\d\d\d/ ||
-						$text =~ />.. .....2021 \d\d\d\d\d\d/
-					)
-				)
-			) && $text !~ /Page/) {
-			# say "$dNum | $text";
-			my ($date) = $text =~ /(.....2020)/;
-			unless ($date) {
-				($date) = $text =~ /(.....2021)/;
+				) && $word !~ /Page/) {
+				my ($date) = $word =~ /(.....2020)/;
+				unless ($date) {
+					($date) = $word =~ /(.....2021)/;
+				}
+				die unless $date;
+				my ($swabDate, $casesYear, $casesMonth, $casesWeekNumber) = convert_date($date);
+				my $style = $div->attr_get_i('style');
+				my ($topMargin) = $style =~ /top:(.*)px;/;
+				die unless looks_like_number $topMargin;
+				next if exists $swabDates{$topMargin}->{'swabDate'};
+				$entryNum++;
+				$swabDates{$topMargin}->{'swabDateTopMargin'} = $topMargin;
+				$swabDates{$topMargin}->{'swabDate'}          = $swabDate;
+				$swabDates{$topMargin}->{'casesYear'}          = $casesYear;
+				$swabDates{$topMargin}->{'casesMonth'}         = $casesMonth;
+				$swabDates{$topMargin}->{'casesWeekNumber'}    = $casesWeekNumber;
 			}
-			die unless $date;
-			my ($casesDate, $casesYear, $casesMonth, $casesWeekNumber) = convert_date($date);
-			$entryNum++;
-			my $style = $div->attr_get_i('style');
-			my ($topMargin) = $style =~ /top:(.*)px;/;
-			die unless looks_like_number $topMargin;
-			$casesDates{$topMargin}->{'casesDateTopMargin'} = $topMargin;
-			$casesDates{$topMargin}->{'casesDate'}          = $casesDate;
-			$casesDates{$topMargin}->{'casesYear'}          = $casesYear;
-			$casesDates{$topMargin}->{'casesMonth'}         = $casesMonth;
-			$casesDates{$topMargin}->{'casesWeekNumber'}    = $casesWeekNumber;
-			# say "$dNum | $casesDate";
 		}
 	}
-	# p%casesDates;
-	unless ($entryNum == $pageTotalPatients) {
-		die "$entryNum != $pageTotalPatients";
-	}
-	return %casesDates;
+	return %swabDates;
 }
 
 sub convert_date {
@@ -329,163 +292,61 @@ sub convert_month {
 	die "failed to convert month [$m]";
 }
 
-sub parse_cases_groups {
-	my ($pageNum, $pageTotalPatients, @divs) = @_;
-	my %casesData = ();
-	my ($dNum, $entryNum, $firstAttempt) = (0, 0, 1);
-	my $casesGroupStart = 0;
-	my $casesGroupDone  = 0;
-	my ($formerLine, $formerTopMargin);
+sub parse_swabs {
+	my ($pageTotalPatients, @divs) = @_;
+	my %firstSwabs = ();
+	my ($dNum) = (0);
+
+	# The date has two possible formats ; date alone, or age group & date collated.
 	for my $div (@divs) {
 		my $text = $div->as_trimmed_text;
-		last if $text =~ /Note:/;
+		last if $text =~ /Abbreviations:/;
 		$dNum++;
-		my $style = $div->attr_get_i('style');
-		my ($topMargin) = $style =~ /top:(.*)px;/;
-		die unless looks_like_number $topMargin;
-		# say "$dNum | [$text]" if !$formerLine;
-		# say "$dNum | [$text] -> $formerLine" if $formerLine;
-		if ($text =~ /\// && $casesGroupStart == 1) {
-			$casesGroupDone = 1;
-		}
-		process_div:
-		if ($casesGroupDone == 0) {
-			if (
-					$text eq 'Pla cebo' || $text eq 'Placebo' || (
-					($text =~ /^\(.. \μg\)$/ && $formerLine eq 'BNT162b1')
-				)
-			) {
-				$entryNum++;
-				# say "$dNum | $text";
-				$casesGroupStart = 1;
-				if ($text =~ /^\(.. μg\)$/) {
-					$casesData{$formerTopMargin}->{'casesGroup'}     = "BNT162b2 $text";
-					$casesData{$formerTopMargin}->{'casesTopMargin'} = $formerTopMargin;
-				} else {
-					$casesData{$topMargin}->{'casesGroup'}     = "Placebo";
-					$casesData{$topMargin}->{'casesTopMargin'} = $topMargin;
-				}
-			} elsif (
-					$text eq 'Pla cebo' || $text eq 'Placebo' || (
-					($text =~ /^\(.. \μg\)$/ && $formerLine eq 'BNT162b2')
-				)
-			) {
-				$entryNum++;
-				# say "$dNum | $text";
-				$casesGroupStart = 1;
-				if ($text =~ /^\(.. μg\)$/) {
-					$casesData{$formerTopMargin}->{'casesGroup'}     = "BNT162b2 $text";
-					$casesData{$formerTopMargin}->{'casesTopMargin'} = $formerTopMargin;
-				} else {
-					$casesData{$topMargin}->{'casesGroup'}     = "Placebo";
-					$casesData{$topMargin}->{'casesTopMargin'} = $topMargin;
-				}
-			}
-			$formerLine = $text;
-			$formerTopMargin = $topMargin;
-		} else {
-			if ($casesGroupDone == 1) {
-				# say "$dNum | [$text]";
+		my @words = split ' ', $text;
+		for my $word (@words) {
+			# say "word : [$word]";
+			if ($word =~ /(...)\/(...)\/(...)/) {
+				my ($visit1NBindAssay, $visit1NaaT, $visit2NaaT) = $word =~ /(...)\/(...)\/(...)/;
+				# say "$visit1NBindAssay, $visit1NaaT, $visit2NaaT";
 				my $style = $div->attr_get_i('style');
 				my ($topMargin) = $style =~ /top:(.*)px;/;
 				die unless looks_like_number $topMargin;
-				if ($text =~ /....2020\/ .....2020/ || $text =~ /....2020\/ .....2021/ || $text =~ /....2021\/ .....2021/) {
-					my @dates = split '\/ ', $text;
-					for my $date (@dates) {
-						$date =~ s/\///;
-						my ($doseDate, $year, $month, $weekNumber) = convert_date($date);
-						$casesData{$topMargin}->{'doseNumDate'}++;
-						my $doseNumDate = $casesData{$topMargin}->{'doseNumDate'} // die;
-						$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'doseDate'}   = $doseDate;
-						$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'year'}       = $year;
-						$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'month'}      = $month;
-						$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'weekNumber'} = $weekNumber;
-						# say "date : [$date] -> $doseDate, $year, $month, $weekNumber";
-					}
-					$formerLine = $text;
-					$formerTopMargin = $topMargin;
-				} elsif ($text =~ /^BNT162b\d BNT162b\d$/) {
-					my @doses = split ' ', $text;
-					for my $dose (@doses) {
-						$casesData{$formerTopMargin}->{'doseNum'}++;
-						my $doseNum = $casesData{$formerTopMargin}->{'doseNum'} // die;
-						$casesData{$formerTopMargin}->{'doses'}->{$doseNum}->{'dose'} = $dose;
-						# say "doses : $doseNum - $dose";
-					}
-				} elsif ($text =~ /^BNT162b\d/) {
-					$casesData{$formerTopMargin}->{'doseNum'}++;
-					my $doseNum = $casesData{$formerTopMargin}->{'doseNum'} // die;
-					$casesData{$formerTopMargin}->{'doses'}->{$doseNum}->{'dose'} = $text;
-				} elsif ($text =~ /^\(.. μg\)$/ || $text =~ /^\(... μg\)$/) {
-					$casesData{$formerTopMargin}->{'dosageNum'}++;
-					my $dosageNum = $casesData{$formerTopMargin}->{'dosageNum'} // die;
-					$casesData{$formerTopMargin}->{'doses'}->{$dosageNum}->{'dosage'} = $text;
-					# p$casesData{$formerTopMargin}->{'doses'};
-					# say "$formerLine - $dosageNum - $text";
-					# die;
-				} elsif ($text =~ /^\(... μg\) \(.. μg\)$/ || $text =~ /^\(.. μg\) \(.. μg\)$/) {
-					my @dosages = split '\) \(', $text;
-					# say "$dNum | [$text]";
-					# p@dosages;
-					for my $dosage (@dosages) {
-						if ($dosage =~ /\)/) {
-							$dosage = "($dosage";
-						} else {
-							$dosage = "$dosage)";
-						}
-						$casesData{$formerTopMargin}->{'dosageNum'}++;
-						my $dosageNum = $casesData{$formerTopMargin}->{'dosageNum'} // die;
-						$casesData{$formerTopMargin}->{'doses'}->{$dosageNum}->{'dosage'} = $dosage;
-						# say "dosage : $dosage";
-					}
-					# p$casesData{$formerTopMargin}->{'doses'};
-					# say "$formerLine - $dosageNum - $text";
-					# die;
-				} elsif ($text =~ /Placebo /) {
-					my @doses = split ' ', $text;
-					for my $dose (@doses) {
-						$casesData{$formerTopMargin}->{'doseNum'}++;
-						my $doseNum = $casesData{$formerTopMargin}->{'doseNum'} // die;
-						$casesData{$formerTopMargin}->{'doses'}->{$doseNum}->{'dose'} = $dose;
-						# say "doses : $doseNum - $dose";
-					}
-				} elsif ($text eq 'Pla cebo' || $text eq 'Pla ceb o') {
-					$casesData{$formerTopMargin}->{'doseNum'}++;
-					my $doseNum = $casesData{$formerTopMargin}->{'doseNum'} // die;
-					$casesData{$formerTopMargin}->{'doses'}->{$doseNum}->{'dose'} = 'Placebo';
-					# say "doses : $doseNum - $dose";
-				} elsif ($text =~ /Page /) {
-					last;
-				} elsif ($text =~ /^.....2020\/$/ || $text =~ /^.....2021\/$/) {
-					# say "$dNum | [$text]";
-					$text =~ s/\///;
-					my ($doseDate, $year, $month, $weekNumber) = convert_date($text);
-					$casesData{$topMargin}->{'doseNumDate'}++;
-					my $doseNumDate = $casesData{$topMargin}->{'doseNumDate'} // die;
-					$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'doseDate'}   = $doseDate;
-					$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'year'}       = $year;
-					$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'month'}      = $month;
-					$casesData{$topMargin}->{'doses'}->{$doseNumDate}->{'weekNumber'} = $weekNumber;
-					# say "date : [$text] -> $doseDate, $year, $month, $weekNumber";
-					$formerLine      = $text;
-					$formerTopMargin = $topMargin;
-				} else {
-					if ($pageNum == 4376 && $firstAttempt == 1) {
-						$casesGroupDone = 0;
-						$firstAttempt = 0;
-						goto process_div;
-					} else {
-						die "text : [$text]";
-					}
+				$firstSwabs{$topMargin}->{'visit1NBindAssay'} = $visit1NBindAssay;
+				$firstSwabs{$topMargin}->{'visit1NaaT'} = $visit1NaaT;
+				$firstSwabs{$topMargin}->{'visit2NaaT'} = $visit2NaaT;
+			} elsif ($word =~ /^(...)\/(...)$/) {
+				my ($visit1NaaT, $visit2NaaT) = $word =~ /(...)\/(...)/;
+				if (
+					($visit1NaaT eq 'Neg' || $visit1NaaT eq 'Pos' || $visit1NaaT eq 'Unk') &&
+					($visit2NaaT eq 'Neg' || $visit2NaaT eq 'Pos' || $visit2NaaT eq 'Unk')
+				) {
+					# say "$visit1NaaT, $visit2NaaT";
+					my $style = $div->attr_get_i('style');
+					my ($topMargin) = $style =~ /top:(.*)px;/;
+					die unless looks_like_number $topMargin;
+					next if exists $firstSwabs{$topMargin}->{'visit1NaaT'};
+					$firstSwabs{$topMargin}->{'visit1NaaT'} = $visit1NaaT;
+					$firstSwabs{$topMargin}->{'visit2NaaT'} = $visit2NaaT;
+				}
+			} elsif ($word =~ /^(...)\/$/) {
+				my ($visit1NBindAssay) = $word =~ /(...)\//;
+				if ($visit1NBindAssay eq 'Neg' || $visit1NBindAssay eq 'Pos' || $visit1NBindAssay eq 'Unk') {
+					# say "$visit1NBindAssay";
+					my $style = $div->attr_get_i('style');
+					my ($topMargin) = $style =~ /top:(.*)px;/;
+					die unless looks_like_number $topMargin;
+					next if exists $firstSwabs{$topMargin}->{'visit1NBindAssay'};
+					$firstSwabs{$topMargin}->{'visit1NBindAssay'} = $visit1NBindAssay;
 				}
 			}
 		}
 	}
-	# p%casesData;
-	# die;
-	unless ($entryNum == $pageTotalPatients) {
-		say "page $pageNum, $entryNum != $pageTotalPatients";
+	unless (keys %firstSwabs == $pageTotalPatients) {
+		p%firstSwabs;
+		my $err = keys %firstSwabs;
+		$err .=  " != $pageTotalPatients";
+		say $err;
+		die;
 	}
-	# die if $pageNum == 646;
-	return %casesData;
+	return %firstSwabs;
 }

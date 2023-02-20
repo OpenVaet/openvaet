@@ -98,7 +98,7 @@
 
 % if ($showUSAStates eq 'true') {
 	<div class="countries-stats-table-container-b">
-		% if ($currentLanguage eq 'En') {
+		% if ($currentLanguage eq 'en') {
 			<div class="countries-stats-table-header-b">
 				<div class="countries-stats-table-cell-1">
 					
@@ -404,7 +404,7 @@
 	</div> 
 % } else {
 	<div class="countries-stats-table-container">
-	% if ($currentLanguage eq 'En') {
+	% if ($currentLanguage eq 'en') {
 		<div class="countries-stats-table-header">
 			<div class="countries-stats-table-cell-1">
 				

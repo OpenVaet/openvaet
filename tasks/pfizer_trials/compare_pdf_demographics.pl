@@ -46,6 +46,7 @@ for my $subjectId (sort{$a <=> $b} keys %demographic2) {
 	}
 	$demographics{$subjectId} = \%{$demographic2{$subjectId}};
 }
+
 say "total subjects : " . keys %demographics;
 say "fromDate       : $fromDate";
 say "toDate         : $toDate";

@@ -1,0 +1,458 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures';
+<head>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+    <!-- Primary Meta Tags -->
+	<title>OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures</title>
+	<meta name="title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta name="description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="og:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="og:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="og:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="twitter:title" content="OPENVAET - Pfizer/BioNTech Trial - A failed yet in depth attempt to reproduce the NEJM & FDA efficacy figures">
+	<meta property="twitter:description" content="We review, in this article, a list of problems in the Pfizer/BioNTech C4591001 Trial, which came out in our attempts to reproduce the results provided by the study. ">
+	<meta property="twitter:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+</head>
+% } else {
+% title 'Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA';
+<head>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+    <!-- Primary Meta Tags -->
+	<title>OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA</title>
+	<meta name="title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta name="description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="og:title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta property="og:description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+	<meta property="og:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://openvaet.org/studies/review_nejm_fda_data?currentLanguage=en">
+	<meta property="twitter:title" content="OPENVAET - Essais cliniques Pfizer/BioNTech - Une tentative infructueuse mais approfondie de reproduire les calculs d\'efficacité du NEJM et de la FDA">
+	<meta property="twitter:description" content="Nous passons en revue, dans cet article, une liste de problèmes dans l'essai clinique Pfizer/BioNTech C4591001, mis en évidence par nos tentatives de reproduire les résultats fournis par l'étude.">
+	<meta property="twitter:image" content="https://openvaet.org/doc/pfizer_trials/dose2AndCasesMap.png">
+</head>
+% }
+
+<style>
+	.image_caption {
+		width: 100%;
+		text-align: right;
+		font-size:12px;
+		color:darkgrey;
+		font-style: italic;
+	}
+</style>
+
+% my %subjectData = %$subjectData;
+% my $subjectId = $subjectData{'subjectId'} // die;
+% my $uSubjectId = $subjectData{'uSubjectId'} // die;
+% my $sex = $subjectData{'sex'} // die;
+% my $cohort = $subjectData{'cohort'} // die;
+% my $ageYears = $subjectData{'ageYears'} // die;
+% my $race = $subjectData{'race'} // die;
+% my $actArm = $subjectData{'actArm'} // die;
+% my $randomizationDate = $subjectData{'randomizationDate'} // die;
+% my $screeningDate = $subjectData{'screeningDate'} // die;
+% my $dose1Date = $subjectData{'dose1Date'} // die;
+% my $dose2Date = $subjectData{'dose2Date'} // die;
+% my $daysBetweenScreeningAndDose1 = $subjectData{'daysBetweenScreeningAndDose1'} // die;
+% my $daysBetweenDose1Dose2 = $subjectData{'daysBetweenDose1Dose2'} // die;
+% use Data::Printer;
+% p%subjectData;
+
+<div class="content-container" style="padding-left:30px;padding-right: 30px;width: calc(100% - 60px);max-width: 1400px;line-height: 26px;font-size: 12px;">
+    <div class="text_separator"></div>
+    % if ($currentLanguage eq 'en') {
+	    <div class="url-link noselect" onclick="openLocation('/studies/pfizer_phase_1');return;">&#10229; Return to study</div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;font-weight:bold;font-size:18px;">
+            	FactSheet
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			<b>Unique Sub. Id :</b> <%=$uSubjectId%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: left;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:175px;text-align: left;">
+       			<b>Subject Id :</b> <%=$subjectId%>
+            </div>
+            <div style="width:175px;text-align: right;">
+       			<b>Age (Y) :</b> <%=$ageYears%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: left;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:175px;text-align: left;">
+       			<b>Race :</b> <%=$race%>
+            </div>
+            <div style="width:175px;text-align: right;">
+       			<b>Sex :</b> <%=$sex%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			<b>Cohort :</b> <%=$cohort%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			<b>Arm :</b> <%=$actArm%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: left;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:175px;text-align: left;">
+       			<b>Screening :</b> <%=$screeningDate%>
+            </div>
+            <div style="width:175px;text-align: right;">
+       			<b>Randomization :</b> <%=$randomizationDate%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: left;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:175px;text-align: left;">
+       			<b>Dose 1 :</b> <%=$dose1Date%>
+            </div>
+            <div style="width:175px;text-align: right;">
+       			<b>Dose 2 :</b> <%=$dose2Date%>
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: left;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:175px;text-align: left;">
+       			<b>Screening &#10230; Dose 1 :</b> <%=$daysBetweenScreeningAndDose1%> days
+            </div>
+            <div style="width:175px;text-align: right;">
+       			<b>Dose 1 &#10230; Dose 2 :</b> <%=$daysBetweenDose1Dose2%> days
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+	    <div class="text_separator"></div>
+	    <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;font-weight:bold;font-size:16px;">
+            	Adverse Effects
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+	    <div class="text_separator"></div>
+        % if (keys %{$subjectData{'adverseEffects'}}) {
+        	% for my $aeNum (sort{$a <=> $b} keys %{$subjectData{'adverseEffects'}}) {
+        		% my $onsetDate = $subjectData{'adverseEffects'}->{$aeNum}->{'onsetDate'} // die;
+        		% my $doseNumber = $subjectData{'adverseEffects'}->{$aeNum}->{'doseNumber'} // '-';
+        		% my $systemOrganClass = $subjectData{'adverseEffects'}->{$aeNum}->{'systemOrganClass'} // '-';
+        		% my $adverseEffects = $subjectData{'adverseEffects'}->{$aeNum}->{'adverseEffects'} // die;
+        		% my $relativeDaysDuration = $subjectData{'adverseEffects'}->{$aeNum}->{'relativeDaysDuration'} // '-';
+        		% my $severe = $subjectData{'adverseEffects'}->{$aeNum}->{'severe'} // '-';
+        		% my $vaxRelated = $subjectData{'adverseEffects'}->{$aeNum}->{'vaxRelated'} // '-';
+        		% my $outcome = $subjectData{'adverseEffects'}->{$aeNum}->{'outcome'} // '-';
+        		% my $outcomeDate = $subjectData{'adverseEffects'}->{$aeNum}->{'outcomeDate'} // '-';
+        		% my $toxicityGrade = $subjectData{'adverseEffects'}->{$aeNum}->{'toxicityGrade'} // '-';
+	        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	            <div style="width:350px;display:flex;flex-wrap: wrap;border: 1px solid black;border-radius: 5px;padding-left:5px;padding-right: 5px;">
+        			<div class="text_separator"></div>
+		            <div style="width:170px;text-align: left;">
+		       			<b>Onset Date :</b> <%=$onsetDate%>
+		            </div>
+		            <div style="width:170px;text-align: right;">
+		       			<b>Onset Dose :</b> <%=$doseNumber%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:130px;text-align: left;">
+		       			<b>Organ Class :</b> <%=$systemOrganClass%>
+		            </div>
+		            <div style="width:210px;text-align: right;">
+		       			<b>Days post Dose / Duration :</b> <%=$relativeDaysDuration%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+       					<b>Adverse Effect :</b> <%=$adverseEffects%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:130px;text-align: left;">
+		       			<b>Severe :</b> <%=$severe%>
+		            </div>
+		            <div style="width:210px;text-align: right;">
+		       			<b>Toxicity Grade :</b> <%=$toxicityGrade%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:170px;text-align: left;">
+		       			<b>Outcome :</b> <%=$outcome%>
+		            </div>
+		            <div style="width:170px;text-align: right;">
+		       			<b>Outcome Date :</b> <%=$outcomeDate%>
+		            </div>
+        			<div class="text_separator"></div>
+        			% if ($vaxRelated eq 'Yes') {
+		            <div style="width:340px;text-align: center;background: lightsalmon;border-top:1px solid black">
+    				% } else {
+		            <div style="width:340px;text-align: center;border-top:1px solid black">
+					% }
+		       			<b>Vax Related :</b> <%=$vaxRelated%>
+		            </div>
+        			<div class="text_separator"></div>
+	            </div>
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	        </div>
+			<div class="text_separator"></div>
+    		% } 
+    	% } else {
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			No adverse effect data for this subject
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+		% }
+	    <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;font-weight:bold;font-size:16px;">
+            	Deviations
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+	    <div class="text_separator"></div>
+        % if (keys %{$subjectData{'deviations'}}) {
+        	% for my $devNum (sort{$a <=> $b} keys %{$subjectData{'deviations'}}) {
+        		% my $deviationDate = $subjectData{'deviations'}->{$devNum}->{'deviationDate'} // die;
+        		% my $deviationCategory = $subjectData{'deviations'}->{$devNum}->{'deviationCategory'} // die;
+        		% my $visitDesignator = $subjectData{'deviations'}->{$devNum}->{'visitDesignator'} // die;
+        		% my $deviationTerm = $subjectData{'deviations'}->{$devNum}->{'deviationTerm'} // die;
+	        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	            <div style="width:350px;display:flex;flex-wrap: wrap;border: 1px solid black;border-radius: 5px;padding-left:5px;padding-right: 5px;">
+        			<div class="text_separator"></div>
+		            <div style="width:170px;text-align: left;">
+		       			<b>Dev. Date :</b> <%=$deviationDate%>
+		            </div>
+		            <div style="width:170px;text-align: right;">
+		       			<b>Category :</b> <%=$deviationCategory%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Designator :</b> <%=$visitDesignator%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Term :</b> <%=$deviationTerm%>
+		            </div>
+        			<div class="text_separator"></div>
+	            </div>
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	        </div>
+			<div class="text_separator"></div>
+    		% } 
+    	% } else {
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			No deviation data for this subject
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+		% }
+	    <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;font-weight:bold;font-size:16px;">
+            	Visits Tests
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+	    <div class="text_separator"></div>
+        % if (keys %{$subjectData{'advaVisits'}} || keys %{$subjectData{'mbVisits'}}) {
+        	% for my $visitNum (0 .. 8) {
+        		% my $visitDate = $subjectData{'advaVisits'}->{$visitNum}->{'visitDate'} // $subjectData{'mbVisits'}->{$visitNum}->{'visitDate'} // next;
+        		% my $visit = $subjectData{'advaVisits'}->{$visitNum}->{'visit'} // $subjectData{'mbVisits'}->{$visitNum}->{'visit'} // die;
+        		% my $nBinding = $subjectData{'advaVisits'}->{$visitNum}->{'N-binding antibody - N-binding Antibody Assay'} // '-';
+        		% my $rbdImmunoassay = $subjectData{'advaVisits'}->{$visitNum}->{'COVID-19 RBD IgG (U/mL) - Luminex Immunoassay'} // '-';
+        		% my $s1Immunoassay = $subjectData{'advaVisits'}->{$visitNum}->{'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay'} // '-';
+        		% my $sCov2NeutralizingTiter50VNA = $subjectData{'advaVisits'}->{$visitNum}->{'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay'} // '-';
+        		% my $sCov2NeutralizingTiter50S1IgG = $subjectData{'advaVisits'}->{$visitNum}->{'SARS-CoV-2 serum neutralizing titer 50 to COVID-19 S1 IgG'} // '-';
+        		% my $sCov2NeutralizingTiter90VNA = $subjectData{'advaVisits'}->{$visitNum}->{'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay'} // '-';
+        		% my $sCov2NeutralizingTiter90S1IgG = $subjectData{'advaVisits'}->{$visitNum}->{'SARS-CoV-2 serum neutralizing titer 90 to COVID-19 S1 IgG'} // '-';
+        		% my $antiHepatitisBSurfaceAntigen2 = $subjectData{'mbVisits'}->{$visitNum}->{'Anti Hepatitis B Surface Antigen2 Qual'}->{'mbResult'} // '-';
+        		% my $hepatitisBVirusAntibody = $subjectData{'mbVisits'}->{$visitNum}->{'Hepatitis B Virus Core Antibody'}->{'mbResult'} // '-';
+        		% my $hepatitisCVirusAntibody = $subjectData{'mbVisits'}->{$visitNum}->{'Hepatitis C Virus Antibody'}->{'mbResult'} // '-';
+        		% my $hiv1And2Antiboy = $subjectData{'mbVisits'}->{$visitNum}->{'HIV-1/2 Antibody'}->{'mbResult'} // '-';
+        		% my $sarsCov2Immunochromatography = $subjectData{'mbVisits'}->{$visitNum}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'mbResult'} // '-';
+        		% my $sarsCov2PCR = $subjectData{'mbVisits'}->{$visitNum}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // '-';
+	        <div style="width:100%;display:flex;flex-wrap: wrap;text-align: center;">
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	            <div style="width:350px;display:flex;flex-wrap: wrap;border: 1px solid black;border-radius: 5px;padding-left:5px;padding-right: 5px;">
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Visit Date :</b> <%=$visitDate%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Visit :</b> <%=$visit%>
+		            </div>
+        			<div class="text_separator"></div>
+        			% if ($nBinding eq 'POS') {
+		            <div style="width:340px;text-align: left;background: lightsalmon;">
+    				% } else {
+		            <div style="width:340px;text-align: left;">
+					% }
+		       			<b>N-binding Antibody Assay :</b> <%=$nBinding%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>RBD IgG (U/mL) - Luminex Immunoassay :</b> <%=$rbdImmunoassay%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>S1 IgG (U/mL) - Luminex Immunoassay :</b> <%=$s1Immunoassay%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>SARS-CoV-2 serum neutralizing titer 50 - Virus Neutralization Assay :</b> <%=$sCov2NeutralizingTiter50VNA%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>SARS-CoV-2 serum neutralizing titer 50 - S1 IgG :</b> <%=$sCov2NeutralizingTiter50S1IgG%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>SARS-CoV-2 serum neutralizing titer 90 - Virus Neutralization Assay :</b> <%=$sCov2NeutralizingTiter90VNA%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>SARS-CoV-2 serum neutralizing titer 90 - S1 IgG :</b> <%=$sCov2NeutralizingTiter90S1IgG%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Anti Hepatitis B Surface Antigen2 Qual :</b> <%=$antiHepatitisBSurfaceAntigen2%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Hepatitis B Virus Core Antibody :</b> <%=$hepatitisBVirusAntibody%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Hepatitis C Virus Core Antibody :</b> <%=$hepatitisCVirusAntibody%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>HIV-1/2 Antibody :</b> <%=$hiv1And2Antiboy%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>SARS Cov. 2 (Immunochromatography) :</b> <%=$sarsCov2Immunochromatography%>
+		            </div>
+        			<div class="text_separator"></div>
+		            <div style="width:340px;text-align: left;">
+		       			<b>Cepheid RT-PCR assay for SARS-CoV-2 :</b> <%=$sarsCov2PCR%>
+		            </div>
+        			<div class="text_separator"></div>
+	            </div>
+	            <div style="width: calc(50% - 175px);">
+	            </div>
+	        </div>
+			<div class="text_separator"></div>
+    		% } 
+    	% } else {
+        <div class="text_separator"></div>
+        <div style="width:100%;display:flex;flex-wrap: wrap;">
+            <div style="width: calc(50% - 175px);">
+            </div>
+            <div style="width:350px;text-align: left;">
+       			No visit data for this subject
+            </div>
+            <div style="width: calc(50% - 175px);">
+            </div>
+        </div>
+		% }
+        <div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+		<div class="text_separator"></div>
+    % }
+</div>

@@ -39,7 +39,7 @@ for my $subjectId (sort{$a <=> $b} keys %{$filesData{'subjects'}}) {
 open my $out, '>:utf8', 'public/doc/pfizer_trials/randomized_patients.json';
 print $out encode_json\%subjects;
 close $out;
-# p%stats;
+p%stats;
 
 say "Subjects randomized : " . keys %subjects;
 

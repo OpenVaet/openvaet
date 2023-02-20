@@ -35,11 +35,11 @@ sub load_source {
 		chomp $_;
 		my (undef, $subjectId, $countryData) = split ';', $_;
 		next unless $subjectId;
+		($subjectId) = $subjectId =~ /C4591001 .... (\d\d\d\d\d\d\d\d)/;
 		$patientsNum++;
 		$srcData{$subjectId} = 1;
 	}
 	close $in;
-	# p%srcData;
 	say "[$srcFile] -> patients : " . keys %srcData;
 }
 

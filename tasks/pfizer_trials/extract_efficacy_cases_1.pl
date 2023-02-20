@@ -108,6 +108,9 @@ sub extract_all_subjects_table {
 		my $pageTotalPatients  = keys %patientsIds;
 		die unless $pageTotalPatients;
 
+		# Fetching first swabs diagnoses.
+		my %firstSwabs = parse_swabs($pageTotalPatients, @divs);
+
 		# We then look for symptoms dates & swab dates.
 		my %casesDates = parse_cases_dates($pageTotalPatients, @divs);
 
@@ -119,6 +122,18 @@ sub extract_all_subjects_table {
 			die if exists $patients{$uSubjectId};
 			$patients{$subjectId}->{'pageNum'}  = $pageNum;
 			$patients{$subjectId}->{'entryNum'} = $entryNum;
+
+			die unless keys %{$firstSwabs{$topMargin}} == 3;
+
+			# Incrementing earlier swabs data.
+			for my $tM (sort keys %{$firstSwabs{$topMargin}}) {
+				my $visit1Diagnose = $firstSwabs{$topMargin}->{'visit1Diagnose'} // die;
+				my $visit2Diagnose = $firstSwabs{$topMargin}->{'visit2Diagnose'} // die;
+				my $visit3Diagnose = $firstSwabs{$topMargin}->{'visit3Diagnose'} // die;
+				$patients{$subjectId}->{'visit1Diagnose'} = $visit1Diagnose;
+				$patients{$subjectId}->{'visit2Diagnose'} = $visit2Diagnose;
+				$patients{$subjectId}->{'visit3Diagnose'} = $visit3Diagnose;
+			}
 
 			# Locates next patient top margin.
 			my $nextTopMargin;
@@ -290,4 +305,36 @@ sub convert_month {
 	return '11' if $m eq 'NOV';
 	return '12' if $m eq 'DEC';
 	die "failed to convert month [$m]";
+}
+
+sub parse_swabs {
+	my ($pageTotalPatients, @divs) = @_;
+	my %firstSwabs = ();
+	my ($dNum, $entryNum) = (0, 0);
+
+	# The date has two possible formats ; date alone, or age group & date collated.
+	for my $div (@divs) {
+		my $text = $div->as_trimmed_text;
+		last if $text =~ /Abbreviations:/;
+		$dNum++;
+		my @words = split ' ', $text;
+		for my $word (@words) {
+			if ($word =~ /(...)\/(...)\/(...)/) {
+				my ($visit1Diagnose, $visit2Diagnose, $visit3Diagnose) = $word =~ /(...)\/(...)\/(...)/;
+				$entryNum++;
+				say "$visit1Diagnose, $visit2Diagnose, $visit3Diagnose";
+				my $style = $div->attr_get_i('style');
+				my ($topMargin) = $style =~ /top:(.*)px;/;
+				die unless looks_like_number $topMargin;
+				$firstSwabs{$topMargin}->{'visit1Diagnose'} = $visit1Diagnose;
+				$firstSwabs{$topMargin}->{'visit2Diagnose'} = $visit2Diagnose;
+				$firstSwabs{$topMargin}->{'visit3Diagnose'} = $visit3Diagnose;
+			}
+			# say "word : [$word]";
+		}
+	}
+	die unless keys %firstSwabs == $pageTotalPatients;
+	# p%firstSwabs;
+	# die;
+	return %firstSwabs;
 }

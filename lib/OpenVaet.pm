@@ -349,6 +349,8 @@ sub startup {
     $r->post('/studies/vaers_fertility/set_pregnancy_details_attributes')->to('studies#set_pregnancy_details_attributes');
     $r->post('/studies/vaers_fertility/display_reports')->to('studies#display_reports');
     $r->get('/studies/cdc_mortality')->to('cdc_mortality#cdc_mortality');
+    $r->get('/studies/pfizer_phase_1')->to('pfizer_phase_1#pfizer_phase_1');
+    $r->get('/phase_1_subject')->to('pfizer_phase_1#phase_1_subject');
     $r->get('/studies/french_vaccines_watch')->to('french_vaccines_watch#french_vaccines_watch');
     $r->get('/conflicts_of_interest')->to('conflicts_of_interest#conflicts_of_interest');
     $r->post('/conflicts_of_interest/search_recipient')->to('conflicts_of_interest#search_recipient');

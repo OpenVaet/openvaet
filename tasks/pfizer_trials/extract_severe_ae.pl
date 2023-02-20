@@ -22,7 +22,7 @@ use Math::Round qw(nearest);
 # File containing the Adverse effects as of April 2021
 my $file         = "public/pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf";
 die "Missing source file, please run tasks/pfizer_documents/get_documents.pl first." unless -f $file;
-my $saePdfFolder = "raw_data/pfizer_trials/adverse_effects";
+my $saePdfFolder = "raw_data/pfizer_trials/sae";
 my $outputFolder = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
@@ -68,9 +68,8 @@ for my $subjectNumber (sort{$a <=> $b} keys %subjectAES) {
 	$subjectId =~ s/\^//;
 	$subjectAESFormatted{$subjectId} = \%{$subjectAES{$subjectNumber}};
 	$subjectAESFormatted{$subjectId}->{'subjectId'} = $subjectId;
-	# p$subjectAESFormatted{$subjectId};die;
 }
-open my $out, '>:utf8', 'public/doc/pfizer_phase_1/20210401_all_adverse_effects_16_2_7_4_1.json';
+open my $out, '>:utf8', 'public/doc/pfizer_phase_1/20210401_serious_adverse_effects_16_2_7_5.json';
 print $out encode_json\%subjectAESFormatted;
 close $out;
 # p%subjectAES;
@@ -90,7 +89,7 @@ sub verify_pdf_structure {
 
 sub extract_data {
 	for my $pageNum (sort{$a <=> $b} keys %htmlPages) {
-		next unless $pageNum >= 77;
+		next unless $pageNum >= 3518;
 		my $htmlFile = "$saePdfFolder/page$pageNum.html";
 		STDOUT->printflush("\rParsing HTML to Text [$pageNum]");
 		# say "htmlFile : $htmlFile";
@@ -110,7 +109,7 @@ sub extract_data {
 		parse_page_text($pageNum, @divs);
 		# p%pageText;
 		# die;
-		last if $pageNum == 3513;
+		last if $pageNum == 3618;
 	}
 	say "";
 }
@@ -132,35 +131,7 @@ sub parse_page_text {
 		my @words = split ' ', $text;
 		for my $word (@words) {
 			unless ($yesNoFound) {
-				if ($word eq '>55/'  || $word eq '16-55/' || $word eq '18-55/' || ($word =~ /^\d\d\d\d$/ && $totalLeft <= 100) ||
-					($word   =~ /^\d\d\d\d\d\d\d\d/ && $totalLeft == 94) || 
-					$word eq 'BLOOD' ||
-					$word eq 'CARD'  ||
-					$word eq 'CONG'  ||
-					$word eq 'EAR'   ||
-					$word eq 'ENDO'  ||
-					$word eq 'EYE'   ||
-					$word eq 'GASTR' ||
-					$word eq 'GENRL' ||
-					$word eq 'HEPAT' ||
-					$word eq 'IMMUN' ||
-					$word eq 'INFEC' ||
-					$word eq 'INJ&P' ||
-					$word eq 'INV'   ||
-					$word eq 'METAB' ||
-					$word eq 'MUSC'  ||
-					$word eq 'NEOPL' ||
-					$word eq 'NERV'  ||
-					$word eq 'PREG'  ||
-					$word eq 'Produ' ||
-					$word eq 'PSYCH' ||
-					$word eq 'RENAL' ||
-					$word eq 'REPRO' ||
-					$word eq 'RESP'  ||
-					$word eq 'SKIN'  ||
-					$word eq 'SURG'  ||
-					$word eq 'SOCCI' ||
-					$word eq 'VASC') {
+				if ($word eq '>55/' || $word eq '16-55/' || $word eq '18-55/' || ($word =~ /^\d\d\d\d$/ && $totalLeft <= 100) || ($word   =~ /^\d\d\d\d\d\d\d\d/ && $totalLeft == 94)) {
 					$yesNoFound = 1;
 				}
 			}
@@ -231,33 +202,31 @@ sub parse_pages_structure {
 					$subjectAES{$subjectNumber}->{'subjectFromPage'}      = $pageNum;
 					$subjectAES{$subjectNumber}->{'subjectFromTopMargin'} = $topMargin;
 				} elsif (
-					$word eq 'BLOOD' ||
-					$word eq 'CARD'  ||
-					$word eq 'CONG'  ||
-					$word eq 'EAR'   ||
-					$word eq 'ENDO'  ||
-					$word eq 'EYE'   ||
-					$word eq 'GASTR' ||
-					$word eq 'GENRL' ||
-					$word eq 'HEPAT' ||
-					$word eq 'IMMUN' ||
 					$word eq 'INFEC' ||
-					$word eq 'INJ&P' ||
-					$word eq 'INV'   ||
-					$word eq 'METAB' ||
-					$word eq 'MUSC'  ||
-					$word eq 'NEOPL' ||
-					$word eq 'NERV'  ||
-					$word eq 'PREG'  ||
-					$word eq 'Produ' ||
+					$word eq 'HEPAT' ||
 					$word eq 'PSYCH' ||
-					$word eq 'RENAL' ||
+					$word eq 'INJ&P' ||
+					$word eq 'CARD'  ||
+					$word eq 'VASC'  ||
+					$word eq 'GENRL' ||
+					$word eq 'METAB' ||
 					$word eq 'REPRO' ||
-					$word eq 'RESP'  ||
-					$word eq 'SKIN'  ||
+					$word eq 'BLOOD' ||
+					$word eq 'PREG'  ||
 					$word eq 'SURG'  ||
+					$word eq 'EAR'   ||
+					$word eq 'EYE'   ||
+					$word eq 'IMMUN' ||
+					$word eq 'INV'   ||
+					$word eq 'NEOPL' ||
 					$word eq 'SOCCI' ||
-					$word eq 'VASC'
+					$word eq 'RENAL' ||
+					$word eq 'GENRL' ||
+					$word eq 'GASTR' ||
+					$word eq 'NERV'  ||
+					$word eq 'MUSC'  ||
+					$word eq 'CONG'  ||
+					$word eq 'RESP'
 				) {
 					if ($systemOrganClass) {
 						if ($onsetDate) {
@@ -277,12 +246,12 @@ sub parse_pages_structure {
 					$adverseEffectNumber        = 1;
 					$currentSymptomData{$adverseEffectSetNumber}->{'symptomSetFromPage'} = $pageNum;
 					$currentSymptomData{$adverseEffectSetNumber}->{'symptomSetFromTop'}  = $topMargin;
-				} elsif ($word =~ /^\d\d\d\d$/ && $totalLeft <= 180) {
+				} elsif ($word =~ /^\d\d\d\d$/ && $totalLeft <= 100) {
 					$trialSiteId = $word;
-				} elsif ($word   =~ /^\d\d\d\d\d\d\d\d/ && $totalLeft <= 190) {
+				} elsif ($word   =~ /^\d\d\d\d\d\d\d\d/ && $totalLeft == 94) {
 					$subjectId   = $word;
 					# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
-				} elsif (($word =~ /^\d\d...\d\d\d\d$/ || $word =~ /^...2020$/ || $word =~ /^...2021$/ || $word eq '2020')) {
+				} elsif (($word =~ /^\d\d...\d\d\d\d$/ || $word =~ /^...2020$/ || $word =~ /^...2021$/)) {
 					if ($onsetDate) {
 						# Finalizing current symptom data.
 						$currentSymptomData{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'symptomToPage'}  = $pageNum;
@@ -323,7 +292,6 @@ sub finalize_patient {
 		die if $adverseEffectSetNumber == 1;
 		delete $currentSymptomData{$adverseEffectSetNumber};
 	}
-	# p%currentSymptomData;
 
 	# Finalizing subject's syptoms.
 	$subjectAES{$subjectNumber}->{'subjectToTopMargin'}   = $topMargin;
@@ -347,8 +315,8 @@ sub finalize_patient {
 			my $systemOrganClass = $currentSymptomData{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'systemOrganClass'} // die;
 			my $onsetDate        = $currentSymptomData{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'onsetDate'}        // die;
 			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'systemOrganClass'} = $systemOrganClass;
+			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'severe'}           = 'Yes';
 			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'onsetDate'}        = $onsetDate;
-			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'severe'}           = 'No';
 			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'symptomFromTop'}   = $symptomFromTop;
 			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'symptomFromPage'}  = $symptomFromPage;
 			$subjectAES{$subjectNumber}->{'adverseEffectsSets'}->{$adverseEffectSetNumber}->{'adverseEffects'}->{$adverseEffectNumber}->{'symptomToTop'}     = $symptomToTop;
@@ -467,18 +435,18 @@ sub parse_symptoms_from_text {
 						}
 						$symptoms       .= $word;
 						# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
-					} elsif (looks_like_number $word && $totalLeft > 450 && $totalLeft < 850 && !$doseNumber) {
+					} elsif (looks_like_number $word && $totalLeft > 550 && $totalLeft < 850 && !$doseNumber) {
 						die "[$pageNum] - [$word] - $totalLeft" unless looks_like_number $word;
 						$doseNumber = $word;
 						# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
-					} elsif ($word =~ /.*\/.*/ && $totalLeft > 450 && $totalLeft < 850 && !$relativeDaysDuration) {
+					} elsif ($word =~ /.*\/.*/ && $totalLeft > 550 && $totalLeft < 850 && !$relativeDaysDuration) {
 						$relativeDaysDuration = $word;
 						# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
-					} elsif (looks_like_number $word && $totalLeft > 450 && $totalLeft < 1350 && $doseNumber && !$toxicityGrade) {
+					} elsif (looks_like_number $word && $totalLeft > 550 && $totalLeft < 1350 && $doseNumber && !$toxicityGrade) {
 						die "[$pageNum] - [$word] - $totalLeft" unless looks_like_number $word;
 						$toxicityGrade = $word;
 						# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
-					} elsif (($word eq 'Yes' || $word eq 'No') && $totalLeft > 450 && $totalLeft < 1350 && $doseNumber && $toxicityGrade && !$vaxRelated) {
+					} elsif (($word eq 'Yes' || $word eq 'No') && $totalLeft > 550 && $totalLeft < 1350 && $doseNumber && $toxicityGrade && !$vaxRelated) {
 						$vaxRelated = $word;
 						# say "$subjectNumber - $ageGroup - $trialSiteId - $subjectId - $systemOrganClass - $pageNum - $topMargin - $totalLeft - $entryNum - $word";
 					} elsif (($word eq 'R' || $word eq 'RS' || $word eq 'F' || $word eq 'RG' || $word eq 'N' || $word eq 'UNK') && $totalLeft > 1240 && $totalLeft < 2600 && !$outcome) {
@@ -516,7 +484,3 @@ sub parse_symptoms_from_text {
 		}
 	}
 }
-
-__END__
-
-https://openvaet.org/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=fr
