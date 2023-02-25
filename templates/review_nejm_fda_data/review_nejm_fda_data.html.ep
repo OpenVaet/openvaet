@@ -233,7 +233,7 @@
 			<div class="text_separator"></div>
 			<li>We can speculate, based on this data, that the "44 820 subjects screened" quoted in NEJM Table's 1 has been established only integrating the sources with a green background. <b>Why subjects who are present in lab analytics, or in the ADVA file, would be excluded from the "screening scope", is unclear.</b></li>
 			<div class="text_separator"></div>
-			<li>Randomization data has been extracted for the PDF files. When no randomization data was available (102 subjects appearing in the ADVA files), the randomization date has been set to the first vaccination date (as is the case for most subjects). <b>It is unclear why we have a 5 subjects offset with the FDA Memorandum; and therefore a 108 subjects offset with the NEJM ones.</b></li>
+			<li>Randomization data has been extracted from the PDF files. When no randomization data was available (102 subjects appearing in the ADVA files), the randomization date has been set to the first vaccination date (as is the case for most subjects). <b>It is unclear why we have a 5 subjects offset with the FDA Memorandum; and therefore a 108 subjects offset with the NEJM ones.</b></li>
 			<div class="text_separator"></div>
 			<li>The doses injected have been built using the randomization PDF files & the ADVA XPT file. It is unclear why <b>102 subjects</b> of the ADVA files aren't appearing in the Randomization files - along with why 27 subjects from the randomization files aren't in the ADVA file.</li>
 		</ul>

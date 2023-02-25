@@ -40,7 +40,15 @@ for my $file (glob "raw_data/pfizer_trials/xpt_files_to_csv/*.csv") {
 for my $fileName (sort keys %xpts) {
 	unless (exists $csvs{$fileName}->{'csvFile'}) {
 		my $sourceXptFile = $xpts{$fileName}->{'sourceXptFile'} // die;
+		say "Missing :";
 		say "fileName      : $fileName";
 		say "sourceXptFile : $sourceXptFile";
+	} else {
+		my $sourceXptFile = $xpts{$fileName}->{'sourceXptFile'} // die;
+		my $csvFile = $csvs{$fileName}->{'csvFile'} // die;
+		say "Exists :";
+		say "fileName      : $fileName";
+		say "sourceXptFile : $sourceXptFile";
+		say "--->  csvFile : $csvFile";
 	}
 }
