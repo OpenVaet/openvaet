@@ -146,28 +146,28 @@ sub load_pdf_cases {
 	say "[$pdfCasesFile] -> subjects : " . keys %pdfCases;
 }
 
-# Flushing .PDF cases prior cut-off
+# Flushing .PDF cases post cut-off
 for my $subjectId (sort{$a <=> $b} keys %pdfCases) {
 	unless ($pdfCases{$subjectId}->{'swabDate'} <= 20201114) {
 		delete $pdfCases{$subjectId};
 	}
 }
 
-# First isolating subjects with positive PCRs & positive PCRs with symptoms.
+# Isolating subjects with positive PCRs & positive PCRs with symptoms.
 my %subjectsWithPositivePCRs = ();
 my ($totalPositivePCRs, $totalPCRs, $totalPositivePCRsSubjects, $positiveCovidWithoutSymptoms, $positiveCovidWithSymptoms) = (0, 0, 0, 0, 0);
 for my $subjectId (sort{$a <=> $b} keys %pcrTests) {
 	# next if exists $phase1Subjects{$subjectId};
-	my $hasPositivePCRPreCutOff = 0;
 	my $firstPositivePCRDate;
-	my %visitsByDates = ();
-	my $randomizationGroup = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
+	my $hasPositivePCRPreCutOff = 0;
+	my %visitsByDates           = ();
+	my $randomizationGroup      = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
 	for my $visitDate (sort keys %{$pcrTests{$subjectId}->{'mbVisits'}}) {
 		next unless exists $pcrTests{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'};
-		my $compdate = $visitDate;
-		$compdate =~ s/\D//g;
-		next unless $compdate >= 20200720;
-		next unless $compdate <= 20201114;
+		my $visitCompdate  = $visitDate;
+		$visitCompdate     =~ s/\D//g;
+		next unless $visitCompdate >= 20200720;
+		next unless $visitCompdate <= 20201114;
 		my $pcrResult = $pcrTests{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
 		$totalPCRs++;
 		if ($pcrResult eq 'POS') {
@@ -175,30 +175,30 @@ for my $subjectId (sort{$a <=> $b} keys %pcrTests) {
 			# say "pcrResult         : $pcrResult";
 			$totalPositivePCRs++;
 			$hasPositivePCRPreCutOff = 1;
-			$visitsByDates{$compdate}->{'visitDate'} = $visitDate;
-			$visitsByDates{$compdate}->{'Cepheid RT-PCR assay for SARS-CoV-2'} = $pcrResult;
+			$visitsByDates{$visitCompdate}->{'visitDate'} = $visitDate;
+			$visitsByDates{$visitCompdate}->{'Cepheid RT-PCR assay for SARS-CoV-2'} = $pcrResult;
 			$subjectsWithPositivePCRs{$subjectId}->{'randomizationGroup'} = $randomizationGroup;
-			$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$compdate}->{'visitDate'} = $visitDate;
-			$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$compdate}->{'Cepheid RT-PCR assay for SARS-CoV-2'} = $pcrResult;
+			$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$visitCompdate}->{'visitDate'} = $visitDate;
+			$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$visitCompdate}->{'Cepheid RT-PCR assay for SARS-CoV-2'} = $pcrResult;
 		}
 	}
 	if ($hasPositivePCRPreCutOff) {
 		# say "*" x 50;
 		# say "subjectId            : $subjectId";
-		for my $compdate (sort{$a <=> $b} keys %visitsByDates) {
-			$firstPositivePCRDate = $compdate;
+		for my $visitCompdate (sort{$a <=> $b} keys %visitsByDates) {
+			$firstPositivePCRDate = $visitCompdate;
 			last;
 		}
 		# say "firstPositivePCRDate : $firstPositivePCRDate";
-		my ($fY, $fM, $fD) = $firstPositivePCRDate =~ /(....)(..)(..)/;
-		$firstPositivePCRDate = "$fY-$fM-$fD 12:00:00";
+		my ($fY, $fM, $fD)       = $firstPositivePCRDate =~ /(....)(..)(..)/;
+		$firstPositivePCRDate    = "$fY-$fM-$fD 12:00:00";
+		my $hasCovidWithSymptoms = 0;
 		$totalPositivePCRsSubjects++;
 		$subjectsWithPositivePCRs{$subjectId}->{'firstPositivePCRDate'} = $firstPositivePCRDate;
-		my $hasCovidWithSymptoms = 0;
 		my $closestDayFromSymptomToCovid = 99;
 		unless (exists $symptoms{$subjectId}) {
 			$positiveCovidWithoutSymptoms++;
-			$stats{'positiveWithoutSymptoms'}->{$randomizationGroup}++;
+			$stats{'pcrAnalysis'}->{'positiveWithoutSymptoms'}->{$randomizationGroup}++;
 			$closestDayFromSymptomToCovid = undef;
 		} else {
 
@@ -211,27 +211,16 @@ for my $subjectId (sort{$a <=> $b} keys %pcrTests) {
 					my $symptomCompdate = $symptomDate;
 					$symptomCompdate    =~ s/\D//g;
 					next unless $symptomCompdate <= 20201114;
+					# next unless $symptomCompdate <= $visitCompdate;
 					my $daysDifference = time::calculate_days_difference($symptomDatetime, $visitDate);
 					$visitsByDates{$symptomDatetime}->{'daysDifference'} = $daysDifference;
-					if ($daysDifference >= 0) {
-						if ($daysDifference <= $daysOffset) {
-							$hasCovidWithSymptoms = 1;
-							my $difToZero = abs(0 - $daysDifference);
-							$closestDayFromSymptomToCovid = $difToZero if $difToZero < $closestDayFromSymptomToCovid;
-							for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}}) {
-								next unless $symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}->{$symptomName} eq 'Y';
-								$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$visitCompdate}->{'symptoms'}->{$daysDifference}->{$symptomName} = $symptomDatetime;
-							}
-						}
-					} else {
-						if ($daysDifference < 0 && $daysDifference >= "-$daysOffset") {
-							$hasCovidWithSymptoms = 1;
-							my $difToZero = abs(0 - $daysDifference);
-							$closestDayFromSymptomToCovid = $difToZero if $difToZero < $closestDayFromSymptomToCovid;
-							for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}}) {
-								next unless $symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}->{$symptomName} eq 'Y';
-								$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$visitCompdate}->{'symptoms'}->{$daysDifference}->{$symptomName} = $symptomDatetime;
-							}
+					if ($daysDifference <= $daysOffset) {
+						$hasCovidWithSymptoms = 1;
+						my $difToZero = abs(0 - $daysDifference);
+						$closestDayFromSymptomToCovid = $difToZero if $difToZero < $closestDayFromSymptomToCovid;
+						for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}}) {
+							next unless $symptoms{$subjectId}->{'symptoms'}->{$symptomDatetime}->{$symptomName} eq 'Y';
+							$subjectsWithPositivePCRs{$subjectId}->{'positivePCR'}->{$visitCompdate}->{'symptoms'}->{$daysDifference}->{$symptomName} = $symptomDatetime;
 						}
 					}
 					# say "$symptomDatetime -> $visitDate ($daysDifference days)";
@@ -244,19 +233,19 @@ for my $subjectId (sort{$a <=> $b} keys %pcrTests) {
 			# die;
 			if ($hasCovidWithSymptoms) {
 				$positiveCovidWithSymptoms++;
-				$stats{'positiveWithSymptoms'}->{$randomizationGroup}++;
-				$stats{'positiveWithSymptoms'}->{'total'}++;
+				$stats{'pcrAnalysis'}->{'positiveWithSymptoms'}->{$randomizationGroup}++;
+				$stats{'pcrAnalysis'}->{'positiveWithSymptoms'}->{'total'}++;
 				unless (exists $pdfCases{$subjectId}) {
 					# say "Subject [$subjectId] ($randomizationGroup) isn't listed as a case in PDF.";
-					$stats{'pdfCases'}->{'nonListedInPDF'}->{$randomizationGroup}->{'total'}++;
-					# $stats{'pdfCases'}->{'nonListedInPDF'}->{$randomizationGroup}->{'subjects'}->{$subjectId}++;
+					$stats{'pcrAnalysis'}->{'pdfCases'}->{'nonListedInPDF'}->{$randomizationGroup}->{'total'}++;
+					# $stats{'pcrAnalysis'}->{'pdfCases'}->{'nonListedInPDF'}->{$randomizationGroup}->{'subjects'}->{$subjectId}++;
 				}
 				# p$randomization{$subjectId};
 				# die;
 			} else {
 				$closestDayFromSymptomToCovid = undef;
 				$positiveCovidWithoutSymptoms++;
-				$stats{'positiveWithoutSymptoms'}->{$randomizationGroup}++;
+				$stats{'pcrAnalysis'}->{'positiveWithoutSymptoms'}->{$randomizationGroup}++;
 			}
 			$subjectsWithPositivePCRs{$subjectId}->{'hasCovidWithSymptoms'} = $hasCovidWithSymptoms;
 		}
@@ -272,6 +261,8 @@ say "positiveCovidWithoutSymptoms : $positiveCovidWithoutSymptoms";
 say "totalPositivePCRsSubjects    : $totalPositivePCRsSubjects";
 say "totalPositivePCRs            : $totalPositivePCRs";
 say "totalPCRs                    : $totalPCRs";
+
+# __END__
 
 # Verifying if we found all the positive cases listed in the .PDF.
 for my $subjectId (sort{$a <=> $b} keys %pdfCases) {
