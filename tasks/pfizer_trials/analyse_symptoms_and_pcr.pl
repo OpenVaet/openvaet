@@ -48,6 +48,7 @@ load_symptoms();
 load_pdf_cases();
 
 my %stats = ();
+my %weeklyStats = ();
 
 # Flushing .PDF cases & exclusions post cut-off on November 14.
 delete_post_cutoff_pdf_cases();
@@ -57,6 +58,9 @@ my %subjectsVisitsConfirmed  = ();
 pcr_positive_data();
 # Verifying if we found all the positive cases listed in the .PDF.
 eval_pdf_positive_cases_to_analysis();
+my %symptomsByGroups     = ();
+my %subjectsWithSymptoms = ();
+symptoms_positive_data();
 
 sub load_demographics {
 	open my $in, '<:utf8', $demographicFile or die "Missing file [$demographicFile]";
@@ -276,6 +280,8 @@ sub pcr_positive_data {
 						my $difToZero = abs(0 - $daysDifference);
 						$closestDayFromSymptomToCovid = $difToZero if $difToZero < $closestDayFromSymptomToCovid;
 						unless (exists $subjectsSymptoms{$subjectId}) {
+							my $weekNumber = time::week_number_from_date($visitDate);
+							$weeklyStats{'PCRWithSymptoms'}->{$weekNumber}->{$randomizationGroup}++;
 							$subjectsSymptoms{$subjectId} = 1;
 							my $symptomDatetime = $symptomsByDates{$symptomCompdate}->{'symptomDatetime'} // 0;
 							my $visitName = $symptomsByDates{$symptomCompdate}->{'visitName'} // 0;
@@ -381,24 +387,28 @@ sub subject_symptoms_by_dates {
 		$symptomCompdate    =~ s/\D//g;
 		next unless $symptomCompdate <= 20201114;
 		my $totalSymptoms   = 0;
+		my $hasOfficialSymptoms = 0;
 		for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
 			next unless $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
 			my $symptomCategory = symptom_category_from_symptom($symptomName);
 			if ($officialSymptomsOnly) {
 				next unless $symptomCategory eq 'OFFICIAL';
 			}
+			$hasOfficialSymptoms = 1 if $symptomCategory eq 'OFFICIAL';
 			$symptomsByDates{$symptomCompdate}->{'symptoms'}->{$symptomName} = 1;
 			$totalSymptoms++;
 		}
 		next unless $totalSymptoms;
 		$hasSymptoms = 1;
-		$symptomsByDates{$symptomCompdate}->{'visitName'}       = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'};
-		$symptomsByDates{$symptomCompdate}->{'symptomDatetime'} = $symptomDatetime;
-		$symptomsByDates{$symptomCompdate}->{'totalSymptoms'}   = $totalSymptoms;
+		$symptomsByDates{$symptomCompdate}->{'visitName'}           = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'};
+		$symptomsByDates{$symptomCompdate}->{'symptomDatetime'}     = $symptomDatetime;
+		$symptomsByDates{$symptomCompdate}->{'totalSymptoms'}       = $totalSymptoms;
+		$symptomsByDates{$symptomCompdate}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
 	}
 	# p%symptomsByDates;
 	# die;
-	return ($hasSymptoms,
+	return (
+		$hasSymptoms,
 		%symptomsByDates);
 }
 
@@ -447,149 +457,186 @@ sub eval_pdf_positive_cases_to_analysis {
 }
 
 # Then isolating subjects who had "Covid-like" symptoms.
-my %symptomsByGroups     = ();
-my %subjectsWithSymptoms = ();
-open my $out, '>:utf8', 'symptomatic_cases.csv';
-say $out "Subject Id;Randomization Group;Symptom Datetime;Suspected Covid N°;" .
-		 "New Or Increased Cough;New Or Increased Sore Throat;Chills;Fever;Diarrhea;New Loss Of Taste Or Smell;" .
-		 "New Or Increased Shortness Of Breath;Fever;New Or Increased Muscle Pain;Vomiting;New Or Increased Nasal Congestion;" .
-		 "Headache;Fatigue;Rhinorrhoea;Nausea;New Or Increased Wheezing;";
-for my $subjectId (sort{$a <=> $b} keys %symptoms) {
-	die if exists $phase1Subjects{$subjectId};
-	my $randomizationGroup  = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
-	my $ageYears            = $demographics{$subjectId}->{'ageYears'}            // 'Unknown';
-	if (exists $exclusions{$subjectId}) {
-		# p$exclusions{$subjectId};
-		# die;
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'excludedSubjects'}->{'total'}++;
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'excludedSubjects'}->{$randomizationGroup}++;
-		# next;
-	}
-	# p$symptoms{$subjectId};
-	# die;
-	# Reorganizing symptoms by dates.
-	my ($hasSymptoms, %symptomsByDates) = subject_symptoms_by_dates($subjectId);
-	next unless keys %symptomsByDates && $hasSymptoms;
-
-	# printing raw .CSV data.
-	for my $symptomCompdate (sort{$a <=> $b} keys %symptomsByDates) {
-		my $symptomDatetime = $symptomsByDates{$symptomCompdate}->{'symptomDatetime'} // 0;
-		my $visitName = $symptomsByDates{$symptomCompdate}->{'visitName'} // 0;
-		my $newOrIncreasedCough = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED COUGH'} // 0;
-		my $newOrIncreasedSoreThroat = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SORE THROAT'} // 0;
-		my $chills = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'CHILLS'} // 0;
-		my $fever  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FEVER'} // 0;
-		my $diarrhea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'DIARRHEA'} // 0;
-		my $newLossOfTasteOrSmell  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW LOSS OF TASTE OR SMELL'} // 0;
-		my $newOrIncreasedShortnessOfBreath = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SHORTNESS OF BREATH'} // 0;
-		my $newOrIncreasedMusclePain = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED MUSCLE PAIN'} // 0;
-		my $vomiting  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'VOMITING'} // 0;
-		my $newOrIncreasedNasalCongestion  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED NASAL CONGESTION'} // 0;
-		my $headache  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'HEADACHE'} // 0;
-		my $fatigue  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FATIGUE'} // 0;
-		my $rhinorrhoea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'RHINORRHOEA'} // 0;
-		my $nausea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NAUSEA'} // 0;
-		my $newOrIncreasedWheezing  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED WHEEZING'} // 0;
-		say $out "$subjectId;$randomizationGroup;$symptomDatetime;$visitName;" .
-				 "$newOrIncreasedCough;$newOrIncreasedSoreThroat;$chills;$fever;$diarrhea;$newLossOfTasteOrSmell;" .
-				 "$newOrIncreasedShortnessOfBreath;$fever;$newOrIncreasedMusclePain;$vomiting;$newOrIncreasedNasalCongestion;" .
-				 "$headache;$fatigue;$rhinorrhoea;$nausea;$newOrIncreasedWheezing;";
-	}
-	$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{'total'}++;
-	$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{$randomizationGroup}++;
-
-	# Reorganizing visits by dates.
-	my ($hasPositivePCR,
-		%pcrsByDates)      = subject_pcrs_by_dates($subjectId);
-
-	# say "*" x 50;
-	# say "subjectId            : $subjectId";
-	# say "randomizationGroup   : $randomizationGroup";
-	my $lastCovidDate;
-	my $hasSymptomsWithTest         = 0;
-	my $hasSymptomsWithPositiveTest = 0;
-	# p%symptomsByDates;
-	# die;
-	for my $symptomCompdate (sort{$a <=> $b} keys %symptomsByDates) {
-		my $symptomDatetime   = $symptomsByDates{$symptomCompdate}->{'symptomDatetime'} // die;
-		my $totalSymptoms = $symptomsByDates{$symptomCompdate}->{'totalSymptoms'} || die;
-		my $visitName     = $symptomsByDates{$symptomCompdate}->{'visitName'}     || die;
-		unless (exists $subjectsVisitsConfirmed{$subjectId}->{$visitName}) {
-			$stats{'symptomsPlusPCRs'}->{'casesSuspectedButUnconfirmed'}->{'total'}++;
-			$stats{'symptomsPlusPCRs'}->{'casesSuspectedButUnconfirmed'}->{$randomizationGroup}++;
-		} else {
-			$stats{'symptomsPlusPCRs'}->{'casesConfirmed'}++;
-		}
-		$stats{'symptomsPlusPCRs'}->{'total'}++;
-		# say "symptomDatetime             : $symptomDatetime";
-		# say "totalSymptoms               : $totalSymptoms";
-		# say "visitName                   : $visitName";
-		$stats{'symptomsPlusPCRs'}->{'byTotalSymptoms'}->{$randomizationGroup}->{$totalSymptoms}++;
-
-		# Fetching nearest test from the symptoms occurence.
-		my $symptomsWithTest = 0;
-		my $closestDayFromSymptomToTest = 99;
-		# $symptomsByGroups{$randomizationGroup}->{'byAges'}->{$ageYears}++;
-		# say "symptomCompdate : $symptomCompdate";
-		# die;
-		# p%pcrsByDates;
-		# die;
-		for my $visitCompdate (sort{$a <=> $b} keys %pcrsByDates) {
-			my $visitDate      = $pcrsByDates{$visitCompdate}->{'visitDate'} // die;
-			my $pcrResult      = $pcrsByDates{$visitCompdate}->{'pcrResult'} // die;
-			my $visitDatetime  = "$visitDate 12:00:00";
-			my $daysDifference = time::calculate_days_difference($symptomDatetime, $visitDatetime);
-			if (!$symptomsBeforePCR) { # If symptomsBeforePCR = 0, skipping the symptoms which have occured before the PCR.
-				next if $symptomCompdate < $visitCompdate; # Verify that the symptom have occured on the day or after the PCR.
-			}
-			next if $daysDifference > $daysOffset;
-			# say "visitDate                   : $visitDate";
-			# say "pcrResult                   : $pcrResult";
-			# say "daysDifference              : $daysDifference";
+sub symptoms_positive_data {
+	open my $out, '>:utf8', 'symptomatic_cases.csv';
+	say $out "Subject Id;Randomization Group;Symptom Datetime;Suspected Covid N°;" .
+			 "New Or Increased Cough;New Or Increased Sore Throat;Chills;Fever;Diarrhea;New Loss Of Taste Or Smell;" .
+			 "New Or Increased Shortness Of Breath;Fever;New Or Increased Muscle Pain;Vomiting;New Or Increased Nasal Congestion;" .
+			 "Headache;Fatigue;Rhinorrhoea;Nausea;New Or Increased Wheezing;";
+	open my $out2, '>:utf8', 'symptomatic_cases_unconfirmed.csv';
+	say $out2 "Subject Id;Randomization Group;Symptom Datetime;Suspected Covid N°;Has Official Symptoms;" .
+			 "New Or Increased Cough;New Or Increased Sore Throat;Chills;Fever;Diarrhea;New Loss Of Taste Or Smell;" .
+			 "New Or Increased Shortness Of Breath;Fever;New Or Increased Muscle Pain;Vomiting;New Or Increased Nasal Congestion;" .
+			 "Headache;Fatigue;Rhinorrhoea;Nausea;New Or Increased Wheezing;";
+	for my $subjectId (sort{$a <=> $b} keys %symptoms) {
+		die if exists $phase1Subjects{$subjectId};
+		my $randomizationGroup  = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
+		my $ageYears            = $demographics{$subjectId}->{'ageYears'}            // 'Unknown';
+		if (exists $exclusions{$subjectId}) {
+			# p$exclusions{$subjectId};
 			# die;
-			$symptomsWithTest = 1;
-			my $difToZero = abs(0 - $daysDifference);
-			$closestDayFromSymptomToTest = $difToZero if $difToZero < $closestDayFromSymptomToTest;
-			if ($pcrResult eq 'POS') {
-				$hasSymptomsWithPositiveTest = 1;
-				$lastCovidDate = $visitDate;
-			}
-			# say "$symptomDatetime -> $visitDate ($daysDifference days | $pcrResult)";
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'excludedSubjects'}->{'total'}++;
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'excludedSubjects'}->{$randomizationGroup}++;
+			# next;
 		}
-		# say "symptomsWithTest         : $symptomsWithTest";
-		# say "closestDayFromSymptomToTest : $closestDayFromSymptomToTest";
-		if ($symptomsWithTest) {
-			$hasSymptomsWithTest = 1;
-			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithTest'}->{$randomizationGroup}++;
-			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithTest'}->{'total'}++;
-			die if $lastCovidDate && !$subjectsWithPCRs{$subjectId}->{'hasCovidWithSymptoms'};
-		} else {
-			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithoutTest'}->{$randomizationGroup}++;
-			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithoutTest'}->{'total'}++;
-		}
-		$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsSets'}->{$randomizationGroup}->{'total'}++;
-		$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsSets'}->{'total'}++;
-	}
-	if ($hasSymptomsWithTest) {
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndTest'}->{$randomizationGroup}->{'total'}++;
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndTest'}->{'total'}++;
-	}
-	if ($hasSymptomsWithPositiveTest) {
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndPositiveTest'}->{$randomizationGroup}->{'total'}++;
-		$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndPositiveTest'}->{'total'}++;
-	}
-}
-close $out;
-p%stats;
+		# p$symptoms{$subjectId};
+		# die;
+		# Reorganizing symptoms by dates.
+		my ($hasSymptoms, %symptomsByDates) = subject_symptoms_by_dates($subjectId);
+		next unless keys %symptomsByDates && $hasSymptoms;
 
-# Displaying subtraction "total symptomatic" - "found positive with symptoms"
-for my $arm (sort keys %symptomsByGroups) {
-	my $symptomatic = $symptomsByGroups{$arm}->{'total'} // die;
-	my $positiveWithSymptoms = $stats{'positiveWithSymptoms'}->{$arm} // die;
-	my $offset = $symptomatic - $positiveWithSymptoms;
-	# say "[$arm] -> $symptomatic - $positiveWithSymptoms = [$offset]";
+		# printing raw .CSV data.
+		for my $symptomCompdate (sort{$a <=> $b} keys %symptomsByDates) {
+			my $symptomDatetime = $symptomsByDates{$symptomCompdate}->{'symptomDatetime'} // 0;
+			my ($symptomDate) = split ' ', $symptomDatetime;
+			my $visitName = $symptomsByDates{$symptomCompdate}->{'visitName'} // 0;
+			my $newOrIncreasedCough = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED COUGH'} // 0;
+			my $newOrIncreasedSoreThroat = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SORE THROAT'} // 0;
+			my $chills = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'CHILLS'} // 0;
+			my $fever  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FEVER'} // 0;
+			my $diarrhea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'DIARRHEA'} // 0;
+			my $newLossOfTasteOrSmell  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW LOSS OF TASTE OR SMELL'} // 0;
+			my $newOrIncreasedShortnessOfBreath = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SHORTNESS OF BREATH'} // 0;
+			my $newOrIncreasedMusclePain = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED MUSCLE PAIN'} // 0;
+			my $vomiting  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'VOMITING'} // 0;
+			my $newOrIncreasedNasalCongestion  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED NASAL CONGESTION'} // 0;
+			my $headache  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'HEADACHE'} // 0;
+			my $fatigue  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FATIGUE'} // 0;
+			my $rhinorrhoea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'RHINORRHOEA'} // 0;
+			my $nausea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NAUSEA'} // 0;
+			my $newOrIncreasedWheezing  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED WHEEZING'} // 0;
+			say $out "$subjectId;$randomizationGroup;$symptomDatetime;$visitName;" .
+					 "$newOrIncreasedCough;$newOrIncreasedSoreThroat;$chills;$fever;$diarrhea;$newLossOfTasteOrSmell;" .
+					 "$newOrIncreasedShortnessOfBreath;$fever;$newOrIncreasedMusclePain;$vomiting;$newOrIncreasedNasalCongestion;" .
+					 "$headache;$fatigue;$rhinorrhoea;$nausea;$newOrIncreasedWheezing;";
+			my $weekNumber = time::week_number_from_date($symptomDate);
+			$weeklyStats{'symptoms'}->{$weekNumber}->{$randomizationGroup}++;
+		}
+		$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{'total'}++;
+		$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{$randomizationGroup}++;
+
+		# Reorganizing visits by dates.
+		my ($hasPositivePCR,
+			%pcrsByDates)      = subject_pcrs_by_dates($subjectId);
+
+		# say "*" x 50;
+		# say "subjectId            : $subjectId";
+		# say "randomizationGroup   : $randomizationGroup";
+		my $lastCovidDate;
+		my $hasSymptomsWithTest         = 0;
+		my $hasSymptomsWithPositiveTest = 0;
+		# p%symptomsByDates;
+		# die;
+		for my $symptomCompdate (sort{$a <=> $b} keys %symptomsByDates) {
+			my $symptomDatetime   = $symptomsByDates{$symptomCompdate}->{'symptomDatetime'} // die;
+			my $totalSymptoms = $symptomsByDates{$symptomCompdate}->{'totalSymptoms'} || die;
+			my $visitName     = $symptomsByDates{$symptomCompdate}->{'visitName'}     || die;
+			my $hasOfficialSymptoms     = $symptomsByDates{$symptomCompdate}->{'hasOfficialSymptoms'}     // die;
+			unless (exists $subjectsVisitsConfirmed{$subjectId}->{$visitName}) {
+				my $newOrIncreasedCough = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED COUGH'} // 0;
+				my $newOrIncreasedSoreThroat = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SORE THROAT'} // 0;
+				my $chills = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'CHILLS'} // 0;
+				my $fever  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FEVER'} // 0;
+				my $diarrhea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'DIARRHEA'} // 0;
+				my $newLossOfTasteOrSmell  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW LOSS OF TASTE OR SMELL'} // 0;
+				my $newOrIncreasedShortnessOfBreath = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED SHORTNESS OF BREATH'} // 0;
+				my $newOrIncreasedMusclePain = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED MUSCLE PAIN'} // 0;
+				my $vomiting  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'VOMITING'} // 0;
+				my $newOrIncreasedNasalCongestion  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED NASAL CONGESTION'} // 0;
+				my $headache  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'HEADACHE'} // 0;
+				my $fatigue  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'FATIGUE'} // 0;
+				my $rhinorrhoea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'RHINORRHOEA'} // 0;
+				my $nausea  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NAUSEA'} // 0;
+				my $newOrIncreasedWheezing  = $symptomsByDates{$symptomCompdate}->{'symptoms'}->{'NEW OR INCREASED WHEEZING'} // 0;
+				say $out2 "$subjectId;$randomizationGroup;$symptomDatetime;$visitName;$hasOfficialSymptoms;" .
+						 "$newOrIncreasedCough;$newOrIncreasedSoreThroat;$chills;$fever;$diarrhea;$newLossOfTasteOrSmell;" .
+						 "$newOrIncreasedShortnessOfBreath;$fever;$newOrIncreasedMusclePain;$vomiting;$newOrIncreasedNasalCongestion;" .
+						 "$headache;$fatigue;$rhinorrhoea;$nausea;$newOrIncreasedWheezing;";
+				$stats{'symptomsPlusPCRs'}->{'casesSuspectedButUnconfirmed'}->{'total'}++;
+				$stats{'symptomsPlusPCRs'}->{'casesSuspectedButUnconfirmed'}->{$randomizationGroup}++;
+				if ($hasOfficialSymptoms) {
+					$stats{'symptomsPlusPCRs'}->{'officialCasesSuspectedButUnconfirmed'}->{'total'}++;
+					$stats{'symptomsPlusPCRs'}->{'officialCasesSuspectedButUnconfirmed'}->{$randomizationGroup}++;
+				}
+			} else {
+				$stats{'symptomsPlusPCRs'}->{'casesConfirmed'}++;
+			}
+			$stats{'symptomsPlusPCRs'}->{'total'}++;
+			# say "symptomDatetime             : $symptomDatetime";
+			# say "totalSymptoms               : $totalSymptoms";
+			# say "visitName                   : $visitName";
+			$stats{'symptomsPlusPCRs'}->{'byTotalSymptoms'}->{$randomizationGroup}->{$totalSymptoms}++;
+
+			# Fetching nearest test from the symptoms occurence.
+			my $symptomsWithTest = 0;
+			my $closestDayFromSymptomToTest = 99;
+			# $symptomsByGroups{$randomizationGroup}->{'byAges'}->{$ageYears}++;
+			# say "symptomCompdate : $symptomCompdate";
+			# die;
+			# p%pcrsByDates;
+			# die;
+			for my $visitCompdate (sort{$a <=> $b} keys %pcrsByDates) {
+				my $visitDate      = $pcrsByDates{$visitCompdate}->{'visitDate'} // die;
+				my $pcrResult      = $pcrsByDates{$visitCompdate}->{'pcrResult'} // die;
+				my $visitDatetime  = "$visitDate 12:00:00";
+				my $daysDifference = time::calculate_days_difference($symptomDatetime, $visitDatetime);
+				if (!$symptomsBeforePCR) { # If symptomsBeforePCR = 0, skipping the symptoms which have occured before the PCR.
+					next if $symptomCompdate < $visitCompdate; # Verify that the symptom have occured on the day or after the PCR.
+				}
+				next if $daysDifference > $daysOffset;
+				# say "visitDate                   : $visitDate";
+				# say "pcrResult                   : $pcrResult";
+				# say "daysDifference              : $daysDifference";
+				# die;
+				$symptomsWithTest = 1;
+				my $difToZero = abs(0 - $daysDifference);
+				$closestDayFromSymptomToTest = $difToZero if $difToZero < $closestDayFromSymptomToTest;
+				if ($pcrResult eq 'POS') {
+					$hasSymptomsWithPositiveTest = 1;
+					$lastCovidDate = $visitDate;
+				}
+				# say "$symptomDatetime -> $visitDate ($daysDifference days | $pcrResult)";
+			}
+			# say "symptomsWithTest         : $symptomsWithTest";
+			# say "closestDayFromSymptomToTest : $closestDayFromSymptomToTest";
+			if ($symptomsWithTest) {
+				$hasSymptomsWithTest = 1;
+				$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithTest'}->{$randomizationGroup}++;
+				$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithTest'}->{'total'}++;
+				die if $lastCovidDate && !$subjectsWithPCRs{$subjectId}->{'hasCovidWithSymptoms'};
+			} else {
+				$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithoutTest'}->{$randomizationGroup}++;
+				$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsWithoutTest'}->{'total'}++;
+			}
+			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsSets'}->{$randomizationGroup}->{'total'}++;
+			$stats{'symptomsAnalysis'}->{'symptoms'}->{'symptomsSets'}->{'total'}++;
+		}
+		if ($hasSymptomsWithTest) {
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndTest'}->{$randomizationGroup}->{'total'}++;
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndTest'}->{'total'}++;
+		}
+		if ($hasSymptomsWithPositiveTest) {
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndPositiveTest'}->{$randomizationGroup}->{'total'}++;
+			$stats{'symptomsAnalysis'}->{'subjects'}->{'subjectsWithSymptomsAndPositiveTest'}->{'total'}++;
+		}
+	}
+	close $out;
 }
+p%stats;
+# p%weeklyStats;
 
 open my $out2, '>:utf8', 'public/doc/pfizer_trials/subjects_with_pcr_and_symptoms.json';
 say $out2 encode_json\%subjectsWithPCRs;
 close $out2;
+
+open my $out3, '>:utf8', 'weekly_cases_accrued.csv';
+for my $label (sort keys %weeklyStats) {
+	my ($bNT162b2, $placebo, $unknown) = (0, 0, 0);
+	for my $weekNumber (sort{$a <=> $b} keys %{$weeklyStats{$label}}) {
+		$bNT162b2 += $weeklyStats{$label}->{$weekNumber}->{'BNT162b2'} // 0;
+		$placebo  += $weeklyStats{$label}->{$weekNumber}->{'Placebo'}  // 0;
+		$unknown  += $weeklyStats{$label}->{$weekNumber}->{'Unknown'}  // 0;
+		say $out3 "$label;$weekNumber;$bNT162b2;$placebo;$unknown;";
+	}
+}
+close $out3;

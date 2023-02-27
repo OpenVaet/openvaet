@@ -15,15 +15,13 @@ use lib "$FindBin::Bin/../../../lib";
 use time;
 
 my $demographicFile   = 'public/doc/pfizer_trials/pfizer_trial_demographics_merged.json';
-my $sdSuppDsFile      = 'public/doc/pfizer_trials/pfizer_suppds_patients.json';
-my $pdfDataFile       = 'public/doc/pfizer_trials/pfizer_pdf_data_patients.json';
 my $sentinelFile      = 'public/doc/pfizer_trials/FDA-CBER-2021-5683-0023500 to -0023507_125742_S1_M5_c4591001-A-c4591001-phase-1-subjects-from-dmw.csv';
 my $randomizationFile = 'public/doc/pfizer_trials/subjects_randomization_dates_merged.json';
 my $randomDataFile    = 'public/doc/pfizer_trials/merged_doses_data.json';
 my $advaFile          = "public/doc/pfizer_trials/pfizer_adva_patients.json";
 my $feverFile         = "public/doc/pfizer_trials/S1_M5_c4591001-S-D-ce.json";
 my $mbFile            = "public/doc/pfizer_trials/pfizer_mb_patients.json";
-my $exclusionsFile    = "public/doc/pfizer_trials/pfizer_addv_patients.json";
+my $deviationsFile    = "public/doc/pfizer_trials/pfizer_addv_patients.json";
 my $seriousAEFile     = 'public/doc/pfizer_phase_1/20210401_serious_adverse_effects_16_2_7_5.json';
 my $allAEFile         = 'public/doc/pfizer_phase_1/20210401_all_adverse_effects_16_2_7_4_1.json';
 my %fevers            = ();
@@ -31,11 +29,9 @@ my %mbData            = ();
 my %advaData          = ();
 my %demographic       = ();
 my %sentinels         = ();
-my %pdfData           = ();
-my %subjectsToRepair  = ();
 my %randomization     = ();
 my %randomData        = ();
-my %exclusions        = ();
+my %deviations        = ();
 my %seriousAE         = ();
 my %allAEs            = ();
 load_ae();
@@ -46,7 +42,6 @@ load_randomization();
 load_random_data();
 load_demographic_subjects();
 load_sentinel();
-load_pdf_data();
 load_serious_ae();
 load_all_aes();
 
@@ -135,7 +130,7 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 		# p$advaData{$subjectId};
 		# p$demographic{$subjectId};
 		# p$randomData{$subjectId};
-		# p$exclusions{$subjectId};
+		# p$deviations{$subjectId};
 		# say "dose1Datetime : $dose1Datetime";
 		# say "dose2Datetime : $dose2Datetime";
 		# die;
@@ -228,8 +223,8 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 		}
 		# If we have additional AEs in the fevers file, processing them.
 		if (exists $fevers{$subjectId}) {
-			say "supplementary :";
-			p$fevers{$subjectId};
+			# say "supplementary :";
+			# p$fevers{$subjectId};
 			# say "serious :";
 			# p$seriousAE{$subjectId};
 			# say "all :";
@@ -281,8 +276,8 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 		$phase1Subjects{$subjectId}->{'hasAdverseEffects'} = $hasAdverseEffects;
 
 		# Incrementing known deviations.
-		if (exists $exclusions{$subjectId}) {
-			$phase1Subjects{$subjectId}->{'deviations'} = \%{$exclusions{$subjectId}->{'deviations'}};
+		if (exists $deviations{$subjectId}) {
+			$phase1Subjects{$subjectId}->{'deviations'} = \%{$deviations{$subjectId}->{'deviations'}};
 		} else {
 			$phase1Subjects{$subjectId}->{'deviations'} = {};
 		}
@@ -511,17 +506,6 @@ sub load_sentinel {
 	say "[$sentinelFile] -> subjects : " . keys %sentinels;
 }
 
-sub load_pdf_data {
-	open my $in, '<:utf8', $pdfDataFile;
-	my $json;
-	while (<$in>) {
-		$json .= $_;
-	}
-	close $in;
-	$json = decode_json($json);
-	%pdfData = %$json;
-}
-
 sub load_serious_ae {
 	open my $in, '<:utf8', $seriousAEFile;
 	my $json;
@@ -547,15 +531,15 @@ sub load_all_aes {
 }
 
 sub load_exclusion {
-	open my $in, '<:utf8', $exclusionsFile;
+	open my $in, '<:utf8', $deviationsFile;
 	my $json;
 	while (<$in>) {
 		$json .= $_;
 	}
 	close $in;
 	$json = decode_json($json);
-	%exclusions = %$json;
-	say "[$exclusionsFile] -> subjects : " . keys %exclusions;
+	%deviations = %$json;
+	say "[$deviationsFile] -> subjects : " . keys %deviations;
 }
 
 sub load_randomization {
