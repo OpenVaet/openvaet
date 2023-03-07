@@ -13,7 +13,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use time;
 
-my $synthesisFile = 'public/pfizer_trials/xpt_to_csv_conversion.csv';
+my $synthesisFile = 'public/doc/pfizer_trials/xpt_to_csv_conversion.csv';
 
 my %xpts = ();
 for my $file (glob "public/pfizer_documents/native_files/pd-production-*/*.xpt") {
@@ -37,6 +37,7 @@ for my $file (glob "raw_data/pfizer_trials/xpt_files_to_csv/*.csv") {
 	$csvs{$fileName}->{'csvFile'} = $file;
 }
 
+open my $out, '>:utf8', $synthesisFile;
 for my $fileName (sort keys %xpts) {
 	unless (exists $csvs{$fileName}->{'csvFile'}) {
 		my $sourceXptFile = $xpts{$fileName}->{'sourceXptFile'} // die;
@@ -50,5 +51,7 @@ for my $fileName (sort keys %xpts) {
 		say "fileName      : $fileName";
 		say "sourceXptFile : $sourceXptFile";
 		say "--->  csvFile : $csvFile";
+		say $out "$csvFile;$sourceXptFile;";
 	}
 }
+close $out;

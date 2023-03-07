@@ -74,6 +74,10 @@ while (<$in>) {
 		my $adt   = $values{'ADT'}   // die;
 		next unless $adt;
 		$adt            = $tp19600101 + $adt * 86400;
+		my $endDt = $values{'AENDT'};
+		if ($endDt) {
+			$endDt = $tp19600101 + $endDt * 86400;
+		}
 		my $adtDatetime = time::timestamp_to_datetime($adt);
 		my $uSubjectId = $values{'USUBJID'} // die;
 		my ($subjectId) = $uSubjectId =~ /^C4591001 .... (.*)$/;
@@ -82,6 +86,7 @@ while (<$in>) {
 		# say "param       : $param";
 		# say "value       : $value";
 		$subjects{$subjectId}->{'subjectId'}     = $subjectId;
+		$subjects{$subjectId}->{'endDt'}         = $endDt;
 		$subjects{$subjectId}->{'uSubjectId'}    = $uSubjectId;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'symptoms'}->{$adtDatetime}->{$param} = $value;

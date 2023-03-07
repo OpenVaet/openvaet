@@ -1,0 +1,15 @@
+<a href="/pfizearch/viewer?pdf=<%=$pdfFileName%>&currentLanguage=<%=$currentLanguage%>" title="To open the complete .pdf, click here" target="_blank"><%=$pdfFile%></a>, page <%=$pageNum%>
+<h4>
+    % if ($formerPageNum && $nextPageNum) {
+    <span style="padding: 3px 6px;border: 1px solid #396ebf;margin-right: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$formerPageNum%>');return;">&#10229;</span>Page found <%=$currentPNum%> / <%==$totalPages%><span style="padding: 3px 6px;border: 1px solid #396ebf;margin-left: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$nextPageNum%>');return;">&#10230;</span>
+    % } elsif ($formerPageNum) {
+    <span style="padding: 3px 6px;border: 1px solid #396ebf;margin-right: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$formerPageNum%>');return;">&#10229;</span>Page found <%=$currentPNum%> / <%==$totalPages%>
+    % } elsif ($nextPageNum) {
+    <span style="padding: 3px 6px;margin-right: 34px;color: white;"></span>Page found <%=$currentPNum%> / <%==$totalPages%><span style="padding: 3px 6px;border: 1px solid #396ebf;margin-left: 15px;border-radius: 25%;cursor:pointer;background: #396ebf;color: white;" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$nextPageNum%>');return;">&#10230;</span>
+    % } else {
+    Page found <%=$currentPNum%> / <%==$totalPages%>
+    % }
+</h4>
+<div style="width: 100%;position:relative;">
+	<%==$content%>
+</div>

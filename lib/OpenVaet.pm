@@ -448,6 +448,15 @@ sub startup {
     $r->post('/social_networks/finalize_network_review')->to('social_networks#finalize_network_review');
 
 
+    $r->get('/pfizer_trial_subjects/pregnancies_related')->to('pfizer_trial_subjects#pregnancies_related');
+    $r->get('/pfizer_trial_subjects/pregnancies_related_subject')->to('pfizer_trial_subjects#pregnancies_related_subject');
+    $r->get('/pfizer_trial_subjects/pregnancies_related_subject_pdf')->to('pfizer_trial_subjects#pregnancies_related_subject_pdf');
+    $r->post('/pfizer_trial_subjects/pregnancies_related_subject_pdf_page')->to('pfizer_trial_subjects#pregnancies_related_subject_pdf_page');
+
+    $r->get('/pfizer_trial_subjects/conflicts_related')->to('pfizer_trial_subjects#conflicts_related');
+    $r->get('/pfizer_trial_subjects/conflicts_related_subject')->to('pfizer_trial_subjects#conflicts_related_subject');
+    $r->get('/pfizer_trial_subjects/conflicts_related_subject_pdf')->to('pfizer_trial_subjects#conflicts_related_subject_pdf');
+    $r->post('/pfizer_trial_subjects/conflicts_related_subject_pdf_page')->to('pfizer_trial_subjects#conflicts_related_subject_pdf_page');
 
     $r->get('/tools')->to('tools#tools');
     $r->get('/tools/archive_org_twitter_followers')->to('tools#archive_org_twitter_followers');

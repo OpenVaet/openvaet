@@ -66,17 +66,20 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
-		# die;
 
 		# Fetching the data we currently focus on.
-		# p%values;
-		# die;
 		my $subjectId   = $values{'SUBJID'}  // die;
 		my $uSubjectId  = $values{'USUBJID'} // die;
 		my $trialSiteId = $values{'SITEID'}  // die;
 		my $adt         = $values{'ADT'}     // die;
 		$adt            = $tp19600101 + $adt * 86400;
 		my $adtDatetime = time::timestamp_to_datetime($adt);
+		my $unblindDt   = $values{'UNBLNDDT'};
+		my $unblindDatetime;
+		if ($unblindDt) {
+			$unblindDt  = $tp19600101 + $unblindDt * 86400;
+			$unblindDatetime = time::timestamp_to_datetime($unblindDt);
+		}
 		my $age         = $values{'AGE'}     // die;
 		my $sex         = $values{'SEX'}     // die;
 		($age) = split '\.', $age;
@@ -123,19 +126,20 @@ while (<$in>) {
 		if (exists $subjects{$subjectId}->{'dose2Datetime'} && $subjects{$subjectId}->{'dose2Datetime'}) {
 			die unless $dose2Datetime eq $subjects{$subjectId}->{'dose2Datetime'};
 		}
-		$subjects{$subjectId}->{'actArm'}        = $actArm;
-		$subjects{$subjectId}->{'phase'}         = $phase;
-		$subjects{$subjectId}->{'cohort'}        = $cohort;
-		$subjects{$subjectId}->{'trialSiteId'}   = $trialSiteId;
-		$subjects{$subjectId}->{'subjectId'}     = $subjectId;
-		$subjects{$subjectId}->{'uSubjectId'}    = $uSubjectId;
+		$subjects{$subjectId}->{'actArm'}          = $actArm;
+		$subjects{$subjectId}->{'phase'}           = $phase;
+		$subjects{$subjectId}->{'cohort'}          = $cohort;
+		$subjects{$subjectId}->{'trialSiteId'}     = $trialSiteId;
+		$subjects{$subjectId}->{'subjectId'}       = $subjectId;
+		$subjects{$subjectId}->{'uSubjectId'}      = $uSubjectId;
+		$subjects{$subjectId}->{'unblindDatetime'} = $unblindDatetime;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
-		$subjects{$subjectId}->{'sex'}           = $sex;
-		$subjects{$subjectId}->{'race'}          = $race;
-		$subjects{$subjectId}->{'age'}           = $age;
-		$subjects{$subjectId}->{'isDtc'}         = $isDtc;
-		$subjects{$subjectId}->{'dose1Datetime'} = $dose1Datetime;
-		$subjects{$subjectId}->{'dose2Datetime'} = $dose2Datetime;
+		$subjects{$subjectId}->{'sex'}             = $sex;
+		$subjects{$subjectId}->{'race'}            = $race;
+		$subjects{$subjectId}->{'age'}             = $age;
+		$subjects{$subjectId}->{'isDtc'}           = $isDtc;
+		$subjects{$subjectId}->{'dose1Datetime'}   = $dose1Datetime;
+		$subjects{$subjectId}->{'dose2Datetime'}   = $dose2Datetime;
 		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{'visit'} = $visit;
 		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{$param}  = $avaLc;
 		$subjects{$subjectId}->{'totalAdvaRows'}++;

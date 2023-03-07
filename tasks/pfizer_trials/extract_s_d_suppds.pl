@@ -66,6 +66,7 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
+		# p%values;
 		# die;
 
 		# Fetching the data we currently focus on.

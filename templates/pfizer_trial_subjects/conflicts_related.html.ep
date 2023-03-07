@@ -1,0 +1,84 @@
+% layout 'default';
+% title 'OPENVAET - Pfizer/BioNTech Trial - Conflicts Related Subjects';
+
+<style type="text/css">
+	.row-1 {
+		width:calc(100% - 35px);
+		min-width:300px;
+		margin:auto;
+		border:1px solid #B2CEF7;
+		border-radius: 15px;
+		display: flex;
+		flex-wrap: wrap;
+		background: #B2CEF7;
+		font-weight: bold;
+		cursor:pointer;
+	}
+	.row-1:hover {
+		background: #c1d6f5;
+	}
+	.row-2 {
+		width:calc(100% - 35px);
+		min-width:300px;
+		margin:auto;
+		border:1px solid #D8E4ED;
+		border-radius: 15px;
+		display: flex;
+		flex-wrap: wrap;
+		background: #D8E4ED;
+		font-weight: bold;
+		cursor:pointer;
+	}
+	.row-2:hover {
+		background: #ebf3fa;
+	}
+</style>
+
+% my %conflictsJson = %$conflictsJson;
+% use Data::Printer;
+<div class="content-container" style="margin-left:15px;margin-right: 15px;width: calc(100% - 30px);max-width: calc(100% - 30px);line-height: 26px;font-size: 12px;text-align:center;">
+    <div class="text_separator"></div>
+    % if ($self->is_connected()) {
+    <div class="text_separator"></div>
+    <div style="width:100%;font-weight: bold;font-size: 18px;">
+    	Trial subjects related to conflicts.
+	</div>
+    <div class="text_separator"></div>
+	<div style="width:98%;margin:auto;overflow-x: auto;overflow-y: auto;">
+		% my $cpt = 0;
+		% for my $subjectId (sort{$a <=> $b} keys %conflictsJson) {
+			% $cpt++;
+			% my $totalXptFiles = keys %{$conflictsJson{$subjectId}->{'xpt'}};
+			% my $totalPdfFiles = keys %{$conflictsJson{$subjectId}->{'pdf'}};
+			% if ($cpt == 1) {
+		<div class="row-1" onclick="loadSubjectFiles(<%=$subjectId%>);return;">
+			% } else {
+				% $cpt = 0;
+		<div class="row-2" onclick="loadSubjectFiles(<%=$subjectId%>);return;">
+			% }
+			<div class="text_separator"></div>
+			<div style="width:10%;min-width:30px;"></div>
+			<div style="width:25%;min-width:80px;"><%=$subjectId%></div>
+			<div style="width:25%;min-width:50px;"><%=$totalXptFiles%> .xpt files</div>
+			<div style="width:25%;min-width:50px;"><%=$totalPdfFiles%> .pdf files</div>
+			<div style="width:10%;min-width:30px;"></div>
+			<div class="text_separator"></div>
+		</div>
+		<div class="text_separator"></div>
+		% }
+	</div>
+    % } else {
+    	<div style="width: 50%;margin: auto;color:darkred;font-size: 16px;">You must login in the top-right corner of the screen & reload this page to continue.</div>
+    % }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+
+<script type="text/javascript">
+	function loadSubjectFiles(subjectId) {
+		window.location.href = "/pfizer_trial_subjects/conflicts_related_subject?subjectId=" + subjectId;
+	}
+</script>

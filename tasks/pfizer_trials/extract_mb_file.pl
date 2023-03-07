@@ -90,6 +90,7 @@ while (<$in>) {
 		my $mbMethod    = $values{'MBMETHOD'} // die;
 		my $mbTest      = $values{'MBTEST'}   // die;
 		my $mbStat      = $values{'MBSTAT'}   // die;
+		my $spDevId     = $values{'SPDEVID'}  // die;
 		unless ($visit) {
 			p%values;
 			$noVisitName++;
@@ -99,8 +100,8 @@ while (<$in>) {
 		unless ($mbOrres) {
 			die unless $mbStat && $mbStat eq 'NOT DONE';
 		}
-		$subjects{$subjectId}->{'subjectId'}     = $subjectId;
-		$subjects{$subjectId}->{'uSubjectId'}    = $uSubjectId;
+		$subjects{$subjectId}->{'subjectId'}  = $subjectId;
+		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{'visit'} = $visit;
 		if ($mbHour) {
@@ -109,6 +110,7 @@ while (<$in>) {
 				die unless $subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{'visitHour'} eq $mbHour;
 			}
 		}
+		$subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{$mbTest}->{'spDevId'}  = $spDevId;
 		$subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{$mbTest}->{'mbStat'}   = $mbStat;
 		$subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{$mbTest}->{'mbResult'} = $mbOrres;
 		$subjects{$subjectId}->{'mbVisits'}->{$mbDate}->{$mbTest}->{'mbMethod'} = $mbMethod;

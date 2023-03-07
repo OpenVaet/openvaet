@@ -233,6 +233,11 @@ sub pcr_positive_data {
 		my $ongoingCovidDate;
 		my ($hasSymptoms, %symptomsByDates) = subject_symptoms_by_dates($subjectId);
 
+		# if ($subjectId == '11331263') {
+		# 	p%pcrsByDates;
+		# 	die;
+		# }
+
 		# If we have no symptom data, or no symptom data up to cutt-off date, simply incrementing the positive PCRs observed on the subject.
 		unless (exists $symptoms{$subjectId} && $hasSymptoms) {
 			$subjectsWithPCRs{$subjectId}->{'hasSymptomData'} = 'No';

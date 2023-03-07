@@ -510,68 +510,6 @@
 		</ul>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
-		<div style="width: 100%;overflow-x: auto;overflow-y: auto;text-align: center;border: 1px solid black;box-sizing: border-box;font-size: 13px;">
-			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;font-weight: bold;padding-top: 15px;">
-				<div style="width: 20%;">
-					File Name
-				</div>
-				<div style="width: 20%;">
-					Table Name
-				</div>
-				<div style="width: 10%;">
-					Pages
-				</div>
-				<div style="width: 15%;">
-					Extraction Script (Github)
-				</div>
-				<div style="width: 25%;">
-					Notes
-				</div>
-				<div style="width: 10%;">
-					Output
-				</div>
-			</div>
-			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
-				<div style="width: 20%;">
-					<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf</a>
-				</div>
-				<div style="width: 20%;">
-					16.2.7.4.1 Listing of Adverse Events – All Subjects ≥16 Years of Age
-				</div>
-				<div style="width: 10%;">
-					77 to 3513
-				</div>
-				<div style="width: 15%;">
-					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_after_effects.pl" target="_blank">tasks/pfizer_trials/extract_after_effects.pl</a>
-				</div>
-				<div style="width: 25%;">
-					All potential after-effects registered for the subjects up to April 1st 2021.
-				</div>
-				<div style="width: 10%;">
-					<a href="/doc/pfizer_trials/pfizer_trial_demographics_1.json" download>.JSON</a>
-				</div>
-			</div>
-			<div style="min-width:1890px;width:100%;display: flex;flex-wrap: wrap;margin-top: 15px;padding-top: 15px;border-top: 1px solid black;">
-				<div style="width: 20%;">
-					<a href="/pfizearch/viewer?pdf=pfizer_documents/native_files/pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf&currentLanguage=<%=$currentLanguage%>" target="_blank">pd-production-070122/125742_S1_M5_5351_c4591001-interim-mth6-adverse-events.pdf</a>
-				</div>
-				<div style="width: 20%;">
-					16.2.7.5 Listing of Serious Adverse Events – All Subjects ≥16 Years of Age
-				</div>
-				<div style="width: 10%;">
-					3518 to 3618
-				</div>
-				<div style="width: 15%;">
-					<a href="https://github.com/OpenVaet/openvaet/blob/main/tasks/pfizer_trials/extract_severe_ae.pl" target="_blank">tasks/pfizer_trials/extract_severe_ae.pl</a>
-				</div>
-				<div style="width: 25%;">
-					Serious potential after-effects registered for the subjects up to April 1st 2021.
-				</div>
-				<div style="width: 10%;">
-					<a href="/doc/pfizer_trials/pfizer_trial_demographics_1.json" download>.JSON</a>
-				</div>
-			</div>
-		</div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>
 		<div class="text_separator"></div>

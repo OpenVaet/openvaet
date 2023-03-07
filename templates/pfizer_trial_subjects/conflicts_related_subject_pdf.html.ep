@@ -1,0 +1,135 @@
+% layout 'default';
+% title "OPENVAET - Pfizer/BioNTech Trial - Subject $subjectId";
+
+<style type="text/css">
+	.pdf-row {
+		font-weight:bold;
+		cursor: pointer;
+		background: #B2CEF7;
+		color:black;
+	}
+	.pdf-row-selected {
+		font-weight:bold;
+		cursor: pointer;
+		background: #91A7C9;
+		color:white;
+	}
+</style>
+
+% my %conflictsJson = %$conflictsJson;
+% use Data::Printer;
+% my $fileNum = 0;
+% my $firstMd5;
+% my $firstPdf;
+% my $firstPdfPage;
+<div class="content-container" style="margin-left:15px;margin-right: 15px;width: calc(100% - 30px);max-width: calc(100% - 30px);line-height: 26px;font-size: 12px;text-align:center;overflow-y: hidden;">
+    <div class="text_separator"></div>
+    % if ($self->is_connected()) {
+    <div class="text_separator"></div>
+    <div class="url-link noselect" style="text-align:left;padding-left: 15px;" onclick="openLocation('/pfizer_trial_subjects/conflicts_related');return;">&#10229; Return to subjects</div>
+    <div style="width:100%;font-weight: bold;font-size: 18px;">
+    	Subject <%=$subjectId%>
+	</div>
+	<div style="width:100%;overflow-x: auto;max-height: 50px;height: 50px;display: flex;flex-wrap: wrap;background: #F2F2F2;margin-top: 24px;font-weight: bold;">
+		<div style="width:150px;height:36px;font-size: 18px;padding-top: 9px;margin-top: 5px;cursor:pointer;background: #B2CEF7;" onclick="openXpt();return;">
+			.XPT (Raw)
+		</div>
+		<div style="width:150px;height:36px;font-size: 18px;padding-top: 9px;margin-top: 5px;background: #B2CEF7;background: #91A7C9;color:white;">
+			.PDF
+		</div>
+	</div>
+	<div style="width:calc(100% - 2px);overflow-y: auto;height: calc(100vh - 250px);max-height: calc(100vh - 250px);border:1px solid #F2F2F2;">
+		<div style="width:98%;margin:auto;display: flex;flex-wrap: wrap;max-height: calc(100vh - 250px);">
+			<div style="width: 70%;position:relative;" id="pdfViewer">
+			</div>
+			<div style="width: calc(30% - 15px);overflow-x: auto;">
+				% for my $pdfFile (sort keys %{$conflictsJson{'pdf'}}) {
+					% $fileNum++;
+					% my $fileMd5 = $conflictsJson{'pdf'}->{$pdfFile}->{'fileMd5'} // die;
+					% $firstMd5 = $fileMd5 unless $firstMd5;
+					% my $totalPages = keys %{$conflictsJson{'pdf'}->{$pdfFile}->{'pages'}};
+					% my $firstPage;
+					% for my $pageNum (sort{$a <=> $b} keys %{$conflictsJson{'pdf'}->{$pdfFile}->{'pages'}}) {
+						% $firstPage = $pageNum unless $firstPage;
+						% last;
+					% }
+					% if ($fileNum == 1) {
+						% $firstPdfPage = $firstPage unless $firstPdfPage;
+						% $firstPdf = $pdfFile unless $firstPdf;
+					<div id="pdf-row-<%=$fileNum%>" class="pdf-row-selected" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$firstPage%>');return;">
+					% } else {
+					<div id="pdf-row-<%=$fileNum%>" class="pdf-row" onclick="loadPdf('<%=$fileNum%>', '<%=$pdfFile%>', '<%=$fileMd5%>', '<%=$firstPage%>');return;">
+					% }
+						<div class="text_separator"></div>
+						<%=$pdfFile%>
+						<br>
+						<%=$totalPages%> pages
+						<div class="text_separator"></div>
+					</div>
+				% }
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		var latestElem = 1;
+		var subjectId  = <%=$subjectId%>;
+		function loadPdf(fileNum, pdfFile, fileMd5, pageNum) {
+			if (latestElem) {
+				if ($('#pdf-row-' + latestElem).hasClass('pdf-row-selected'))
+	        	$('#pdf-row-' + latestElem).removeClass('pdf-row-selected');
+        		$('#pdf-row-' + latestElem).addClass('pdf-row');
+			}
+			if ($('#pdf-row-' + fileNum).hasClass('pdf-row'))
+        	$('#pdf-row-' + fileNum).removeClass('pdf-row');
+        	$('#pdf-row-' + fileNum).addClass('pdf-row-selected');
+			console.log('fileNum  : ' + fileNum);
+			console.log('pdfFile  : ' + pdfFile);
+			console.log('fileMd5  : ' + fileMd5);
+			console.log('pageNum  : ' + pageNum);
+	        $("#pdfViewer").html("");
+	        let siteTarget = $('#siteTarget').val();
+	        let request = $.ajax({
+	            url: "/pfizer_trial_subjects/conflicts_related_subject_pdf_page",
+	            type: "POST",
+	            data: {
+	                currentLanguage : currentLanguage,
+	                subjectId       : subjectId,
+	                fileNum         : fileNum,
+	                fileMd5         : fileMd5,
+	                pdfFile         : pdfFile,
+	                pageNum         : pageNum
+	           }
+	        });
+
+	        request.done(function(data) {
+	            $("#pdfViewer").html(data);
+	        });
+
+	        // Printing error message if case of failure
+	        request.fail(function(jqXHR, textStatus) {
+	            alert("Something went wrong : " + textStatus)
+	        });
+
+			latestElem = fileNum;
+		}
+
+        $( document ).ready(function() {
+            loadPdf('1', '<%=$firstPdf%>', '<%=$firstMd5%>', '<%=$firstPdfPage%>');
+        });
+	</script>
+    % } else {
+    	<div style="width: 50%;margin: auto;color:darkred;font-size: 16px;">You must login in the top-right corner of the screen & reload this page to continue.</div>
+    % }
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+</div>
+
+<script type="text/javascript">
+	function openXpt() {
+		window.location.href = '/pfizer_trial_subjects/conflicts_related_subject?subjectId=<%=$subjectId%>&currentLanguage=<%=$currentLanguage%>';
+	}
+</script>
