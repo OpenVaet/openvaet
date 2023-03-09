@@ -461,6 +461,9 @@ sub startup {
     $r->get('/tools')->to('tools#tools');
     $r->get('/tools/archive_org_twitter_followers')->to('tools#archive_org_twitter_followers');
     $r->post('/tools/analyze_archive_org_twitter_followers')->to('tools#analyze_archive_org_twitter_followers');
+
+    $r->get('/mapping')->to('mapping#mapping');
+    $r->post('/mapping/load_mapping')->to('mapping#load_mapping');
 }
 
 sub connect_dbi

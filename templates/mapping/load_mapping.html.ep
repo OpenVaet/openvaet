@@ -1,0 +1,133 @@
+
+% my %sites = %$sites;
+<div style="width:100%;display: flex;flex-wrap: wrap;">
+% if ($mainWidth > 500) {
+	<div style="width:80%;">
+		<div id="map" style="height: 1200px;width: 100%;z-index: 1;"></div>
+	</div>
+	<div style="width:20%;">
+		<div  id="currentMouseOver">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+% } else {
+	<div style="width:100%;">
+		<div id="map" style="height: 250px;width: 100%;z-index: 1;"></div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+	<div style="width:100%;">
+		<div  id="currentMouseOver">
+
+		</div>
+		<div>
+			
+		</div>
+	</div>
+    <div class="text_separator"></div>
+    <div class="text_separator"></div>
+% }
+</div>
+
+<script type="text/javascript">
+
+	// Create the map
+	var map       = L.map('map', {attributionControl: false}).setView(center, zoomLevel);
+	var pinLat;
+	var pinLng;
+	var zoom;
+	% for my $trialSiteId (sort{$a <=> $b} keys %sites) {
+		% my $siteName = $sites{$trialSiteId}->{'siteName'} // die;
+		% my $latitude = $sites{$trialSiteId}->{'latitude'} // die;
+		% my $longitude = $sites{$trialSiteId}->{'longitude'} // die;
+		% my $postalCode = $sites{$trialSiteId}->{'postalCode'} // die;
+		% my $totalSubjectsScreened = $sites{$trialSiteId}->{'totalSubjectsScreened'} // die;
+		% my $totalExclusions = $sites{$trialSiteId}->{'totalExclusions'} // die;
+		% my $investigator = $sites{$trialSiteId}->{'investigator'} // die;
+		% my $address = $sites{$trialSiteId}->{'address'} // die;
+		% my $city = $sites{$trialSiteId}->{'city'} // die;
+		% my $radiusSize = 250 * $totalSubjectsScreened;
+		% my $siteNamePrint = $siteName;
+		% $siteNamePrint =~ s/\'/\\\'/;
+		// var circle<%=$trialSiteId%> = L.circle([<%=$latitude%>, <%=$longitude%>], {
+		//     color: '#79b',
+		//     fillColor: '#79b',
+		//     fillOpacity: 0.9,
+		//     radius: <%=$radiusSize%>,
+		//     siteName: '<%=$siteName%>',
+		//     address: '<%=$address%>',
+		//     investigator: '<%=$investigator%>',
+		//     postalCode: '<%=$postalCode%>',
+		//     city: '<%=$city%>',
+		//     trialSiteId: <%=$trialSiteId%>,
+		//     totalSubjectsScreened: <%=$totalSubjectsScreened%>,
+		//     totalExclusions: <%=$totalExclusions%>
+		// }).addTo(map).on('mouseover', onClick);
+		% my $radiusSize = 250 * $totalSubjectsScreened;
+		% my $casesRadiusSize = 2500 * $totalExclusions;
+		% my $siteNamePrint = $siteName;
+		% $siteNamePrint =~ s/\'/\\\'/;
+		% if ($totalExclusions) {
+		var casesCircle<%=$trialSiteId%> = L.circle([<%=$latitude%>, <%=$longitude%>], {
+		    color: '#c77a1c',
+		    fillColor: '#c77a1c',
+		    fillOpacity: 0.9,
+		    radius: <%=$casesRadiusSize%>,
+		    siteName: '<%=$siteName%>',
+		    address: '<%=$address%>',
+		    investigator: '<%=$investigator%>',
+		    postalCode: '<%=$postalCode%>',
+		    city: '<%=$city%>',
+		    trialSiteId: <%=$trialSiteId%>,
+		    totalExclusions: <%=$totalExclusions%>,
+		    totalSubjectsScreened: <%=$totalSubjectsScreened%>
+		}).addTo(map).on('mouseover', onClick);
+		% }
+		var circle<%=$trialSiteId%> = L.circle([<%=$latitude%>, <%=$longitude%>], {
+		    color: '#7a7777',
+		    fillColor: '#7a7777',
+		    fillOpacity: 0.7,
+		    radius: <%=$radiusSize%>,
+		    siteName: '<%=$siteName%>',
+		    address: '<%=$address%>',
+		    investigator: '<%=$investigator%>',
+		    postalCode: '<%=$postalCode%>',
+		    city: '<%=$city%>',
+		    trialSiteId: <%=$trialSiteId%>,
+		    totalExclusions: <%=$totalExclusions%>,
+		    totalSubjectsScreened: <%=$totalSubjectsScreened%>
+		}).addTo(map).on('mouseover', onClick);
+	% }
+
+	// Set up the OSM layer
+	L.tileLayer(
+		'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: 'Data © <a href="http://osm.org/copyright">OpenStreetMap</a>',
+		maxZoom: 18
+	}).addTo(map);
+
+    $( document ).ready(function() {
+		var flags = document.querySelectorAll('.leaflet-bottom leaflet-right');
+		console.log(flags);
+		flags.forEach(flag => {
+			flag.remove();
+			alert('removed');
+		});
+    });
+
+    function onClick(e) {
+    	let trialSiteId = this.options.trialSiteId;
+    	let siteName = this.options.siteName;
+    	let totalSubjectsScreened = this.options.totalSubjectsScreened;
+    	let totalExclusions = this.options.totalExclusions;
+    	let address = this.options.address;
+    	let postalCode = this.options.postalCode;
+    	let city = this.options.city;
+    	let investigator = this.options.investigator;
+	    // alert(this.getLatLng() + ', siteName : ' + siteName + ', trialSiteId : ' + trialSiteId + ', totalSubjectsScreened : ' + totalSubjectsScreened);
+	    $('#currentMouseOver').html('<div style="width:calc(100% - 15px);padding-left:15px;font-size:18px;font-weight:bold;">' + siteName + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Site Code :</b>' + trialSiteId  + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Address :</b>' + address + ', '+ postalCode + ', '+ city + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;"><b>Investigator :</b>' + investigator + '</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalSubjectsScreened + ' Screened</div><div style="width:calc(100% - 15px);padding-left:15px;margin-top:15px;font-size:15px;font-weight:bold;">' + totalExclusions + ' Excluded</div>')
+	}
+</script>

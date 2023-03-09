@@ -17,7 +17,7 @@ use Scalar::Util qw(looks_like_number);
 use time;
 
 # Treatment configuration.
-my $daysOffset           = 5;
+my $daysOffset           = 15;
 my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
 my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
 my $cutoffCompdate       = '20201114';
@@ -211,8 +211,8 @@ sub load_tests_refs {
 # Then isolating subjects who had "Covid-like" symptoms.
 sub symptoms_positive_data {
 	my %subjectsVisits = ();
-	open my $out, '>:utf8', 'subjects_symptoms_by_visits.csv';
-	say $out "subjectId;randomizationGroup;symptomDatetime;visitName;hasOfficialSymptoms;symptomsWithPositiveLocalPCR;symptomsWithPositiveCentralPCR;centralVisitDate;centralPcrResult;localVisitDate;localPcrResult;localSpDevId;";
+	open my $out, '>:utf8', 'conflicts_negative_to_positive.csv';
+	say $out "subjectId;randomizationGroup;symptomDatetime;visitName;hasOfficialSymptoms;closestDayFromSymptomToLocalPCR;symptomsWithPositiveLocalPCR;symptomsWithPositiveCentralPCR;";
 	for my $subjectId (sort{$a <=> $b} keys %symptoms) {
 		die if exists $phase1Subjects{$subjectId};
 		my $randomizationGroup  = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
@@ -224,10 +224,11 @@ sub symptoms_positive_data {
 			($unblindCompdate)   = split ' ', $unblindDatetime;
 			$unblindCompdate        =~ s/\D//g;
 		}
+		# die "unblindDatetime : $unblindDatetime";
 
 		# Reorganizing symptoms by dates.
-		my ($hasSymptoms, %symptomsByVisit) = subject_symptoms_by_dates($subjectId, $unblindCompdate);
-		next unless keys %symptomsByVisit && $hasSymptoms;
+		my ($hasSymptoms, %symptomsByDates) = subject_symptoms_by_dates($subjectId, $unblindCompdate);
+		next unless keys %symptomsByDates && $hasSymptoms;
 
 		$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{'total'}++;
 		$stats{'symptomsAnalysis'}->{'subjects'}->{'withSymptoms'}->{$randomizationGroup}++;
@@ -235,22 +236,38 @@ sub symptoms_positive_data {
 
 		# Reorganizing Central PCRs by dates.
 		my ($hasPositiveCentralPCR,
-			%centralPCRsByVisit)    = subject_central_pcrs_by_dates($subjectId, $unblindCompdate);
+			%centralPCRsByDates)    = subject_central_pcrs_by_dates($subjectId, $unblindCompdate);
 
 		# Reorganizing Local PCRs by dates.
 		my ($hasPositiveLocalPCR,
-			%localPCRsByVisit)      = subject_local_pcrs_by_dates($subjectId, $unblindCompdate);
+			%localPCRsByDates)      = subject_local_pcrs_by_dates($subjectId, $unblindCompdate);
+		# if ($subjectId eq '10071444') {
+		# 	say "*" x 50;
+		# 	say "subjectId            : $subjectId";
+		# 	say "randomizationGroup   : $randomizationGroup";
+		# 	say "central              :";
+		# 	p%centralPCRsByDates;
+		# 	say "local                :";
+		# 	p%localPCRsByDates;
+		# 	say "symptoms by dates    :";
+		# 	p%symptomsByDates;
+		# 	die;
+		# }
 		if (exists $faces{$subjectId}) {
 			$stats{'faceData'}->{'subjects'}->{'total'}++;
 			$stats{'faceData'}->{'subjects'}->{$randomizationGroup}++;
 		} else {
 			die;
 		}
-		for my $visitName (sort keys %symptomsByVisit) {
-			my $symptomDate         = $symptomsByVisit{$visitName}->{'symptomDate'}         // die;
-			my $totalSymptoms       = $symptomsByVisit{$visitName}->{'totalSymptoms'}       || die;
-			my $hasOfficialSymptoms = $symptomsByVisit{$visitName}->{'hasOfficialSymptoms'} // die;
+		for my $symptomCompdate (sort{$a <=> $b} keys %symptomsByDates) {
+			my $symptomDate         = $symptomsByDates{$symptomCompdate}->{'symptomDate'}         // die;
+			my $totalSymptoms       = $symptomsByDates{$symptomCompdate}->{'totalSymptoms'}       || die;
+			my $visitName           = $symptomsByDates{$symptomCompdate}->{'visitName'}           || die;
+			my $hasOfficialSymptoms = $symptomsByDates{$symptomCompdate}->{'hasOfficialSymptoms'} // die;
 			my $symptomDatetime     = "$symptomDate 12:00:00";
+			# say "symptomDatetime             : $symptomDatetime";
+			# say "totalSymptoms               : $totalSymptoms";
+			# say "visitName                   : $visitName";
 			$stats{'symptomsAnalysis'}->{'visitsDates'}->{'total'}++;
 			$stats{'symptomsAnalysis'}->{'visitsDates'}->{$randomizationGroup}++;
 
@@ -265,27 +282,62 @@ sub symptoms_positive_data {
 			my $symptomsWithLocalPCR              = 0;
 			my $symptomsWithPositiveCentralPCR    = 0;
 			my $symptomsWithPositiveLocalPCR      = 0;
-			my $centralVisitDate = $centralPCRsByVisit{$visitName}->{'visitDate'};
-			my $centralPcrResult = $centralPCRsByVisit{$visitName}->{'pcrResult'};
-			if ($centralPcrResult && ($centralPcrResult eq 'NEG' || $centralPcrResult eq 'POS')) {
+			my $closestDayFromSymptomToCentralPCR = 99;
+			my $closestDayFromSymptomToLocalPCR   = 99;
+			# $symptomsByGroups{$randomizationGroup}->{'byAges'}->{$ageYears}++;
+			# say "symptomCompdate : $symptomCompdate";
+			# die;
+			# p%centralPCRsByDates;
+			# die;
+			for my $visitCompdate (sort{$a <=> $b} keys %centralPCRsByDates) {
+				my $visitDate      = $centralPCRsByDates{$visitCompdate}->{'visitDate'} // die;
+				my $pcrResult      = $centralPCRsByDates{$visitCompdate}->{'pcrResult'} // die;
+				my $visitDatetime  = "$visitDate 12:00:00";
+				my $daysDifference = time::calculate_days_difference($symptomDatetime, $visitDatetime);
+				if (!$symptomsBeforePCR) { # If symptomsBeforePCR = 0, skipping the symptoms which have occured before the PCR.
+					next if $symptomCompdate < $visitCompdate; # Verify that the symptom have occured on the day or after the PCR.
+				}
+				next if $daysDifference > $daysOffset;
+				# say "visitDate                   : $visitDate";
+				# say "pcrResult                   : $pcrResult";
+				# say "daysDifference              : $daysDifference";
+				# die;
 				$symptomsWithCentralPCR = 1;
+				my $difToZero = abs(0 - $daysDifference);
+				$closestDayFromSymptomToCentralPCR = $difToZero if $difToZero < $closestDayFromSymptomToCentralPCR;
+				if ($pcrResult eq 'POS') {
+					$symptomsWithPositiveCentralPCR = 1;
+				}
+				# say "$symptomDatetime -> $visitDate ($daysDifference days | $pcrResult)";
 			}
-			if ($centralPcrResult && $centralPcrResult eq 'POS') {
-				$symptomsWithPositiveCentralPCR = 1;
-			}
-			my $localVisitDate       = $localPCRsByVisit{$visitName}->{'visitDate'};
-			my $localPcrResult       = $localPCRsByVisit{$visitName}->{'pcrResult'};
-			my $localSpDevId         = $localPCRsByVisit{$visitName}->{'spDevId'};
-			my %localDevices         = ();
+			my %localDevices = ();
 			my %localPositiveDevices = ();
-			if ($localPcrResult && ($localPcrResult eq 'NEG' || $localPcrResult eq 'POS')) {
+			for my $visitCompdate (sort{$a <=> $b} keys %localPCRsByDates) {
+				my $visitDate      = $localPCRsByDates{$visitCompdate}->{'visitDate'} // die;
+				my $pcrResult      = $localPCRsByDates{$visitCompdate}->{'pcrResult'} // die;
+				my $spDevId        = $localPCRsByDates{$visitCompdate}->{'spDevId'}   // die;
+				my $visitDatetime  = "$visitDate 12:00:00";
+				my $daysDifference = time::calculate_days_difference($symptomDatetime, $visitDatetime);
+				if (!$symptomsBeforePCR) { # If symptomsBeforePCR = 0, skipping the symptoms which have occured before the PCR.
+					next if $symptomCompdate < $visitCompdate; # Verify that the symptom have occured on the day or after the PCR.
+				}
+				next if $daysDifference > $daysOffset;
+				$localDevices{$spDevId} = $pcrResult;
+				# say "visitDate                   : $visitDate";
+				# say "pcrResult                   : $pcrResult";
+				# say "daysDifference              : $daysDifference";
+				# die;
 				$symptomsWithLocalPCR = 1;
-				$localDevices{$localSpDevId} = $localPcrResult;
+				my $difToZero = abs(0 - $daysDifference);
+				$closestDayFromSymptomToLocalPCR = $difToZero if $difToZero < $closestDayFromSymptomToLocalPCR;
+				if ($pcrResult eq 'POS') {
+					$symptomsWithPositiveLocalPCR = 1;
+					$localPositiveDevices{$spDevId} = $pcrResult;
+				}
+				# say "$symptomDatetime -> $visitDate ($daysDifference days | $pcrResult)";
 			}
-			if ($localPcrResult && ($localPcrResult eq 'POS')) {
-				$symptomsWithPositiveLocalPCR = 1;
-				$localPositiveDevices{$localSpDevId} = $localPcrResult;
-			}
+			# say "symptomsWithCentralPCR         : $symptomsWithCentralPCR";
+			# say "closestDayFromSymptomToCentralPCR : $closestDayFromSymptomToCentralPCR";
 			if ($symptomsWithCentralPCR) {
 				if ($symptomsWithPositiveCentralPCR == 1) {
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'central'}->{'symptomsWithPCR'}->{'positivePCR'}->{$randomizationGroup}++;
@@ -302,7 +354,6 @@ sub symptoms_positive_data {
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'local'}->{'symptomsWithPCR'}->{'positivePCR'}->{$randomizationGroup}++;
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'local'}->{'symptomsWithPCR'}->{'positivePCR'}->{'total'}++;
 				}
-				# say $out "$subjectId;$randomizationGroup;$symptomDatetime;$visitName;$hasOfficialSymptoms;$symptomsWithPositiveLocalPCR;$symptomsWithPositiveCentralPCR;$centralVisitDate;$centralPcrResult;$localVisitDate;$localPcrResult;$localSpDevId;";
 				$stats{'symptomsAnalysis'}->{'symptoms'}->{'local'}->{'symptomsWithPCR'}->{$randomizationGroup}++;
 				$stats{'symptomsAnalysis'}->{'symptoms'}->{'local'}->{'symptomsWithPCR'}->{'total'}++;
 			} else {
@@ -325,6 +376,7 @@ sub symptoms_positive_data {
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'localAndCentral'}->{'negativeLocalPositiveCentral'}->{'total'}++;
 				}
 				if ($symptomsWithPositiveLocalPCR == 1 && $symptomsWithPositiveCentralPCR == 0) {
+					say $out "$subjectId;$randomizationGroup;$symptomDatetime;$visitName;$hasOfficialSymptoms;$closestDayFromSymptomToLocalPCR;$symptomsWithPositiveLocalPCR;$symptomsWithPositiveCentralPCR;";
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'localAndCentral'}->{'positiveLocalNegativeCentral'}->{$randomizationGroup}++;
 					$stats{'symptomsAnalysis'}->{'symptoms'}->{'localAndCentral'}->{'positiveLocalNegativeCentral'}->{'total'}++;
 				}
@@ -364,7 +416,7 @@ sub symptoms_positive_data {
 sub subject_central_pcrs_by_dates {
 	my ($subjectId,
 		$unblindCompdate) = @_;
-	my %centralPCRsByVisit    = ();
+	my %centralPCRsByDates    = ();
 	my $hasPositiveCentralPCR = 0;
 	my $referenceCompdate = ref_from_unblind($unblindCompdate);
 	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
@@ -379,20 +431,74 @@ sub subject_central_pcrs_by_dates {
 		next unless $visitCompdate <= $referenceCompdate;
 		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
 		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
-		$centralPCRsByVisit{$visitName}->{'visitDate'} = $visitDate;
-		$centralPCRsByVisit{$visitName}->{'pcrResult'} = $pcrResult;
+		$visitName    = visit_to_visit_num($visitName);
+		$centralPCRsByDates{$visitCompdate}->{'visitName'} = $visitName;
+		$centralPCRsByDates{$visitCompdate}->{'visitDate'} = $visitDate;
+		$centralPCRsByDates{$visitCompdate}->{'pcrResult'} = $pcrResult;
 		if ($pcrResult eq 'POS') {
 			$hasPositiveCentralPCR = 1;
 		}
 	}
 	return ($hasPositiveCentralPCR,
-		%centralPCRsByVisit);
+		%centralPCRsByDates);
+}
+
+sub visit_to_visit_num {
+	my $visitName = shift;
+	# if ($visitName eq 'V1_DAY1_VAX1_L') {
+	# 	$visitName = 0;
+	# } elsif ($visitName eq 'V2_VAX2_L') {
+	# 	$visitName = 0.5;
+	# } elsif ($visitName eq 'COVID_A') {
+	# 	$visitName = 1;
+	# } elsif ($visitName eq 'COVID_AR1') {
+	# 	$visitName = 1.5;
+	# } elsif ($visitName eq 'COVID_AR2') {
+	# 	$visitName = 1.75;
+	# } elsif ($visitName eq 'COVID_B') {
+	# 	$visitName = 2;
+	# } elsif ($visitName eq 'COVID_BR1') {
+	# 	$visitName = 2.5;
+	# } elsif ($visitName eq 'COVID_BR2') {
+	# 	$visitName = 2.75;
+	# } elsif ($visitName eq 'COVID_C') {
+	# 	$visitName = 3;
+	# } elsif ($visitName eq 'COVID_CR1') {
+	# 	$visitName = 3.5;
+	# } elsif ($visitName eq 'COVID_CR2') {
+	# 	$visitName = 3.75;
+	# } elsif ($visitName eq 'COVID_D') {
+	# 	$visitName = 4;
+	# } elsif ($visitName eq 'COVID_DR1') {
+	# 	$visitName = 4.5;
+	# } elsif ($visitName eq 'COVID_E') {
+	# 	$visitName = 5;
+	# } elsif ($visitName eq 'COVID_ER1') {
+	# 	$visitName = 5.5;
+	# } elsif ($visitName eq 'COVID_F') {
+	# 	$visitName = 6;
+	# } elsif ($visitName eq 'COVID_FR1') {
+	# 	$visitName = 6.5;
+	# } elsif ($visitName eq 'V201_SURVEIL_CONSENT') {
+	# 	$visitName = 10;
+	# } elsif ($visitName eq 'SSWAB_WEEK2') {
+	# 	$visitName = 0.5; # To verify prior any use  /!\
+	# } elsif ($visitName eq 'SSWAB_WEEK4') {
+	# 	$visitName = 0.65; # To verify prior any use  /!\
+	# } elsif ($visitName eq 'SSWAB_WEEK6') {
+	# 	$visitName = 0.75; # To verify prior any use  /!\
+	# } elsif ($visitName eq 'SSWAB_WEEK8') {
+	# 	$visitName = 0.85; # To verify prior any use  /!\
+	# } else {
+	# 	die "visitName : [$visitName]";
+	# }
+	return $visitName;
 }
 
 sub subject_local_pcrs_by_dates {
 	my ($subjectId,
 		$unblindCompdate) = @_;
-	my %localPCRsByVisit    = ();
+	my %localPCRsByDates    = ();
 	my $hasPositiveLocalPCR = 0;
 	my $referenceCompdate = ref_from_unblind($unblindCompdate);
 	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
@@ -423,36 +529,41 @@ sub subject_local_pcrs_by_dates {
 		}
 		$stats{'localPCRsAnalysis'}->{'total'}++;
 		$stats{'localPCRsAnalysis'}->{$spDevId}++;
+		$visitName    = visit_to_visit_num($visitName);
 		if ($pcrResult eq 'POSITIVE') {
 			$pcrResult = 'POS';
 		} elsif ($pcrResult eq 'NEGATIVE') {
 			$pcrResult = 'NEG';
 		} elsif ($pcrResult eq 'INDETERMINATE' || $pcrResult eq '') {
-			$pcrResult = 'IND';
+			$pcrResult = 'UKN';
 		} else {
 			die "pcrResult : $pcrResult";
 		}
-		$localPCRsByVisit{$visitName}->{'visitDate'} = $visitDate;
-		$localPCRsByVisit{$visitName}->{'pcrResult'} = $pcrResult;
-		$localPCRsByVisit{$visitName}->{'spDevId'}   = $spDevId;
+		$localPCRsByDates{$visitCompdate}->{'visitName'} = $visitName;
+		$localPCRsByDates{$visitCompdate}->{'visitDate'} = $visitDate;
+		$localPCRsByDates{$visitCompdate}->{'pcrResult'} = $pcrResult;
+		$localPCRsByDates{$visitCompdate}->{'spDevId'}   = $spDevId;
 		if ($pcrResult eq 'POS') {
 			$hasPositiveLocalPCR = 1;
 		}
 	}
 	return ($hasPositiveLocalPCR,
-		%localPCRsByVisit);
+		%localPCRsByDates);
 }
 
 sub subject_symptoms_by_dates {
 	my ($subjectId,
 		$unblindCompdate) = @_;
+	# die "subjectId : $subjectId" unless exists $faces{$subjectId};
+	# p$faces{$subjectId};
+	# die;
+	# p$symptoms{$subjectId};
+	# die;
 	my $referenceCompdate = ref_from_unblind($unblindCompdate);
-	my %symptomsByVisit = ();
+	my %symptomsByDates = ();
 	my $hasSymptoms     = 0;
 	for my $symptomDatetime (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}}) {
 		my ($symptomDate)   = split ' ', $symptomDatetime;
-		my $compsympt = $symptomDate;
-		$compsympt =~ s/\D//g;
 
 		# Comment these lines to stick with the visit date.
 		my ($formerSymptomDate, $onsetStartOffset);
@@ -460,15 +571,12 @@ sub subject_symptoms_by_dates {
 			my $altStartDate = $faces{$subjectId}->{$symptomDate}->{'symptomsDates'}->{'First Symptom Date'} // die;
 			unless ($altStartDate eq $symptomDate) {
 				if ($altStartDate =~ /^....-..-..$/) {
-					my $compalt = $altStartDate;
-					$compalt =~ s/\D//g;
-					if ($compalt < $compsympt) {
-						$stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'total'}++;
-						$formerSymptomDate = $symptomDate;
-						$onsetStartOffset  = time::calculate_days_difference("$symptomDate 12:00:00", "$altStartDate 12:00:00");
-						$stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'offsets'}->{$onsetStartOffset}++;
-						$symptomDate = $altStartDate;
-					}
+					$stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'total'}++;
+					# say "Adjusting [$subjectId] - [$symptomDate] -> [$altStartDate]";
+					$formerSymptomDate = $symptomDate;
+					$onsetStartOffset  = time::calculate_days_difference("$symptomDate 12:00:00", "$altStartDate 12:00:00");
+					$stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'offsets'}->{$onsetStartOffset}++;
+					$symptomDate = $altStartDate;
 				} else {
 					$stats{'faceData'}->{'symptoms'}->{'invalidDate'}++;
 				}
@@ -493,23 +601,24 @@ sub subject_symptoms_by_dates {
 				next unless $symptomCategory eq 'OFFICIAL';
 			}
 			$hasOfficialSymptoms = 1 if $symptomCategory eq 'OFFICIAL';
-			$symptomsByVisit{$visitName}->{'symptoms'}->{$symptomName} = 1;
+			$symptomsByDates{$symptomCompdate}->{'symptoms'}->{$symptomName} = 1;
 			$totalSymptoms++;
 		}
 		next unless $totalSymptoms;
 		$hasSymptoms  = 1;
-		$symptomsByVisit{$visitName}->{'onsetStartOffset'}    = $onsetStartOffset;
-		$symptomsByVisit{$visitName}->{'formerSymptomDate'}   = $formerSymptomDate;
-		$symptomsByVisit{$visitName}->{'symptomDate'}         = $symptomDate;
-		$symptomsByVisit{$visitName}->{'totalSymptoms'}       = $totalSymptoms;
-		$symptomsByVisit{$visitName}->{'endDatetime'}         = $endDatetime;
-		$symptomsByVisit{$visitName}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
+		$symptomsByDates{$symptomCompdate}->{'onsetStartOffset'}    = $onsetStartOffset;
+		$symptomsByDates{$symptomCompdate}->{'formerSymptomDate'}   = $formerSymptomDate;
+		$symptomsByDates{$symptomCompdate}->{'symptomDate'}         = $symptomDate;
+		$symptomsByDates{$symptomCompdate}->{'totalSymptoms'}       = $totalSymptoms;
+		$symptomsByDates{$symptomCompdate}->{'visitName'}           = $visitName;
+		$symptomsByDates{$symptomCompdate}->{'endDatetime'}         = $endDatetime;
+		$symptomsByDates{$symptomCompdate}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
 	}
-	# p%symptomsByVisit;
+	# p%symptomsByDates;
 	# die;
 	return (
 		$hasSymptoms,
-		%symptomsByVisit);
+		%symptomsByDates);
 }
 
 sub ref_from_unblind {
