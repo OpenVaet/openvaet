@@ -34,6 +34,7 @@ my %randomData        = ();
 my %deviations        = ();
 my %seriousAE         = ();
 my %allAEs            = ();
+
 load_ae();
 load_mb();
 load_adva();

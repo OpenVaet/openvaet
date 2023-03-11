@@ -63,14 +63,19 @@ verify_pdf_structure();
 my %patients      = ();
 my $totalPatients = 0;
 my %patientsIds   = ();
+my %preCutoff     = ();
 extract_all_subjects_table();
 # p%patients;
 say "totalPatients   : $totalPatients";
+say "pre-cut-off     : " . keys %preCutoff;
 
 # Prints patients JSON.
 open my $out3, '>:utf8', "$outputFolder/pfizer_trial_cases_1.json";
 print $out3 encode_json\%patients;
 close $out3;
+open my $out4, '>:utf8', "$outputFolder/pre_cut_off_pdf_cases.json";
+print $out4 encode_json\%preCutoff;
+close $out4;
 
 sub verify_pdf_structure {
 	for my $htmlFile (glob "$casesPdfFolder/*") {
@@ -149,7 +154,11 @@ sub extract_all_subjects_table {
 			$patients{$subjectId}->{'casesMonth'}      = $casesMonth;
 			$patients{$subjectId}->{'casesWeekNumber'} = $casesWeekNumber;
 			$patients{$subjectId}->{'casesYear'}       = $casesYear;
+			if ($swabDate <= 20201114) {
+				$preCutoff{$subjectId} = $swabDate;
+			}
 			# p$patients{$subjectId};
+			# die;
 		}
 		# last if $pageNum == 65;
 		last if $pageNum == 216;
