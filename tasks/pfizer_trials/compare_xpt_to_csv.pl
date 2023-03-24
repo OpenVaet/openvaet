@@ -47,10 +47,10 @@ for my $fileName (sort keys %xpts) {
 	} else {
 		my $sourceXptFile = $xpts{$fileName}->{'sourceXptFile'} // die;
 		my $csvFile = $csvs{$fileName}->{'csvFile'} // die;
-		say "Exists :";
-		say "fileName      : $fileName";
-		say "sourceXptFile : $sourceXptFile";
-		say "--->  csvFile : $csvFile";
+		# say "Exists :";
+		# say "fileName      : $fileName";
+		# say "sourceXptFile : $sourceXptFile";
+		# say "--->  csvFile : $csvFile";
 		say $out "$csvFile;$sourceXptFile;";
 	}
 }

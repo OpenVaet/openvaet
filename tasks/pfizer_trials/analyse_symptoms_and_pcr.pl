@@ -17,9 +17,9 @@ use Scalar::Util qw(looks_like_number);
 use time;
 
 # Treatment configuration.
-my $daysOffset           = 5;
+my $daysOffset           = 4;
 my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
-my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
+my $officialSymptomsOnly = 1; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
 
 # Loading data required.
 my $exclusionsFile    = 'public/doc/pfizer_trials/pfizer_excluded_patients.json';

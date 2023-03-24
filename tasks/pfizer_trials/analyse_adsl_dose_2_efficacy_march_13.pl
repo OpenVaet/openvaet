@@ -25,31 +25,47 @@ my $cutoffCompdate       = '20201114';
 my $df                   = 1; # degrees of freedom
 
 # Loading data required.
-my $adslFile          = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
-my $exclusionsFile    = 'public/doc/pfizer_trials/pfizer_excluded_patients.json';
-my $deviationsFile    = 'public/doc/pfizer_trials/pfizer_sddv_patients.json';
-my $pcrRecordsFile    = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
-my $faceFile          = 'public/doc/pfizer_trials/pfizer_face_patients.json';
-my $symptomsFile      = 'public/doc/pfizer_trials/pfizer_patients_symptoms.json';
-my $randomizationFile = 'public/doc/pfizer_trials/merged_doses_data.json';
-my $p1SubjectsFile    = 'public/doc/pfizer_trials/phase1Subjects.json';
-my $testsRefsFile     = 'public/doc/pfizer_trials/pfizer_di.json';
-my $demographicFile   = 'public/doc/pfizer_trials/pfizer_trial_demographics_merged.json';
-my $pdfCasesFile      = 'public/doc/pfizer_trials/pfizer_trial_cases_merged.json';
-my $centralPCRsFile   = 'public/doc/pfizer_trials/subjects_with_pcr_and_symptoms.json';
-my $advaFile          = "public/doc/pfizer_trials/pfizer_adva_patients.json";
-my %advaData          = ();
-my %adsl              = ();
-my %faces             = ();
-my %demographics      = ();
-my %phase1Subjects    = ();
-my %exclusions        = ();
-my %deviations        = ();
-my %pcrRecords        = ();
-my %symptoms          = ();
-my %randomization     = ();
-my %pdfCases          = ();
-my %testsRefs         = ();
+my $adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
+my $exclusionsFile       = 'public/doc/pfizer_trials/pfizer_excluded_patients.json';
+my $deviationsFile       = 'public/doc/pfizer_trials/pfizer_sddv_patients.json';
+my $lackPIOverFile       = 'public/doc/pfizer_trials/pfizer_suppdv_patients.json';
+my $pcrRecordsFile       = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
+my $faceFile             = 'public/doc/pfizer_trials/pfizer_face_patients.json';
+my $symptomsFile         = 'public/doc/pfizer_trials/pfizer_patients_symptoms.json';
+my $randomizationFile    = 'public/doc/pfizer_trials/merged_doses_data.json';
+my $p1SubjectsFile       = 'public/doc/pfizer_trials/phase1Subjects.json';
+my $testsRefsFile        = 'public/doc/pfizer_trials/pfizer_di.json';
+my $demographicFile      = 'public/doc/pfizer_trials/pfizer_trial_demographics_merged.json';
+my $pdfCasesFile         = 'public/doc/pfizer_trials/pfizer_trial_cases_merged.json';
+my $centralPCRsFile      = 'public/doc/pfizer_trials/subjects_with_pcr_and_symptoms.json';
+my $advaFile             = "public/doc/pfizer_trials/pfizer_adva_patients.json";
+my $screeningsFile       = "public/doc/pfizer_trials/subjects_screening_dates.json";
+my $randomizationFile1   = 'public/doc/pfizer_trials/pfizer_trial_randomization_1.json';
+my $pdfFile1             = 'excluded subjects 6 month.csv';
+my $adc19efFile          = 'public/doc/pfizer_trials/pfizer_adc19ef_patients.json';
+
+my %adc19efs             = ();
+my %pdf_exclusions_1     = ();
+my %randomization1       = ();
+my %lackPIOver           = ();
+my %screenings           = ();
+my %advaData             = ();
+my %adsl                 = ();
+my %faces                = ();
+my %demographics         = ();
+my %phase1Subjects       = ();
+my %exclusions           = ();
+my %deviations           = ();
+my %pcrRecords           = ();
+my %symptoms             = ();
+my %randomization        = ();
+my %pdfCases             = ();
+my %testsRefs            = ();
+load_adc19ef();
+load_pdf_exclusions_1();
+load_pi_oversight();
+load_randomization_subjects_1();
+load_screening();
 load_adsl();
 load_demographics();
 load_phase_1();
@@ -64,94 +80,58 @@ load_tests_refs();
 load_adva_data();
 
 my %stats = ();
-# symptoms_positive_data();
+my %officialEfficacy = ();
 
-for my $subjectId (sort{$a <=> $b} keys %randomization) {
-	die unless exists $adsl{$subjectId};
-	$stats{'subjects'}->{'totalSubjectsRandomized'}++;
-	if (exists $phase1Subjects{$subjectId}) {
-		$stats{'phase1Subjects'}++;
+for my $subjectId (sort{$a <=> $b} keys %adsl) {
+	my $phase = $adsl{$subjectId}->{'phase'} // die;
+	my $ageYears = $adsl{$subjectId}->{'ageYears'} // die;
+	next unless $ageYears >= 16;
+	my $arm = $adsl{$subjectId}->{'arm'} // die;
+	my $hasHIV = $adsl{$subjectId}->{'hasHIV'} // die;
+	my $uSubjectId = $adsl{$subjectId}->{'uSubjectId'} // die;
+	my $unblindingDate = $adsl{$subjectId}->{'unblindingDate'} || $cutoffCompdate;
+
+	# Verifying phase.
+	next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
+	$phase = 'Phase 2 - 3';
+
+	# # Verifying Dose 2.
+	my $dose2Date = $adsl{$subjectId}->{'dose2Date'};
+	unless ($dose2Date) {
 		next;
 	}
-	unless ($randomization{$subjectId}->{'dose1Date'}) {
-		$stats{'noDose1'}++;
-		next;
-	}
-	my $dose1Date           = $randomization{$subjectId}->{'dose1Date'}          // die;
-	if ($dose1Date > 20201114) {
-		$stats{'dose1PostCutOff'}++;
-		next;
-	}
-	my $randomizationGroup  = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
-	my $unblindDatetime     = $advaData{$subjectId}->{'unblindDatetime'};
-	$randomizationGroup     = 'BNT162b2' if $randomizationGroup =~ /BNT162b2 \(30/;
-	my $unblindCompdate     = $cutoffCompdate;
-	if ($unblindDatetime) {
-		($unblindCompdate)   = split ' ', $unblindDatetime;
-		$unblindCompdate        =~ s/\D//g;
-	}
-	if ($randomizationGroup eq 'Unknown') {
-		$stats{'noKnownRandomizationGroup'}++;
+	if ($dose2Date > 20210313) {
 		next;
 	}
 
-	my ($trialSiteId) = $subjectId =~ /(....)..../;
-
-	# Reorganizing symptoms by dates.
-	my ($hasSymptoms, 
-		$firstSymptomDate,
-		$firstSymptomVisit,
-		%symptomsByDates) = subject_symptoms_by_dates($subjectId, $unblindCompdate);
-
-	# Reorganizing Central PCRs by dates.
-	my ($hasPositiveCentralPCR,
-		$firstPositiveCentralPCRDate,
-		$firstPositiveCentralPCRVisit,
-		%centralPCRsByDates)    = subject_central_pcrs_by_dates($subjectId, $unblindCompdate);
-
-	# Reorganizing Local PCRs by dates.
-	my ($hasPositiveLocalPCR,
-		$firstPositiveLocalPCRDate,
-		$firstPositiveLocalPCRVisit,
-		%localPCRsByDates)      = subject_local_pcrs_by_dates($subjectId, $unblindCompdate);
-
-	$firstPositiveCentralPCRDate  = '' unless $firstPositiveCentralPCRDate;
-	$firstPositiveLocalPCRDate    = '' unless $firstPositiveLocalPCRDate;
-	$firstPositiveCentralPCRVisit = '' unless $firstPositiveCentralPCRVisit;
-	$firstPositiveLocalPCRVisit   = '' unless $firstPositiveLocalPCRVisit;
-
-	my $symptomsRefDate = $cutoffCompdate;
-	if ($firstSymptomDate) {
-		# $symptomsRefDate = $firstSymptomDate;
-	}
-	my ($fDY, $fDM, $fDD)    = $symptomsRefDate  =~ /(....)(..)(..)/;
-	my ($fDsY, $fDsM, $fDsD) = $dose1Date        =~ /(....)(..)(..)/;
-
-	my $daysOfExposureToSymptoms = time::calculate_days_difference("$fDsY-$fDsM-$fDsD 12:00:00", "$fDY-$fDM-$fDD 12:00:00");
-	unless (exists $demographics{$subjectId}) {
-		$stats{'noDemographicData'}++;
+	# Verifying DB D1 Efficacy Tags.
+	my $aai1effl = $adsl{$subjectId}->{'aai1effl'}    // die;
+	my $mulenRfl = $adsl{$subjectId}->{'mulenRfl'}    // die;
+	my $evaleffl = $adsl{$subjectId}->{'evaleffl'}    // die;
+	my $pdp27FL  = $adc19efs{$subjectId}->{'pdp27FL'} // 'N';
+	if ($evaleffl ne 'Y' || $mulenRfl eq 'Y' || $hasHIV || $pdp27FL ne 'Y') {
+		$stats{'phase3'}->{'subjects'}->{'nonEligible'}->{'evaleffl'}->{$evaleffl}++ if $evaleffl ne 'Y';
+		$stats{'phase3'}->{'subjects'}->{'nonEligible'}->{'mulenRfl'}->{$mulenRfl}++ if $mulenRfl eq 'Y';
+		$stats{'phase3'}->{'subjects'}->{'nonEligible'}->{'hasHIV'}->{$hasHIV}++ if $hasHIV;
+		$stats{'phase3'}->{'subjects'}->{'nonEligible'}->{'pdp27FL'}->{$pdp27FL}++ if $pdp27FL ne 'Y';
 		next;
 	}
-	p$demographics{$subjectId};die;
-	my $ageYears            = $demographics{$subjectId}->{'ageYears'}            // die;
-	$stats{'subjects'}->{'dose1'}->{'totalSubjects'}++;
-	$stats{'subjects'}->{'dose1'}->{'byArm'}->{$randomizationGroup}->{'totalSubjects'}++;
-	$stats{'subjects'}->{'dose1'}->{'byArm'}->{$randomizationGroup}->{'totalDaysOfExposure'} += $daysOfExposureToSymptoms;
-	if ($hasSymptoms) {
-		$stats{'subjects'}->{'dose1'}->{'byArm'}->{$randomizationGroup}->{'totalSymptomatic'}++;
-		# say "hasSymptoms                  : [$hasSymptoms]";
-		# say "firstSymptomDate             : [$firstSymptomDate]";
-		# say "firstSymptomVisit            : [$firstSymptomVisit]";
-		# say "hasPositiveCentralPCR        : [$hasPositiveCentralPCR]";
-		# say "firstPositiveCentralPCRDate  : [$firstPositiveCentralPCRDate]";
-		# say "firstPositiveCentralPCRVisit : [$firstPositiveCentralPCRVisit]";
-		# say "hasPositiveLocalPCR          : [$hasPositiveLocalPCR]";
-		# say "firstPositiveLocalPCRDate    : [$firstPositiveLocalPCRDate]";
-		# say "firstPositiveLocalPCRVisit   : [$firstPositiveLocalPCRVisit]";
-		# say "daysOfExposureToSymptoms     : [$daysOfExposureToSymptoms]";
-		# die;
-	}
+	$stats{'phase3'}->{'subjects'}->{'dose2Eligible'}->{'total'}++;
+	$stats{'phase3'}->{'subjects'}->{'dose2Eligible'}->{'byArm'}->{$arm}->{'total'}++;
+	$officialEfficacy{$subjectId} = 1;
+	# p$adsl{$subjectId};
+	# p%centralPCRsByVisits;
+	# die "indeed" if $subjectId eq '10681009';
+	# die;
 }
+
+delete $stats{'primaryBreakdown'}; # Comment this line if you wish to review the primary breakdown.
+p%stats;
+
+open my $out, '>:utf8', 'public/doc/pfizer_trials/officialEfficacy2021.json';
+print $out encode_json\%officialEfficacy;
+close $out;
+# p%missingTests; # Stores the subjects absent from ADVA or PCR results.
 
 sub chi_squared {
      my ($a, $b, $c, $d) = @_;
@@ -161,8 +141,59 @@ sub chi_squared {
      return (($n * ($a * $d - $b * $c) ** 2) / (($a + $b)*($c + $d)*($a + $c)*($b + $d)));
 }
 
-p%stats;
-# die;
+sub load_pdf_exclusions_1 {
+	open my $in, '<:utf8', $pdfFile1;
+	my $lNum = 0;
+	while (<$in>) {
+		$lNum++;
+		next if $lNum == 1;
+		my (undef, $uSubjectId) = split ';', $_;
+		my ($subjectId)       = $uSubjectId =~ /^C4591001 .... (.*)$/;
+		die unless $subjectId && $subjectId =~ /^........$/;
+		die unless $uSubjectId =~ /$subjectId$/;
+		$pdf_exclusions_1{$subjectId} = 1;
+	}
+	close $in;
+	say "[$pdfFile1] -> subjects : " . keys %pdf_exclusions_1;
+}
+
+sub load_pi_oversight {
+	open my $in, '<:utf8', $lackPIOverFile or die "Missing file [$lackPIOverFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%lackPIOver = %$json;
+	say "[$lackPIOverFile] -> subjects : " . keys %lackPIOver;
+	# p%lackPIOver;
+	# die;
+}
+
+sub load_adc19ef {
+	open my $in, '<:utf8', $adc19efFile or die "Missing file [$adc19efFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%adc19efs = %$json;
+	say "[$adc19efFile] -> subjects : " . keys %adc19efs;
+}
+
+sub load_screening {
+	open my $in, '<:utf8', $screeningsFile or die "Missing file [$screeningsFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%screenings = %$json;
+	say "[$screeningsFile] -> subjects : " . keys %screenings;
+}
 
 sub load_adsl {
 	open my $in, '<:utf8', $adslFile or die "Missing file [$adslFile]";
@@ -313,13 +344,23 @@ sub load_tests_refs {
 	say "[$testsRefsFile] -> tests    : " . keys %testsRefs;
 }
 
+sub load_randomization_subjects_1 {
+	open my $in, '<:utf8', $randomizationFile1;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%randomization1 = %$json;
+	say "[$randomizationFile1] -> tests    : " . keys %randomization1;
+}
+
 sub subject_central_pcrs_by_dates {
 	my ($subjectId,
 		$unblindCompdate) = @_;
-	my %centralPCRsByDates    = ();
+	my %centralPCRsByVisits    = ();
 	my $hasPositiveCentralPCR = 0;
-	my $firstPositiveCentralPCRDate;
-	my $firstPositiveCentralPCRVisit;
 	my $referenceCompdate = ref_from_unblind($unblindCompdate);
 	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
 
@@ -333,42 +374,24 @@ sub subject_central_pcrs_by_dates {
 		next unless $visitCompdate <= $referenceCompdate;
 		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
 		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
-		$centralPCRsByDates{$visitCompdate}->{'visitDate'} = $visitDate;
-		$centralPCRsByDates{$visitCompdate}->{'pcrResult'} = $pcrResult;
-		$centralPCRsByDates{$visitCompdate}->{'visitName'} = $visitName;
+		$centralPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$centralPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$centralPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
 		if ($pcrResult eq 'POS') {
 			$hasPositiveCentralPCR = 1;
-			if (!$firstPositiveCentralPCRDate) {
-
-			}
-		}
-	}
-	for my $compdate (sort{$a <=> $b} keys %centralPCRsByDates) {
-		my $visitName = $centralPCRsByDates{$compdate}->{'visitName'} // die;
-		my $pcrResult = $centralPCRsByDates{$compdate}->{'pcrResult'} // die;
-		if ($pcrResult eq 'POS') {
-			if (!$firstPositiveCentralPCRDate) {
-				$firstPositiveCentralPCRDate = $compdate;
-				$firstPositiveCentralPCRVisit = $visitName;
-				last;
-			}
 		}
 	}
 	return (
 		$hasPositiveCentralPCR,
-		$firstPositiveCentralPCRDate,
-		$firstPositiveCentralPCRVisit,
-		%centralPCRsByDates);
+		%centralPCRsByVisits);
 }
 
 sub subject_local_pcrs_by_dates {
 	my ($subjectId,
-		$unblindCompdate) = @_;
-	my %localPCRsByDates    = ();
+		$unblindCompdate)  = @_;
+	my %localPCRsByVisits   = ();
 	my $hasPositiveLocalPCR = 0;
-	my $firstPositiveLocalPCRDate;
-	my $firstPositiveLocalPCRVisit;
-	my $referenceCompdate = ref_from_unblind($unblindCompdate);
+	my $referenceCompdate   = ref_from_unblind($unblindCompdate);
 	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
 
 		# Skips the visits unless it contains PCRs.
@@ -406,36 +429,23 @@ sub subject_local_pcrs_by_dates {
 		} else {
 			die "pcrResult : $pcrResult";
 		}
-		$localPCRsByDates{$visitCompdate}->{'visitDate'} = $visitDate;
-		$localPCRsByDates{$visitCompdate}->{'pcrResult'} = $pcrResult;
-		$localPCRsByDates{$visitCompdate}->{'visitName'} = $visitName;
-		$localPCRsByDates{$visitCompdate}->{'spDevId'}   = $spDevId;
+		$localPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$localPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$localPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
+		$localPCRsByVisits{$visitName}->{'spDevId'}       = $spDevId;
 		if ($pcrResult eq 'POS') {
 			$hasPositiveLocalPCR = 1;
 		}
 	}
-	for my $compdate (sort{$a <=> $b} keys %localPCRsByDates) {
-		my $visitName = $localPCRsByDates{$compdate}->{'visitName'} // die;
-		my $pcrResult = $localPCRsByDates{$compdate}->{'pcrResult'} // die;
-		if ($pcrResult eq 'POS') {
-			if (!$firstPositiveLocalPCRDate) {
-				$firstPositiveLocalPCRDate = $compdate;
-				$firstPositiveLocalPCRVisit = $visitName;
-				last;
-			}
-		}
-	}
 	return ($hasPositiveLocalPCR,
-		$firstPositiveLocalPCRDate,
-		$firstPositiveLocalPCRVisit,
-		%localPCRsByDates);
+		%localPCRsByVisits);
 }
 
 sub subject_symptoms_by_dates {
 	my ($subjectId,
 		$unblindCompdate) = @_;
 	my $referenceCompdate = ref_from_unblind($unblindCompdate);
-	my %symptomsByDates = ();
+	my %symptomsByVisits = ();
 	my $hasSymptoms     = 0;
 	my $firstSymptomDate;
 	my $firstSymptomVisit;
@@ -483,34 +493,34 @@ sub subject_symptoms_by_dates {
 				next unless $symptomCategory eq 'OFFICIAL';
 			}
 			$hasOfficialSymptoms = 1 if $symptomCategory eq 'OFFICIAL';
-			$symptomsByDates{$symptomCompdate}->{'symptoms'}->{$symptomName} = 1;
+			$symptomsByVisits{$symptomCompdate}->{'symptoms'}->{$symptomName} = 1;
 			$totalSymptoms++;
 		}
 		next unless $totalSymptoms;
 		$hasSymptoms  = 1;
-		$symptomsByDates{$symptomCompdate}->{'onsetStartOffset'}    = $onsetStartOffset;
-		$symptomsByDates{$symptomCompdate}->{'formerSymptomDate'}   = $formerSymptomDate;
-		$symptomsByDates{$symptomCompdate}->{'visitName'}           = $visitName;
-		$symptomsByDates{$symptomCompdate}->{'symptomDate'}         = $symptomDate;
-		$symptomsByDates{$symptomCompdate}->{'totalSymptoms'}       = $totalSymptoms;
-		$symptomsByDates{$symptomCompdate}->{'endDatetime'}         = $endDatetime;
-		$symptomsByDates{$symptomCompdate}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
+		$symptomsByVisits{$symptomCompdate}->{'onsetStartOffset'}    = $onsetStartOffset;
+		$symptomsByVisits{$symptomCompdate}->{'formerSymptomDate'}   = $formerSymptomDate;
+		$symptomsByVisits{$symptomCompdate}->{'visitName'}           = $visitName;
+		$symptomsByVisits{$symptomCompdate}->{'symptomDate'}         = $symptomDate;
+		$symptomsByVisits{$symptomCompdate}->{'totalSymptoms'}       = $totalSymptoms;
+		$symptomsByVisits{$symptomCompdate}->{'endDatetime'}         = $endDatetime;
+		$symptomsByVisits{$symptomCompdate}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
 	}
-	for my $compdate (sort{$a <=> $b} keys %symptomsByDates) {
-		my $visitName = $symptomsByDates{$compdate}->{'visitName'} // die;
+	for my $compdate (sort{$a <=> $b} keys %symptomsByVisits) {
+		my $visitName = $symptomsByVisits{$compdate}->{'visitName'} // die;
 		if (!$firstSymptomDate) {
 			$firstSymptomDate = $compdate;
 			$firstSymptomVisit = $visitName;
 			last;
 		}
 	}
-	# p%symptomsByDates;
+	# p%symptomsByVisits;
 	# die;
 	return (
 		$hasSymptoms,
 		$firstSymptomDate,
 		$firstSymptomVisit,
-		%symptomsByDates);
+		%symptomsByVisits);
 }
 
 sub ref_from_unblind {

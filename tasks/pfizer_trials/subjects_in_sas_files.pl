@@ -113,12 +113,18 @@ sub load_xpt_details {
 }
 
 sub parse_xpt_files {
+	my $start = 0;
 	my %filesAttributed = ();
 	for my $file (glob "raw_data/pfizer_trials/xpt_files_to_csv/*") {
+		if ($file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0768189-0768226_125742_S1_M4_38166-D_bg.csv') {
+			$start = 1;
+		}
+		next unless $start;
 
-		# This doesn't contain subjects data.
+		# These files don't contain relevant subjects data.
 		next if $file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0593482-0593595-125742_S1_M5_bnt162-01-S-D-pe.csv';
 		next if $file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0593327-0593481-125742_S1_M5_bnt162-01-S-D-ce.csv';
+		next if $file eq 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0768189-0768226_125742_S1_M4_38166-D_bg.csv';
 		my $fileConverted = $file;
 		$fileConverted    =~ s/-/_/g;
 		($fileConverted)  = $fileConverted =~ /xpt_files_to_csv\/(.*)\.csv/;

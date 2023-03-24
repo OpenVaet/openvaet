@@ -20,16 +20,16 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use time;
 
-my $dt19600101  = '1960-01-01 12:00:00';
-my $tp19600101  = time::datetime_to_timestamp($dt19600101);
-my $adc19efFile = "raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0710069-0763793-125742_S1_M5_c4591001-A-D-adc19ef.csv";
-die "you must convert the adc19ef file using readstats and place it in [raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0710069-0763793-125742_S1_M5_c4591001-A-D-adc19ef.csv] first." unless -f $adc19efFile;
-open my $in, '<:utf8', $adc19efFile;
-my $dataCsv     = Text::CSV_XS->new ({ binary => 1 });
-my %dataLabels  = ();
+my $dt19600101   = '1960-01-01 12:00:00';
+my $tp19600101   = time::datetime_to_timestamp($dt19600101);
+my $suppdvFile   = 'raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0174607-to-0178318_125742_S1_M5_c4591001-S-D-suppdv.csv';
+die "you must convert the suppdv file using readstats and place it in [raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0174607-to-0178318_125742_S1_M5_c4591001-S-D-suppdv.csv] first." unless -f $suppdvFile;
+open my $in, '<:utf8', $suppdvFile;
+my $dataCsv      = Text::CSV_XS->new ({ binary => 1 });
+my %dataLabels   = ();
 my ($dRNum,
 	$expectedValues) = (0, 0);
-my %subjects    = ();
+my %subjects      = ();
 while (<$in>) {
 	$dRNum++;
 
@@ -69,27 +69,21 @@ while (<$in>) {
 		# die;
 
 		# Fetching the data we currently focus on.
-		my $subjectId         = $values{'SUBJID'}  // die;
-		my $uSubjectId        = $values{'USUBJID'} // die;
-		my $pdp27FL           = $values{'PDP27FL'} // die;
-		die if (exists $subjects{$subjectId}->{'pdp27FL'} && ($subjects{$subjectId}->{'pdp27FL'} ne $pdp27FL));
-		$subjects{$subjectId}->{'totalADC19EFRows'}++;
-		my $totalADC19EFRows     = $subjects{$subjectId}->{'totalADC19EFRows'} // die;
-		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
-		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjects{$subjectId}->{'pdp27FL'}    = $pdp27FL;
-		# p$subjects{$subjectId};
-		# die;
+		my $uSubjectId  = $values{'USUBJID'} // die;
+		my ($subjectId) = $uSubjectId =~ /C4591001 \d\d\d\d (\d\d\d\d\d\d\d\d)/;
+		my $qNam        = $values{'QNAM'}    // die;
+		$subjects{$subjectId}->{'qNam'} = $qNam;
 	}
 }
 close $in;
-say "dRNum           : $dRNum";
-say "patients        : " . keys %subjects;
+say "dRNum       : $dRNum";
+say "patients    : " . keys %subjects;
 
 my $outputFolder   = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
 # Prints patients JSON.
-open my $out, '>:utf8', "$outputFolder/pfizer_adc19ef_patients.json";
+open my $out, '>:utf8', "$outputFolder/pfizer_suppdv_patients.json";
 print $out encode_json\%subjects;
 close $out;
+

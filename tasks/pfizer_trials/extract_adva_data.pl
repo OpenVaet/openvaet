@@ -80,6 +80,8 @@ while (<$in>) {
 			$unblindDt  = $tp19600101 + $unblindDt * 86400;
 			$unblindDatetime = time::timestamp_to_datetime($unblindDt);
 		}
+		my ($visitDate) = split ' ', $adtDatetime;
+		$visitDate      =~ s/\D//g;
 		my $age         = $values{'AGE'}     // die;
 		my $sex         = $values{'SEX'}     // die;
 		($age) = split '\.', $age;
@@ -88,7 +90,7 @@ while (<$in>) {
 		die unless $ageUnit eq 'YEARS';
 		my $phase       = $values{'PHASE'}   // die;
 		my $isDtc       = $values{'ISDTC'}   // die;
-		my $visit       = $values{'VISIT'}   // die;
+		my $visitName   = $values{'VISIT'}   // die;
 		my $actArm      = $values{'ACTARM'}  // die;
 		my $cohort      = $values{'COHORT'}  // die;
 		my $param       = $values{'PARAM'}   // die;
@@ -140,8 +142,9 @@ while (<$in>) {
 		$subjects{$subjectId}->{'isDtc'}           = $isDtc;
 		$subjects{$subjectId}->{'dose1Datetime'}   = $dose1Datetime;
 		$subjects{$subjectId}->{'dose2Datetime'}   = $dose2Datetime;
-		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{'visit'} = $visit;
-		$subjects{$subjectId}->{'visits'}->{$adtDatetime}->{$param}  = $avaLc;
+		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} = $visitDate;
+		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDatetime'} = $adtDatetime;
+		$subjects{$subjectId}->{'visits'}->{$visitName}->{$param}  = $avaLc;
 		$subjects{$subjectId}->{'totalAdvaRows'}++;
 		# p$subjects{$uSubjectId};
 		# p%values;

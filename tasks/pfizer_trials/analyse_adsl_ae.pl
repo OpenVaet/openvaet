@@ -9,88 +9,529 @@ no autovivification;
 use utf8;
 use JSON;
 use Math::Round qw(nearest);
+use Math::CDF;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use time;
 use Date::WeekNumber qw/ iso_week_number /;
 use Scalar::Util qw(looks_like_number);
+use time;
 
-my $screeningFile      = 'public/doc/pfizer_trials/subjects_screening_dates.json';
-my $randomizationFile  = 'public/doc/pfizer_trials/merged_doses_data.json';
-my $casesFile          = 'public/doc/pfizer_trials/pfizer_trial_cases_merged.json';
-my $advaFile           = 'public/doc/pfizer_trials/pfizer_adva_patients.json';
-my $efficacyFile       = 'public/doc/pfizer_trials/pfizer_trial_efficacy_cases.json';
-my $demographicFile    = 'public/doc/pfizer_trials/pfizer_trial_demographics_merged.json';
+# Treatment configuration.
+my $daysOffset           = 5;
+my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
+my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
+my $cutoffCompdate       = '20210313';
+my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
+my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
+my $df                   = 1; # degrees of freedom
 
-my %demographic        = ();
-my %screening          = ();
-my %randomization      = ();
-my %efficacy           = ();
-my %stats              = ();
-my %cases              = ();
-my %adva               = ();
-my %sites              = ();
-my %casesStats         = ();
-my %dose1Stats         = ();
-my %dose2Stats         = ();
-my %posExpByCountries  = ();
-my %posExpBySites      = ();
-my %efficacySubjects   = ();
-my %sitesCountriesData = ();
-my %trialSitesData     = ();
-my %subjectObjects     = ();
+# Loading data required.
+my $adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
+my $exclusionsFile       = 'public/doc/pfizer_trials/pfizer_excluded_patients.json';
+my $deviationsFile       = 'public/doc/pfizer_trials/pfizer_sddv_patients.json';
+my $lackPIOverFile       = 'public/doc/pfizer_trials/pfizer_suppdv_patients.json';
+my $pcrRecordsFile       = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
+my $faceFile             = 'public/doc/pfizer_trials/pfizer_face_patients.json';
+my $adaeFile             = 'public/doc/pfizer_trials/pfizer_adae_patients.json';
+my $symptomsFile         = 'public/doc/pfizer_trials/pfizer_patients_symptoms.json';
+my $randomizationFile    = 'public/doc/pfizer_trials/merged_doses_data.json';
+my $p1SubjectsFile       = 'public/doc/pfizer_trials/phase1Subjects.json';
+my $testsRefsFile        = 'public/doc/pfizer_trials/pfizer_di.json';
+my $demographicFile      = 'public/doc/pfizer_trials/pfizer_trial_demographics_merged.json';
+my $pdfCasesFile         = 'public/doc/pfizer_trials/pfizer_trial_cases_merged.json';
+my $centralPCRsFile      = 'public/doc/pfizer_trials/subjects_with_pcr_and_symptoms.json';
+my $advaFile             = "public/doc/pfizer_trials/pfizer_adva_patients.json";
+my $screeningsFile       = "public/doc/pfizer_trials/subjects_screening_dates.json";
+my $randomizationFile1   = 'public/doc/pfizer_trials/pfizer_trial_randomization_1.json';
+my $pdfFile1             = 'excluded subjects 6 month.csv';
+my $adc19efFile          = 'public/doc/pfizer_trials/pfizer_adc19ef_patients.json';
+my $officialEfficacyFile = 'public/doc/pfizer_trials/officialEfficacy.json';
 
+my %sitesTargeted = ();
+$sitesTargeted{'1133'} = 'ee8493';
+$sitesTargeted{'1135'} = 'ee8493';
+$sitesTargeted{'1146'} = 'ee8493';
+$sitesTargeted{'1170'} = 'ee8493';
+$sitesTargeted{'1001'} = 'ej0553';
+$sitesTargeted{'1002'} = 'ej0553';
+$sitesTargeted{'1003'} = 'ej0553';
+$sitesTargeted{'1007'} = 'ej0553';
+
+my %officialEfficacy     = ();
+my %sites                = ();
+my %adc19efs             = ();
+my %pdf_exclusions_1     = ();
+my %randomization1       = ();
+my %lackPIOver           = ();
+my %screenings           = ();
+my %advaData             = ();
+my %adsl                 = ();
+my %adaes                = ();
+my %faces                = ();
+my %demographics         = ();
+my %phase1Subjects       = ();
+my %exclusions           = ();
+my %deviations           = ();
+my %pcrRecords           = ();
+my %symptoms             = ();
+my %randomization        = ();
+my %pdfCases             = ();
+my %testsRefs            = ();
 config_sites();
-load_adva();
-load_cases();
+load_official_efficacy();
+load_adc19ef();
+load_pdf_exclusions_1();
+load_pi_oversight();
+load_randomization_subjects_1();
 load_screening();
+load_adae();
+load_adsl();
+load_demographics();
+load_phase_1();
+load_faces();
 load_randomization();
-load_demographic_subjects();
-load_efficacy();
-verify_randomization();
-average_trial_sites_dose_1_days();
-trial_sites_countries_stats();
-trial_sites_stats();
-print_stats();
+load_exclusions();
+load_deviations();
+load_pcr_tests();
+load_symptoms();
+load_pdf_cases();
+load_tests_refs();
+load_adva_data();
 
-p%stats;
+my %stats = ();
 
+for my $subjectId (sort{$a <=> $b} keys %adsl) {
+	my $trialSiteId    = $adsl{$subjectId}->{'trialSiteId'}    // die;
+	# next unless exists $sitesTargeted{$trialSiteId};
+	my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
+	my $mulenRfl       = $adsl{$subjectId}->{'mulenRfl'}       // die;
+	my $country        = $sites{$trialSiteId}->{'country'}     // die;
+	my $phase          = $adsl{$subjectId}->{'phase'}          // die;
+	my $saffl          = $adsl{$subjectId}->{'saffl'}          // die;
+	my $ageYears       = $adsl{$subjectId}->{'ageYears'}       // die;
+	my $ageGroup       = age_to_age_group($ageYears);
+	my $arm            = $adsl{$subjectId}->{'arm'}            // die;
+	my $originalArm    = $arm;
+	my $hasHIV         = $adsl{$subjectId}->{'hasHIV'}         // die;
+	my $uSubjectId     = $adsl{$subjectId}->{'uSubjectId'}     // die;
+	my $unblindingDate = $adsl{$subjectId}->{'unblindingDate'} || $cutoffCompdate;
 
-sub load_adva {
-	open my $in, '<:utf8', $advaFile;
-	my $json;
-	while (<$in>) {
-		$json .= $_;
+	# Verifying phase.
+	next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
+	next unless $saffl && $saffl eq 'Y';
+	next if $mulenRfl  && $mulenRfl eq 'Y';
+	$phase = 'Phase 2 - 3';
+	my $sex = $adsl{$subjectId}->{'sex'} // die;
+	my $randomizationDatetime = $adsl{$subjectId}->{'randomizationDatetime'} // '';
+	my $randomizationDate = $adsl{$subjectId}->{'randomizationDate'};
+
+	# Verifying Dose 1.
+	my $dose1Date = $adsl{$subjectId}->{'dose1Date'};
+
+	# Verifying Visit 1 Tests.
+	my ($hasPositiveCentralPCR,
+		%centralPCRsByVisits) = subject_central_pcrs_by_visits($subjectId, $unblindingDate);
+	my ($hasPositiveLocalPCR,
+		%localPCRsByVisits)   = subject_local_pcrs_by_visits($subjectId, $unblindingDate);
+
+	# Verifing VISIT 1 Test Results.
+	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'};
+	my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
+	my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
+	die if $v1D1LocalPCR;
+
+	# Verifying Dose 2.
+	my $dose2Date = $adsl{$subjectId}->{'dose2Date'};
+
+	# Verifying interval between injections.
+	my $deathDatetime    = $adsl{$subjectId}->{'deathDatetime'};
+	my $deathCompdate;
+	if ($deathDatetime) {
+		($deathCompdate) = split ' ', $deathDatetime;
+		$deathCompdate =~ s/\D//g;
+		die if $deathCompdate && ($deathCompdate > 20210313);
 	}
-	close $in;
-	$json = decode_json($json);
-	%adva = %$json;
-	say "[$advaFile] -> patients : " . keys %adva;
+	my $dose1Datetime    = $adsl{$subjectId}->{'dose1Datetime'};
+	next unless $dose1Datetime;
+	my $dose2Datetime    = $adsl{$subjectId}->{'dose2Datetime'};
+	my $dose3Datetime    = $adsl{$subjectId}->{'dose3Datetime'};
+	my ($daysBetweenDoses1And2, $daysBetweenDoses1And3, $daysBetweenDoses2And3, $daysBetweenDoseAndCutOff);
+	my ($doeBNT162b2, $doePlacebo) = (0, 0);
+	if ($dose1Datetime && $dose2Datetime) {
+		$daysBetweenDoses1And2 = time::calculate_days_difference($dose1Datetime, $dose2Datetime);
+	}
+	if ($dose3Datetime) {
+		die unless $arm eq 'Placebo';
+		$daysBetweenDoses1And3 = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
+		$doePlacebo += $daysBetweenDoses1And3;
+		unless ($dose2Datetime) {
+			$stats{'noDose2WhileDose3'}++;
+			die unless $dose1Datetime;
+			$daysBetweenDoses2And3 = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
+		} else {
+			$daysBetweenDoses2And3 = time::calculate_days_difference($dose2Datetime, $dose3Datetime);
+		}
+		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $deathDatetime);
+		} else {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
+		}
+		$doeBNT162b2 += $daysBetweenDoseAndCutOff;
+		# $stats{'daysBetween3rdDoses'}->{$daysBetweenDoses2And3}++;
+		# say "daysBetweenDoses2And3 : $daysBetweenDoses2And3";
+	} else {
+		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
+		} else {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
+		}
+		if ($arm eq 'Placebo') {
+			$doePlacebo  += $daysBetweenDoseAndCutOff;
+		} else {
+			$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
+		}
+	}
+	if ($deathDatetime) {
+		my ($deathCompdate) = split ' ', $deathDatetime;
+		$deathCompdate =~ s/\D//g;
+		die if $deathCompdate && ($deathCompdate > 20210313);
+		$stats{'deathsByLastDoseArm'}->{$arm}->{'totalDeaths'}++;
+		$stats{'deathsByLastDoseArm'}->{$arm}->{'subjects'}->{$subjectId} = $deathDatetime;
+	}
+	$stats{'totalSubjects'}++;
+
+	if (exists $adaes{$subjectId}) {
+		if ($subjectId eq '11521085') {
+			p$adaes{$subjectId};
+			die;
+		}
+		my $hasAE = 0;
+		my $hasAEPostOctober = 0;
+		for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
+			my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
+			unless ($aeY && $aeM && $aeD) {
+				$stats{'faultyDate'}++;
+				next;
+			} else {
+				next if $aeCompdate > $cutoffCompdate;
+				$stats{'adverseEffectsReported'}++;
+			}
+			$hasAE = 1;
+			my %doseDates = ();
+			$doseDates{'1'} = $dose1Datetime;
+			if ($dose2Datetime) {
+				$doseDates{'2'} = $dose2Datetime;
+			}
+			if ($dose3Datetime) {
+				$doseDates{'3'} = $dose3Datetime;
+			}
+			my %doseDatesByDates = ();
+			for my $dNum (sort{$a <=> $b} keys %doseDates) {
+				my $dt = $doseDates{$dNum} // die;
+				my ($cpDt) = split ' ', $dNum;
+				$cpDt =~ s/\D//g;
+				next unless $cpDt < $aeCompdate;
+				my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
+				$doseDatesByDates{$daysBetween}->{'closestDoseDate'} = $dt;
+				$doseDatesByDates{$daysBetween}->{'closestDose'} = $dNum;
+			}
+			my ($closestDoseDate, $closestDose, $doseToAE);
+			for my $daysBetween (sort{$a <=> $b} keys %doseDatesByDates) {
+				$closestDoseDate = $doseDatesByDates{$daysBetween}->{'closestDoseDate'} // die;
+				$closestDose = $doseDatesByDates{$daysBetween}->{'closestDose'} // die;
+				$doseToAE = $daysBetween;
+				last;
+			}
+			$arm = 'BNT162b2 Phase 2/3 (30 mcg)' if $closestDose > 2;
+			for my $aeObserved (sort keys %{$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}}) {
+				# p$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved};die;
+				my $aehlgt        = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlgt'}        // die;
+				my $aehlt         = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlt'}         // die;
+				my $toxicityGrade = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'toxicityGrade'} || 'NA';
+				say "closestDoseDate : $closestDoseDate";
+				say "closestDose     : $closestDose";
+				say "doseToAE        : $doseToAE";
+				say "aehlgt          : $aehlgt";
+				say "aehlt           : $aehlt";
+				say "aeObserved      : $aeObserved";
+				say "toxicityGrade   : $toxicityGrade";
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{$arm}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'gradeTotal'}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{$arm}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'gradeTotal'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{$aehlgt}->{'categories'}->{'categoryTotal'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{$aehlgt}->{'categories'}->{'byReactions'}->{$aehlt}->{$arm}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{$aehlgt}->{'categories'}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
+				if ($aeCompdate >= 20201019) {
+					$hasAEPostOctober = 1;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{$arm}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'gradeTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{$arm}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'gradeTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
+				}
+			}
+		}
+		$stats{'aeStats'}->{'full_data'}->{'totalSubjectsWithAE'}++ if $hasAE;
+		$stats{'aeStats'}->{'post_october_19'}->{'totalSubjectsWithAE'}++ if $hasAEPostOctober;
+		# die;
+	}
+
+	# if (exists $adaes{$subjectId}) {
+	# 	p$adaes{$subjectId};
+	# 	p$adsl{$subjectId};
+	# 	die;
+	# }
 }
 
-sub load_cases {
-	open my $in, '<:utf8', $casesFile;
+for my $fileLabel (sort keys %{$stats{'aeStats'}}) {
+	for my $toxicityGrade (sort keys %{$stats{'aeStats'}->{$fileLabel}}) {
+		next unless $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'};
+		say "Printing [adverse_effects_$fileLabel" . "_$toxicityGrade.csv]";
+		open my $out, '>:utf8', "adverse_effects_$fileLabel" . "_$toxicityGrade.csv";
+		say $out "System Organ Class / Preferred Term;;BNT162b2 (30 mcg);;;Placebo;;;Total;;;";
+		say $out ";;AEs;Subjects;\%;Placebo;AEs;Subjects;%;AEs;Subjects;\%;";
+		say $out "All;All;AEs;Subjects;\%;Placebo;AEs;Subjects;%;AEs;Subjects;\%;";
+		my $totalSubjects = $stats{'aeStats'}->{$fileLabel}->{'totalSubjectsWithAE'}                           // die;
+		my $totalAEs      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'gradeTotal'}                  // 0;
+		my $bNT162b2AEs   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'BNT162b2 Phase 2/3 (30 mcg)'} // 0;
+		my $placeboAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'Placebo'}                     // 0;
+		for my $category (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}}) {
+			my $categoryTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'categoryTotal'} // die;
+			for my $reaction (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}}) {
+				my $reactionTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'reactionTotal'} // die;
+				my $bNT162b2Total = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'BNT162b2 Phase 2/3 (30 mcg)'} // 0;
+				my $placeboTotal  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'Placebo'} // 0;
+				say $out "$category;$categoryTotal;$reaction;$reactionTotal;$bNT162b2Total;$placeboTotal;";
+			}
+		}
+		close $out;
+	}
+}
+delete $stats{'primaryBreakdown'}; # Comment this line if you wish to review the primary breakdown.
+# p%stats;
+
+sub age_to_age_group {
+	my $age = shift;
+	my $ageGroup;
+	if ($age > 5 && $age <= 14) {
+		$ageGroup = '5-14';
+	} elsif ($age >= 15 && $age <= 24) {
+		$ageGroup = '15-24';
+	} elsif ($age >= 25 && $age <= 34) {
+		$ageGroup = '25-34';
+	} elsif ($age >= 35 && $age <= 44) {
+		$ageGroup = '35-44';
+	} elsif ($age >= 45 && $age <= 54) {
+		$ageGroup = '45-54';
+	} elsif ($age >= 55 && $age <= 64) {
+		$ageGroup = '55-64';
+	} elsif ($age >= 65 && $age <= 74) {
+		$ageGroup = '65-74';
+	} elsif ($age >= 75 && $age <= 84) {
+		$ageGroup = '75-84';
+	} elsif ($age >= 85 && $age <= 94) {
+		$ageGroup = '85-94';
+	} else {
+		die "age : $age";
+	}
+	return $ageGroup;
+}
+
+sub load_official_efficacy {
+	open my $in, '<:utf8', $officialEfficacyFile or die "Missing file [$officialEfficacyFile]";
 	my $json;
 	while (<$in>) {
 		$json .= $_;
 	}
 	close $in;
 	$json = decode_json($json);
-	%cases = %$json;
-	say "[$casesFile] -> patients : " . keys %cases;
+	%officialEfficacy = %$json;
+	say "[$officialEfficacyFile] -> subjects : " . keys %officialEfficacy;
+}
+
+sub chi_squared {
+     my ($a, $b, $c, $d) = @_;
+     return 0 if($a + $c == 0);
+     return 0 if($b + $d == 0);
+     my $n = $a + $b + $c + $d;
+     return (($n * ($a * $d - $b * $c) ** 2) / (($a + $b)*($c + $d)*($a + $c)*($b + $d)));
+}
+
+sub load_pdf_exclusions_1 {
+	open my $in, '<:utf8', $pdfFile1;
+	my $lNum = 0;
+	while (<$in>) {
+		$lNum++;
+		next if $lNum == 1;
+		my (undef, $uSubjectId) = split ';', $_;
+		my ($subjectId)       = $uSubjectId =~ /^C4591001 .... (.*)$/;
+		die unless $subjectId && $subjectId =~ /^........$/;
+		die unless $uSubjectId =~ /$subjectId$/;
+		$pdf_exclusions_1{$subjectId} = 1;
+	}
+	close $in;
+	say "[$pdfFile1] -> subjects : " . keys %pdf_exclusions_1;
+}
+
+sub load_pi_oversight {
+	open my $in, '<:utf8', $lackPIOverFile or die "Missing file [$lackPIOverFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%lackPIOver = %$json;
+	say "[$lackPIOverFile] -> subjects : " . keys %lackPIOver;
+	# p%lackPIOver;
+	# die;
+}
+
+sub load_adc19ef {
+	open my $in, '<:utf8', $adc19efFile or die "Missing file [$adc19efFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%adc19efs = %$json;
+	say "[$adc19efFile] -> subjects : " . keys %adc19efs;
 }
 
 sub load_screening {
-	open my $in, '<:utf8', $screeningFile;
+	open my $in, '<:utf8', $screeningsFile or die "Missing file [$screeningsFile]";
 	my $json;
 	while (<$in>) {
 		$json .= $_;
 	}
 	close $in;
 	$json = decode_json($json);
-	%screening = %$json;
-	# p%screening;
-	say "[$screeningFile] -> patients : " . keys %screening;
+	%screenings = %$json;
+	say "[$screeningsFile] -> subjects : " . keys %screenings;
+}
+
+sub load_adae {
+	open my $in, '<:utf8', $adaeFile or die "Missing file [$adaeFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%adaes = %$json;
+	say "[$adaeFile] -> subjects : " . keys %adaes;
+}
+
+sub load_adsl {
+	open my $in, '<:utf8', $adslFile or die "Missing file [$adslFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%adsl = %$json;
+	say "[$adslFile] -> subjects : " . keys %adsl;
+}
+
+sub load_demographics {
+	open my $in, '<:utf8', $demographicFile or die "Missing file [$demographicFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%demographics = %$json;
+	say "[$demographicFile] -> subjects : " . keys %demographics;
+}
+
+sub load_phase_1 {
+	open my $in, '<:utf8', $p1SubjectsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%phase1Subjects = %$json;
+	# p%phase1Subjects;die;
+	say "[$p1SubjectsFile] -> subjects : " . keys %phase1Subjects;
+}
+
+sub load_faces {
+	open my $in, '<:utf8', $faceFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%faces = %$json;
+	# p%faces;die;
+	say "[$faceFile] -> subjects : " . keys %faces;
+}
+
+sub load_exclusions {
+	open my $in, '<:utf8', $exclusionsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%exclusions = %$json;
+	say "[$exclusionsFile] -> subjects : " . keys %exclusions;
+}
+
+sub load_deviations {
+	open my $in, '<:utf8', $deviationsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%deviations = %$json;
+	say "[$deviationsFile] -> subjects : " . keys %deviations;
+}
+
+sub load_pcr_tests {
+	open my $in, '<:utf8', $pcrRecordsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%pcrRecords = %$json;
+	# p$pcrRecords{'44441222'};
+	say "[$pcrRecordsFile] -> subjects : " . keys %pcrRecords;
+}
+
+sub load_symptoms {
+	open my $in, '<:utf8', $symptomsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%symptoms = %$json;
+	say "[$symptomsFile] -> subjects : " . keys %symptoms;
+	# p$symptoms{'44441222'};
+	# die;
 }
 
 sub load_randomization {
@@ -102,626 +543,426 @@ sub load_randomization {
 	close $in;
 	$json = decode_json($json);
 	%randomization = %$json;
-	say "[$randomizationFile] -> patients : " . keys %randomization;
+	say "[$randomizationFile] -> subjects : " . keys %randomization;
 }
 
-sub load_efficacy {
-	open my $in, '<:utf8', $efficacyFile;
+sub load_pdf_cases {
+	open my $in, '<:utf8', $pdfCasesFile;
 	my $json;
 	while (<$in>) {
 		$json .= $_;
 	}
 	close $in;
 	$json = decode_json($json);
-	%efficacy = %$json;
-	say "[$efficacyFile] -> patients : " . keys %efficacy;
-	# p%efficacy;
-	# die;
+	%pdfCases = %$json;
+	say "[$pdfCasesFile] -> subjects : " . keys %pdfCases;
 }
 
-sub verify_randomization {
-	$dose1Stats{'0'}->{'firstDose1'} = '99999999';
-	$dose1Stats{'0'}->{'lastDose1'}  = '0';
-	$dose2Stats{'0'}->{'firstDose2'} = '99999999';
-	$dose2Stats{'0'}->{'lastDose2'}  = '0';
-	$casesStats{'0'}->{'firstCase'}  = '99999999';
-	$casesStats{'0'}->{'lastCase'}   = '0';
-	open my $out, '>:utf8', "public/doc/pfizer_trials/all_patients.csv";
-	say $out "subjectId;screeningDate;screeningDateOrigin;isPhase1;hasHIV;randomizationGroup;dose1Date;age;sexName;trialSiteId;ageGroupId;ageGroupName;sexGroupId;uSubjectId;trialSiteCountry;daysOfExposure;trialSiteState;trialSiteName;trialSitePostalCode;trialSiteAddress;trialSiteCity;trialSiteInvestigator;trialSiteLatitude;trialSiteLongitude;dose1WeekNumber;dose2Date;sourceFile;sourceTable;swabDate;daysDifferenceBetweenPosTestAnd2;swabNumber;";
-	for my $subjectId (sort{$a <=> $b} keys %randomization) {
-
-		# say "subjectId : $subjectId";
-		# p$screening{$subjectId};
-		# die;
-		my $randomizationDate   = $randomization{$subjectId}->{'randomizationDate'};
-		my $doseDateOrigin      = $randomization{$subjectId}->{'doseDateOrigin'};
-		$stats{'0_preliminaryExclusions'}->{'totalScreened'}++;
-
-		# Initiating subjects variables.
-		my (
-			$screeningDate, $screeningDateOrigin, $isPhase1, $hasHIV, $randomizationGroup,
-			$dose1Date, $age, $sexName, $trialSiteId, $ageGroupId,
-			$ageGroupName, $sexGroupId, $uSubjectId, $trialSiteCountry, $daysOfExposure,
-			$trialSiteState, $trialSiteName, $trialSitePostalCode, $trialSiteAddress, $trialSiteCity,
-			$trialSiteInvestigator, $trialSiteLatitude, $trialSiteLongitude, $dose1WeekNumber, $dose2Date,
-			$sourceFile, $sourceTable, $swabDate, $daysDifferenceBetweenPosTestAnd2, $swabNumber,
-			$visit1NBindAssay, $visit1NaaT, $visit2NaaT
-		);
-		unless ($randomizationDate) {
-			$stats{'0_preliminaryExclusions'}->{'noRandomizationDate'}++;
-		} else {
-			unless ($randomizationDate <= 20201114) {
-				$stats{'0_preliminaryExclusions'}->{'randomizedPostDate'}++;
-			} else {
-				unless (exists $screening{$subjectId}) {
-					say "subjectId : $subjectId";
-					p$randomization{$subjectId};
-					die;
-				}
-				$screeningDate = $screening{$subjectId}->{'screeningDate'} // die;
-				$screeningDateOrigin = $screening{$subjectId}->{'screeningDateOrigin'} // die;
-				$isPhase1 = $screening{$subjectId}->{'isPhase1'};
-				if ($isPhase1 && ($isPhase1 eq 'Yes')) {
-					$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
-				} else {
-					$hasHIV     = $screening{$subjectId}->{'hasHIV'};
-					if ($hasHIV && ($hasHIV eq 'Yes')) {
-						$stats{'0_preliminaryExclusions'}->{'phase1Subjects'}++;
-					} else {
-						if ($screeningDate > $randomizationDate) {
-							say "$subjectId -> screeningDate : $screeningDate | randomizationDate : $randomizationDate";
-							p$randomization{$subjectId};
-							die;
-							$stats{'0_preliminaryExclusions'}->{'screenedPostRandom'}++;
-						} else {
-							if ($randomizationDate >= 20200720 && $randomizationDate <= 20201114) {
-								unless ($screeningDate <= 20201114) {
-									# p$screening{$subjectId};
-									$stats{'0_preliminaryExclusions'}->{'skippedByScreeningDate'}++;
-								} else {
-									$stats{'1_totalPhase2And3RandomizedPostConsent'}->{'totalSubjects'}++;
-									$randomizationGroup = $randomization{$subjectId}->{'randomizationGroup'} // die;
-									$randomizationGroup = 'BNT162b2' if $randomizationGroup =~ /BNT162b2/;
-									$stats{'1_totalPhase2And3RandomizedPostConsent'}->{$randomizationGroup}++;
-									$dose1Date = $randomization{$subjectId}->{'dose1Date'};
-									if ($dose1Date && ($dose1Date <= 20201114)) {
-										# p$randomization{$subjectId};
-										# p $adva{$subjectId};
-										# p $demographic{$subjectId};
-										$uSubjectId = $demographic{$subjectId}->{'uSubjectId'}  // $adva{$subjectId}->{'uSubjectId'} // die;
-										$stats{'2_totalPhase2And3Dose1'}->{'totalSubjects'}++;
-										$stats{'2_totalPhase2And3Dose1'}->{$randomizationGroup}++;
-
-										# Identifying the age, sex & trial site, ideally from the ADVA file, and if not available, from the demographic data.
-										if (exists $adva{$subjectId}) {
-											# say "all cool";
-											$trialSiteId = $adva{$subjectId}->{'trialSiteId'} // die;
-											$sexName         = $adva{$subjectId}->{'sex'}         // die;
-											if ($sexName eq 'M') {
-												$sexName = 'Male';
-											} elsif ($sexName eq 'F') {
-												$sexName = 'Female';
-											} else {
-												die "sexName : $sexName";
-											}
-											$age         = $adva{$subjectId}->{'age'}         // die;
-											# p$adva{$subjectId};
-											# die;
-										} else {
-											die unless exists $demographic{$subjectId};
-											# p$demographic{$subjectId};
-											# die;
-											($trialSiteId) = $uSubjectId =~ /^C4591001 (....) \d\d\d\d\d\d\d\d$/;
-											die unless $trialSiteId && looks_like_number $trialSiteId;
-											$sexName       = $demographic{$subjectId}->{'sex'}         // die;
-											$age           = $demographic{$subjectId}->{'ageYears'}    // die;
-										}
-										die unless $trialSiteId && defined $age && $sexName;
-										($ageGroupId, $ageGroupName) = age_to_age_group($age);
-										if ($sexName eq 'Female') {
-											$sexGroupId = 1;
-										} elsif ($sexName eq 'Male') {
-											$sexGroupId = 2;
-										} else {
-											die;
-										}
-										unless (exists $dose1Stats{$trialSiteId}) {
-
-											$dose1Stats{$trialSiteId}->{'firstDose1'} = '99999999';
-											$dose1Stats{$trialSiteId}->{'lastDose1'}  = '0';
-										}
-
-										# Builing week by week dose 1 data.
-										# say "dose1Date : $dose1Date";
-										$trialSiteCountry      = $sites{$trialSiteId}->{'country'}      // die "trialSiteId : $trialSiteId";
-										$trialSiteState        = $sites{$trialSiteId}->{'state'};
-										if ($trialSiteCountry eq 'USA' && !$trialSiteState) {
-											die "trialSiteId : $trialSiteId";
-										}
-										$trialSiteName         = $sites{$trialSiteId}->{'name'}         // die;
-										$trialSitePostalCode   = $sites{$trialSiteId}->{'postalCode'}   // die;
-										$trialSiteAddress      = $sites{$trialSiteId}->{'address'}      // die;
-										$trialSiteCity         = $sites{$trialSiteId}->{'city'}         // die;
-										$trialSiteInvestigator = $sites{$trialSiteId}->{'investigator'} // die;
-										$trialSiteLatitude     = $sites{$trialSiteId}->{'latitude'}     // die;
-										$trialSiteLongitude    = $sites{$trialSiteId}->{'longitude'}    // die;
-										$dose1WeekNumber       = week_from_compdate($dose1Date);
-										if ($dose1Stats{'0'}->{'firstDose1'} > $dose1Date) {
-											$dose1Stats{'0'}->{'firstDose1'} = $dose1Date;
-										}
-										if ($dose1Stats{'0'}->{'lastDose1'} < $dose1Date) {
-											$dose1Stats{'0'}->{'lastDose1'} = $dose1Date;
-										}
-										if ($dose1Stats{$trialSiteId}->{'firstDose1'} > $dose1Date) {
-											$dose1Stats{$trialSiteId}->{'firstDose1'} = $dose1Date;
-										}
-										if ($dose1Stats{$trialSiteId}->{'lastDose1'} < $dose1Date) {
-											$dose1Stats{$trialSiteId}->{'lastDose1'} = $dose1Date;
-										}
-										# say "dose1WeekNumber : $dose1WeekNumber";
-										$dose1Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
-										$dose1Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
-										$dose1Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
-										$dose1Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
-										$dose1Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
-										$dose1Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-										$dose1Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
-										$dose1Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
-										$dose1Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
-										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-										$dose1Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-										$dose1Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-										$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-										$dose1Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-										$dose1Stats{$trialSiteId}->{'totalSubjects'}++;
-										$dose1Stats{$trialSiteId}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
-										$dose1Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
-										$dose1Stats{'0'}->{'totalSubjects'}++;
-										$dose1Stats{'0'}->{'trialSiteName'} = 'All Sites';
-										$dose1Stats{'0'}->{'weekNumbers'}->{$dose1WeekNumber}->{$randomizationGroup}++;
-										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-										$dose1Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-										$dose1Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-										$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-										$dose1Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-										# die;
-
-										# Dose 2 data & stats.
-										$dose2Date = $randomization{$subjectId}->{'dose2Date'};
-										if ($dose2Date && ($dose2Date <= 20201114)) {
-											$stats{'3_totalPhase2And3Dose2'}->{'totalSubjects'}++;
-											$stats{'3_totalPhase2And3Dose2'}->{$randomizationGroup}++;
-											if ($dose2Date <= 20201107) {
-												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{'totalSubjects'}++;
-												$stats{'4_totalPhase2And3Dose2EfficacyDelay'}->{$randomizationGroup}++;
-												my $daysDifferenceBetweenDoses1And2 = calc_days_difference($dose1Date, $dose2Date);
-												if ($daysDifferenceBetweenDoses1And2 >= 19 && $daysDifferenceBetweenDoses1And2 <= 42) {
-													$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{'totalSubjects'}++;
-													$stats{'5_totalPhase2And3Dose2EfficacyIntervalDelay'}->{$randomizationGroup}++;
-													unless (exists $adva{$subjectId}) {
-														$stats{'6_noAdvaData'}->{'totalSubjects'}++;
-														$stats{'6_noAdvaData'}->{$randomizationGroup}++;
-														$stats{'6_noAdvaData'}->{'subjects'}->{$subjectId} = 1;
-														if (exists $cases{$subjectId}->{'swabDate'}) {
-															my $swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
-															if ($swabDate <= 20201114) {
-																p$cases{$subjectId};
-																say "swabDate : [$swabDate] for subjectId [$subjectId]";
-																$stats{'6_noAdvaData'}->{'positivePreCutOff'}++;
-															}
-														}
-													}
-
-													# Verifying if the subject had evidence of infection prior 7 days post dose 2.
-													my %visitDates = ();
-													for my $visitDatetime (sort keys %{$cases{$subjectId}->{'visits'}}) {
-														my ($visitDate) = split ' ', $visitDatetime;
-														$visitDate =~ s/\D//g;
-														$visitDates{$visitDate} = \%{$cases{$subjectId}->{'visits'}->{$visitDatetime}};
-													}
-
-													# If the patient has a documented Covid, tagging so.
-													my ($hasSwab, $swabInDelay, $caseEligible) = (0, 0, 1);
-													if (exists $cases{$subjectId}->{'swabDate'}) {
-														$hasSwab     = 1;
-														$sourceFile  = $cases{$subjectId}->{'sourceFile'}  // die;
-														$sourceTable = $cases{$subjectId}->{'sourceTable'} // die;
-														$swabDate    = $cases{$subjectId}->{'swabDate'}    // die;
-														$stats{'7_positiveSwabs'}->{'totalSubjects'}++;
-														$stats{'7_positiveSwabs'}->{$randomizationGroup}++;
-														$stats{'7_positiveSwabs'}->{$sourceTable}++;
-
-														if ($swabDate <= 20201114) {
-															$stats{'8_positiveSwabsPreCutOff'}->{'totalSubjects'}++;
-															$stats{'8_positiveSwabsPreCutOff'}->{$randomizationGroup}++;
-															$stats{'8_positiveSwabsPreCutOff'}->{$sourceTable}++;
-															$stats{'8_positiveSwabsPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
-															$stats{'8_positiveSwabsPreCutOff'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-															$daysDifferenceBetweenPosTestAnd2 = calc_days_difference($dose2Date, $swabDate);
-															if ($swabDate < $dose2Date) {
-																$caseEligible = 0;
-																# say "Tested positive before dose 2 : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																$stats{'9_positiveNBindingPriorDose2'}->{'totalSubjects'}++;
-																$stats{'9_positiveNBindingPriorDose2'}->{$randomizationGroup}++;
-															} else {
-																if ($daysDifferenceBetweenPosTestAnd2 < 7) {
-																	$caseEligible = 0;
-																	# say "Tested positive before dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																	$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-																	$stats{'10_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-																} else {
-																	$swabInDelay = 1;
-																	# say "Tested positive after dose 2 + 7 days : positive : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																	if (exists $efficacy{$subjectId}) {
-																		$visit1NBindAssay = $cases{$subjectId}->{'visit1NBindAssay'} // die;
-																		$visit1NaaT = $cases{$subjectId}->{'visit1NaaT'} // die;
-																		$visit2NaaT = $cases{$subjectId}->{'visit2NaaT'} // die;
-																		if ($visit1NBindAssay ne 'Neg' || $visit1NaaT ne 'Neg' || $visit2NaaT ne 'Neg') {
-																			p$cases{$subjectId};
-																			die "error";
-																		}
-																		say "Tested positive after dose 2 + 7 days, in efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'totalSubjects'}++;
-																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
-																		$stats{'12_positiveNBindingPostDose2Prior7DaysInEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-																		$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-																	} else {
-																		$visit1NBindAssay = $cases{$subjectId}->{'visit1NBindAssay'} // die;
-																		$visit1NaaT = $cases{$subjectId}->{'visit1NaaT'} // die;
-																		$visit2NaaT = $cases{$subjectId}->{'visit2NaaT'} // die;
-																		if ($visit1NBindAssay ne 'Neg' || $visit1NaaT ne 'Neg' || $visit2NaaT ne 'Neg') {
-																			say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'earlySwabPositives'}++;
-																		} else {
-																			say "Tested positive after dose 2 + 7 days, out of efficacy : $subjectId | swabDate : $swabDate - dose2Date : $dose2Date => $daysDifferenceBetweenPosTestAnd2";
-																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'totalSubjects'}++;
-																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'byGroups'}->{$randomizationGroup}++;
-																			# $stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'subjects'}->{$subjectId} = 1;
-																			$stats{'13_positiveNBindingPostDose2Prior7DaysOutOfEfficacy'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'totalSubjects'}++;
-																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'byGroups'}->{$randomizationGroup}++;
-																			$stats{'11_positiveNBindingPostDose2Prior7Days'}->{'bySources'}->{"$sourceFile | $sourceTable"}++;
-																			# p$randomization{$subjectId};
-																			# p$screening{$subjectId};
-																		}
-																	}
-																	unless (exists $casesStats{$trialSiteId}) {
-
-																		$casesStats{$trialSiteId}->{'firstCase'} = '99999999';
-																		$casesStats{$trialSiteId}->{'lastCase'}  = '0';
-																	}
-																	if ($casesStats{'0'}->{'firstCase'} > $swabDate) {
-																		$casesStats{'0'}->{'firstCase'} = $swabDate;
-																	}
-																	if ($casesStats{'0'}->{'lastCase'} < $swabDate) {
-																		$casesStats{'0'}->{'lastCase'} = $swabDate;
-																	}
-																	if ($casesStats{$trialSiteId}->{'firstCase'} > $swabDate) {
-																		$casesStats{$trialSiteId}->{'firstCase'} = $swabDate;
-																	}
-																	if ($casesStats{$trialSiteId}->{'lastCase'} < $swabDate) {
-																		$casesStats{$trialSiteId}->{'lastCase'} = $swabDate;
-																	}
-																	$swabNumber       = week_from_compdate($swabDate);
-																	$casesStats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
-																	$casesStats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
-																	$casesStats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
-																	$casesStats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
-																	$casesStats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
-																	$casesStats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-																	$casesStats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
-																	$casesStats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
-																	$casesStats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
-																	$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-																	$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-																	$casesStats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-																	$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-																	$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-																	$casesStats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-																	$casesStats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-																	$casesStats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-																	$casesStats{$trialSiteId}->{'totalSubjects'}++;
-																	$casesStats{$trialSiteId}->{'weekNumbers'}->{$swabNumber}->{$randomizationGroup}++;
-																	$casesStats{'0'}->{'armGroups'}->{$randomizationGroup}++;
-																	$casesStats{'0'}->{'totalSubjects'}++;
-																	$casesStats{'0'}->{'trialSiteName'} = 'All Sites';
-																	$casesStats{'0'}->{'weekNumbers'}->{$swabNumber}->{$randomizationGroup}++;
-																	$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-																	$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-																	$casesStats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-																	$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-																	$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-																	$casesStats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-																	$casesStats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-																	$casesStats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-																	if ($swabDate >= 20201101 && $swabDate <= 20201131) {
-																		# if ($trialSiteState) {
-																		# 	$posExpByCountries{$trialSiteState}->{'totalCasesNovember'}++;
-																		# }
-																		$posExpByCountries{$trialSiteCountry}->{'totalCasesNovember'}++;
-																		$posExpBySites{$trialSiteId}->{'totalCasesNovember'}++;
-																	}
-																	if ($swabDate >= 20201001 && $swabDate <= 20201031) {
-																		# if ($trialSiteState) {
-																		# 	$posExpByCountries{$trialSiteState}->{'totalCasesOctober'}++;
-																		# }
-																		$posExpByCountries{$trialSiteCountry}->{'totalCasesOctober'}++;
-																		$posExpBySites{$trialSiteId}->{'totalCasesOctober'}++;
-																	}
-																	if ($swabDate >= 20200901 && $swabDate <= 20200931) {
-																		# if ($trialSiteState) {
-																		# 	$posExpByCountries{$trialSiteState}->{'totalCasesSeptember'}++;
-																		# }
-																		$posExpByCountries{$trialSiteCountry}->{'totalCasesSeptember'}++;
-																		$posExpBySites{$trialSiteId}->{'totalCasesSeptember'}++;
-																	}
-																	# if ($trialSiteState) {
-																	# 	$posExpByCountries{$trialSiteState}->{'totalCases'}++;
-																	# }
-																	$posExpByCountries{$trialSiteCountry}->{'totalCases'}++;
-																	$posExpBySites{$trialSiteId}->{'totalCases'}++;
-																}
-																$dose2Stats{$trialSiteId}->{'totalCases'}++;
-															}
-														}
-													}
-													if ($caseEligible) {
-														$stats{'14_eligiblePopulationPreCutOff'}->{'totalSubjects'}++;
-														$stats{'14_eligiblePopulationPreCutOff'}->{$randomizationGroup}++;
-														$stats{'14_eligiblePopulationPreCutOff'}->{'byGroups'}->{$randomizationGroup}++;
-														$daysOfExposure = calc_days_difference($dose2Date, '20201114');
-														$daysOfExposure = $daysOfExposure - 7;
-														die unless $daysOfExposure >= 0;
-														# if ($trialSiteState) {
-														# 	$posExpByCountries{$trialSiteState}->{'isUSAState'} = 1;
-														# 	$posExpByCountries{$trialSiteState}->{'totalSubjects'}++;
-														# 	$posExpByCountries{$trialSiteState}->{'totalDaysOfExposure'} += $daysOfExposure;
-														# }
-														$posExpByCountries{$trialSiteCountry}->{'isUSAState'} = 0;
-														$posExpByCountries{$trialSiteCountry}->{'totalSubjects'}++;
-														$posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposure'} += $daysOfExposure;
-														$posExpBySites{$trialSiteId}->{'totalSubjects'}++;
-														$posExpBySites{$trialSiteId}->{'totalDaysOfExposure'} += $daysOfExposure;
-														if ($dose2Date <= 20201131) {
-															my $monthlyDays = 0;
-															if ($dose2Date <= 20201101) {
-																$monthlyDays = 30;
-															} else {
-																$monthlyDays = calc_days_difference($dose2Date, '20201101');
-																$monthlyDays = 30 - $monthlyDays;
-															}
-															# if ($trialSiteState) {
-															# 	$posExpByCountries{$trialSiteState}->{'totalSubjectsNovember'}++;
-															# 	$posExpByCountries{$trialSiteState}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-															# }
-															$posExpByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}++;
-															$posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-															$posExpBySites{$trialSiteId}->{'totalSubjectsNovember'}++;
-															$posExpBySites{$trialSiteId}->{'totalDaysOfExposureNovember'} += $monthlyDays;
-														}
-														if ($dose2Date <= 20201031) {
-															my $monthlyDays = 0;
-															if ($dose2Date <= 20201001) {
-																$monthlyDays = 30;
-															} else {
-																$monthlyDays = calc_days_difference($dose2Date, '20201001');
-																$monthlyDays = 30 - $monthlyDays;
-															}
-															# if ($trialSiteState) {
-															# 	$posExpByCountries{$trialSiteState}->{'totalSubjectsOctober'}++;
-															# 	$posExpByCountries{$trialSiteState}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-															# }
-															$posExpByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}++;
-															$posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-															$posExpBySites{$trialSiteId}->{'totalSubjectsOctober'}++;
-															$posExpBySites{$trialSiteId}->{'totalDaysOfExposureOctober'} += $monthlyDays;
-														}
-														if ($dose2Date <= 20200931) {
-															my $monthlyDays = 0;
-															if ($dose2Date <= 20200901) {
-																$monthlyDays = 30;
-															} else {
-																$monthlyDays = calc_days_difference($dose2Date, '20200901');
-																$monthlyDays = 30 - $monthlyDays;
-															}
-															# if ($trialSiteState) {
-															# 	$posExpByCountries{$trialSiteState}->{'totalSubjectsSeptember'}++;
-															# 	$posExpByCountries{$trialSiteState}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-															# }
-															$posExpByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'}++;
-															$posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-															$posExpBySites{$trialSiteId}->{'totalSubjectsSeptember'}++;
-															$posExpBySites{$trialSiteId}->{'totalDaysOfExposureSeptember'} += $monthlyDays;
-														}
-														if ($hasSwab && $swabInDelay) {
-															$daysOfExposure = calc_days_difference($dose2Date, $swabDate);
-															$daysOfExposure = $daysOfExposure - 7;
-															die unless $daysOfExposure >= 0;
-															$uSubjectId = $adva{$subjectId}->{'uSubjectId'} // die;
-															# p$adva{$subjectId};
-															# die;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'subjectId'} = $subjectId;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationDate'} = $randomizationDate;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'daysOfExposure'} = $daysOfExposure;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'doseDateOrigin'} = $doseDateOrigin;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = $screeningDateOrigin;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDate'} = $screeningDate;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'isPhase1'} = $isPhase1;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'hasHIV'} = $hasHIV;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'randomizationGroup'} = $randomizationGroup;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'dose1Date'} = $dose1Date;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'uSubjectId'} = $uSubjectId;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'age'} = $age;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'sexName'} = $sexName;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteId'} = $trialSiteId;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceTable'} = $sourceTable;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'swabSourceFile'} = $sourceFile;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'screeningDateOrigin'} = ucfirst $screeningDateOrigin;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'swabDate'} = $swabDate;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'dose2Date'} = $dose2Date;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteName'} = $trialSiteName;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSitePostalCode'} = $trialSitePostalCode;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteAddress'} = $trialSiteAddress;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCity'} = $trialSiteCity;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteCountry'} = $trialSiteCountry;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLatitude'} = $trialSiteLatitude;
-															$efficacySubjects{$swabDate}->{$subjectId}->{'trialSiteLongitude'} = $trialSiteLongitude;
-															# p%efficacySubjects;
-															# die;
-														}
-
-														# Eligible population post dose 2.
-														unless (exists $dose2Stats{$trialSiteId}) {
-															$dose2Stats{$trialSiteId}->{'firstDose2'} = '99999999';
-															$dose2Stats{$trialSiteId}->{'lastDose2'}  = '0';
-														}
-														my $dose2WeekNumber       = week_from_compdate($dose2Date);
-														if ($dose2Stats{'0'}->{'firstDose2'} > $dose2Date) {
-															$dose2Stats{'0'}->{'firstDose2'} = $dose2Date;
-														}
-														if ($dose2Stats{'0'}->{'lastDose2'} < $dose2Date) {
-															$dose2Stats{'0'}->{'lastDose2'} = $dose2Date;
-														}
-														if ($dose2Stats{$trialSiteId}->{'firstDose2'} > $dose2Date) {
-															$dose2Stats{$trialSiteId}->{'firstDose2'} = $dose2Date;
-														}
-														if ($dose2Stats{$trialSiteId}->{'lastDose2'} < $dose2Date) {
-															$dose2Stats{$trialSiteId}->{'lastDose2'} = $dose2Date;
-														}
-														# say "dose2WeekNumber : $dose2WeekNumber";
-														$dose2Stats{$trialSiteId}->{'trialSiteState'}        = $trialSiteState;
-														$dose2Stats{$trialSiteId}->{'trialSiteName'}         = $trialSiteName;
-														$dose2Stats{$trialSiteId}->{'trialSitePostalCode'}   = $trialSitePostalCode;
-														$dose2Stats{$trialSiteId}->{'trialSiteAddress'}      = $trialSiteAddress;
-														$dose2Stats{$trialSiteId}->{'trialSiteCity'}         = $trialSiteCity;
-														$dose2Stats{$trialSiteId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-														$dose2Stats{$trialSiteId}->{'trialSiteLatitude'}     = $trialSiteLatitude;
-														$dose2Stats{$trialSiteId}->{'trialSiteLongitude'}    = $trialSiteLongitude;
-														$dose2Stats{$trialSiteId}->{'armGroups'}->{$randomizationGroup}++;
-														$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-														$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-														$dose2Stats{$trialSiteId}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-														$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-														$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-														$dose2Stats{$trialSiteId}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-														$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-														$dose2Stats{$trialSiteId}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-														$dose2Stats{$trialSiteId}->{'totalSubjects'}++;
-														$dose2Stats{$trialSiteId}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
-														$dose2Stats{'0'}->{'armGroups'}->{$randomizationGroup}++;
-														$dose2Stats{'0'}->{'totalSubjects'}++;
-														$dose2Stats{'0'}->{'trialSiteName'} = 'All Sites';
-														$dose2Stats{'0'}->{'weekNumbers'}->{$dose2WeekNumber}->{$randomizationGroup}++;
-														$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'totalSubjects'}++;
-														$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{$randomizationGroup}++;
-														$dose2Stats{'0'}->{'ageGroups'}->{$ageGroupId}->{'ageGroupName'} = $ageGroupName;
-														$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'totalSubjects'}++;
-														$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{$randomizationGroup}++;
-														$dose2Stats{'0'}->{'sexGroups'}->{$sexGroupId}->{'sexName'} = $sexName;
-														$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{'totalSubjects'}++;
-														$dose2Stats{'0'}->{'countries'}->{$trialSiteCountry}->{$randomizationGroup}++;
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		my $line;
-		my @vals = (
-			$subjectId, $screeningDate, $screeningDateOrigin, $isPhase1, $hasHIV,
-			$randomizationGroup, $dose1Date, $age, $sexName, $trialSiteId,
-			$ageGroupId, $ageGroupName, $sexGroupId, $uSubjectId, $trialSiteCountry,
-			$daysOfExposure, $trialSiteState, $trialSiteName, $trialSitePostalCode, $trialSiteAddress,
-			$trialSiteCity, $trialSiteInvestigator, $trialSiteLatitude, $trialSiteLongitude, $dose1WeekNumber,
-			$dose2Date, $sourceFile, $sourceTable, $swabDate, $daysDifferenceBetweenPosTestAnd2,
-			$swabNumber
-		);
-		for my $val (@vals) {
-			$val = '' unless $val;
-			$line .= ";$val" if defined $line;
-			$line = $val if !defined$line;
-		}
-		$line .= ';';
-		say $out $line;
-
-		# Formatting subject object.
-		$subjectObjects{$subjectId}->{'visit1NBindAssay'} = $visit1NBindAssay;
-		$subjectObjects{$subjectId}->{'visit1NaaT'} = $visit1NaaT;
-		$subjectObjects{$subjectId}->{'visit2NaaT'} = $visit2NaaT;
-		$subjectObjects{$subjectId}->{'screeningDate'} = $screeningDate;
-		$subjectObjects{$subjectId}->{'screeningDateOrigin'} = $screeningDateOrigin;
-		$subjectObjects{$subjectId}->{'isPhase1'} = $isPhase1;
-		$subjectObjects{$subjectId}->{'hasHIV'} = $hasHIV;
-		$subjectObjects{$subjectId}->{'randomizationGroup'} = $randomizationGroup;
-		$subjectObjects{$subjectId}->{'dose1Date'} = $dose1Date;
-		$subjectObjects{$subjectId}->{'age'} = $age;
-		$subjectObjects{$subjectId}->{'sexName'} = $sexName;
-		$subjectObjects{$subjectId}->{'trialSiteId'} = $trialSiteId;
-		$subjectObjects{$subjectId}->{'ageGroupId'} = $ageGroupId;
-		$subjectObjects{$subjectId}->{'ageGroupName'} = $ageGroupName;
-		$subjectObjects{$subjectId}->{'sexGroupId'} = $sexGroupId;
-		$subjectObjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjectObjects{$subjectId}->{'trialSiteCountry'} = $trialSiteCountry;
-		$subjectObjects{$subjectId}->{'daysOfExposure'} = $daysOfExposure;
-		$subjectObjects{$subjectId}->{'trialSiteState'} = $trialSiteState;
-		$subjectObjects{$subjectId}->{'trialSiteName'} = $trialSiteName;
-		$subjectObjects{$subjectId}->{'trialSitePostalCode'} = $trialSitePostalCode;
-		$subjectObjects{$subjectId}->{'trialSiteAddress'} = $trialSiteAddress;
-		$subjectObjects{$subjectId}->{'trialSiteCity'} = $trialSiteCity;
-		$subjectObjects{$subjectId}->{'trialSiteInvestigator'} = $trialSiteInvestigator;
-		$subjectObjects{$subjectId}->{'trialSiteLatitude'} = $trialSiteLatitude;
-		$subjectObjects{$subjectId}->{'trialSiteLongitude'} = $trialSiteLongitude;
-		$subjectObjects{$subjectId}->{'dose1WeekNumber'} = $dose1WeekNumber;
-		$subjectObjects{$subjectId}->{'dose2Date'} = $dose2Date;
-		$subjectObjects{$subjectId}->{'sourceFile'} = $sourceFile;
-		$subjectObjects{$subjectId}->{'sourceTable'} = $sourceTable;
-		$subjectObjects{$subjectId}->{'swabDate'} = $swabDate;
-		$subjectObjects{$subjectId}->{'daysDifferenceBetweenPosTestAnd2'} = $daysDifferenceBetweenPosTestAnd2;
-		$subjectObjects{$subjectId}->{'swabNumber'} = $swabNumber;
+sub load_adva_data {
+	open my $in, '<:utf8', $advaFile or die "Missing file [$advaFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
 	}
-	close $out;
+	close $in;
+	$json = decode_json($json);
+	%advaData = %$json;
+	say "[$advaFile] -> patients : " . keys %advaData;
 }
 
-sub calc_days_difference {
-	my ($date1, $date2) = @_;
-	die unless $date1 && $date2;
-	my $date1Ftd = date_from_compdate($date1);
-	my $date2Ftd = date_from_compdate($date2);
-	# say "date1Ftd : $date1Ftd";
-	# say "date2Ftd : $date2Ftd";
-	my $daysDifference = time::calculate_days_difference($date1Ftd, $date2Ftd);
-	return $daysDifference;
+sub load_tests_refs {
+	open my $in, '<:utf8', $testsRefsFile or die "Missing file [$testsRefsFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%testsRefs = %$json;
+	say "[$testsRefsFile] -> tests    : " . keys %testsRefs;
 }
 
-sub date_from_compdate {
-	my ($date) = shift;
-	my ($y, $m, $d) = $date =~ /(....)(..)(..)/;
-	die unless $y && $m && $d;
-	return "$y-$m-$d 12:00:00";
+sub load_randomization_subjects_1 {
+	open my $in, '<:utf8', $randomizationFile1;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%randomization1 = %$json;
+	say "[$randomizationFile1] -> tests    : " . keys %randomization1;
 }
 
-sub week_from_compdate {
-	my $dt = shift;
-	my ($y, $m, $d) = $dt =~ /(....)(..)(..)/;
-	my $weekNumber = iso_week_number("$y-$m-$d");
-	(undef, $weekNumber) = split '-', $weekNumber;
-	$weekNumber =~ s/W//;
-	return $weekNumber;
+sub subject_central_pcrs_by_visits {
+	my ($subjectId,
+		$unblindCompdate) = @_;
+	my %centralPCRsByVisits    = ();
+	my $hasPositiveCentralPCR = 0;
+	my $referenceCompdate = ref_from_unblind($unblindCompdate);
+	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'};
+		my $visitCompdate = $visitDate;
+		$visitCompdate =~ s/\D//g;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitCompdate >= 20200720;
+		next unless $visitCompdate <= $referenceCompdate;
+		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
+		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		if (exists $centralPCRsByVisits{$visitName}->{'pcrResult'} && ($centralPCRsByVisits{$visitName}->{'pcrResult'} ne $pcrResult)) {
+			next unless $pcrResult eq 'POS';
+		}
+		$centralPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$centralPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$centralPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
+		if ($pcrResult eq 'POS') {
+			$hasPositiveCentralPCR = 1;
+		}
+	}
+	return (
+		$hasPositiveCentralPCR,
+		%centralPCRsByVisits);
+}
+
+sub subject_local_pcrs_by_visits {
+	my ($subjectId,
+		$unblindCompdate)  = @_;
+	my %localPCRsByVisits   = ();
+	my $hasPositiveLocalPCR = 0;
+	my $referenceCompdate   = ref_from_unblind($unblindCompdate);
+	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'};
+		# p$pcrRecords{$subjectId};
+		# die;
+		my $visitCompdate = $visitDate;
+		$visitCompdate =~ s/\D//g;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitCompdate >= 20200720;
+		next unless $visitCompdate <= $referenceCompdate;
+		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'mbResult'} // die;
+		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		my $spDevId   = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'spDevId'}  // die;
+		if ($spDevId) {
+			die "spDevId: $spDevId" unless $spDevId && looks_like_number $spDevId;
+			die unless exists $testsRefs{$spDevId};
+			my $deviceType = $testsRefs{$spDevId}->{'Device Type'} // die;
+			my $tradeName  = $testsRefs{$spDevId}->{'Trade Name'}  // die;
+			$spDevId = "$deviceType - $tradeName ($spDevId)";
+			# p$testsRefs{$spDevId};
+			# die;
+		} else {
+			$spDevId = 'Not Provided';
+		}
+		# $stats{'localPCRsAnalysis'}->{'total'}++;
+		# $stats{'localPCRsAnalysis'}->{$spDevId}++;
+		if ($pcrResult eq 'POSITIVE') {
+			$pcrResult = 'POS';
+		} elsif ($pcrResult eq 'NEGATIVE') {
+			$pcrResult = 'NEG';
+		} elsif ($pcrResult eq 'INDETERMINATE' || $pcrResult eq '') {
+			$pcrResult = 'IND';
+		} else {
+			die "pcrResult : $pcrResult";
+		}
+		next if exists $localPCRsByVisits{$visitName}->{'pcrResult'} && ($localPCRsByVisits{$visitName}->{'pcrResult'} ne $pcrResult && $pcrResult ne 'POS');
+		$localPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$localPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$localPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
+		$localPCRsByVisits{$visitName}->{'spDevId'}       = $spDevId;
+		if ($pcrResult eq 'POS') {
+			# say "visitDate : $visitDate";
+			# say "pcrResult : $pcrResult";
+			# p%localPCRsByVisits;
+			$hasPositiveLocalPCR = 1;
+		}
+	}
+
+	return ($hasPositiveLocalPCR,
+		%localPCRsByVisits);
+}
+
+sub subject_symptoms_by_visits {
+	my ($subjectId,
+		$unblindCompdate) = @_;
+	my $referenceCompdate = ref_from_unblind($unblindCompdate);
+	my %symptomsByVisits = ();
+	my $hasSymptoms      = 0;
+	for my $symptomDatetime (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}}) {
+		my ($symptomDate)   = split ' ', $symptomDatetime;
+		my $compsympt = $symptomDate;
+		$compsympt =~ s/\D//g;
+
+		# Comment these lines to stick with the visit date.
+		my ($formerSymptomDate, $onsetStartOffset);
+		if (exists $faces{$subjectId}->{$symptomDate}) {
+			my $altStartDate = $faces{$subjectId}->{$symptomDate}->{'symptomsDates'}->{'First Symptom Date'} // die;
+			unless ($altStartDate eq $symptomDate) {
+				if ($altStartDate =~ /^....-..-..$/) {
+					my $compalt = $altStartDate;
+					$compalt =~ s/\D//g;
+					if ($compalt < $compsympt) {
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'total'}++;
+						$formerSymptomDate = $symptomDate;
+						$onsetStartOffset  = time::calculate_days_difference("$symptomDate 12:00:00", "$altStartDate 12:00:00");
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'offsets'}->{$onsetStartOffset}++;
+						$symptomDate = $altStartDate;
+					}
+				} else {
+					# $stats{'faceData'}->{'symptoms'}->{'invalidDate'}++;
+				}
+			} else {
+				# $stats{'faceData'}->{'symptoms'}->{'sameDate'}++;
+			}
+		} else {
+			# $stats{'faceData'}->{'symptoms'}->{'noVisitData'}++;
+		}
+		# $stats{'faceData'}->{'symptoms'}->{'totalRowsParsed'}++;
+		my $symptomCompdate = $symptomDate;
+		$symptomCompdate    =~ s/\D//g;
+		next unless $symptomCompdate <= $referenceCompdate;
+		my $totalSymptoms   = 0;
+		my $hasOfficialSymptoms = 0;
+		my $endDatetime = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'endDatetime'};
+		my $visitName = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'} // die;
+		for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
+			next unless $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
+			my $symptomCategory = symptom_category_from_symptom($symptomName);
+			if ($officialSymptomsOnly) {
+				next unless $symptomCategory eq 'OFFICIAL';
+			}
+			$hasOfficialSymptoms = 1 if $symptomCategory eq 'OFFICIAL';
+			$symptomsByVisits{$visitName}->{'symptoms'}->{$symptomName} = 1;
+			$totalSymptoms++;
+		}
+		next unless $totalSymptoms;
+		$hasSymptoms  = 1;
+		$symptomsByVisits{$visitName}->{'onsetStartOffset'}    = $onsetStartOffset;
+		$symptomsByVisits{$visitName}->{'formerSymptomDate'}   = $formerSymptomDate;
+		$symptomsByVisits{$visitName}->{'symptomCompdate'}     = $symptomCompdate;
+		$symptomsByVisits{$visitName}->{'symptomDate'}         = $symptomDate;
+		$symptomsByVisits{$visitName}->{'totalSymptoms'}       = $totalSymptoms;
+		$symptomsByVisits{$visitName}->{'endDatetime'}         = $endDatetime;
+		$symptomsByVisits{$visitName}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
+	}
+	# p%symptomsByVisits;
+	# die;
+	return (
+		$hasSymptoms,
+		%symptomsByVisits);
+}
+
+sub subject_central_pcrs_by_dates {
+	my ($subjectId,
+		$unblindCompdate) = @_;
+	my %centralPCRsByVisits    = ();
+	my $hasPositiveCentralPCR = 0;
+	my $referenceCompdate = ref_from_unblind($unblindCompdate);
+	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'};
+		my $visitCompdate = $visitDate;
+		$visitCompdate =~ s/\D//g;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitCompdate >= 20200720;
+		next unless $visitCompdate <= $referenceCompdate;
+		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
+		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		$centralPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$centralPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$centralPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
+		if ($pcrResult eq 'POS') {
+			$hasPositiveCentralPCR = 1;
+		}
+	}
+	return (
+		$hasPositiveCentralPCR,
+		%centralPCRsByVisits);
+}
+
+sub subject_local_pcrs_by_dates {
+	my ($subjectId,
+		$unblindCompdate)  = @_;
+	my %localPCRsByVisits   = ();
+	my $hasPositiveLocalPCR = 0;
+	my $referenceCompdate   = ref_from_unblind($unblindCompdate);
+	for my $visitDate (sort keys %{$pcrRecords{$subjectId}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'};
+		# p$pcrRecords{$subjectId};
+		# die;
+		my $visitCompdate = $visitDate;
+		$visitCompdate =~ s/\D//g;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitCompdate >= 20200720;
+		next unless $visitCompdate <= $referenceCompdate;
+		my $pcrResult = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'mbResult'} // die;
+		my $visitName = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		my $spDevId   = $pcrRecords{$subjectId}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'spDevId'}  // die;
+		if ($spDevId) {
+			die "spDevId: $spDevId" unless $spDevId && looks_like_number $spDevId;
+			die unless exists $testsRefs{$spDevId};
+			my $deviceType = $testsRefs{$spDevId}->{'Device Type'} // die;
+			my $tradeName  = $testsRefs{$spDevId}->{'Trade Name'}  // die;
+			$spDevId = "$deviceType - $tradeName ($spDevId)";
+			# p$testsRefs{$spDevId};
+			# die;
+		} else {
+			$spDevId = 'Not Provided';
+		}
+		# $stats{'localPCRsAnalysis'}->{'total'}++;
+		# $stats{'localPCRsAnalysis'}->{$spDevId}++;
+		if ($pcrResult eq 'POSITIVE') {
+			$pcrResult = 'POS';
+		} elsif ($pcrResult eq 'NEGATIVE') {
+			$pcrResult = 'NEG';
+		} elsif ($pcrResult eq 'INDETERMINATE' || $pcrResult eq '') {
+			$pcrResult = 'IND';
+		} else {
+			die "pcrResult : $pcrResult";
+		}
+		$localPCRsByVisits{$visitName}->{'visitDate'}     = $visitDate;
+		$localPCRsByVisits{$visitName}->{'pcrResult'}     = $pcrResult;
+		$localPCRsByVisits{$visitName}->{'visitCompdate'} = $visitCompdate;
+		$localPCRsByVisits{$visitName}->{'spDevId'}       = $spDevId;
+		if ($pcrResult eq 'POS') {
+			$hasPositiveLocalPCR = 1;
+		}
+	}
+	return ($hasPositiveLocalPCR,
+		%localPCRsByVisits);
+}
+
+sub subject_symptoms_by_dates {
+	my ($subjectId,
+		$unblindCompdate) = @_;
+	my $referenceCompdate = ref_from_unblind($unblindCompdate);
+	my %symptomsByVisits = ();
+	my $hasSymptoms     = 0;
+	my $firstSymptomDate;
+	my $firstSymptomVisit;
+	for my $symptomDatetime (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}}) {
+		my ($symptomDate)   = split ' ', $symptomDatetime;
+		my $compsympt = $symptomDate;
+		$compsympt =~ s/\D//g;
+
+		# Comment these lines to stick with the visit date.
+		my ($formerSymptomDate, $onsetStartOffset);
+		if (exists $faces{$subjectId}->{$symptomDate}) {
+			my $altStartDate = $faces{$subjectId}->{$symptomDate}->{'symptomsDates'}->{'First Symptom Date'} // die;
+			unless ($altStartDate eq $symptomDate) {
+				if ($altStartDate =~ /^....-..-..$/) {
+					my $compalt = $altStartDate;
+					$compalt =~ s/\D//g;
+					if ($compalt < $compsympt) {
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'total'}++;
+						$formerSymptomDate = $symptomDate;
+						$onsetStartOffset  = time::calculate_days_difference("$symptomDate 12:00:00", "$altStartDate 12:00:00");
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'offsets'}->{$onsetStartOffset}++;
+						$symptomDate = $altStartDate;
+					}
+				} else {
+					# $stats{'faceData'}->{'symptoms'}->{'invalidDate'}++;
+				}
+			} else {
+				# $stats{'faceData'}->{'symptoms'}->{'sameDate'}++;
+			}
+		} else {
+			# $stats{'faceData'}->{'symptoms'}->{'noVisitData'}++;
+		}
+		# $stats{'faceData'}->{'symptoms'}->{'totalRowsParsed'}++;
+		my $symptomCompdate = $symptomDate;
+		$symptomCompdate    =~ s/\D//g;
+		next unless $symptomCompdate <= $referenceCompdate;
+		my $totalSymptoms   = 0;
+		my $hasOfficialSymptoms = 0;
+		my $endDatetime = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'endDatetime'};
+		my $visitName = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'} // die;
+		for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
+			next unless $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
+			my $symptomCategory = symptom_category_from_symptom($symptomName);
+			if ($officialSymptomsOnly) {
+				next unless $symptomCategory eq 'OFFICIAL';
+			}
+			$hasOfficialSymptoms = 1 if $symptomCategory eq 'OFFICIAL';
+			$symptomsByVisits{$symptomCompdate}->{'symptoms'}->{$symptomName} = 1;
+			$totalSymptoms++;
+		}
+		next unless $totalSymptoms;
+		$hasSymptoms  = 1;
+		$symptomsByVisits{$symptomCompdate}->{'onsetStartOffset'}    = $onsetStartOffset;
+		$symptomsByVisits{$symptomCompdate}->{'formerSymptomDate'}   = $formerSymptomDate;
+		$symptomsByVisits{$symptomCompdate}->{'visitName'}           = $visitName;
+		$symptomsByVisits{$symptomCompdate}->{'symptomDate'}         = $symptomDate;
+		$symptomsByVisits{$symptomCompdate}->{'totalSymptoms'}       = $totalSymptoms;
+		$symptomsByVisits{$symptomCompdate}->{'endDatetime'}         = $endDatetime;
+		$symptomsByVisits{$symptomCompdate}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
+	}
+	for my $compdate (sort{$a <=> $b} keys %symptomsByVisits) {
+		my $visitName = $symptomsByVisits{$compdate}->{'visitName'} // die;
+		if (!$firstSymptomDate) {
+			$firstSymptomDate = $compdate;
+			$firstSymptomVisit = $visitName;
+			last;
+		}
+	}
+	# p%symptomsByVisits;
+	# die;
+	return (
+		$hasSymptoms,
+		$firstSymptomDate,
+		$firstSymptomVisit,
+		%symptomsByVisits);
+}
+
+sub ref_from_unblind {
+	my $unblindCompdate = shift;
+	my $referenceCompdate;
+	if ($unblindCompdate > $cutoffCompdate) {
+		$referenceCompdate = $cutoffCompdate;
+	} else {
+		$referenceCompdate = $unblindCompdate;
+	}
+	return $referenceCompdate;
+}
+
+sub symptom_category_from_symptom {
+	my $symptomName = shift;
+	my $symptomCategory;
+	if (
+		$symptomName eq 'NEW OR INCREASED COUGH' ||
+		$symptomName eq 'NEW OR INCREASED SORE THROAT' ||
+		$symptomName eq 'CHILLS' ||
+		$symptomName eq 'FEVER' ||
+		$symptomName eq 'DIARRHEA' ||
+		$symptomName eq 'NEW LOSS OF TASTE OR SMELL' ||
+		$symptomName eq 'NEW OR INCREASED SHORTNESS OF BREATH' ||
+		$symptomName eq 'NEW OR INCREASED MUSCLE PAIN' ||
+		$symptomName eq 'VOMITING'
+	) {
+		$symptomCategory = 'OFFICIAL';
+	} elsif (
+		$symptomName eq 'NEW OR INCREASED NASAL CONGESTION' ||
+		$symptomName eq 'HEADACHE' ||
+		$symptomName eq 'FATIGUE' ||
+		$symptomName eq 'RHINORRHOEA' ||
+		$symptomName eq 'NAUSEA' ||
+		$symptomName eq 'NEW OR INCREASED WHEEZING'
+	) {
+		$symptomCategory = 'SECONDARY';
+	} else {
+		die "symptomName : $symptomName";
+	}
+	return $symptomCategory;
 }
 
 sub config_sites {
@@ -868,7 +1109,7 @@ sub config_sites {
 	# 1019
 	$sites{'1019'}->{'name'}         = 'Diagnostics Research Group';
 	$sites{'1019'}->{'address'}      = '4410 Medical Dr, Ste 360';
-	$sites{'1019'}->{'postalCode'}   = 'Texas 78229';
+	$sites{'1019'}->{'postalCode'}   = '78229';
 	$sites{'1019'}->{'city'}         = 'San Antonio';
 	$sites{'1019'}->{'country'}      = 'USA';
 	$sites{'1019'}->{'state'}        = 'Texas';
@@ -878,7 +1119,7 @@ sub config_sites {
 	# 1021
 	$sites{'1021'}->{'name'}         = 'PMG Research of Raleigh, LLC';
 	$sites{'1021'}->{'address'}      = '3521 Haworth Dr, Ste 100';
-	$sites{'1021'}->{'postalCode'}   = 'NC 27609';
+	$sites{'1021'}->{'postalCode'}   = '27609';
 	$sites{'1021'}->{'city'}         = 'Raleigh';
 	$sites{'1021'}->{'country'}      = 'USA';
 	$sites{'1021'}->{'state'}        = 'North Carolina';
@@ -888,7 +1129,7 @@ sub config_sites {
 	# 1022
 	$sites{'1022'}->{'name'}         = 'Wenatchee Valley Hospital, Clinical Research Department';
 	$sites{'1022'}->{'address'}      = '820 N Chelan Ave';
-	$sites{'1022'}->{'postalCode'}   = 'WA 98801';
+	$sites{'1022'}->{'postalCode'}   = '98801';
 	$sites{'1022'}->{'city'}         = 'Wenatchee';
 	$sites{'1022'}->{'investigator'} = 'Steven Kaster';
 	$sites{'1022'}->{'country'}      = 'USA';
@@ -1028,7 +1269,7 @@ sub config_sites {
 	# 1052
 	$sites{'1052'}->{'name'}         = 'Long Beach Clinical Trials Services Inc.';
 	$sites{'1052'}->{'address'}      = '2403 Atlantic Ave';
-	$sites{'1052'}->{'postalCode'}   = 'CA 90057';
+	$sites{'1052'}->{'postalCode'}   = '90057';
 	$sites{'1052'}->{'city'}         = 'Los Angeles';
 	$sites{'1052'}->{'country'}      = 'USA';
 	$sites{'1052'}->{'state'}        = 'California';
@@ -1098,7 +1339,7 @@ sub config_sites {
 	# 1071
 	$sites{'1071'}->{'name'}         = 'Quality Clinical Research, Inc.';
 	$sites{'1071'}->{'address'}      = '10040 Regency Cr, Ste 375';
-	$sites{'1071'}->{'postalCode'}   = 'NE 68114';
+	$sites{'1071'}->{'postalCode'}   = '68114';
 	$sites{'1071'}->{'city'}         = 'Omaha';
 	$sites{'1071'}->{'investigator'} = 'Michael Dunn';
 	$sites{'1071'}->{'country'}      = 'USA';
@@ -1108,7 +1349,7 @@ sub config_sites {
 	# 1072
 	$sites{'1072'}->{'name'}         = 'Optimal Research, LLC';
 	$sites{'1072'}->{'address'}      = '2089 Cecil Ashburn Dr, Ste 203';
-	$sites{'1072'}->{'postalCode'}   = 'AL 35802';
+	$sites{'1072'}->{'postalCode'}   = '35802';
 	$sites{'1072'}->{'country'}      = 'USA';
 	$sites{'1072'}->{'city'}         = 'Huntsville';
 	$sites{'1072'}->{'state'}        = 'Alabama';
@@ -1208,7 +1449,7 @@ sub config_sites {
 	# 1087
 	$sites{'1087'}->{'name'}         = 'PMG Research of Hickory, LLC';
 	$sites{'1087'}->{'address'}      = '1907 Tradd Court';
-	$sites{'1087'}->{'postalCode'}   = 'NC 28401';
+	$sites{'1087'}->{'postalCode'}   = '28401';
 	$sites{'1087'}->{'city'}         = 'Wilmington';
 	$sites{'1087'}->{'investigator'} = 'Kevin Cannon';
 	$sites{'1087'}->{'country'}      = 'USA';
@@ -1318,7 +1559,7 @@ sub config_sites {
 	# 1098
 	$sites{'1098'}->{'name'}         = 'SMS Clinical Research, LLC';
 	$sites{'1098'}->{'address'}      = '1210 N Galloway Ave';
-	$sites{'1098'}->{'postalCode'}   = 'TX 75149';
+	$sites{'1098'}->{'postalCode'}   = '75149';
 	$sites{'1098'}->{'country'}      = 'USA';
 	$sites{'1098'}->{'state'}        = 'Texas';
 	$sites{'1098'}->{'city'}         = 'Mesquite';
@@ -1999,8 +2240,8 @@ sub config_sites {
 	$sites{'1218'}->{'name'}         = 'Johns Hopkins Center for American Indian Health';
 	$sites{'1218'}->{'address'}      = '308 Kuper St.';
 	$sites{'1218'}->{'postalCode'}   = '41380';
-	$sites{'1218'}->{'country'}      = 'Turkey';
-	$sites{'1218'}->{'state'}        = undef;
+	$sites{'1218'}->{'country'}      = 'USA';
+	$sites{'1218'}->{'state'}        = 'Maryland';
 	$sites{'1218'}->{'city'}         = 'Whiteriver';
 	$sites{'1218'}->{'investigator'} = 'Laura Hammitt';
 	$sites{'1218'}->{'latitude'}     = '33.878486';
@@ -2010,37 +2251,37 @@ sub config_sites {
 	$sites{'1219'}->{'address'}      = 'US Hwy 191 and Hospital Rd';
 	$sites{'1219'}->{'postalCode'}   = '86503';
 	$sites{'1219'}->{'city'}         = 'Chinle';
-	$sites{'1219'}->{'country'}      = 'Turkey';
-	$sites{'1219'}->{'state'}        = undef;
+	$sites{'1219'}->{'country'}      = 'USA';
+	$sites{'1219'}->{'state'}        = 'Maryland';
 	$sites{'1219'}->{'investigator'} = 'Laura Hammitt';
 	$sites{'1219'}->{'latitude'}     = '36.152499';
 	$sites{'1219'}->{'longitude'}    = '-109.556408';
 	# 1220
 	$sites{'1220'}->{'name'}         = 'Northern Navajo Medical Center';
 	$sites{'1220'}->{'address'}      = 'US Hwy 491 N';
-	$sites{'1220'}->{'postalCode'}   = 'NEW MEXICO 87420';
+	$sites{'1220'}->{'postalCode'}   = '87420';
 	$sites{'1220'}->{'city'}         = 'Shiprock';
 	$sites{'1220'}->{'investigator'} = 'Laura Hammitt';
-	$sites{'1220'}->{'country'}      = 'Turkey';
-	$sites{'1220'}->{'state'}        = undef;
+	$sites{'1220'}->{'country'}      = 'USA';
+	$sites{'1220'}->{'state'}        = 'New Mexico';
 	$sites{'1220'}->{'latitude'}     = '36.804719';
 	$sites{'1220'}->{'longitude'}    = '-108.691378';
 	# 1221
 	$sites{'1221'}->{'name'}         = 'Gallup Indian Medical Center';
 	$sites{'1221'}->{'address'}      = '516 E Nizhoni Blvd';
-	$sites{'1221'}->{'postalCode'}   = 'New Mexico 87301';
-	$sites{'1221'}->{'country'}      = 'Turkey';
+	$sites{'1221'}->{'postalCode'}   = '87301';
+	$sites{'1221'}->{'country'}      = 'USA';
 	$sites{'1221'}->{'city'}         = 'Gallup';
-	$sites{'1221'}->{'state'}        = undef;
+	$sites{'1221'}->{'state'}        = 'New Mexico';
 	$sites{'1221'}->{'investigator'} = 'Laura Hammitt';
 	$sites{'1221'}->{'latitude'}     = '35.508026';
 	$sites{'1221'}->{'longitude'}    = '-108.729960';
 	# 1223
 	$sites{'1223'}->{'name'}         = 'Yale Center for Clinical Investigations';
 	$sites{'1223'}->{'address'}      = '2 Church St S, Ste 114';
-	$sites{'1223'}->{'postalCode'}   = 'CT 06510';
-	$sites{'1223'}->{'country'}      = 'Turkey';
-	$sites{'1223'}->{'state'}        = undef;
+	$sites{'1223'}->{'postalCode'}   = '06510';
+	$sites{'1223'}->{'country'}      = 'USA';
+	$sites{'1223'}->{'state'}        = 'Massachusetts';
 	$sites{'1223'}->{'city'}         = 'New Haven';
 	$sites{'1223'}->{'investigator'} = 'Onyema Ogbuagu';
 	$sites{'1223'}->{'latitude'}     = '41.301948';
@@ -2048,9 +2289,9 @@ sub config_sites {
 	# 1224
 	$sites{'1224'}->{'name'}         = 'Lynn Institute of Denver';
 	$sites{'1224'}->{'address'}      = '1411 S. Potomac St, Ste 420';
-	$sites{'1224'}->{'postalCode'}   = 'CO 80012';
-	$sites{'1224'}->{'country'}      = 'Turkey';
-	$sites{'1224'}->{'state'}        = undef;
+	$sites{'1224'}->{'postalCode'}   = '80012';
+	$sites{'1224'}->{'country'}      = 'USA';
+	$sites{'1224'}->{'state'}        = 'Colorado';
 	$sites{'1224'}->{'city'}         = 'Aurora';
 	$sites{'1224'}->{'investigator'} = 'Larry Odekirk';
 	$sites{'1224'}->{'latitude'}     = '39.691116';
@@ -2058,7 +2299,7 @@ sub config_sites {
 	# 1226
 	$sites{'1226'}->{'name'}         = 'CEPIC - Centro Paulista de Investigacao Clinica e Servicos Medicos Ltda (Casa Blanca)';
 	$sites{'1226'}->{'address'}      = 'Rua Moreira e Costa, 342 - Ipiranga';
-	$sites{'1226'}->{'postalCode'}   = 'SP 04266-010';
+	$sites{'1226'}->{'postalCode'}   = '04266-010';
 	$sites{'1226'}->{'city'}         = 'Sao Paulo';
 	$sites{'1226'}->{'country'}      = 'Brazil';
 	$sites{'1226'}->{'state'}        = undef;
@@ -2259,253 +2500,4 @@ sub config_sites {
 	# Displaying total sites.
 	# my $totalSites   = keys %sites;
 	# say "$totalSites sites listed.";
-}
-
-sub load_demographic_subjects {
-	open my $in, '<:utf8', $demographicFile or die "Missing file [$demographicFile]";
-	my $json;
-	while (<$in>) {
-		$json .= $_;
-	}
-	close $in;
-	$json = decode_json($json);
-	%demographic = %$json;
-	say "[$demographicFile] -> patients : " . keys %demographic;
-}
-
-sub age_to_age_group {
-	my ($patientAge) = @_;
-	return (0, 'Unknown') unless defined $patientAge && length $patientAge >= 1;
-	my ($ageGroupId, $ageGroupName);
-	if ($patientAge <= 0.16) {
-		$ageGroupId = '1';
-		$ageGroupName       = '0-1 Month';
-	} elsif ($patientAge > 0.16 && $patientAge <= 2.9) {
-		$ageGroupId = '2';
-		$ageGroupName = '2 Months - 2 Years';
-	} elsif ($patientAge > 2.9 && $patientAge <= 11.9) {
-		$ageGroupId = '3';
-		$ageGroupName = '3-11 Years';
-	} elsif ($patientAge > 11.9 && $patientAge <= 17.9) {
-		$ageGroupId = '4';
-		$ageGroupName = '12-17 Years';
-	} elsif ($patientAge > 17.9 && $patientAge <= 48.9) {
-		$ageGroupId = '5';
-		$ageGroupName = '18-48 Years';
-	} elsif ($patientAge > 48.9 && $patientAge <= 64.9) {
-		$ageGroupId = '6';
-		$ageGroupName = '49-64 Years';
-	} elsif ($patientAge > 64.9 && $patientAge <= 85.9) {
-		$ageGroupId = '7';
-		$ageGroupName = '64-85 Years';
-	} elsif ($patientAge > 85.9) {
-		$ageGroupId = '8';
-		$ageGroupName = 'More than 85 Years';
-	} else {
-		die "patientAge : $patientAge";
-	}
-	return ($ageGroupId, $ageGroupName);
-}
-
-sub average_trial_sites_dose_1_days {
-	my ($totalSites, $totalDays) = (0, 0);
-	for my $trialSiteId (sort{$a <=> $b} keys %dose1Stats) {
-		next if $trialSiteId == 0 || $trialSiteId == 1231;
-		my $fromDate = $dose1Stats{$trialSiteId}->{'firstDose1'} // die;
-		my $toDate = $dose1Stats{$trialSiteId}->{'lastDose1'} // die;
-		my $daysDifference = calc_days_difference($fromDate, $toDate);
-		$totalSites++;
-		$totalDays += $daysDifference;
-	}
-	my $average = nearest(0.01, $totalDays / $totalSites);
-	say "average days for dose 1, all sites but 1231 : [$average]";
-}
-
-sub trial_sites_countries_stats {
-	for my $trialSiteCountry (sort keys %posExpByCountries) {
-		# p$posExpByCountries{$trialSiteCountry};
-		my $isUSAState              = $posExpByCountries{$trialSiteCountry}->{'isUSAState'}             // die;
-		my $totalDaysOfExposure     = $posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposure'}    // die;
-		my $totalSubjects           = $posExpByCountries{$trialSiteCountry}->{'totalSubjects'}          // die;
-		my $totalCases              = $posExpByCountries{$trialSiteCountry}->{'totalCases'}             // 0;
-		my $totalSubjectsOctober    = $posExpByCountries{$trialSiteCountry}->{'totalSubjectsOctober'}   // 0;
-		my $totalCasesOctober       = $posExpByCountries{$trialSiteCountry}->{'totalCasesOctober'}      // 0;
-		my $totalSubjectsSeptember  = $posExpByCountries{$trialSiteCountry}->{'totalSubjectsSeptember'} // 0;
-		my $totalCasesSeptember     = $posExpByCountries{$trialSiteCountry}->{'totalCasesSeptember'}    // 0;
-		my $totalSubjectsNovember   = $posExpByCountries{$trialSiteCountry}->{'totalSubjectsNovember'}  // 0;
-		my $totalCasesNovember      = $posExpByCountries{$trialSiteCountry}->{'totalCasesNovember'}     // 0;
-		my $totalDaysOfExposureSeptember = $posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureSeptember'} // 0;
-		my $totalDaysOfExposureOctober   = $posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureOctober'}   // 0;
-		my $totalDaysOfExposureNovember  = $posExpByCountries{$trialSiteCountry}->{'totalDaysOfExposureNovember'}  // 0;
-		my $averageDaysOfExposure   = $totalDaysOfExposure / $totalSubjects;
-		my $averageSubjectsOn30Days = nearest(0.01, $totalDaysOfExposure / 30);
-		my $averageSubjectsOn30DaysSeptember = nearest(0.01, $totalDaysOfExposureSeptember / 30);
-		my $averageSubjectsOn30DaysOctober   = nearest(0.01, $totalDaysOfExposureOctober   / 30);
-		my $averageSubjectsOn30DaysNovember  = nearest(0.01, $totalDaysOfExposureNovember  / 30);
-		my ($exposureRateSeptember,
-			$exposureRateOctober,
-			$exposureRateNovember)  = (0, 0, 0);
-		if ($totalSubjectsSeptember) {
-			$exposureRateSeptember  = nearest(0.001, $totalCasesSeptember / $averageSubjectsOn30DaysSeptember * 1000);
-		}
-		if ($totalSubjectsOctober) {
-			$exposureRateOctober    = nearest(0.001, $totalCasesOctober / $averageSubjectsOn30DaysOctober * 1000);
-		}
-		if ($totalSubjectsNovember) {
-			$exposureRateNovember   = nearest(0.001, $totalCasesNovember / $averageSubjectsOn30DaysNovember * 1000);
-		}
-		# say "*" x 50;
-		# say "*" x 50;
-		# say "trialSiteCountry                 : $trialSiteCountry";
-		# say "totalDaysOfExposure              : $totalDaysOfExposure";
-		# say "totalSubjects                    : $totalSubjects";
-		# say "averageDaysOfExposure            : $averageDaysOfExposure";
-		# say "averageSubjectsOn30Days          : $averageSubjectsOn30Days";
-		# say "totalCases                       : $totalCases";
-		# say "totalSubjectsOctober             : $totalSubjectsOctober";
-		# say "totalCasesOctober                : $totalCasesOctober";
-		# say "exposureRateOctober              : $exposureRateOctober";
-		# say "totalSubjectsSeptember           : $totalSubjectsSeptember";
-		# say "totalCasesSeptember              : $totalCasesSeptember";
-		# say "exposureRateSeptember            : $exposureRateSeptember";
-		# say "totalSubjectsNovember            : $totalSubjectsNovember";
-		# say "totalCasesNovember               : $totalCasesNovember";
-		# say "exposureRateNovember             : $exposureRateNovember";
-		# say "totalDaysOfExposureSeptember     : $totalDaysOfExposureSeptember";
-		# say "totalDaysOfExposureOctober       : $totalDaysOfExposureOctober";
-		# say "totalDaysOfExposureNovember      : $totalDaysOfExposureNovember";
-		# say "averageSubjectsOn30DaysSeptember : $averageSubjectsOn30DaysSeptember";
-		# say "averageSubjectsOn30DaysOctober   : $averageSubjectsOn30DaysOctober";
-		# say "averageSubjectsOn30DaysNovember  : $averageSubjectsOn30DaysNovember";
-		$sitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposure'}              = $totalDaysOfExposure;
-		$sitesCountriesData{$trialSiteCountry}->{'totalSubjects'}                    = $totalSubjects;
-		$sitesCountriesData{$trialSiteCountry}->{'averageDaysOfExposure'}            = $averageDaysOfExposure;
-		$sitesCountriesData{$trialSiteCountry}->{'isUSAState'}                       = $isUSAState;
-		$sitesCountriesData{$trialSiteCountry}->{'totalCases'}                       = $totalCases;
-		$sitesCountriesData{$trialSiteCountry}->{'totalSubjectsOctober'}             = $totalSubjectsOctober;
-		$sitesCountriesData{$trialSiteCountry}->{'totalCasesOctober'}                = $totalCasesOctober;
-		$sitesCountriesData{$trialSiteCountry}->{'exposureRateOctober'}              = $exposureRateOctober;
-		$sitesCountriesData{$trialSiteCountry}->{'totalSubjectsSeptember'}           = $totalSubjectsSeptember;
-		$sitesCountriesData{$trialSiteCountry}->{'totalCasesSeptember'}              = $totalCasesSeptember;
-		$sitesCountriesData{$trialSiteCountry}->{'exposureRateSeptember'}            = $exposureRateSeptember;
-		$sitesCountriesData{$trialSiteCountry}->{'totalSubjectsNovember'}            = $totalSubjectsNovember;
-		$sitesCountriesData{$trialSiteCountry}->{'totalCasesNovember'}               = $totalCasesNovember;
-		$sitesCountriesData{$trialSiteCountry}->{'exposureRateNovember'}             = $exposureRateNovember;
-		$sitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureSeptember'}     = $totalDaysOfExposureSeptember;
-		$sitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureOctober'}       = $totalDaysOfExposureOctober;
-		$sitesCountriesData{$trialSiteCountry}->{'totalDaysOfExposureNovember'}      = $totalDaysOfExposureNovember;
-		$sitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysSeptember'} = $averageSubjectsOn30DaysSeptember;
-		$sitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysOctober'}   = $averageSubjectsOn30DaysOctober;
-		$sitesCountriesData{$trialSiteCountry}->{'averageSubjectsOn30DaysNovember'}  = $averageSubjectsOn30DaysNovember;
-	}
-}
-
-sub trial_sites_stats {
-	for my $trialSiteId (sort keys %posExpBySites) {
-		# p$posExpBySites{$trialSiteId};
-		my $trialSiteState          = $sites{$trialSiteId}->{'trialSiteState'};
-		my $trialSiteName           = $sites{$trialSiteId}->{'name'}               // die;
-		my $trialSiteInvestigator   = $sites{$trialSiteId}->{'investigator'}       // die;
-		my $totalDaysOfExposure     = $posExpBySites{$trialSiteId}->{'totalDaysOfExposure'}    // die;
-		my $totalSubjects           = $posExpBySites{$trialSiteId}->{'totalSubjects'}          // die;
-		my $totalCases              = $posExpBySites{$trialSiteId}->{'totalCases'}             // 0;
-		my $totalSubjectsOctober    = $posExpBySites{$trialSiteId}->{'totalSubjectsOctober'}   // 0;
-		my $totalCasesOctober       = $posExpBySites{$trialSiteId}->{'totalCasesOctober'}      // 0;
-		my $totalSubjectsSeptember  = $posExpBySites{$trialSiteId}->{'totalSubjectsSeptember'} // 0;
-		my $totalCasesSeptember     = $posExpBySites{$trialSiteId}->{'totalCasesSeptember'}    // 0;
-		my $totalSubjectsNovember   = $posExpBySites{$trialSiteId}->{'totalSubjectsNovember'}  // 0;
-		my $totalCasesNovember      = $posExpBySites{$trialSiteId}->{'totalCasesNovember'}     // 0;
-		my $totalDaysOfExposureSeptember = $posExpBySites{$trialSiteId}->{'totalDaysOfExposureSeptember'} // 0;
-		my $totalDaysOfExposureOctober   = $posExpBySites{$trialSiteId}->{'totalDaysOfExposureOctober'}   // 0;
-		my $totalDaysOfExposureNovember  = $posExpBySites{$trialSiteId}->{'totalDaysOfExposureNovember'}  // 0;
-		my $averageDaysOfExposure   = $totalDaysOfExposure / $totalSubjects;
-		my $averageSubjectsOn30Days = nearest(0.01, $totalDaysOfExposure / 30);
-		my $averageSubjectsOn30DaysSeptember = nearest(0.01, $totalDaysOfExposureSeptember / 30);
-		my $averageSubjectsOn30DaysOctober   = nearest(0.01, $totalDaysOfExposureOctober   / 30);
-		my $averageSubjectsOn30DaysNovember  = nearest(0.01, $totalDaysOfExposureNovember  / 30);
-		my ($exposureRateSeptember,
-			$exposureRateOctober,
-			$exposureRateNovember)  = (0, 0, 0);
-		if ($totalSubjectsSeptember) {
-			$exposureRateSeptember  = nearest(0.001, $totalCasesSeptember / $averageSubjectsOn30DaysSeptember * 1000);
-		}
-		if ($totalSubjectsOctober) {
-			$exposureRateOctober    = nearest(0.001, $totalCasesOctober / $averageSubjectsOn30DaysOctober * 1000);
-		}
-		if ($totalSubjectsNovember) {
-			$exposureRateNovember   = nearest(0.001, $totalCasesNovember / $averageSubjectsOn30DaysNovember * 1000);
-		}
-		# say "*" x 50;
-		# say "*" x 50;
-		# say "trialSiteId                      : $trialSiteId";
-		# say "trialSiteState                   : $trialSiteState";
-		# say "trialSiteName                    : $trialSiteName";
-		# say "trialSiteInvestigator            : $trialSiteInvestigator";
-		# say "totalDaysOfExposure              : $totalDaysOfExposure";
-		# say "totalSubjects                    : $totalSubjects";
-		# say "averageDaysOfExposure            : $averageDaysOfExposure";
-		# say "averageSubjectsOn30Days          : $averageSubjectsOn30Days";
-		# say "totalCases                       : $totalCases";
-		# say "totalSubjectsOctober             : $totalSubjectsOctober";
-		# say "totalCasesOctober                : $totalCasesOctober";
-		# say "exposureRateOctober              : $exposureRateOctober";
-		# say "totalSubjectsSeptember           : $totalSubjectsSeptember";
-		# say "totalCasesSeptember              : $totalCasesSeptember";
-		# say "exposureRateSeptember            : $exposureRateSeptember";
-		# say "totalSubjectsNovember            : $totalSubjectsNovember";
-		# say "totalCasesNovember               : $totalCasesNovember";
-		# say "exposureRateNovember             : $exposureRateNovember";
-		# say "totalDaysOfExposureSeptember     : $totalDaysOfExposureSeptember";
-		# say "totalDaysOfExposureOctober       : $totalDaysOfExposureOctober";
-		# say "totalDaysOfExposureNovember      : $totalDaysOfExposureNovember";
-		# say "averageSubjectsOn30DaysSeptember : $averageSubjectsOn30DaysSeptember";
-		# say "averageSubjectsOn30DaysOctober   : $averageSubjectsOn30DaysOctober";
-		# say "averageSubjectsOn30DaysNovember  : $averageSubjectsOn30DaysNovember";
-		$trialSitesData{$trialSiteId}->{'trialSiteId'}                      = $trialSiteId;
-		$trialSitesData{$trialSiteId}->{'trialSiteName'}                    = $trialSiteName;
-		$trialSitesData{$trialSiteId}->{'trialSiteState'}                   = $trialSiteState;
-		$trialSitesData{$trialSiteId}->{'totalDaysOfExposure'}              = $totalDaysOfExposure;
-		$trialSitesData{$trialSiteId}->{'totalSubjects'}                    = $totalSubjects;
-		$trialSitesData{$trialSiteId}->{'averageDaysOfExposure'}            = $averageDaysOfExposure;
-		$trialSitesData{$trialSiteId}->{'totalCases'}                       = $totalCases;
-		$trialSitesData{$trialSiteId}->{'totalSubjectsOctober'}             = $totalSubjectsOctober;
-		$trialSitesData{$trialSiteId}->{'totalCasesOctober'}                = $totalCasesOctober;
-		$trialSitesData{$trialSiteId}->{'exposureRateOctober'}              = $exposureRateOctober;
-		$trialSitesData{$trialSiteId}->{'totalSubjectsSeptember'}           = $totalSubjectsSeptember;
-		$trialSitesData{$trialSiteId}->{'totalCasesSeptember'}              = $totalCasesSeptember;
-		$trialSitesData{$trialSiteId}->{'exposureRateSeptember'}            = $exposureRateSeptember;
-		$trialSitesData{$trialSiteId}->{'totalSubjectsNovember'}            = $totalSubjectsNovember;
-		$trialSitesData{$trialSiteId}->{'totalCasesNovember'}               = $totalCasesNovember;
-		$trialSitesData{$trialSiteId}->{'exposureRateNovember'}             = $exposureRateNovember;
-		$trialSitesData{$trialSiteId}->{'totalDaysOfExposureSeptember'}     = $totalDaysOfExposureSeptember;
-		$trialSitesData{$trialSiteId}->{'totalDaysOfExposureOctober'}       = $totalDaysOfExposureOctober;
-		$trialSitesData{$trialSiteId}->{'totalDaysOfExposureNovember'}      = $totalDaysOfExposureNovember;
-		$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysSeptember'} = $averageSubjectsOn30DaysSeptember;
-		$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysOctober'}   = $averageSubjectsOn30DaysOctober;
-		$trialSitesData{$trialSiteId}->{'averageSubjectsOn30DaysNovember'}  = $averageSubjectsOn30DaysNovember;
-	}
-}
-
-sub print_stats {
-	open my $o1, '>:utf8', 'public/doc/pfizer_trials/first_doses_stats.json';
-	print $o1 encode_json\%dose1Stats;
-	close $o1;
-	open my $o2, '>:utf8', 'public/doc/pfizer_trials/second_doses_stats.json';
-	print $o2 encode_json\%dose2Stats;
-	close $o2;
-	open my $o6, '>:utf8', 'public/doc/pfizer_trials/efficacy_cases_stats.json';
-	print $o6 encode_json\%casesStats;
-	close $o6;
-	open my $o3, '>:utf8', 'public/doc/pfizer_trials/efficacy_subjects.json';
-	print $o3 encode_json\%efficacySubjects;
-	close $o3;
-	open my $o4, '>:utf8', 'public/doc/pfizer_trials/efficacy_stats.json';
-	print $o4 encode_json\%sitesCountriesData;
-	close $o4;
-	open my $o5, '>:utf8', 'public/doc/pfizer_trials/efficacy_sites_stats.json';
-	print $o5 encode_json\%trialSitesData;
-	close $o5;
-	open my $o7, '>:utf8', 'public/doc/pfizer_trials/merged_data_efficacy_subjects.json';
-	print $o7 encode_json\%subjectObjects;
-	close $o7;
 }

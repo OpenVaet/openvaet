@@ -39,7 +39,7 @@ my $phase1Total      = 0;
 my %stats            = ();
 for my $subjectId (sort{$a <=> $b} keys %sdSuppDs) {
 	my $screeningOrder = $sdSuppDs{$subjectId}->{'screeningOrder'} // die;
-	if (exists $demographic{$subjectId} || exists $sentinels{$subjectId}) {
+	if (exists $demographic{$subjectId}) {
 		my $screeningDate = $demographic{$subjectId}->{'screeningDate'} // $sentinels{$subjectId};
 		if ($demographic{$subjectId}->{'isPhase1'}) {
 			my $isPhase1  = $demographic{$subjectId}->{'isPhase1'}      // die;
@@ -48,13 +48,8 @@ for my $subjectId (sort{$a <=> $b} keys %sdSuppDs) {
 			}
 			$presents{$screeningOrder}->{'isPhase1'}  = $isPhase1;
 		}
-		if (exists $demographic{$subjectId}) {
-			$presents{$screeningOrder}->{'screeningDateOrigin'} = 'demographic';
-			$stats{'screeningDate'}->{'ok'}->{'demographic'}++;
-		} else {
-			$presents{$screeningOrder}->{'screeningDateOrigin'} = 'sentinels';
-			$stats{'screeningDate'}->{'ok'}->{'sentinels'}++;
-		}
+		$presents{$screeningOrder}->{'screeningDateOrigin'} = 'demographic';
+		$stats{'screeningDate'}->{'ok'}->{'demographic'}++;
 		$presents{$screeningOrder}->{'subjectId'}     = $subjectId;
 		$presents{$screeningOrder}->{'screeningDate'} = $screeningDate;
 		$stats{'screeningDate'}->{'ok'}->{'total'}++;
@@ -155,7 +150,7 @@ for my $screeningOrder (sort{$a <=> $b} keys %allSubs) {
 		$screeningDate = $latestScreeningDate;
 	}
 	if ($screeningDate) {
-		my $screeningDateOrigin = $presents{$screeningOrder}->{'screeningDateOrigin'} // 'Approximative last day estime';
+		my $screeningDateOrigin = $presents{$screeningOrder}->{'screeningDateOrigin'} // 'Approximative last day estimate';
 		$screeningDates{$subjectId}->{'screeningDate'}       = $screeningDate;
 		$screeningDates{$subjectId}->{'isPhase1'}            = $isPhase1;
 		$screeningDates{$subjectId}->{'hasHIV'}              = $hasHIV;
@@ -175,6 +170,21 @@ open my $out2, '>:utf8', 'public/doc/pfizer_trials/subjects_screening_dates.json
 print $out2 encode_json\%screeningDates;
 close $out2;
 say "screeningDates         : " . keys %screeningDates;
+
+open my $out3, '>:utf8', 'public/doc/pfizer_trials/subjects_screening_dates.csv';
+say $out3 "SubjectId;Screening Date;Screening Date Origin;";
+for my $subjectId (sort{$a <=> $b} keys %screeningDates) {
+	my $screeningDate = $screeningDates{$subjectId}->{'screeningDate'} // die;
+	if ($latestScreeningDate) {
+		$latestScreeningDate = $screeningDate if $latestScreeningDate < $screeningDate;
+	}
+	my ($y, $m, $d) = $screeningDate =~ /(....)(..)(..)/;
+	$screeningDate = "$y-$m-$d";
+	my $screeningDateOrigin = $screeningDates{$subjectId}->{'screeningDateOrigin'} // die;
+	say $out3 "$subjectId;$screeningDate;$screeningDateOrigin;";
+}
+close $out3;
+say "latestScreeningDate    : $latestScreeningDate";
 # p%screeningDates;
 
 

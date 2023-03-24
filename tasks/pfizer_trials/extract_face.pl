@@ -22,9 +22,9 @@ use time;
 
 my $dt19600101  = '1960-01-01 12:00:00';
 my $tp19600101  = time::datetime_to_timestamp($dt19600101);
-my $adc19efFile = "raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0710069-0763793-125742_S1_M5_c4591001-A-D-adc19ef.csv";
-die "you must convert the adc19ef file using readstats and place it in [raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0710069-0763793-125742_S1_M5_c4591001-A-D-adc19ef.csv] first." unless -f $adc19efFile;
-open my $in, '<:utf8', $adc19efFile;
+my $faceFile = "raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0539816-0593326-125742_S1_M5_c4591001-01-S-Supp-D-face.csv";
+die "you must convert the face file using readstats and place it in [raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0539816-0593326-125742_S1_M5_c4591001-01-S-Supp-D-face.csv] first." unless -f $faceFile;
+open my $in, '<:utf8', $faceFile;
 my $dataCsv     = Text::CSV_XS->new ({ binary => 1 });
 my %dataLabels  = ();
 my ($dRNum,
@@ -65,21 +65,37 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
-		# p%values;
-		# die;
 
 		# Fetching the data we currently focus on.
-		my $subjectId         = $values{'SUBJID'}  // die;
 		my $uSubjectId        = $values{'USUBJID'} // die;
-		my $pdp27FL           = $values{'PDP27FL'} // die;
-		die if (exists $subjects{$subjectId}->{'pdp27FL'} && ($subjects{$subjectId}->{'pdp27FL'} ne $pdp27FL));
-		$subjects{$subjectId}->{'totalADC19EFRows'}++;
-		my $totalADC19EFRows     = $subjects{$subjectId}->{'totalADC19EFRows'} // die;
-		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
-		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjects{$subjectId}->{'pdp27FL'}    = $pdp27FL;
-		# p$subjects{$subjectId};
-		# die;
+		my ($subjectId)       = $uSubjectId =~ /^C4591001 .... (.*)$/;
+		die unless $subjectId && $subjectId =~ /^........$/;
+		my $visitName = $values{'VISIT'}    // die;
+		my $visitDate = $values{'FADTC'}    // die;
+		my $faTest    = $values{'FATEST'}   // die;
+		my $fastResc  = $values{'FASTRESC'} // die;
+		if (
+			$faTest eq 'First Symptom Date' ||
+			$faTest eq 'Last Symptom Resolved Date'
+		) {
+			$subjects{$subjectId}->{$visitDate}->{'visitName'}     = $visitName;
+			$subjects{$subjectId}->{$visitDate}->{'symptomsDates'}->{$faTest} = $fastResc;
+		} elsif (
+			$faTest eq 'Severity/Intensity' ||
+			$faTest eq 'Occurrence Indicator' ||
+			$faTest eq 'Related to Study Treatment' ||
+			$faTest eq 'Stop Date Meds Given to Trt/Pnt Symptoms' ||
+			$faTest eq 'Medication to Treat Fever or Pain' ||
+			$faTest eq 'Diameter' ||
+			$faTest eq 'Minimum Diameter' ||
+			$faTest eq 'Maximum Diameter' ||
+			$faTest eq 'Symptom Ongoing' ||
+			$faTest eq 'Grade 4 Criteria Met'
+		) {
+			$dRNum--;
+		} else {
+			die "faTest : [$faTest]";
+		}
 	}
 }
 close $in;
@@ -90,6 +106,6 @@ my $outputFolder   = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
 
 # Prints patients JSON.
-open my $out, '>:utf8', "$outputFolder/pfizer_adc19ef_patients.json";
+open my $out, '>:utf8', "$outputFolder/pfizer_face_patients.json";
 print $out encode_json\%subjects;
 close $out;

@@ -34,8 +34,75 @@ load_phase_1();
 load_randomization();
 
 my %stats = ();
+my %abnormalSites = ();
 eval_days_of_exposure();
 trial_site_stats();
+
+# From August 1st to November 14, evaluating the p-value for each abnormal site.
+my $maxRecruitmentDate = '20200720';
+open my $out, '>:utf8', 'doe_subjects_by_sites_and_limit_date.csv';
+say $out "maxRecruitmentDate;trialSiteId;totalBNT162b2DOE;totalBNT162b2Subjects;populationBNT162b2DOE;totalPlaceboDOE;totalPlaceboSubjects;PlaceboRestOfStudyDOE;pValueDOE;";
+while ($maxRecruitmentDate < $cutoffCompdate) {
+	# say "maxRecruitmentDate : $maxRecruitmentDate";
+
+	# Calculates p-value for each site limiting recruitment to this max date.
+	my %tmpStats = ();
+	for my $subjectId (sort{$a <=> $b} keys %randomization) {
+		if (exists $phase1Subjects{$subjectId}) {
+			next;
+		}
+		unless ($randomization{$subjectId}->{'dose1Date'}) {
+			next;
+		}
+		my $dose1Date           = $randomization{$subjectId}->{'dose1Date'}          // die;
+		next if $dose1Date > $maxRecruitmentDate;
+		my $randomizationGroup  = $randomization{$subjectId}->{'randomizationGroup'} // 'Unknown';
+		$randomizationGroup     = 'BNT162b2' if $randomizationGroup =~ /BNT162b2 \(30/;
+		if ($randomizationGroup eq 'Unknown') {
+			next;
+		}
+
+		my ($trialSiteId)        = $subjectId =~ /(....)..../;
+		my ($fDY, $fDM, $fDD)    = $cutoffCompdate  =~ /(....)(..)(..)/;
+		my ($fDsY, $fDsM, $fDsD) = $dose1Date        =~ /(....)(..)(..)/;
+
+		my $daysOfExposureToSymptoms = time::calculate_days_difference("$fDsY-$fDsM-$fDsD 12:00:00", "$fDY-$fDM-$fDD 12:00:00");
+		$tmpStats{'subjects'}->{'total'}->{$randomizationGroup}->{'total'}++;
+		$tmpStats{'subjects'}->{'total'}->{$randomizationGroup}->{'totalDaysOfExposure'} += $daysOfExposureToSymptoms;
+		next unless exists $abnormalSites{'bntMoreExposed'}->{$trialSiteId} || exists $abnormalSites{'placeboMoreExposed'}->{$trialSiteId};
+
+		$tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{$randomizationGroup}->{'total'}++;
+		$tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{$randomizationGroup}->{'totalDaysOfExposure'} += $daysOfExposureToSymptoms;
+	}
+	my $populationBNT162b2DOE      = $tmpStats{'subjects'}->{'total'}->{'BNT162b2'}->{'totalDaysOfExposure'};
+	if ($populationBNT162b2DOE) {
+		my $populationPlaceboDOE       = $tmpStats{'subjects'}->{'total'}->{'Placebo'}->{'totalDaysOfExposure'}  // die;
+		for my $trialSiteId (sort{$a <=> $b} keys %{$tmpStats{'subjects'}->{'byArm'}}) {
+			# say "trialSiteId : $trialSiteId";
+			# p$tmpStats{'subjects'}->{'byArm'}->{$trialSiteId};
+			my $totalBNT162b2DOE       = $tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{'BNT162b2'}->{'totalDaysOfExposure'} // next;
+			my $totalPlaceboDOE        = $tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{'Placebo'}->{'totalDaysOfExposure'}  // next;
+			my $totalBNT162b2Subjects  = $tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{'BNT162b2'}->{'total'} // die;
+			my $totalPlaceboSubjects   = $tmpStats{'subjects'}->{'byArm'}->{$trialSiteId}->{'Placebo'}->{'total'}  // die;
+			my $BNT162b2RestOfStudyDOE = $populationBNT162b2DOE - $totalBNT162b2DOE;
+			my $PlaceboRestOfStudyDOE  = $populationPlaceboDOE  - $totalBNT162b2DOE;
+			my $chiDOE                 = chi_squared($totalBNT162b2DOE, $totalPlaceboDOE, $BNT162b2RestOfStudyDOE, $PlaceboRestOfStudyDOE);
+			my $pValueDOE              = 1 - Math::CDF::pchisq($chiDOE, $df);
+			say $out "$maxRecruitmentDate;$trialSiteId;$totalBNT162b2DOE;$totalBNT162b2Subjects;$populationBNT162b2DOE;$totalPlaceboDOE;$totalPlaceboSubjects;$PlaceboRestOfStudyDOE;$pValueDOE;";
+		}
+	}
+
+	# Adds a day.
+	my ($y, $m, $d) = $maxRecruitmentDate =~ /(....)(..)(..)/;
+	my $uts = time::datetime_to_timestamp("$y-$m-$d 12:00:00");
+	$uts += 86400;
+	my $dt = time::timestamp_to_datetime($uts);
+	($maxRecruitmentDate) = split ' ', $dt;
+	$maxRecruitmentDate =~ s/\D//g;
+}
+close $out;
+p%abnormalSites;
+die;
 
 sub eval_days_of_exposure {
 	for my $subjectId (sort{$a <=> $b} keys %randomization) {
@@ -74,7 +141,7 @@ sub trial_site_stats {
 	my $populationPlaceboSubjects  = $stats{'subjects'}->{'total'}->{'Placebo'}->{'total'}  // die;
 	my $populationBNT162b2DOE      = $stats{'subjects'}->{'total'}->{'BNT162b2'}->{'totalDaysOfExposure'} // die;
 	my $populationPlaceboDOE       = $stats{'subjects'}->{'total'}->{'Placebo'}->{'totalDaysOfExposure'}  // die;
-	open my $out, '>:utf8', 'symptomatic_subjects_by_sites.csv';
+	open my $out, '>:utf8', 'doe_subjects_by_sites.csv';
 	say $out "BNT162b2 - Total Subjects;Placebo - Total Subjects;BNT162b2 - Total Days Of Exposure;Placebo - Total Days Of Exposure;";
 	say $out "$populationBNT162b2Subjects;$populationPlaceboSubjects;$populationBNT162b2DOE;$populationPlaceboDOE;";
 	say $out "";
@@ -96,6 +163,7 @@ sub trial_site_stats {
 		say $out "$trialSiteId;$totalBNT162b2DOE;$totalBNT162b2Subjects;$chiSubjects;$totalPlaceboDOE;$totalPlaceboSubjects;$chiDOE;";
 		if ($pValueDOE < 0.1) {
 			if ($totalBNT162b2DOE > $totalPlaceboDOE) {
+				$abnormalSites{'bntMoreExposed'}->{$trialSiteId} = 1;
 				$stats{'BNT162OverExposed'}->{'totalBNT162b2Subjects'} += $totalBNT162b2Subjects;
 				$stats{'BNT162OverExposed'}->{'totalPlaceboSubjects'} += $totalPlaceboSubjects;
 				$stats{'BNT162OverExposed'}->{'totalBNT162b2DOE'} += $totalBNT162b2DOE;
@@ -114,6 +182,7 @@ sub trial_site_stats {
 				say "chiDOE                       : [$chiDOE]";
 				say "pValueDOE                    : [$pValueDOE]";
 			} else {
+				$abnormalSites{'placeboMoreExposed'}->{$trialSiteId} = 1;
 				$stats{'PlaceboOverExposed'}->{'totalBNT162b2Subjects'} += $totalBNT162b2Subjects;
 				$stats{'PlaceboOverExposed'}->{'totalPlaceboSubjects'} += $totalPlaceboSubjects;
 				$stats{'PlaceboOverExposed'}->{'totalBNT162b2DOE'} += $totalBNT162b2DOE;
@@ -141,10 +210,6 @@ sub trial_site_stats {
 			}
 		}
 	}
-	# close $out;
-	my $chi = chi_squared(44008, 38580, 1485387, 1490727);
-	my $pValue = 1 - Math::CDF::pchisq($chi, $df);
-	say "chi : [$chi], p-value: [$pValue]";
 }
 
 sub chi_squared {
