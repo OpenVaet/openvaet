@@ -123,10 +123,10 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	} else {
 		$stats{'0_primaryBreakdown'}->{$phase}->{'byAges'}->{'16+'}++;
 	}
-	if ($subjectId eq '12301012') {
-		p$advaData{$subjectId};
-		die;
-	}
+	# if ($subjectId eq '12301012') {
+	# 	p$advaData{$subjectId};
+	# 	die;
+	# }
 
 	# Verifying phase.
 	next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
@@ -219,7 +219,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		next;
 	}
 	my $missingVisit1Record = 0;
-	unless (exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'}) {
+	unless (exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'}) {
 		$stats{'1_phase3'}->{'4_visit1Testing'}->{'noVisit1AdvaData'}++;
 		$missingVisit1Record = 1;
 	}
@@ -246,7 +246,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	# die;
 
 	# Verifing VISIT 1 Test Results.
-	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'} // die;
+	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'} // die;
 	my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'} // die;
 	my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
 	die if $v1D1LocalPCR;
@@ -386,6 +386,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 			} else {
 				$stats{'1_phase3'}->{'13_dose2'}->{'covidPositivePost7DaysPostDose2'}++;
 				$stats{'1_phase3'}->{'13_dose2'}->{'byArm'}->{$arm}->{'covidPositivePost7DaysPostDose2'}++;
+				$stats{'1_phase3'}->{'13_dose2'}->{'byArm'}->{$arm}->{'subjectsQualifying'}->{$subjectId}++;
 				# next;
 			}
 		}

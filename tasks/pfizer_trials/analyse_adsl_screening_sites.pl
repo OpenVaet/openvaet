@@ -45,6 +45,7 @@ my $advaFile             = "public/doc/pfizer_trials/pfizer_adva_patients.json";
 my $screeningsFile       = "public/doc/pfizer_trials/subjects_screening_dates.json";
 my $randomizationFile1   = 'public/doc/pfizer_trials/pfizer_trial_randomization_1.json';
 my $pdfFile1             = 'excluded subjects 6 month.csv';
+my $sitesRecruitmentFile = 'tasks/pfizer_trials/investigative_sites_screening_random.csv';
 my $adc19efFile          = 'public/doc/pfizer_trials/pfizer_adc19ef_patients.json';
 my $officialEfficacyFile = 'public/doc/pfizer_trials/officialEfficacy.json';
 my $simuEfficacyFile     = 'public/doc/pfizer_trials/simulated_efficacy.json';
@@ -53,6 +54,7 @@ my $simuEffiAnomaFile    = 'public/doc/pfizer_trials/simulated_efficacy_anomalie
 my %expectedMortality    = ();
 config_expected_mortality();
 
+my %sitesRecruitments    = ();
 my %simuEffiAnomalies    = ();
 my %simulatedEfficacy    = ();
 my %officialEfficacy     = ();
@@ -76,6 +78,7 @@ my %randomization        = ();
 my %pdfCases             = ();
 my %testsRefs            = ();
 config_sites();
+load_sites_recruitments();
 load_simulated_efficacy();
 load_simulated_efficacy_anomalies();
 load_official_efficacy();
@@ -102,7 +105,38 @@ my %stats = ();
 
 parse_data();
 
-delete $stats{'primaryBreakdown'}; # Comment this line if you wish to review the primary breakdown.
+open my $out, '>:utf8', 'sites_expected_vs_actual_recruitment.csv';
+say $out "trialSiteId;screened;expectedScreened;randomized;expectedRandomized;";
+for my $trialSiteId (sort{$a <=> $b} keys %{$stats{'totalSubjects'}->{'bySites'}}) {
+	my $screened   = $stats{'totalSubjects'}->{'bySites'}->{$trialSiteId}          // die;
+	my $randomized = $stats{'totalSubjectsRandomized'}->{'bySites'}->{$trialSiteId} // die;
+	my $expectedScreened   = $sitesRecruitments{$trialSiteId}->{'screened'}   // die;
+	my $expectedRandomized = $sitesRecruitments{$trialSiteId}->{'randomized'} // die;
+	die unless exists $sitesRecruitments{$trialSiteId};
+	if (
+		$sitesRecruitments{$trialSiteId}->{'screened'} != $screened ||
+		$sitesRecruitments{$trialSiteId}->{'randomized'} != $randomized
+	) {
+		say "$trialSiteId | $screened | $expectedScreened | $randomized | $expectedRandomized |";
+		# p$sitesRecruitments{$trialSiteId};
+		if ($sitesRecruitments{$trialSiteId}->{'screened'} != $screened) {
+			my $absoluteOffset = abs($expectedScreened - $screened);
+			my $offsetToExpected = $expectedScreened - $screened;
+			$stats{'offsets'}->{'screening'}->{'absoluteOffset'} += $absoluteOffset;
+			$stats{'offsets'}->{'screening'}->{'offsetToExpected'} += $offsetToExpected;
+		}
+		if ($sitesRecruitments{$trialSiteId}->{'randomized'} != $randomized) {
+			my $absoluteOffset = abs($expectedRandomized - $randomized);
+			my $offsetToExpected = $expectedRandomized - $randomized;
+			$stats{'offsets'}->{'randomized'}->{'absoluteOffset'} += $absoluteOffset;
+			$stats{'offsets'}->{'randomized'}->{'offsetToExpected'} += $offsetToExpected;
+		}
+	}
+	say $out "$trialSiteId;$screened;$expectedScreened;$randomized;$expectedRandomized;";
+}
+close $out;
+delete $stats{'totalSubjects'};
+delete $stats{'totalSubjectsRandomized'};
 p%stats;
 
 sub age_to_age_group {
@@ -194,6 +228,21 @@ sub load_pdf_exclusions_1 {
 	}
 	close $in;
 	say "[$pdfFile1] -> subjects : " . keys %pdf_exclusions_1;
+}
+
+sub load_sites_recruitments {
+	open my $in, '<:utf8', $sitesRecruitmentFile;
+	my $lNum = 0;
+	while (<$in>) {
+		$lNum++;
+		chomp $_;
+		next if $lNum == 1;
+		my ($trialSiteId, $screened, $randomized) = split ';', $_;
+		$sitesRecruitments{$trialSiteId}->{'screened'}   = $screened;
+		$sitesRecruitments{$trialSiteId}->{'randomized'} = $randomized;
+	}
+	close $in;
+	say "[$sitesRecruitmentFile] -> subjects : " . keys %sitesRecruitments;
 }
 
 sub load_pi_oversight {
@@ -2337,13 +2386,11 @@ sub config_sites {
 }
 
 sub parse_data {
-	my %visits = ();
-	my %tests = ();
 	for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		my ($trialSiteId)  = $subjectId =~ /^(....)....$/;
 		$trialSiteId       = 1231 if $trialSiteId eq '4444';
 		die "trialSiteId : $trialSiteId" unless exists $sites{$trialSiteId}->{'country'};
-		# next if exists $duplicates{$subjectId};
+		die "trialSiteId : $trialSiteId" unless exists $sitesRecruitments{$trialSiteId};
 		my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
 		my $mulenRfl       = $adsl{$subjectId}->{'mulenRfl'}       // die;
 		my $country        = $sites{$trialSiteId}->{'country'}     // die;
@@ -2359,20 +2406,15 @@ sub parse_data {
 		# Verifying phase.
 		# next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
 		# next if $mulenRfl  && $mulenRfl eq 'Y';
-		my $anomalyType = 'No Anomaly';
-		if (exists $simuEffiAnomalies{$subjectId}) {
-			$anomalyType = $simuEffiAnomalies{$subjectId} // die;
-			$stats{'dataAnomaly'}++;
-		} else {
-			$stats{'eligible'}++;
-		}
-		$phase = 'Phase 2 - 3';
 		my $sex = $adsl{$subjectId}->{'sex'} // die;
 		my $randomizationDatetime = $adsl{$subjectId}->{'randomizationDatetime'} // '';
 		my $randomizationDate = $adsl{$subjectId}->{'randomizationDate'};
 		# next if (!$randomizationDate || ($randomizationDate > $cutoffCompdate));
 		$stats{'totalSubjects'}->{'total'}++;
-		$stats{'totalSubjects'}->{$arm}++;
+		$stats{'totalSubjects'}->{'bySites'}->{$trialSiteId}++;
+		next unless $randomizationDate;
+		$stats{'totalSubjectsRandomized'}->{'total'}++;
+		$stats{'totalSubjectsRandomized'}->{'bySites'}->{$trialSiteId}++;
 
 		# Verifying Dose 1.
 		my $dose1Date = $adsl{$subjectId}->{'dose1Date'};
@@ -2412,115 +2454,5 @@ sub parse_data {
 		my $v6NBinding   = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
 		# next unless exists $simulatedEfficacy{$subjectId} || exists $simuEffiAnomalies{$subjectId};
 
-		next unless $v1D1NBinding && $v3NBinding;
-
-		$stats{'patterns'}->{$arm}->{$v1D1NBinding}->{$v3NBinding}++;
-
-		# if (
-		# 	($v3NBinding && ($v3NBinding eq 'POS'))
-		# 	# ||
-		# 	# ($v4NBinding && ($v4NBinding eq 'POS')) ||
-		# 	# ($v5NBinding && ($v5NBinding eq 'POS')) ||
-		# 	# ($v6NBinding && ($v6NBinding eq 'POS'))
-		# ) {
-		# 	if ($v1D1NBinding eq 'POS') {
-		# 		next if $anomalyType eq 'No Visit 1 PCR';
-		# 		say "v3NBinding  : $v3NBinding";
-		# 		say "v4NBinding  : $v4NBinding";
-		# 		say "anomalyType : $anomalyType";
-		# 		die;
-		# 	}
-		# 	if ($v1D1NBinding && ($v1D1NBinding eq 'NEG')) {
-		# 		$stats{'totalSubjectsPositiveNegV1'}++;
-		# 		my ($positiveDatetime, $positiveDate, $positiveVisit);
-		# 		if ($v3NBinding eq 'POS') {
-		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V3_MONTH1_POSTVAX2_L'}->{'visitDate'};
-		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V3_MONTH1_POSTVAX2_L'}->{'visitDatetime'};
-		# 		} elsif ($v4NBinding eq 'POS') {
-		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V101_VAX3'}->{'visitDate'};
-		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V101_VAX3'}->{'visitDatetime'};
-		# 		} elsif ($v5NBinding eq 'POS') {
-		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V201_SURVEIL_CONSENT'}->{'visitDate'};
-		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V201_SURVEIL_CONSENT'}->{'visitDatetime'};
-		# 		} elsif ($v6NBinding eq 'POS') {
-		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'visitDate'};
-		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'visitDatetime'};
-		# 		}
-		# 		die unless $positiveDatetime;
-		# 		say "positiveDatetime : $positiveDatetime";
-		# 		say "positiveDate : $positiveDate";
-		# 		say "v3NBinding   : $v3NBinding";
-		# 		say "v4NBinding   : $v4NBinding";
-		# 		say "anomalyType  : $anomalyType";
-		# 		my $earliestCovid = '99999999';
-		# 		for my $visit (sort keys %centralPCRsByVisits) {
-		# 			my $visitCompdate = $centralPCRsByVisits{$visit}->{'visitCompdate'} // die;
-		# 			my $pcrResult     = $centralPCRsByVisits{$visit}->{'pcrResult'}     // die;
-		# 			if ($pcrResult eq 'POS') {
-		# 				$earliestCovid = $visitCompdate if $visitCompdate < $earliestCovid;
-		# 			}
-		# 		}
-		# 		# Uncommenting these lines (and switching the "if" condition above) allows to review the figures including Local PCR.
-		# 		# for my $visit (sort keys %localPCRsByVisits) {
-		# 		# 	my $visitCompdate = $localPCRsByVisits{$visit}->{'visitCompdate'} // die;
-		# 		# 	my $pcrResult     = $localPCRsByVisits{$visit}->{'pcrResult'}     // die;
-		# 		# 	if ($pcrResult eq 'POS') {
-		# 		# 		$earliestCovid = $visitCompdate if $visitCompdate < $earliestCovid;
-		# 		# 	}
-		# 		# }
-		# 		if ($earliestCovid eq '99999999' || $earliestCovid > $positiveDate) {
-		# 			# say "earliestCovid  : $earliestCovid";
-		# 			# p%centralPCRsByVisits;
-		# 			# p%symptomsByVisits;
-		# 			$stats{'noPositiveCentralPCR'}->{'total'}++;
-		# 			$stats{'noPositiveCentralPCR'}->{$arm}->{'total'}++;
-		# 			$stats{'noPositiveCentralPCR'}->{$arm}->{$anomalyType}++;
-		# 			# die;
-		# 		} else {
-		# 			$stats{'positiveCentralPCR'}->{'total'}++;
-		# 			$stats{'positiveCentralPCR'}->{$arm}->{'total'}++;
-		# 			$stats{'positiveCentralPCR'}->{$arm}->{$anomalyType}++;
-		# 		}
-		# 	} else {
-
-		# 	}
-		# 	say "v3NBinding  : $v3NBinding";
-		# 	say "v4NBinding  : $v4NBinding";
-		# 	say "v5NBinding  : $v5NBinding";
-		# 	say "v6NBinding  : $v6NBinding";
-		# 	say "anomalyType : $anomalyType";
-		# 	$stats{'totalSubjectsPositive'}++;
-		# }
-
-		# for my $advaVisitName (sort keys %{$advaData{$subjectId}->{'visits'}}) {
-		# 	$visits{$advaVisitName}++;
-		# 	my $visitDate = $advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'visitDate'} // die;
-		# 	for my $advaTestName (sort keys %{$advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}}) {
-		# 		$tests{$advaTestName}->{$advaVisitName}++;
-		# 		if (
-		# 			$advaTestName eq 'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay' ||
-		# 			$advaTestName eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay' ||
-		# 			$advaTestName eq 'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay'
-		# 		) {
-		# 			for my $testResult (@{$advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}->{$advaTestName}}) {
-		# 				# say "testResult    : $testResult";
-		# 			}
-		# 		} else {
-		# 			my $testResult = $advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}->{$advaTestName} // die;
-		# 			# say "advaVisitName : $advaVisitName";
-		# 			# say "advaTestName  : $advaTestName";
-		# 			# say "testResult    : $testResult";
-		# 		}
-		# 		# die;
-		# 	}
-		# }
-
-		# if (exists $adaes{$subjectId}) {
-		# 	p$adaes{$subjectId};
-		# 	p$adsl{$subjectId};
-		# 	die;
-		# }
 	}
-	p%visits;
-	p%tests;
 }
