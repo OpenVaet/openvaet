@@ -196,7 +196,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		next;
 	}
 	if (
-		!exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'} &&
+		!exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'} &&
 		!exists $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'}
 	) {
 		$treatmentAnomalies{$subjectId} = 'No Visit 1 Test Data';
@@ -212,8 +212,8 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		$missingVisit1Tests{$subjectId}->{'randomizationDatetime'} = $randomizationDatetime;
 		next;
 	}
-	unless (exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'}) {
-		$treatmentAnomalies{$subjectId} = 'No Visit 1 Test Data';
+	unless (exists $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'}) {
+		$treatmentAnomalies{$subjectId} = 'No Visit 1 N-Binding';
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'missingVisit1Data'}++;
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'noVisit1AdvaData'}++;
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'byArm'}->{$arm}->{'missingVisit1Data'}++;
@@ -226,7 +226,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		next;
 	}
 	unless (exists $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'}) {
-		$treatmentAnomalies{$subjectId} = 'No Visit 1 Test Data';
+		$treatmentAnomalies{$subjectId} = 'No Visit 1 PCR';
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'missingVisit1Data'}++;
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'noVisit1PCRData'}++;
 		$stats{'1_phase3'}->{'4_visit1TestingData'}->{'byArm'}->{$arm}->{'missingVisit1Data'}++;
@@ -256,7 +256,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	# die;
 
 	# Verifing VISIT 1 Test Results.
-	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'} // die;
+	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'} // die;
 	my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'} // die;
 	my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
 	die if $v1D1LocalPCR;
@@ -577,6 +577,12 @@ for my $subjectId (sort{$a <=> $b} keys %treatmentAnomalies) {
 	say $outAnomalies "$subjectId;$arm;$sex;$randomizationDatetime;$motive;";
 }
 close $outAnomalies;
+open my $out, '>:utf8', 'public/doc/pfizer_trials/simulated_efficacy.json';
+print $out encode_json\%simulatedEfficacy;
+close $out;
+open my $out2, '>:utf8', 'public/doc/pfizer_trials/simulated_efficacy_anomalies.json';
+print $out2 encode_json\%treatmentAnomalies;
+close $out2;
 
 p%stats;
 # p%visitValues;

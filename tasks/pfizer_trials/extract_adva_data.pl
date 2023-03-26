@@ -128,6 +128,42 @@ while (<$in>) {
 		if (exists $subjects{$subjectId}->{'dose2Datetime'} && $subjects{$subjectId}->{'dose2Datetime'}) {
 			die unless $dose2Datetime eq $subjects{$subjectId}->{'dose2Datetime'};
 		}
+		if (exists $subjects{$subjectId}->{'visits'}->{$visitName}->{$param}) {
+			if ($subjects{$subjectId}->{'visits'}->{$visitName}->{$param} ne $avaLc) {
+				die "param: $param" unless $param eq 'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay' || $param eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay' || $param eq 'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay';
+				# p$subjects{$subjectId}->{'visits'}->{$visitName};
+				# my %tmp = ();
+				# $tmp{$subjectId}->{'actArm'}          = $actArm;
+				# $tmp{$subjectId}->{'phase'}           = $phase;
+				# $tmp{$subjectId}->{'cohort'}          = $cohort;
+				# $tmp{$subjectId}->{'trialSiteId'}     = $trialSiteId;
+				# $tmp{$subjectId}->{'subjectId'}       = $subjectId;
+				# $tmp{$subjectId}->{'uSubjectId'}      = $uSubjectId;
+				# $tmp{$subjectId}->{'unblindDatetime'} = $unblindDatetime;
+				# $tmp{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
+				# $tmp{$subjectId}->{'sex'}             = $sex;
+				# $tmp{$subjectId}->{'race'}            = $race;
+				# $tmp{$subjectId}->{'age'}             = $age;
+				# $tmp{$subjectId}->{'isDtc'}           = $isDtc;
+				# $tmp{$subjectId}->{'dose1Datetime'}   = $dose1Datetime;
+				# $tmp{$subjectId}->{'dose2Datetime'}   = $dose2Datetime;
+				# $tmp{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} = $visitDate;
+				# $tmp{$subjectId}->{'visits'}->{$visitName}->{'visitName'} = $visitName;
+				# $tmp{$subjectId}->{'visits'}->{$visitName}->{$param}  = $avaLc;
+				# p%tmp;
+				# die;
+			}
+			die unless $subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} eq $visitDate;
+		}
+		if (
+			$param eq 'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay' ||
+			$param eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay' ||
+			$param eq 'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay'
+		) {
+			push @{$subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}}, $avaLc;
+		} else {
+			$subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}  = $avaLc;
+		}
 		$subjects{$subjectId}->{'actArm'}          = $actArm;
 		$subjects{$subjectId}->{'phase'}           = $phase;
 		$subjects{$subjectId}->{'cohort'}          = $cohort;
@@ -144,7 +180,6 @@ while (<$in>) {
 		$subjects{$subjectId}->{'dose2Datetime'}   = $dose2Datetime;
 		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} = $visitDate;
 		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDatetime'} = $adtDatetime;
-		$subjects{$subjectId}->{'visits'}->{$visitName}->{$param}  = $avaLc;
 		$subjects{$subjectId}->{'totalAdvaRows'}++;
 		# p$subjects{$uSubjectId};
 		# p%values;

@@ -67,11 +67,14 @@ sub detect_missing_subjects {
 				unless ($theoricalNext == $trialSiteSubjectId) {
 					my $upTo = $trialSiteSubjectId - 1;
 					# say "[$trialSiteSubjectId] != $theoricalNext";
+					my $increments = 0;
 					for my $theorical ($theoricalNext .. $upTo) {
 						$subjectsIds{$trialSiteId}->{$theorical} = 'Missing';
 						say "Missing [$trialSiteId$theorical]";
+						$increments++;
 						$stats{'errors'}++;
 					}
+					$stats{'byIncrements'}->{$increments}++;
 				} else {
 					# say "Present [$trialSiteId$trialSiteSubjectId]";
 					$stats{'asExpected'}++;
@@ -80,11 +83,14 @@ sub detect_missing_subjects {
 				unless ($trialSiteSubjectId == 1001) {
 					# say "[$trialSiteSubjectId] != 1001";
 					my $upTo = $trialSiteSubjectId - 1;
+					my $increments = 0;
 					for my $theorical (1001 .. $upTo) {
 						$subjectsIds{$trialSiteId}->{$theorical} = 'Missing';
 						say "Missing [$trialSiteId$theorical]";
 						$stats{'errors'}++;
+						$increments++;
 					}
+					$stats{'byIncrements'}->{$increments}++;
 				} else {
 					# say "Present [$trialSiteId$trialSiteSubjectId]";
 					$stats{'asExpected'}++;

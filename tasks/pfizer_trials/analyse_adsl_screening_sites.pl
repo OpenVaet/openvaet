@@ -21,11 +21,10 @@ use time;
 my $daysOffset           = 5;
 my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
 my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
-my $cutoffCompdate       = '20210313';
+my $cutoffCompdate       = '20211114';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
 my $df                   = 1; # degrees of freedom
-my $fromDoseCompdate     = '20201019';
 
 # Loading data required.
 my $adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
@@ -48,17 +47,14 @@ my $randomizationFile1   = 'public/doc/pfizer_trials/pfizer_trial_randomization_
 my $pdfFile1             = 'excluded subjects 6 month.csv';
 my $adc19efFile          = 'public/doc/pfizer_trials/pfizer_adc19ef_patients.json';
 my $officialEfficacyFile = 'public/doc/pfizer_trials/officialEfficacy.json';
+my $simuEfficacyFile     = 'public/doc/pfizer_trials/simulated_efficacy.json';
+my $simuEffiAnomaFile    = 'public/doc/pfizer_trials/simulated_efficacy_anomalies.json';
 
-my %sitesTargeted = ();
-$sitesTargeted{'1133'} = 'ee8493';
-$sitesTargeted{'1135'} = 'ee8493';
-$sitesTargeted{'1146'} = 'ee8493';
-$sitesTargeted{'1170'} = 'ee8493';
-$sitesTargeted{'1001'} = 'ej0553';
-$sitesTargeted{'1002'} = 'ej0553';
-$sitesTargeted{'1003'} = 'ej0553';
-$sitesTargeted{'1007'} = 'ej0553';
+my %expectedMortality    = ();
+config_expected_mortality();
 
+my %simuEffiAnomalies    = ();
+my %simulatedEfficacy    = ();
 my %officialEfficacy     = ();
 my %sites                = ();
 my %adc19efs             = ();
@@ -80,6 +76,8 @@ my %randomization        = ();
 my %pdfCases             = ();
 my %testsRefs            = ();
 config_sites();
+load_simulated_efficacy();
+load_simulated_efficacy_anomalies();
 load_official_efficacy();
 load_adc19ef();
 load_pdf_exclusions_1();
@@ -100,247 +98,11 @@ load_pdf_cases();
 load_tests_refs();
 load_adva_data();
 
-my %stats       = ();
-my %subjectsAEs = ();
+my %stats = ();
 
-for my $subjectId (sort{$a <=> $b} keys %adsl) {
-	my $trialSiteId    = $adsl{$subjectId}->{'trialSiteId'}    // die;
-	next unless exists $sitesTargeted{$trialSiteId};
-	my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
-	my $mulenRfl       = $adsl{$subjectId}->{'mulenRfl'}       // die;
-	my $country        = $sites{$trialSiteId}->{'country'}     // die;
-	my $phase          = $adsl{$subjectId}->{'phase'}          // die;
-	my $saffl          = $adsl{$subjectId}->{'saffl'}          // die;
-	my $ageYears       = $adsl{$subjectId}->{'ageYears'}       // die;
-	my $ageGroup       = age_to_age_group($ageYears);
-	my $arm            = $adsl{$subjectId}->{'arm'}            // die;
-	my $originalArm    = $arm;
-	my $hasHIV         = $adsl{$subjectId}->{'hasHIV'}         // die;
-	my $uSubjectId     = $adsl{$subjectId}->{'uSubjectId'}     // die;
-	my $unblindingDate = $adsl{$subjectId}->{'unblindingDate'} || $cutoffCompdate;
+parse_data();
 
-	# Verifying phase.
-	next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
-	next unless $saffl && $saffl eq 'Y';
-	next if $mulenRfl  && $mulenRfl eq 'Y';
-	$phase = 'Phase 2 - 3';
-	my $sex = $adsl{$subjectId}->{'sex'} // die;
-	my $randomizationDatetime = $adsl{$subjectId}->{'randomizationDatetime'} // '';
-	my $randomizationDate = $adsl{$subjectId}->{'randomizationDate'};
-
-	# Verifying Dose 1.
-	my $dose1Date = $adsl{$subjectId}->{'dose1Date'};
-
-	# Verifying Visit 1 Tests.
-	my ($hasPositiveCentralPCR,
-		%centralPCRsByVisits) = subject_central_pcrs_by_visits($subjectId, $unblindingDate);
-	my ($hasPositiveLocalPCR,
-		%localPCRsByVisits)   = subject_local_pcrs_by_visits($subjectId, $unblindingDate);
-
-	# Verifing VISIT 1 Test Results.
-	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'};
-	my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
-	my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
-	die if $v1D1LocalPCR;
-
-	# Verifying Dose 2.
-	my $dose2Date = $adsl{$subjectId}->{'dose2Date'};
-
-	# Verifying interval between injections.
-	my $deathDatetime    = $adsl{$subjectId}->{'deathDatetime'};
-	my $deathCompdate;
-	if ($deathDatetime) {
-		($deathCompdate) = split ' ', $deathDatetime;
-		$deathCompdate =~ s/\D//g;
-		die if $deathCompdate && ($deathCompdate > 20210313);
-	}
-	my $dose1Datetime    = $adsl{$subjectId}->{'dose1Datetime'};
-	next unless $dose1Datetime;
-	my $dose2Datetime    = $adsl{$subjectId}->{'dose2Datetime'};
-	my $dose3Datetime    = $adsl{$subjectId}->{'dose3Datetime'};
-	my ($daysBetweenDoses1And2, $daysBetweenDoses1And3, $daysBetweenDoses2And3, $daysBetweenDoseAndCutOff);
-	my ($doeBNT162b2, $doePlacebo) = (0, 0);
-	if ($dose1Datetime && $dose2Datetime) {
-		$daysBetweenDoses1And2 = time::calculate_days_difference($dose1Datetime, $dose2Datetime);
-	}
-	if ($dose3Datetime) {
-		die unless $arm eq 'Placebo';
-		$daysBetweenDoses1And3 = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-		$doePlacebo += $daysBetweenDoses1And3;
-		unless ($dose2Datetime) {
-			$stats{'noDose2WhileDose3'}++;
-			die unless $dose1Datetime;
-			$daysBetweenDoses2And3 = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-		} else {
-			$daysBetweenDoses2And3 = time::calculate_days_difference($dose2Datetime, $dose3Datetime);
-		}
-		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $deathDatetime);
-		} else {
-			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
-		}
-		$doeBNT162b2 += $daysBetweenDoseAndCutOff;
-		# $stats{'daysBetween3rdDoses'}->{$daysBetweenDoses2And3}++;
-		# say "daysBetweenDoses2And3 : $daysBetweenDoses2And3";
-	} else {
-		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-		} else {
-			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
-		}
-		if ($arm eq 'Placebo') {
-			$doePlacebo  += $daysBetweenDoseAndCutOff;
-		} else {
-			$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-		}
-	}
-	if ($deathDatetime) {
-		my ($deathCompdate) = split ' ', $deathDatetime;
-		$deathCompdate =~ s/\D//g;
-		die if $deathCompdate && ($deathCompdate > 20210313);
-		$stats{'deathsByLastDoseArm'}->{$arm}->{'totalDeaths'}++;
-		$stats{'deathsByLastDoseArm'}->{$arm}->{'subjects'}->{$subjectId} = $deathDatetime;
-	}
-
-	if (exists $adaes{$subjectId}) {
-		# p$adaes{$subjectId};
-		my $hasAE = 0;
-		my $hasAEPostOctober = 0;
-		for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
-			my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
-			unless ($aeY && $aeM && $aeD) {
-				$stats{'faultyDate'}++;
-				next;
-			} else {
-				next if $aeCompdate > $cutoffCompdate;
-				$stats{'adverseEffectsReported'}++;
-			}
-			$hasAE = 1;
-			my %doseDates = ();
-			$doseDates{'1'} = $dose1Datetime;
-			if ($dose2Datetime) {
-				$doseDates{'2'} = $dose2Datetime;
-			}
-			if ($dose3Datetime) {
-				$doseDates{'3'} = $dose3Datetime;
-			}
-			my %doseDatesByDates = ();
-			for my $dNum (sort{$a <=> $b} keys %doseDates) {
-				my $dt = $doseDates{$dNum} // die;
-				my ($cpDt) = split ' ', $dNum;
-				$cpDt =~ s/\D//g;
-				next unless $cpDt < $aeCompdate;
-				my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
-				$doseDatesByDates{$daysBetween}->{'closestDoseDate'} = $dt;
-				$doseDatesByDates{$daysBetween}->{'closestDose'} = $dNum;
-			}
-			my ($closestDoseDate, $closestDose, $doseToAE);
-			for my $daysBetween (sort{$a <=> $b} keys %doseDatesByDates) {
-				$closestDoseDate = $doseDatesByDates{$daysBetween}->{'closestDoseDate'} // die;
-				$closestDose = $doseDatesByDates{$daysBetween}->{'closestDose'} // die;
-				$doseToAE = $daysBetween;
-				last;
-			}
-			$arm = 'BNT162b2 Phase 2/3 (30 mcg)' if $closestDose > 2;
-			for my $aeObserved (sort keys %{$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}}) {
-				# p$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved};die;
-				my $aehlgt        = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlgt'}        // die;
-				my $aehlt         = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlt'}         // die;
-				my $toxicityGrade = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'toxicityGrade'} || 'NA';
-				# say "closestDoseDate : $closestDoseDate";
-				# say "closestDose     : $closestDose";
-				# say "doseToAE        : $doseToAE";
-				# say "aehlgt          : $aehlgt";
-				# say "aehlt           : $aehlt";
-				# say "aeObserved      : $aeObserved";
-				# say "toxicityGrade   : $toxicityGrade";
-
-				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalSubjects'}++;
-				}
-				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-					$subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalSubjects'}++;
-				}
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalAEs'}++;
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'gradeTotal'}++;
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalAEs'}++;
-				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'gradeTotal'}++;
-				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				if ($aeCompdate >= $fromDoseCompdate) {
-					$hasAEPostOctober = 1;
-					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalSubjects'}++;
-					}
-					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalSubjects'}++;
-					}
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalAEs'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'gradeTotal'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalAEs'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'gradeTotal'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				}
-			}
-		}
-		$stats{'globalStats'}->{'full_data'}->{'totalSubjects'}++;
-		$stats{'globalStats'}->{'full_data'}->{'totalSubjectsWithAE'}++ if $hasAE;
-		if ($dose1Date >= $fromDoseCompdate) {
-			$stats{'globalStats'}->{'post_october_19'}->{'totalSubjects'}++;
-		}
-		$stats{'globalStats'}->{'post_october_19'}->{'totalSubjectsWithAE'}++ if $hasAEPostOctober;
-		# die;
-	}
-
-	# if (exists $adaes{$subjectId}) {
-	# 	p$adaes{$subjectId};
-	# 	p$adsl{$subjectId};
-	# 	die;
-	# }
-}
-
-for my $fileLabel (sort keys %{$stats{'aeStats'}}) {
-	my $totalSubjects = $stats{'globalStats'}->{$fileLabel}->{'totalSubjects'} // die;
-	my $totalSubjectsWithAE = $stats{'globalStats'}->{$fileLabel}->{'totalSubjectsWithAE'} // die;
-	my $percentOfTotal = nearest(0.01, $totalSubjectsWithAE * 100 / $totalSubjects);
-	say "totalSubjects       : $totalSubjects";
-	say "totalSubjectsWithAE : $totalSubjectsWithAE";
-	say "percentOfTotal      : $percentOfTotal";
-	for my $toxicityGrade (sort keys %{$stats{'aeStats'}->{$fileLabel}}) {
-		p$stats{'aeStats'}->{$fileLabel};
-		say "Printing [adverse_effects_$fileLabel" . "_$toxicityGrade.csv]";
-		open my $out, '>:utf8', "adverse_effects/adverse_effects_$fileLabel" . "_$toxicityGrade.csv";
-		say $out "System Organ Class / Preferred Term;;BNT162b2 (30 mcg);;;Placebo;;;Total;;;";
-		say $out ";;AEs;Subjects;\%;AEs;Subjects;\%;AEs;Subjects;\%;";
-		my $totalAEs      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'gradeTotal'}                  // 0;
-		my $bNT162b2AEs   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalAEs'} // 0;
-		my $placeboAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo'}->{'totalAEs'}                     // 0;
-		say $out "All;All;$totalAEs;$totalSubjectsWithAE;$percentOfTotal;$bNT162b2AEs;Subjects;%;$placeboAEs;Subjects;\%;";
-		for my $category (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}}) {
-			my $categoryTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'categoryTotal'} // die;
-			for my $reaction (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}}) {
-				my $reactionTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'reactionTotal'} // die;
-				my $bNT162b2Total = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'BNT162b2 Phase 2/3 (30 mcg)'} // 0;
-				my $placeboTotal  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'Placebo'} // 0;
-				say $out "$category;$categoryTotal;$reaction;$reactionTotal;$bNT162b2Total;$placeboTotal;";
-			}
-		}
-		close $out;
-	}
-}
+delete $stats{'primaryBreakdown'}; # Comment this line if you wish to review the primary breakdown.
 p%stats;
 
 sub age_to_age_group {
@@ -380,6 +142,34 @@ sub load_official_efficacy {
 	$json = decode_json($json);
 	%officialEfficacy = %$json;
 	say "[$officialEfficacyFile] -> subjects : " . keys %officialEfficacy;
+}
+
+sub load_simulated_efficacy {
+	open my $in, '<:utf8', $simuEfficacyFile or die "Missing file [$simuEfficacyFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%simulatedEfficacy = %$json;
+	# p%simulatedEfficacy;
+	# die;
+	say "[$simuEfficacyFile] -> subjects : " . keys %simulatedEfficacy;
+}
+
+sub load_simulated_efficacy_anomalies {
+	open my $in, '<:utf8', $simuEffiAnomaFile or die "Missing file [$simuEffiAnomaFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%simuEffiAnomalies = %$json;
+	# p%simuEffiAnomalies;
+	# die;
+	say "[$simuEffiAnomaFile] -> subjects : " . keys %simuEffiAnomalies;
 }
 
 sub chi_squared {
@@ -986,6 +776,27 @@ sub symptom_category_from_symptom {
 		die "symptomName : $symptomName";
 	}
 	return $symptomCategory;
+}
+
+sub config_expected_mortality {
+	$expectedMortality{'85-94'}->{'2019'} = '13228.6';
+	$expectedMortality{'85-94'}->{'2020'} = '15210.0';
+	$expectedMortality{'85-94'}->{'2021'} = '15743.3';
+	$expectedMortality{'75-84'}->{'2019'} = '4308.3';
+	$expectedMortality{'75-84'}->{'2020'} = '4997';
+	$expectedMortality{'75-84'}->{'2021'} = '5119.4';
+	$expectedMortality{'65-74'}->{'2019'} = '1764.6';
+	$expectedMortality{'65-74'}->{'2020'} = '2072.3';
+	$expectedMortality{'65-74'}->{'2021'} = '2151.3';
+	$expectedMortality{'55-64'}->{'2019'} = '883.3';
+	$expectedMortality{'55-64'}->{'2020'} = '1038.9';
+	$expectedMortality{'55-64'}->{'2021'} = '1117.1';
+	$expectedMortality{'45-54'}->{'2019'} = '392.4';
+	$expectedMortality{'45-54'}->{'2020'} = '473.5';
+	$expectedMortality{'45-54'}->{'2021'} = '531';
+	$expectedMortality{'35-44'}->{'2019'} = '199.2';
+	$expectedMortality{'35-44'}->{'2020'} = '248';
+	$expectedMortality{'35-44'}->{'2021'} = '287.9';
 }
 
 sub config_sites {
@@ -2523,4 +2334,193 @@ sub config_sites {
 	# Displaying total sites.
 	# my $totalSites   = keys %sites;
 	# say "$totalSites sites listed.";
+}
+
+sub parse_data {
+	my %visits = ();
+	my %tests = ();
+	for my $subjectId (sort{$a <=> $b} keys %adsl) {
+		my ($trialSiteId)  = $subjectId =~ /^(....)....$/;
+		$trialSiteId       = 1231 if $trialSiteId eq '4444';
+		die "trialSiteId : $trialSiteId" unless exists $sites{$trialSiteId}->{'country'};
+		# next if exists $duplicates{$subjectId};
+		my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
+		my $mulenRfl       = $adsl{$subjectId}->{'mulenRfl'}       // die;
+		my $country        = $sites{$trialSiteId}->{'country'}     // die;
+		my $phase          = $adsl{$subjectId}->{'phase'}          // die;
+		my $saffl          = $adsl{$subjectId}->{'saffl'}          // die;
+		my $ageYears       = $adsl{$subjectId}->{'ageYears'}       // die;
+		my $ageGroup       = age_to_age_group($ageYears);
+		my $arm            = $adsl{$subjectId}->{'arm'}            // die;
+		my $hasHIV         = $adsl{$subjectId}->{'hasHIV'}         // die;
+		my $uSubjectId     = $adsl{$subjectId}->{'uSubjectId'}     // die;
+		my $unblindingDate = $adsl{$subjectId}->{'unblindingDate'} || $cutoffCompdate;
+
+		# Verifying phase.
+		# next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
+		# next if $mulenRfl  && $mulenRfl eq 'Y';
+		my $anomalyType = 'No Anomaly';
+		if (exists $simuEffiAnomalies{$subjectId}) {
+			$anomalyType = $simuEffiAnomalies{$subjectId} // die;
+			$stats{'dataAnomaly'}++;
+		} else {
+			$stats{'eligible'}++;
+		}
+		$phase = 'Phase 2 - 3';
+		my $sex = $adsl{$subjectId}->{'sex'} // die;
+		my $randomizationDatetime = $adsl{$subjectId}->{'randomizationDatetime'} // '';
+		my $randomizationDate = $adsl{$subjectId}->{'randomizationDate'};
+		# next if (!$randomizationDate || ($randomizationDate > $cutoffCompdate));
+		$stats{'totalSubjects'}->{'total'}++;
+		$stats{'totalSubjects'}->{$arm}++;
+
+		# Verifying Dose 1.
+		my $dose1Date = $adsl{$subjectId}->{'dose1Date'};
+
+		# Verifying Visit 1 Tests.
+		my ($hasPositiveCentralPCR,
+			%centralPCRsByVisits) = subject_central_pcrs_by_visits($subjectId, $unblindingDate);
+		my ($hasPositiveLocalPCR,
+			%localPCRsByVisits)   = subject_local_pcrs_by_visits($subjectId, $unblindingDate);
+		my ($hasSymptoms,
+			%symptomsByVisits) = subject_symptoms_by_visits($subjectId, $unblindingDate);
+
+		# Verifing VISIT 1 Test Results.
+		my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
+		my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
+		die if $v1D1LocalPCR;
+
+		# Verifying Dose 2.
+		my $dose2Date = $adsl{$subjectId}->{'dose2Date'};
+
+		# Verifying interval between injections.
+		my $deathDatetime    = $adsl{$subjectId}->{'deathDatetime'};
+		my $deathCompdate;
+		if ($deathDatetime) {
+			($deathCompdate) = split ' ', $deathDatetime;
+			$deathCompdate =~ s/\D//g;
+			die if $deathCompdate && ($deathCompdate > $cutoffCompdate);
+		}
+		my $dose1Datetime    = $adsl{$subjectId}->{'dose1Datetime'};
+		my $dose2Datetime    = $adsl{$subjectId}->{'dose2Datetime'};
+		my $dose3Datetime    = $adsl{$subjectId}->{'dose3Datetime'};
+
+		my $v3NBinding   = $advaData{$subjectId}->{'visits'}->{'V3_MONTH1_POSTVAX2_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		my $v4NBinding   = $advaData{$subjectId}->{'visits'}->{'V101_VAX3'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		my $v5NBinding   = $advaData{$subjectId}->{'visits'}->{'V201_SURVEIL_CONSENT'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		my $v6NBinding   = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		# next unless exists $simulatedEfficacy{$subjectId} || exists $simuEffiAnomalies{$subjectId};
+
+		next unless $v1D1NBinding && $v3NBinding;
+
+		$stats{'patterns'}->{$arm}->{$v1D1NBinding}->{$v3NBinding}++;
+
+		# if (
+		# 	($v3NBinding && ($v3NBinding eq 'POS'))
+		# 	# ||
+		# 	# ($v4NBinding && ($v4NBinding eq 'POS')) ||
+		# 	# ($v5NBinding && ($v5NBinding eq 'POS')) ||
+		# 	# ($v6NBinding && ($v6NBinding eq 'POS'))
+		# ) {
+		# 	if ($v1D1NBinding eq 'POS') {
+		# 		next if $anomalyType eq 'No Visit 1 PCR';
+		# 		say "v3NBinding  : $v3NBinding";
+		# 		say "v4NBinding  : $v4NBinding";
+		# 		say "anomalyType : $anomalyType";
+		# 		die;
+		# 	}
+		# 	if ($v1D1NBinding && ($v1D1NBinding eq 'NEG')) {
+		# 		$stats{'totalSubjectsPositiveNegV1'}++;
+		# 		my ($positiveDatetime, $positiveDate, $positiveVisit);
+		# 		if ($v3NBinding eq 'POS') {
+		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V3_MONTH1_POSTVAX2_L'}->{'visitDate'};
+		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V3_MONTH1_POSTVAX2_L'}->{'visitDatetime'};
+		# 		} elsif ($v4NBinding eq 'POS') {
+		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V101_VAX3'}->{'visitDate'};
+		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V101_VAX3'}->{'visitDatetime'};
+		# 		} elsif ($v5NBinding eq 'POS') {
+		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V201_SURVEIL_CONSENT'}->{'visitDate'};
+		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V201_SURVEIL_CONSENT'}->{'visitDatetime'};
+		# 		} elsif ($v6NBinding eq 'POS') {
+		# 			$positiveDate = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'visitDate'};
+		# 			$positiveDatetime = $advaData{$subjectId}->{'visits'}->{'V4_MONTH6_L'}->{'visitDatetime'};
+		# 		}
+		# 		die unless $positiveDatetime;
+		# 		say "positiveDatetime : $positiveDatetime";
+		# 		say "positiveDate : $positiveDate";
+		# 		say "v3NBinding   : $v3NBinding";
+		# 		say "v4NBinding   : $v4NBinding";
+		# 		say "anomalyType  : $anomalyType";
+		# 		my $earliestCovid = '99999999';
+		# 		for my $visit (sort keys %centralPCRsByVisits) {
+		# 			my $visitCompdate = $centralPCRsByVisits{$visit}->{'visitCompdate'} // die;
+		# 			my $pcrResult     = $centralPCRsByVisits{$visit}->{'pcrResult'}     // die;
+		# 			if ($pcrResult eq 'POS') {
+		# 				$earliestCovid = $visitCompdate if $visitCompdate < $earliestCovid;
+		# 			}
+		# 		}
+		# 		# Uncommenting these lines (and switching the "if" condition above) allows to review the figures including Local PCR.
+		# 		# for my $visit (sort keys %localPCRsByVisits) {
+		# 		# 	my $visitCompdate = $localPCRsByVisits{$visit}->{'visitCompdate'} // die;
+		# 		# 	my $pcrResult     = $localPCRsByVisits{$visit}->{'pcrResult'}     // die;
+		# 		# 	if ($pcrResult eq 'POS') {
+		# 		# 		$earliestCovid = $visitCompdate if $visitCompdate < $earliestCovid;
+		# 		# 	}
+		# 		# }
+		# 		if ($earliestCovid eq '99999999' || $earliestCovid > $positiveDate) {
+		# 			# say "earliestCovid  : $earliestCovid";
+		# 			# p%centralPCRsByVisits;
+		# 			# p%symptomsByVisits;
+		# 			$stats{'noPositiveCentralPCR'}->{'total'}++;
+		# 			$stats{'noPositiveCentralPCR'}->{$arm}->{'total'}++;
+		# 			$stats{'noPositiveCentralPCR'}->{$arm}->{$anomalyType}++;
+		# 			# die;
+		# 		} else {
+		# 			$stats{'positiveCentralPCR'}->{'total'}++;
+		# 			$stats{'positiveCentralPCR'}->{$arm}->{'total'}++;
+		# 			$stats{'positiveCentralPCR'}->{$arm}->{$anomalyType}++;
+		# 		}
+		# 	} else {
+
+		# 	}
+		# 	say "v3NBinding  : $v3NBinding";
+		# 	say "v4NBinding  : $v4NBinding";
+		# 	say "v5NBinding  : $v5NBinding";
+		# 	say "v6NBinding  : $v6NBinding";
+		# 	say "anomalyType : $anomalyType";
+		# 	$stats{'totalSubjectsPositive'}++;
+		# }
+
+		# for my $advaVisitName (sort keys %{$advaData{$subjectId}->{'visits'}}) {
+		# 	$visits{$advaVisitName}++;
+		# 	my $visitDate = $advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'visitDate'} // die;
+		# 	for my $advaTestName (sort keys %{$advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}}) {
+		# 		$tests{$advaTestName}->{$advaVisitName}++;
+		# 		if (
+		# 			$advaTestName eq 'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay' ||
+		# 			$advaTestName eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay' ||
+		# 			$advaTestName eq 'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay'
+		# 		) {
+		# 			for my $testResult (@{$advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}->{$advaTestName}}) {
+		# 				# say "testResult    : $testResult";
+		# 			}
+		# 		} else {
+		# 			my $testResult = $advaData{$subjectId}->{'visits'}->{$advaVisitName}->{'tests'}->{$advaTestName} // die;
+		# 			# say "advaVisitName : $advaVisitName";
+		# 			# say "advaTestName  : $advaTestName";
+		# 			# say "testResult    : $testResult";
+		# 		}
+		# 		# die;
+		# 	}
+		# }
+
+		# if (exists $adaes{$subjectId}) {
+		# 	p$adaes{$subjectId};
+		# 	p$adsl{$subjectId};
+		# 	die;
+		# }
+	}
+	p%visits;
+	p%tests;
 }
