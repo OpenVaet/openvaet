@@ -64,11 +64,13 @@ sub load_supp_deviations {
 	say "[$deviationsSuppFile] -> subjects : " . keys %deviationsSupp;
 }
 
-my %stats = ();
+my %deviations     = ();
 my %setsAttributed = ();
+open my $out, '>:utf8', 'public/doc/pfizer_trials/deviations_data_currated.csv';
+say $out "SUBJID;DVSPID;DESGTOR;DVCAT;EPOCH;DVSEQ;SOURCE;ACTSITE;CAPE;DVTERM;DVSTDTC;";
 for my $subjectId (sort{$a <=> $b} keys %deviationsSupp) {
-	say "*" x 50;
-	say "subjectId : $subjectId";
+	# say "*" x 50;
+	# say "subjectId : $subjectId";
 	# p$deviationsAD{$subjectId};
 	# p$deviationsSD{$subjectId};
 	# p$deviationsSupp{$subjectId};
@@ -106,22 +108,38 @@ for my $subjectId (sort{$a <=> $b} keys %deviationsSupp) {
 			# p$deviationsSupp{$subjectId}->{$setNum};
 		}
 		die if exists $setsAttributed{$subjectId}->{$dvSeq};
+		if ($dvTerm1) {
+			$dvTerm .= " $dvTerm1";
+		}
 		$setsAttributed{$subjectId}->{$dvSeq} = 1;
-		say "visitDesignator : $visitDesignator";
-		say "dvCat           : $dvCat";
-		say "dvTerm          : $dvTerm";
-		say "dvSeq           : $dvSeq";
-		say "epoch           : $epoch";
-		say "designator      : $designator";
-		say "setCape         : $setCape";
-		say "actSite         : $actSite";
-		say "source          : $source";
-		say "setCape        : $setCape";
+		$deviations{$subjectId}->{$deviationId}->{'visitDesignator'} = $visitDesignator;
+		$deviations{$subjectId}->{$deviationId}->{'deviationDate'} = $deviationDate;
+		$deviations{$subjectId}->{$deviationId}->{'dvCat'} = $dvCat;
+		$deviations{$subjectId}->{$deviationId}->{'dvTerm'} = $dvTerm;
+		$deviations{$subjectId}->{$deviationId}->{'dvSeq'} = $dvSeq;
+		$deviations{$subjectId}->{$deviationId}->{'source'} = $source;
+		$deviations{$subjectId}->{$deviationId}->{'actSite'} = $actSite;
+		$deviations{$subjectId}->{$deviationId}->{'epoch'} = $epoch;
+		$deviations{$subjectId}->{$deviationId}->{'cape'} = $cape;
+		$deviations{$subjectId}->{$deviationId}->{'dvTerm1'} = $dvTerm1;
+		say $out "$subjectId;$deviationId;$visitDesignator;$dvCat;$epoch;$dvSeq;$source;$actSite;$cape;$dvTerm;$deviationDate;";
+		# say "visitDesignator : $visitDesignator";
+		# say "dvCat           : $dvCat";
+		# say "dvTerm          : $dvTerm";
+		# say "dvSeq           : $dvSeq";
+		# say "epoch           : $epoch";
+		# say "designator      : $designator";
+		# say "setCape         : $setCape";
+		# say "actSite         : $actSite";
+		# say "source          : $source";
+		# say "setCape        : $setCape";
+		# p$deviations{$subjectId}->{$deviationId};
 		# die unless $deviationSuppDevSetNumber;
 		# die;
 	}
-	die;
+	# die;
 }
+close $out;
 
 # Verify that each set has been attributed.
 for my $subjectId (sort{$a <=> $b} keys %deviationsSupp) {
@@ -134,3 +152,8 @@ for my $subjectId (sort{$a <=> $b} keys %deviationsSupp) {
 		}
 	}
 }
+
+# Print usable JSON.
+open my $out2, '>:utf8', 'public/doc/pfizer_trials/deviations_data_currated.json';
+print $out2 encode_json\%deviations;
+close $out2;
