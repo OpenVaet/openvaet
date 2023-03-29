@@ -114,27 +114,28 @@ for my $trialSiteId (sort{$a <=> $b} keys %{$stats{'totalSubjects'}->{'bySites'}
 	my $expectedRandomized = $sitesRecruitments{$trialSiteId}->{'randomized'} // die;
 	die unless exists $sitesRecruitments{$trialSiteId};
 	if (
-		$sitesRecruitments{$trialSiteId}->{'screened'} != $screened ||
-		$sitesRecruitments{$trialSiteId}->{'randomized'} != $randomized
+		$expectedScreened   != $screened ||
+		$expectedRandomized != $randomized
 	) {
-		say "$trialSiteId | $screened | $expectedScreened | $randomized | $expectedRandomized |";
-		# p$sitesRecruitments{$trialSiteId};
-		if ($sitesRecruitments{$trialSiteId}->{'screened'} != $screened) {
+		if ($expectedScreened != $screened) {
 			my $absoluteOffset = abs($expectedScreened - $screened);
 			my $offsetToExpected = $expectedScreened - $screened;
 			$stats{'offsets'}->{'screening'}->{'absoluteOffset'} += $absoluteOffset;
 			$stats{'offsets'}->{'screening'}->{'offsetToExpected'} += $offsetToExpected;
+			say $out "$trialSiteId;$screened;$expectedScreened;$randomized;$expectedRandomized;";
 		}
-		if ($sitesRecruitments{$trialSiteId}->{'randomized'} != $randomized) {
+		if ($expectedRandomized != $randomized) {
 			my $absoluteOffset = abs($expectedRandomized - $randomized);
 			my $offsetToExpected = $expectedRandomized - $randomized;
 			$stats{'offsets'}->{'randomized'}->{'absoluteOffset'} += $absoluteOffset;
 			$stats{'offsets'}->{'randomized'}->{'offsetToExpected'} += $offsetToExpected;
 		}
 	}
-	say $out "$trialSiteId;$screened;$expectedScreened;$randomized;$expectedRandomized;";
 }
 close $out;
+for my $trialSiteId (sort{$a <=> $b} keys %sitesRecruitments) {
+	die "trialSiteId: $trialSiteId" unless exists $stats{'totalSubjects'}->{'bySites'}->{$trialSiteId};
+}
 delete $stats{'totalSubjects'};
 delete $stats{'totalSubjectsRandomized'};
 p%stats;
@@ -2387,7 +2388,8 @@ sub config_sites {
 
 sub parse_data {
 	for my $subjectId (sort{$a <=> $b} keys %adsl) {
-		my ($trialSiteId)  = $subjectId =~ /^(....)....$/;
+		my $trialSiteId    = $adsl{$subjectId}->{'trialSiteId'}    // die;
+		# my ($trialSiteId)  = $subjectId =~ /^(....)....$/;
 		$trialSiteId       = 1231 if $trialSiteId eq '4444';
 		die "trialSiteId : $trialSiteId" unless exists $sites{$trialSiteId}->{'country'};
 		die "trialSiteId : $trialSiteId" unless exists $sitesRecruitments{$trialSiteId};

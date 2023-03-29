@@ -31,6 +31,7 @@ my ($dRNum,
 	$expectedValues) = (0, 0);
 my %subjects   = ();
 while (<$in>) {
+	chomp $_;
 	$dRNum++;
 
 	# Verifying line.
@@ -71,27 +72,27 @@ while (<$in>) {
 		# Fetching the data we currently focus on.
 		my $subjectId         = $values{'SUBJID'}  // die;
 		my $uSubjectId        = $values{'USUBJID'} // die;
+		my $deviationId       = $values{'DVSPID'}  // die;
+		my $dvSeq             = $values{'DVSEQ'}   // die;
 		my $deviationDate     = $values{'DVSTDTC'} // die;
 		my $visitDesignator   = $values{'DESGTOR'} // die;
+		my $cape              = $values{'CAPE'}    // die;
 		my $deviationCategory = $values{'DVCAT'}   // die;
-		my $age               = $values{'AGE'}     // die;
-		($age) = split '\.', $age;
 		my $deviationTerm     = $values{'DVTERM'}  // die;
-		$subjects{$subjectId}->{'totalAddvRows'}++;
-		my $totalAddvRows     = $subjects{$subjectId}->{'totalAddvRows'} // die;
-		$subjects{$subjectId}->{'deviations'}->{$totalAddvRows}->{'age'}               = $age;
-		$subjects{$subjectId}->{'deviations'}->{$totalAddvRows}->{'deviationCategory'} = $deviationCategory;
-		$subjects{$subjectId}->{'deviations'}->{$totalAddvRows}->{'deviationDate'}     = $deviationDate;
-		$subjects{$subjectId}->{'deviations'}->{$totalAddvRows}->{'deviationTerm'}     = $deviationTerm;
-		$subjects{$subjectId}->{'deviations'}->{$totalAddvRows}->{'visitDesignator'}   = $visitDesignator;
-		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
-		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjects{$subjectId}->{'age'} = $age;
+		die if exists $subjects{$subjectId}->{$deviationId};
+		$subjects{$subjectId}->{$deviationId}->{'dvSeq'}             = $dvSeq;
+		$subjects{$subjectId}->{$deviationId}->{'cape'}              = $cape;
+		$subjects{$subjectId}->{$deviationId}->{'deviationCategory'} = $deviationCategory;
+		$subjects{$subjectId}->{$deviationId}->{'deviationDate'}     = $deviationDate;
+		$subjects{$subjectId}->{$deviationId}->{'deviationTerm'}     = $deviationTerm;
+		$subjects{$subjectId}->{$deviationId}->{'visitDesignator'}   = $visitDesignator;
+
 		# p$subjects{$subjectId};
 		# die;
 	}
 }
 close $in;
+$dRNum--;
 say "dRNum           : $dRNum";
 say "patients        : " . keys %subjects;
 

@@ -29,8 +29,11 @@ my $dataCsv      = Text::CSV_XS->new ({ binary => 1 });
 my %dataLabels   = ();
 my ($dRNum,
 	$expectedValues) = (0, 0);
+my %stats         = ();
 my %subjects      = ();
+my %subjectSets   = ();
 while (<$in>) {
+	chomp $_;
 	$dRNum++;
 
 	# Verifying line.
@@ -65,17 +68,26 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
-		# p%values;
-		# die;
 
 		# Fetching the data we currently focus on.
-		my $uSubjectId  = $values{'USUBJID'} // die;
+		my $uSubjectId  = $values{'USUBJID'}  // die;
 		my ($subjectId) = $uSubjectId =~ /C4591001 \d\d\d\d (\d\d\d\d\d\d\d\d)/;
-		my $qNam        = $values{'QNAM'}    // die;
-		$subjects{$subjectId}->{'qNam'} = $qNam;
+		my $qNam        = $values{'QNAM'}     // die;
+		my $qVal        = $values{'QVAL'}     // die;
+		my $idVarVal    = $values{'IDVARVAL'} // die;
+		# p%values;
+		# die if $dRNum == 5;
+		# if ($qNam eq 'CAPE') {
+		# 	p%values;
+		# 	die;
+		# }
+		$stats{$qNam}->{$qVal}++;
+		die if exists $subjects{$subjectId}->{$idVarVal}->{$qNam};
+		$subjects{$subjectId}->{$idVarVal}->{$qNam} = $qVal;
 	}
 }
 close $in;
+$dRNum--;
 say "dRNum       : $dRNum";
 say "patients    : " . keys %subjects;
 
@@ -87,3 +99,4 @@ open my $out, '>:utf8', "$outputFolder/pfizer_suppdv_patients.json";
 print $out encode_json\%subjects;
 close $out;
 
+p%stats;

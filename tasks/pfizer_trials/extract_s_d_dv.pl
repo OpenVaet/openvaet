@@ -32,6 +32,7 @@ my ($dRNum,
 	$screeningOrder) = (0, 0, 0, 0);
 my %subjects      = ();
 while (<$in>) {
+	chomp $_;
 	$dRNum++;
 
 	# Verifying line.
@@ -70,18 +71,24 @@ while (<$in>) {
 		# die;
 
 		# Fetching the data we currently focus on.
-		my $uSubjectId  = $values{'USUBJID'} // die;
-		my ($subjectId) = $uSubjectId =~ /C4591001 \d\d\d\d (\d\d\d\d\d\d\d\d)/;
-		my $dvTerm      = $values{'DVTERM'}  // die;
-		my $dvDate      = $values{'DVSTDTC'} // die;
-		my $dvCat       = $values{'DVCAT'}   // die;
-		my $epoch       = $values{'EPOCH'}   // die;
-		$subjects{$subjectId}->{$dvDate}->{'dvTerm'} = $dvTerm;
-		$subjects{$subjectId}->{$dvDate}->{'dvCat'}  = $dvCat;
-		$subjects{$subjectId}->{$dvDate}->{'epoch'}  = $epoch;
+		my $uSubjectId   = $values{'USUBJID'} // die;
+		my ($subjectId)  = $uSubjectId =~ /C4591001 \d\d\d\d (\d\d\d\d\d\d\d\d)/;
+		my $dvTerm       = $values{'DVTERM'}  // die;
+		my $deviationId  = $values{'DVSPID'}  // die;
+		my $dvSeq        = $values{'DVSEQ'}   // die;
+		my $dvDate       = $values{'DVSTDTC'} // die;
+		my $epoch        = $values{'EPOCH'}   // die;
+		my $dvCat        = $values{'DVCAT'}   // die;
+		$subjects{$subjectId}->{$deviationId}->{'dvSeq'}  = $dvSeq;
+		$subjects{$subjectId}->{$deviationId}->{'dvDate'} = $dvDate;
+		$subjects{$subjectId}->{$deviationId}->{'dvTerm'} = $dvTerm;
+		$subjects{$subjectId}->{$deviationId}->{'dRNum'}  = $dRNum;
+		$subjects{$subjectId}->{$deviationId}->{'dvCat'}  = $dvCat;
+		$subjects{$subjectId}->{$deviationId}->{'epoch'}  = $epoch;
 	}
 }
 close $in;
+$dRNum--;
 say "dRNum       : $dRNum";
 say "patients    : " . keys %subjects;
 

@@ -120,11 +120,14 @@ sub extract_all_subjects_table {
 
 		for my $topMargin (sort{$a <=> $b} keys %patientsIds) {
 			$totalPatients++;
-			my $subjectId              = $patientsIds{$topMargin}->{'subjectId'}                     // die;
+			my $uSubjectId             = $patientsIds{$topMargin}->{'uSubjectId'}                    // die;
+			my ($subjectId) = $uSubjectId =~ /^C4591001 .... (........)$/;
+			die unless $subjectId;
 			my $entryNum               = $patientsIds{$topMargin}->{'entryNum'}                      // die;
 			die if exists $patients{$subjectId};
 			$patients{$subjectId}->{'pageNum'}  = $pageNum;
 			$patients{$subjectId}->{'entryNum'} = $entryNum;
+			$patients{$subjectId}->{'uSubjectId'} = $uSubjectId;
 
 			die unless keys %{$firstSwabs{$topMargin}} == 3;
 
@@ -204,7 +207,7 @@ sub parse_patients_ids {
 						}
 						$entryNum++;
 						$patientsIds{$topMargin}->{'entryNum'}           = $entryNum;
-						$patientsIds{$topMargin}->{'subjectId'}          = $subjectId;
+						$patientsIds{$topMargin}->{'uSubjectId'}         = $subjectId;
 						$patientsIds{$topMargin}->{'subjectIdTopMargin'} = $topMargin;
 						$trialData = undef;
 						$siteData  = undef;

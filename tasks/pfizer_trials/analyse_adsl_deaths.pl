@@ -21,7 +21,7 @@ use time;
 my $daysOffset           = 5;
 my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
 my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
-my $cutoffCompdate       = '20210313';
+my $cutoffCompdate       = '20201114';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
 my $df                   = 1; # degrees of freedom
@@ -2401,7 +2401,7 @@ sub usa_death_stats {
 			}
 		}
 		next if $country ne 'USA';
-		if ($deathDatetime) {
+		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
 			my ($deathCompdate) = split ' ', $deathDatetime;
 			$deathCompdate =~ s/\D//g;
 			die if $deathCompdate && ($deathCompdate > 20210313);
