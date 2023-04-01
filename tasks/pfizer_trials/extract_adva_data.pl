@@ -31,10 +31,14 @@ my ($dRNum,
 	$expectedValues,
 	$noDose1Data) = (0, 0, 0);
 my %subjects   = ();
+my $lastVisitNum  = 0;
+my $lastVisitName = 0;
+my $lastSubjectId = 0;
 while (<$in>) {
 	$dRNum++;
 
 	# Verifying line.
+	chomp $_;
 	my $line = $_;
 	$line = decode("ascii", $line);
 	for (/[^\n -~]/g) {
@@ -92,6 +96,8 @@ while (<$in>) {
 		my $isDtc       = $values{'ISDTC'}   // die;
 		my $visitName   = $values{'VISIT'}   // die;
 		my $actArm      = $values{'ACTARM'}  // die;
+		my $aVisit      = $values{'AVISIT'}  // die;
+		my $aVisitNum   = $values{'AVISITN'} // die;
 		my $cohort      = $values{'COHORT'}  // die;
 		my $param       = $values{'PARAM'}   // die;
 		my $avaLc       = $values{'AVALC'}   // die;
@@ -160,7 +166,16 @@ while (<$in>) {
 			$param eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay' ||
 			$param eq 'SARS-CoV-2 serum neutralizing titer 90 (titer) - Virus Neutralization Assay'
 		) {
-			push @{$subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}}, $avaLc;
+			# p%values;
+			my %o = ();
+			$o{'avaLc'}     = $avaLc;
+			$o{'aVisit'}    = $aVisit;
+			$o{'aVisitNum'} = $aVisitNum;
+			if (!$aVisit) {
+				die if exists $subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}; # This verifies that no incremental entry for the same test has
+																									# been made before when the "AVISIT" scalar is empty.
+			}
+			push @{$subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}}, \%o;
 		} else {
 			$subjects{$subjectId}->{'visits'}->{$visitName}->{'tests'}->{$param}  = $avaLc;
 		}
@@ -178,9 +193,26 @@ while (<$in>) {
 		$subjects{$subjectId}->{'isDtc'}           = $isDtc;
 		$subjects{$subjectId}->{'dose1Datetime'}   = $dose1Datetime;
 		$subjects{$subjectId}->{'dose2Datetime'}   = $dose2Datetime;
+		$subjects{$subjectId}->{'visits'}->{$visitName}->{'aVisit'}    = $aVisit if $aVisit;
 		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} = $visitDate;
 		$subjects{$subjectId}->{'visits'}->{$visitName}->{'visitDatetime'} = $adtDatetime;
 		$subjects{$subjectId}->{'totalAdvaRows'}++;
+
+		# Verifying incremental order.
+		my $visitNum   = $values{'VISITNUM'}   // die;
+		if ($lastSubjectId == $subjectId) {
+			if ($lastVisitName eq $visitName) {
+				die unless $visitNum == $lastVisitNum;
+			} else {
+				die unless $visitNum > $lastVisitNum;
+			}
+		} else {
+			die unless $visitNum > $lastVisitNum;
+		}
+
+		# $lastSubjectId = $subjectId;
+		# $lastVisitName = $visitName;
+		# $lastVisitNum  = $visitNum;
 		# p$subjects{$uSubjectId};
 		# p%values;
 		# p%subjects;

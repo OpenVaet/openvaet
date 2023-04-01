@@ -34,6 +34,7 @@ my ($dRNum,
 my %subjects    = ();
 my %stats       = ();
 while (<$in>) {
+	chomp $_;
 	$dRNum++;
 
 	# Verifying line.
@@ -74,6 +75,7 @@ while (<$in>) {
 		# Fetching the data we currently focus on.
 		my $trialSiteId       = $values{'SITEID'}   // die;
 		my $subjectId         = $values{'SUBJID'}   // die;
+		my $cohort            = $values{'COHORT'}   // die;
 		my $uSubjectId        = $values{'USUBJID'}  // die;
 		my $ageUnit           = $values{'AGETRU01'} // die;
 		die unless $ageUnit eq 'YEARS';
@@ -227,6 +229,7 @@ while (<$in>) {
 		$subjects{$subjectId}->{'randomNumber'}          = $randomNumber;
 		$subjects{$subjectId}->{'uSubjectId'}            = $uSubjectId;
 		$subjects{$subjectId}->{'aai1effl'}              = $aai1effl;
+		$subjects{$subjectId}->{'cohort'}                = $cohort;
 		$subjects{$subjectId}->{'mulenRfl'}              = $mulenRfl;
 		$subjects{$subjectId}->{'evaleffl'}              = $evaleffl;
 		$subjects{$subjectId}->{'screeningDatetime'}     = $screeningDatetime;

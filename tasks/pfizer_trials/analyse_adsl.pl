@@ -21,7 +21,7 @@ my (
 	$adslFile, $exclusionsFile, $deviationsFile, $lackPIOverFile, $pcrRecordsFile,
 	$faceFile, $symptomsFile, $randomizationFile, $p1SubjectsFile, $testsRefsFile,
 	$demographicFile, $pdfCasesFile, $centralPCRsFile, $advaFile, $screeningsFile,
-	$randomizationFile1, $pdfFile1, $officialEfficacyFile
+	$randomizationFile1, $pdfFile1
 );
 
 # Treatment configuration.
@@ -35,7 +35,6 @@ my $df                   = 1; # degrees of freedom
 # Cached data.
 my %duplicates           = ();
 my %noVaxData            = ();
-my %officialEfficacy     = ();
 my %pdf_exclusions_1     = ();
 my %randomization1       = ();
 my %lackPIOver           = ();
@@ -171,7 +170,30 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	$stats{'1_phase3'}->{'2_dose1'}->{'totalDose1PriorCutOff'}++;
 	$stats{'1_phase3'}->{'2_dose1'}->{'byArm'}->{$arm}->{'total'}++;
 
-	# Verifying DB D1 Efficacy Tags.
+	# Verifying which subjects have been excluded from POP5 (Dose 1 Efficacy).
+	my $hasPop5Deviation = 0;
+	for my $deviationId (sort keys %{$deviations{$subjectId}}) {
+		my $deviationDate = $deviations{$subjectId}->{$deviationId}->{'deviationDate'} // die;
+		my $devCompdate   = $deviationDate;
+		$devCompdate      =~ s/\D//g;
+		if ($devCompdate <= $cutoffCompdate) {
+			my $cape      = $deviations{$subjectId}->{$deviationId}->{'cape'}          // die;
+			my @capes = split ',', $cape;
+			for my $cape (@capes) {
+				if ($cape eq 'YES-POP5') {
+					$hasPop5Deviation = 1;
+				}
+			}
+		}
+	}
+	if ($hasPop5Deviation) {
+		$stats{'1_phase3'}->{'3_tagBasedExclusions'}->{'deviationOnD1Efficacy'}++;
+		next;
+	}
+	$stats{'1_phase3'}->{'3_tagBasedExclusions'}->{'totalDose1PostD1Deviations'}++;
+	$stats{'1_phase3'}->{'3_tagBasedExclusions'}->{'byArm'}->{$arm}->{'total'}++;
+
+	# Verifying DB D1 Efficacy Tags but not skipping on their basis.
 	my $aai1effl = $adsl{$subjectId}->{'aai1effl'} // die;
 	my $mulenRfl = $adsl{$subjectId}->{'mulenRfl'} // die;
 	if ($mulenRfl ne 'Y' && $aai1effl eq 'Y') {
@@ -342,7 +364,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		next;
 	}
 	$stats{'1_phase3'}->{'8_dose2Administered'}->{'totalDose2PriorCutOff'}++;
-	$stats{'1_phase3'}->{'8_dose2Administered'}->{'byArm'}->{$arm}->{'total'}++;
+	$stats{'1_phase3'}->{'8_dose2Administered'}->{'byArm'}->{$arm}->{'totalDose2PriorCutOff'}++;
 	if ($dose2Date > $cutoffMinus7Days) {
 		$stats{'1_phase3'}->{'8_dose2Administered'}->{'dose2PostEfficacyCutOff'}++;
 		next;
@@ -416,20 +438,6 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	}
 	$stats{'1_phase3'}->{'9_dose2Efficacy'}->{'noCovid7DaysPostDose2'}++;
 	$stats{'1_phase3'}->{'9_dose2Efficacy'}->{'byArm'}->{$arm}->{'noCovid7DaysPostDose2'}++;
-
-	# Verifying which subjects at this stage aren't included in the "official" ones.
-	unless (exists $officialEfficacy{$subjectId}) {
-		$stats{'1_phase3'}->{'9_dose2Efficacy'}->{'notInOfficialEfficacy'}++;
-		$stats{'1_phase3'}->{'9_dose2Efficacy'}->{'byArm'}->{$arm}->{'notInOfficialEfficacy'}++;
-		$treatmentAnomalies{$subjectId} = 'Not In Study Efficacy Data';
-		# say "*" x 50;
-		# say "subjectId : $subjectId";
-		# p$adsl{$subjectId};
-		# p%centralPCRsByVisits;
-		# p%localPCRsByVisits;
-		# die;
-	}
-	$simulatedEfficacy{$subjectId} = 1;
 
 	# Verifying the rates among eligible symptomatic subjects.
 	# Reorganizing symptoms by dates.
@@ -559,13 +567,6 @@ close $outMissingVisit1;
 # delete $stats{'0_primaryBreakdown'}; # Comment this line if you wish to review the primary breakdown.
 # p%missingTests; # Stores the subjects absent from ADVA or PCR results.
 
-for my $subjectId (sort keys %officialEfficacy) {
-	unless (exists $simulatedEfficacy{$subjectId}) {
-		say "Present in analysis but not in efficacy : [$subjectId]";
-		$treatmentAnomalies{$subjectId} = 'In Efficacy Data but not our analysis';
-	}
-}
-
 say "Total anomalies : " . keys %treatmentAnomalies;
 open my $outAnomalies, '>:utf8', 'treatment_anomalies.csv';
 say $outAnomalies "Subject Id;Treatment Arm;Sex;Randomization Date;Motive;";
@@ -617,7 +618,7 @@ sub load_data {
 	# Files configuration.
 	$adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
 	$exclusionsFile       = 'public/doc/pfizer_trials/pfizer_excluded_patients.json';
-	$deviationsFile       = 'public/doc/pfizer_trials/pfizer_sddv_patients.json';
+	$deviationsFile       = 'public/doc/pfizer_trials/deviations_data_currated.json';
 	$lackPIOverFile       = 'public/doc/pfizer_trials/pfizer_suppdv_patients.json';
 	$pcrRecordsFile       = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
 	$faceFile             = 'public/doc/pfizer_trials/pfizer_face_patients.json';
@@ -632,7 +633,6 @@ sub load_data {
 	$screeningsFile       = "public/doc/pfizer_trials/subjects_screening_dates.json";
 	$randomizationFile1   = 'public/doc/pfizer_trials/pfizer_trial_randomization_1.json';
 	$pdfFile1             = 'excluded subjects 6 month.csv';
-	$officialEfficacyFile = 'public/doc/pfizer_trials/officialEfficacy.json';
 
 	# Configuring duplicates & patients without CRFs required.
 	$duplicates{'10561101'}  = 11331382;
@@ -652,7 +652,6 @@ sub load_data {
 	$noVaxData{'11631008'}   = 1;
 
 	# Loading data required.
-	load_official_efficacy();
 	load_pdf_exclusions_1();
 	load_pi_oversight();
 	load_randomization_subjects_1();
@@ -719,18 +718,6 @@ sub load_screening {
 	$json = decode_json($json);
 	%screenings = %$json;
 	say "[$screeningsFile] -> subjects : " . keys %screenings;
-}
-
-sub load_official_efficacy {
-	open my $in, '<:utf8', $officialEfficacyFile or die "Missing file [$officialEfficacyFile]";
-	my $json;
-	while (<$in>) {
-		$json .= $_;
-	}
-	close $in;
-	$json = decode_json($json);
-	%officialEfficacy = %$json;
-	say "[$officialEfficacyFile] -> subjects : " . keys %officialEfficacy;
 }
 
 sub load_adsl {
