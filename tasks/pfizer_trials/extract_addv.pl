@@ -68,6 +68,10 @@ while (<$in>) {
 		}
 		# p%values;
 		# die;
+		# open my $out, '>:utf8', 'sample.json';
+		# print $out encode_json\%values;
+		# close $out;
+		# die;
 
 		# Fetching the data we currently focus on.
 		my $subjectId         = $values{'SUBJID'}  // die;

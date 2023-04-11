@@ -32,6 +32,7 @@ my ($dRNum,
 	$noVisitName,
 	$noVisitDate) = (0, 0, 0, 0);
 my %subjects   = ();
+my %stats      = ();
 while (<$in>) {
 	$dRNum++;
 
@@ -68,31 +69,40 @@ while (<$in>) {
 			$vN++;
 		}
 
-		my $ceTerm      = $values{'CETERM'}   // die;
+		my $ceTerm      = $values{'CETERM'}  // die;
 		# p%values;
 		# die if $ceTerm eq 'FEVER';
-		my $ceStartDate = $values{'CERFTDTC'} // die;
+		my $ceStartDate = $values{'CEDTC'}   // die;
+		unless ($ceStartDate) {
+			$ceStartDate = $values{'CERFTDTC'} // die;
+			$stats{'hasDate'}->{'CERFTDTC'}++ if $ceStartDate;
+		} else {
+			$stats{'hasDate'}->{'CEDTC'}++;
+		}
 		$ceStartDate    =~ s/\D//g;
-		my $ceSeverity  = $values{'CESEV'}    // die;
-		my $uSubjectId  = $values{'USUBJID'}  // die;
+		my $ceSeverity  = $values{'CESEV'}   // die;
+		my $uSubjectId  = $values{'USUBJID'} // die;
 		my ($subjectId) = $uSubjectId =~ /^C4591001 .... (.*)$/;
 		die unless $subjectId && $subjectId =~ /^........$/;
 		die unless $uSubjectId =~ /$subjectId$/;
 		unless ($ceStartDate) {
+			$stats{'noDate'}->{$ceTerm}++;
+			# p%values;
+			if ($ceTerm eq 'FEVER') {
+				p%values;
+				die;
+			}
 			next;
-			p%values;
-			die if $ceTerm eq 'FEVER';
 		}
+		$stats{'hasDate'}->{'total'}++;
 		# p%values;
+		# die;
 		# die if $ceTerm eq 'FEVER';
 		# say "ceTerm      : $ceTerm";
 		# say "ceStartDate : $ceStartDate";
 		# say "ceSeverity  : $ceSeverity";
 		my $dayAfterDose  = $values{'CETPT'}  // die;
 		my $afterShot  = $values{'CETPTREF'}  // die;
-		$subjects{$subjectId}->{'subjectId'}  = $subjectId;
-		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'aeListed'}->{$ceStartDate}->{$ceTerm}->{'severity'} = $ceSeverity;
 		$subjects{$subjectId}->{'aeListed'}->{$ceStartDate}->{$ceTerm}->{'dayAfterDose'} = $dayAfterDose;
 		$subjects{$subjectId}->{'aeListed'}->{$ceStartDate}->{$ceTerm}->{'afterShot'} = $afterShot;
@@ -100,6 +110,9 @@ while (<$in>) {
 	}
 }
 close $in;
+$dRNum--;
+
+p%stats;
 say "dRNum       : $dRNum";
 say "patients    : " . keys %subjects;
 

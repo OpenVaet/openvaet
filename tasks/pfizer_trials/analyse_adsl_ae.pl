@@ -22,6 +22,8 @@ my $daysOffset           = 5;
 my $symptomsBeforePCR    = 1; # 0 = before non included ; 1 = before included.
 my $officialSymptomsOnly = 0; # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
 my $cutoffCompdate       = '20210313';
+my $doseCutoffCompdate   = '20210313';
+# my $doseCutoffCompdate   = '20201018';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
 my $df                   = 1; # degrees of freedom
@@ -49,15 +51,15 @@ my $pdfFile1             = 'excluded subjects 6 month.csv';
 my $adc19efFile          = 'public/doc/pfizer_trials/pfizer_adc19ef_patients.json';
 my $officialEfficacyFile = 'public/doc/pfizer_trials/officialEfficacy.json';
 
-my %sitesTargeted = ();
-$sitesTargeted{'1133'} = 'ee8493';
-$sitesTargeted{'1135'} = 'ee8493';
-$sitesTargeted{'1146'} = 'ee8493';
-$sitesTargeted{'1170'} = 'ee8493';
-$sitesTargeted{'1001'} = 'ej0553';
-$sitesTargeted{'1002'} = 'ej0553';
-$sitesTargeted{'1003'} = 'ej0553';
-$sitesTargeted{'1007'} = 'ej0553';
+my %sitesTargeted        = ();
+$sitesTargeted{'1133'}   = 'ee8493';
+$sitesTargeted{'1135'}   = 'ee8493';
+$sitesTargeted{'1146'}   = 'ee8493';
+$sitesTargeted{'1170'}   = 'ee8493';
+$sitesTargeted{'1001'}   = 'ej0553';
+$sitesTargeted{'1002'}   = 'ej0553';
+$sitesTargeted{'1003'}   = 'ej0553';
+$sitesTargeted{'1007'}   = 'ej0553';
 
 my %officialEfficacy     = ();
 my %sites                = ();
@@ -105,20 +107,28 @@ my %subjectsAEs = ();
 
 for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	my $trialSiteId    = $adsl{$subjectId}->{'trialSiteId'}    // die;
-	next unless exists $sitesTargeted{$trialSiteId};
-	my $batch          = $sitesTargeted{$trialSiteId}          // die;
+	next if exists $sitesTargeted{$trialSiteId};
+	# my $batch          = $sitesTargeted{$trialSiteId}          // die;
 	my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
 	my $mulenRfl       = $adsl{$subjectId}->{'mulenRfl'}       // die;
 	my $country        = $sites{$trialSiteId}->{'country'}     // die;
 	my $phase          = $adsl{$subjectId}->{'phase'}          // die;
 	my $saffl          = $adsl{$subjectId}->{'saffl'}          // die;
 	my $ageYears       = $adsl{$subjectId}->{'ageYears'}       // die;
+	next unless $ageYears >= 16;
 	my $ageGroup       = age_to_age_group($ageYears);
 	my $arm            = $adsl{$subjectId}->{'arm'}            // die;
 	my $originalArm    = $arm;
 	my $hasHIV         = $adsl{$subjectId}->{'hasHIV'}         // die;
 	my $uSubjectId     = $adsl{$subjectId}->{'uSubjectId'}     // die;
 	my $unblindingDate = $adsl{$subjectId}->{'unblindingDate'} || $cutoffCompdate;
+	my $deathDatetime  = $adsl{$subjectId}->{'deathDatetime'};
+	my $deathCompdate;
+	if ($deathDatetime) {
+		($deathCompdate) = split ' ', $deathDatetime;
+		$deathCompdate =~ s/\D//g;
+		die if $deathCompdate && ($deathCompdate > 20210313);
+	}
 
 	# Verifying phase.
 	next unless $phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000' || $phase eq 'Phase 2_ds360/ds6000';
@@ -128,18 +138,6 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	my $sex = $adsl{$subjectId}->{'sex'} // die;
 	my $randomizationDatetime = $adsl{$subjectId}->{'randomizationDatetime'} // '';
 	my $randomizationDate = $adsl{$subjectId}->{'randomizationDate'};
-
-	# Verifying Visit 1 Tests.
-	my ($hasPositiveCentralPCR,
-		%centralPCRsByVisits) = subject_central_pcrs_by_visits($subjectId, $unblindingDate);
-	my ($hasPositiveLocalPCR,
-		%localPCRsByVisits)   = subject_local_pcrs_by_visits($subjectId, $unblindingDate);
-
-	# Verifing VISIT 1 Test Results.
-	my $v1D1NBinding   = $advaData{$subjectId}->{'visits'}->{'V1_DAY1_VAX1_L'}->{'N-binding antibody - N-binding Antibody Assay'};
-	my $v1D1CentralPCR = $centralPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
-	my $v1D1LocalPCR   = $localPCRsByVisits{'V1_DAY1_VAX1_L'}->{'pcrResult'};
-	die if $v1D1LocalPCR;
 
 	# Fetching Doses received.
 	my $hasAE              = 0;
@@ -154,16 +152,50 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	my $dose3Datetime    = $adsl{$subjectId}->{'dose3Datetime'};
 
 	# Setting tags related to subject's populations.
-	if ($dose1Date >= $fromDoseCompdate) {
+	my $placeboPostOctober = 0;
+	my $placeboAndBNT = 0;
+	if ($dose1Date >= $fromDoseCompdate && $dose1Date <= $doseCutoffCompdate) {
 		$hasPostOctoberDose = 1;
+		next if $dose1Date > $doseCutoffCompdate;
+		$placeboPostOctober = 1 if $arm eq 'Placebo';
 	}
-	if ($dose2Date && ($dose2Date >= $fromDoseCompdate)) {
+	if ($dose2Date && ($dose2Date >= $fromDoseCompdate) && $dose2Date <= $doseCutoffCompdate) {
 		$hasPostOctoberDose = 1;
+		$placeboPostOctober = 1 if $arm eq 'Placebo';
 	}
-	if ($dose3Date && ($dose3Date >= $fromDoseCompdate)) {
+	my $groupArm = $arm;
+	if ($dose3Date && ($dose3Date >= $fromDoseCompdate) && $dose3Date <= $doseCutoffCompdate) {
 		$hasPostOctoberDose = 1;
+		$placeboAndBNT = 1;
+		$groupArm = 'Placebo -> BNT162b2 Phase 2/3 (30 mcg)';
 	}
-
+	my ($doeBNT162b2, $doePlacebo) = (0, 0);
+	if ($dose3Datetime) {
+		die unless $arm eq 'Placebo';
+		my $daysBetweenDoses1And3 = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
+		$doePlacebo += $daysBetweenDoses1And3;
+		my $daysBetweenDoseAndCutOff;
+		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $deathDatetime);
+		} else {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
+		}
+		$doeBNT162b2 += $daysBetweenDoseAndCutOff;
+		# $stats{'daysBetween3rdDoses'}->{$daysBetweenDoses2And3}++;
+		# say "daysBetweenDoses2And3 : $daysBetweenDoses2And3";
+	} else {
+		my $daysBetweenDoseAndCutOff;
+		if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
+		} else {
+			$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
+		}
+		if ($arm eq 'Placebo') {
+			$doePlacebo  += $daysBetweenDoseAndCutOff;
+		} else {
+			$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
+		}
+	}
 	if (exists $adaes{$subjectId}) {
 		# p$adaes{$subjectId};
 		for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
@@ -174,7 +206,6 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 			} else {
 				next if $aeCompdate > $cutoffCompdate;
 			}
-			$hasAE = 1;
 			my %doseDates = ();
 			$doseDates{'1'} = $dose1Datetime;
 			if ($dose2Datetime) {
@@ -200,12 +231,27 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 				$doseToAE = $daysBetween;
 				last;
 			}
-			$arm = 'Placebo -> BNT162b2 Phase 2/3 (30 mcg)' if $closestDose > 2;
+			my ($closestDoseCompdate) = split ' ', $closestDoseDate;
+			$closestDoseCompdate =~ s/\D//g;
+			next if $closestDoseCompdate > $doseCutoffCompdate;
+			$hasAE = 1;
+			my $doseArm = $arm;
+			if ($closestDose > 2) {
+				$doseArm = 'Placebo -> BNT162b2 Phase 2/3 (30 mcg)';
+			}
 			for my $aeObserved (sort keys %{$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}}) {
 				# p$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved};die;
 				my $aehlgt        = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlgt'}        // die;
 				my $aehlt         = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlt'}         // die;
+				my $aeser         = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aeser'}         // die;
 				my $toxicityGrade = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'toxicityGrade'} || 'NA';
+				if ($aeser eq 'Y') {
+					$aeser = 1;
+				} elsif ($aeser eq 'N') {
+					$aeser = 0;
+				} else {
+					$aeser = 0;
+				}
 				# say "closestDoseDate : $closestDoseDate";
 				# say "closestDose     : $closestDose";
 				# say "doseToAE        : $doseToAE";
@@ -214,44 +260,171 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 				# say "aeObserved      : $aeObserved";
 				# say "toxicityGrade   : $toxicityGrade";
 
-				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalSubjects'}++;
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 				}
-				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-					$subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalSubjects'}++;
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 				}
-				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalAEs'}++;
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'totalSubjects'}++;
+				}
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'gradeTotalAEs'}++;
 				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'gradeTotalAEs'}++;
-				# $stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				# $stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				# $stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				# $stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalAEs'}++;
-				# $stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'gradeTotal'}++;
-				# $stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				# $stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				# $stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				if ($aeCompdate >= $fromDoseCompdate) {
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'gradeTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'gradeTotalAEs'}++;
+				if ($aeser) {
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'gradeTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'gradeTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'gradeTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'gradeTotalSeriousAEs'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+				}
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'aehlgtTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalAEs'}++;
+				if ($aeser) {
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'aehlgtTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalSeriousAEs'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+				}
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'aehltTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'aehltTotalAEs'}++;
+				$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalAEs'}++;
+				if ($aeser) {
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'aehltTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'aehltTotalSeriousAEs'}++;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalSeriousAEs'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+				}
+				unless (exists $subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId}) {
+					$subjectsAEs{'full_data'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId} = 1;
+					$stats{'aeStats'}->{'full_data'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+				}
+				if ($closestDoseCompdate >= $fromDoseCompdate) {
 					$hasAEPostOctober = 1;
-					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalSubjects'}++;
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 					}
-					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId}) {
-						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'subjects'}->{$subjectId} = 1;
-						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalSubjects'}++;
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'subjects'}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 					}
-					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$arm}->{'totalAEs'}++;
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'totalSubjects'}++;
+					}
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'gradeTotalAEs'}++;
 					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'gradeTotalAEs'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$arm}->{'totalAEs'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'gradeTotal'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'categoryTotal'}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$arm}++;
-				# 	$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'reactionTotal'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'gradeTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'gradeTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'aehlgtTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalAEs'}++;
+					if ($aeser) {
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'gradeTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'gradeTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'gradeTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'gradeTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'aehlgtTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'aehlgtTotalSeriousAEs'}++;
+					}
+
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$doseArm}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+					}
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$doseArm}->{'aehltTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalAEs'}++;
+					$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$doseArm}->{'aehltTotalAEs'}++;
+					if ($aeser) {
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$doseArm}->{'aehltTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalSeriousAEs'}++;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{$doseArm}->{'aehltTotalSeriousAEs'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{'all_grades'}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+					}
+					unless (exists $subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId}) {
+						$subjectsAEs{'post_october_19'}->{$toxicityGrade}->{'subjects'}->{'categories'}->{$aehlgt}->{$aehlt}->{$doseArm}->{$subjectId} = 1;
+						$stats{'aeStats'}->{'post_october_19'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+					}
 				}
 			}
 		}
@@ -259,8 +432,30 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	}
 	$stats{'globalStats'}->{'full_data'}->{'totalSubjects'}++;
 	$stats{'globalStats'}->{'full_data'}->{'totalSubjectsWithAE'}++ if $hasAE;
+	$stats{'globalStats'}->{'full_data'}->{'byArms'}->{$groupArm}->{'totalSubjects'}++;
+	if ($dose3Datetime) {
+		$stats{'globalStats'}->{'full_data'}->{'doePlaceboBNT162b2'} += $doeBNT162b2;
+	} else {
+		$stats{'globalStats'}->{'full_data'}->{'doeBNT162b2'} += $doeBNT162b2;
+	}
+	$stats{'globalStats'}->{'full_data'}->{'doePlacebo'}  += $doePlacebo;
+	if ($placeboAndBNT && $dose1Date <= $doseCutoffCompdate) {
+		$stats{'globalStats'}->{'full_data'}->{'byArms'}->{'Placebo'}->{'totalSubjects'}++;
+	}
 	$stats{'globalStats'}->{'post_october_19'}->{'totalSubjects'}++ if $hasPostOctoberDose;
 	$stats{'globalStats'}->{'post_october_19'}->{'totalSubjectsWithAE'}++ if $hasAEPostOctober;
+	$stats{'globalStats'}->{'post_october_19'}->{'byArms'}->{$groupArm}->{'totalSubjects'}++ if $hasPostOctoberDose;
+	if ($hasPostOctoberDose) {
+		if ($dose3Datetime) {
+			$stats{'globalStats'}->{'post_october_19'}->{'doePlaceboBNT162b2'} += $doeBNT162b2;
+		} else {
+			$stats{'globalStats'}->{'post_october_19'}->{'doeBNT162b2'} += $doeBNT162b2;
+		}
+		$stats{'globalStats'}->{'post_october_19'}->{'doePlacebo'}  += $doePlacebo;
+	}
+	if ($placeboAndBNT && $placeboPostOctober && $dose3Date <= $doseCutoffCompdate) {
+		$stats{'globalStats'}->{'post_october_19'}->{'byArms'}->{'Placebo'}->{'totalSubjects'}++;
+	}
 
 	# if (exists $adaes{$subjectId}) {
 	# 	p$adaes{$subjectId};
@@ -268,37 +463,105 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	# 	die;
 	# }
 }
+# p$stats{'globalStats'}->{'full_data'};die;
 
 for my $fileLabel (sort keys %{$stats{'aeStats'}}) {
-	my $totalSubjects = $stats{'globalStats'}->{$fileLabel}->{'totalSubjects'} // die;
-	my $totalSubjectsWithAE = $stats{'globalStats'}->{$fileLabel}->{'totalSubjectsWithAE'} // die;
-	my $percentOfTotal = nearest(0.01, $totalSubjectsWithAE * 100 / $totalSubjects);
-	say "totalSubjects       : $totalSubjects";
-	say "totalSubjectsWithAE : $totalSubjectsWithAE";
-	say "percentOfTotal      : $percentOfTotal";
+	my $totalSubjects                = $stats{'globalStats'}->{$fileLabel}->{'totalSubjects'}       // next;
+	my $totalSubjectsBNT162b2        = $stats{'globalStats'}->{$fileLabel}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'} // die;
+	my $totalSubjectsPlacebo         = $stats{'globalStats'}->{$fileLabel}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                     // die;
+	my $totalSubjectsPlaceboBNT162b2 = $stats{'globalStats'}->{$fileLabel}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'} // 0;
+	my $totalSubjectsWithAE          = $stats{'globalStats'}->{$fileLabel}->{'totalSubjectsWithAE'} // die;
+	my $doePlaceboBNT162b2           = $stats{'globalStats'}->{$fileLabel}->{'doePlaceboBNT162b2'}  // die;
+	my $doeBNT162b2                  = $stats{'globalStats'}->{$fileLabel}->{'doeBNT162b2'}         // die;
+	my $doePlacebo                   = $stats{'globalStats'}->{$fileLabel}->{'doePlacebo'}          // die;
+	my $personYearsPlaceboBNT162b2   = nearest(0.01, $doePlaceboBNT162b2 / 365);
+	my $personYearsBNT162b2          = nearest(0.01, $doeBNT162b2 / 365);
+	my $personYearsPlacebo           = nearest(0.01, $doePlacebo / 365);
+	say "totalSubjects              : $totalSubjects";
+	say "doePlacebo                 : $doePlacebo";
+	say "doeBNT162b2                : $doeBNT162b2";
+	say "doePlaceboBNT162b2         : $doePlaceboBNT162b2";
+	say "totalSubjectsWithAE        : $totalSubjectsWithAE";
+	say "personYearsBNT162b2        : $personYearsBNT162b2";
+	say "personYearsPlacebo         : $personYearsPlacebo";
+	say "personYearsPlaceboBNT162b2 : $personYearsPlaceboBNT162b2";
+	# die;
 	for my $toxicityGrade (sort keys %{$stats{'aeStats'}->{$fileLabel}}) {
-		p$stats{'aeStats'}->{$fileLabel};
+		# p$stats{'aeStats'}->{$fileLabel};
 		say "Printing [adverse_effects_$fileLabel" . "_$toxicityGrade.csv]";
 		open my $out, '>:utf8', "adverse_effects/adverse_effects_$fileLabel" . "_$toxicityGrade.csv";
-		say $out "System Organ Class / Preferred Term;;BNT162b2 (30 mcg);;;Placebo;;;Total;;;";
-		say $out ";;AEs;Subjects;\%;AEs;Subjects;\%;AEs;Subjects;\%;";
-		my $totalAEs      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'gradeTotalAEs'} // 0;
-		my $bNT162b2AEs   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalAEs'} // 0;
-		my $placeboAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo'}->{'totalAEs'}                     // 0;
-		say $out "All;All;$totalAEs;$totalSubjectsWithAE;$percentOfTotal;$bNT162b2AEs;Subjects;%;$placeboAEs;Subjects;\%;";
-		# for my $category (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}}) {
-		# 	my $categoryTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'categoryTotal'} // die;
-		# 	for my $reaction (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}}) {
-		# 		my $reactionTotal = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'reactionTotal'} // die;
-		# 		my $bNT162b2Total = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'BNT162b2 Phase 2/3 (30 mcg)'} // 0;
-		# 		my $placeboTotal  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$category}->{'byReactions'}->{$reaction}->{'byGrade'}->{'Placebo'} // 0;
-		# 		say $out "$category;$categoryTotal;$reaction;$reactionTotal;$bNT162b2Total;$placeboTotal;";
-		# 	}
-		# }
+		say $out "System Organ Class / Preferred Term;;BNT162b2 (30 mcg);;;;Placebo;;;;Placebo -> BNT162b2 (30 mcg);;;;Total;;;;";
+		say $out ";;AEs;SAEs;Subjects (N=$totalSubjectsBNT162b2);\%;AEs;SAEs;Subjects (N=$totalSubjectsPlacebo);\%;AEs;SAEs;Subjects (N=$totalSubjectsPlaceboBNT162b2);\%;AEs;SAEs;Subjects (N=$totalSubjects);\%;";
+		my $gradeTotalAEs        = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'gradeTotalAEs'} // 0;
+		my $bNT162b2AEs          = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'gradeTotalAEs'}            // 0;
+		my $placeboAEs           = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo'}->{'gradeTotalAEs'}                                // 0;
+		my $placeboBNTAEs        = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'gradeTotalAEs'} // 0;
+		my $gradeTotalSeriousAEs = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'gradeTotalSeriousAEs'} // 0;
+		my $bNT162b2SeriousAEs   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'gradeTotalSeriousAEs'}            // 0;
+		my $placeboSeriousAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo'}->{'gradeTotalSeriousAEs'}                                // 0;
+		my $placeboBNTSeriousAEs = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'gradeTotalSeriousAEs'} // 0;
+		my $gradeTotalSubjects   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'totalSubjects'} // 0;
+		my $bNT162b2Subjects     = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'}            // 0;
+		my $placeboSubjects      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                                // 0;
+		my $placeboBNTSubjects   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'} // 0;
+		my $bnt162B2PercentOfTotal        = nearest(0.01, $bNT162b2Subjects   * 100 / $totalSubjectsBNT162b2);
+		my $placeboPercentOfTotal         = nearest(0.01, $placeboSubjects    * 100 / $totalSubjectsPlacebo);
+		my $placeboBnt162B2PercentOfTotal = 0;
+		if ($totalSubjectsPlaceboBNT162b2) {
+			$placeboBnt162B2PercentOfTotal = nearest(0.01, $placeboBNTSubjects * 100 / $totalSubjectsPlaceboBNT162b2);
+		}
+		my $totalPercentOfTotal           = nearest(0.01, $gradeTotalSubjects * 100 / $totalSubjects);
+		say $out "All;All;$bNT162b2AEs;$bNT162b2SeriousAEs;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSeriousAEs;$placeboSubjects;$placeboPercentOfTotal;$placeboBNTAEs;$placeboBNTSeriousAEs;$placeboBNTSubjects;$placeboBnt162B2PercentOfTotal;$gradeTotalAEs;$gradeTotalSeriousAEs;$gradeTotalSubjects;$totalPercentOfTotal;";
+		say "out       : [All;All;$bNT162b2AEs;$bNT162b2SeriousAEs;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSeriousAEs;$placeboSubjects;$placeboPercentOfTotal;$placeboBNTAEs;$placeboBNTSeriousAEs;$placeboBNTSubjects;$placeboBnt162B2PercentOfTotal;$gradeTotalAEs;$gradeTotalSeriousAEs;$gradeTotalSubjects;$totalPercentOfTotal;]";
+		die;
+		for my $aehlgt (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}}) {
+			my $aehlgtTotalAEs        = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalAEs'} // die;
+			my $bNT162b2AEs           = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'aehlgtTotalAEs'}            // 0;
+			my $placeboAEs            = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo'}->{'aehlgtTotalAEs'}                                // 0;
+			my $placeboBNTAEs         = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'aehlgtTotalAEs'} // 0;
+			my $aehlgtTotalSeriousAEs = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'aehlgtTotalSeriousAEs'} // 0;
+			my $bNT162b2SeriousAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'aehlgtTotalSeriousAEs'}            // 0;
+			my $placeboSeriousAEs     = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo'}->{'aehlgtTotalSeriousAEs'}                                // 0;
+			my $placeboBNTSeriousAEs  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'aehlgtTotalSeriousAEs'} // 0;
+			my $aehlgtTotalSubjects   = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalSubjects'} // 0;
+			my $bNT162b2Subjects      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'}            // 0;
+			my $placeboSubjects       = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                                // 0;
+			my $placeboBNTSubjects    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'} // 0;
+			my $bnt162B2PercentOfTotal        = nearest(0.01, $bNT162b2Subjects   * 100 / $totalSubjectsBNT162b2);
+			my $placeboPercentOfTotal         = nearest(0.01, $placeboSubjects    * 100 / $totalSubjectsPlacebo);
+			my $placeboBnt162B2PercentOfTotal = 0;
+			if ($totalSubjectsPlaceboBNT162b2) {
+				$placeboBnt162B2PercentOfTotal = nearest(0.01, $placeboBNTSubjects * 100 / $totalSubjectsPlaceboBNT162b2);
+			}
+			my $totalPercentOfTotal           = nearest(0.01, $aehlgtTotalSubjects * 100 / $totalSubjects);
+			say $out "$aehlgt;All;$bNT162b2AEs;$bNT162b2SeriousAEs;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSeriousAEs;$placeboSubjects;$placeboPercentOfTotal;$placeboBNTAEs;$placeboBNTSeriousAEs;$placeboBNTSubjects;$placeboBnt162B2PercentOfTotal;$aehlgtTotalAEs;$aehlgtTotalSeriousAEs;$aehlgtTotalSubjects;$totalPercentOfTotal;";
+			for my $aehlt (sort keys %{$stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}}) {
+				my $aehltTotalAEs         = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalAEs'} // die;
+				my $bNT162b2AEs           = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'aehltTotalAEs'}            // 0;
+				my $placeboAEs            = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{'aehltTotalAEs'}                                // 0;
+				my $placeboBNTAEs         = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'aehltTotalAEs'} // 0;
+				my $aehltTotalSeriousAEs  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'aehltTotalSeriousAEs'} // 0;
+				my $bNT162b2SeriousAEs    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'aehltTotalSeriousAEs'}            // 0;
+				my $placeboSeriousAEs     = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{'aehltTotalSeriousAEs'}                                // 0;
+				my $placeboBNTSeriousAEs  = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'aehltTotalSeriousAEs'} // 0;
+				my $aehltTotalSubjects    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'totalSubjects'} // 0;
+				my $bNT162b2Subjects      = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'}            // 0;
+				my $placeboSubjects       = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                                // 0;
+				my $placeboBNTSubjects    = $stats{'aeStats'}->{$fileLabel}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byReactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 Phase 2/3 (30 mcg)'}->{'totalSubjects'} // 0;
+				my $bnt162B2PercentOfTotal        = nearest(0.01, $bNT162b2Subjects   * 100 / $totalSubjectsBNT162b2);
+				my $placeboPercentOfTotal         = nearest(0.01, $placeboSubjects    * 100 / $totalSubjectsPlacebo);
+				my $placeboBnt162B2PercentOfTotal = 0;
+				if ($totalSubjectsPlaceboBNT162b2) {
+					$placeboBnt162B2PercentOfTotal = nearest(0.01, $placeboBNTSubjects * 100 / $totalSubjectsPlaceboBNT162b2);
+				}
+				my $totalPercentOfTotal           = nearest(0.01, $aehltTotalSubjects * 100 / $totalSubjects);
+				say $out ";$aehlt;$bNT162b2AEs;$bNT162b2SeriousAEs;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSeriousAEs;$placeboSubjects;$placeboPercentOfTotal;$placeboBNTAEs;$placeboBNTSeriousAEs;$placeboBNTSubjects;$placeboBnt162B2PercentOfTotal;$aehltTotalAEs;$aehltTotalSeriousAEs;$aehltTotalSubjects;$totalPercentOfTotal;";
+			}
+		}
 		close $out;
 	}
 }
-p%stats;
+# p%stats;
 
 sub age_to_age_group {
 	my $age = shift;
@@ -712,7 +975,7 @@ sub subject_symptoms_by_visits {
 		my $visitName = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'} // die;
 		for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
 			next unless $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
-			my $symptomCategory = symptom_category_from_symptom($symptomName);
+			my $symptomCategory = symptom_aehlgt_from_symptom($symptomName);
 			if ($officialSymptomsOnly) {
 				next unless $symptomCategory eq 'OFFICIAL';
 			}
@@ -869,7 +1132,7 @@ sub subject_symptoms_by_dates {
 		my $visitName = $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'} // die;
 		for my $symptomName (sort keys %{$symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
 			next unless $symptoms{$subjectId}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
-			my $symptomCategory = symptom_category_from_symptom($symptomName);
+			my $symptomCategory = symptom_aehlgt_from_symptom($symptomName);
 			if ($officialSymptomsOnly) {
 				next unless $symptomCategory eq 'OFFICIAL';
 			}
@@ -915,7 +1178,7 @@ sub ref_from_unblind {
 	return $referenceCompdate;
 }
 
-sub symptom_category_from_symptom {
+sub symptom_aehlgt_from_symptom {
 	my $symptomName = shift;
 	my $symptomCategory;
 	if (

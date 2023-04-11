@@ -77,6 +77,7 @@ sub load_adva_data {
 
 sub parse_data {
 	open my $out, '>:utf8', 'subjects_50_titer_data.csv';
+	say $out "Subject Id;Phase;Age (Years);Sex;Cohort;Randomization Datetime;Dose 1 Datetime;Dose 2 Datetime;Visit Name;Visit Day;Visit Datetime;Test;AVisit;AVisitNum;Result 1;Result 2;Offset (if Result 2);";
 	for my $subjectId (sort{$a <=> $b} keys %adsl) {
 		my ($trialSiteId)  = $subjectId =~ /^(....)....$/;
 		my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
@@ -120,6 +121,10 @@ sub parse_data {
 		for my $visitName (sort keys %{$advaData{$subjectId}->{'visits'}}) {
 			my $visitDay  = visit_name_to_day($visitName);
 			my $visitDate = $advaData{$subjectId}->{'visits'}->{$visitName}->{'visitDate'} // die;
+			if ($visitName eq 'V8_MONTH6_S') {
+				$stats{'z_date'}->{$visitDate}++;
+			}
+			my $visitDatetime = $advaData{$subjectId}->{'visits'}->{$visitName}->{'visitDatetime'} // die;
 			my $hasTest   = 0;
 			for my $testName (sort keys %{$advaData{$subjectId}->{'visits'}->{$visitName}->{'tests'}}) {
 				if ($testName eq 'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay') {
@@ -135,6 +140,7 @@ sub parse_data {
 						$stats{'totalSubjects'}->{'6_visitsByNames'}->{$visitName}->{'aVisit'} = $aVisit;
 						$stats{'totalSubjects'}->{'6_visitsByNames'}->{$visitName}->{'aVisitNum'} = $aVisitNum;
 						unless ($aVisit) {
+							$stats{'totalSubjects'}->{'6_visitsByNames'}->{'totalAVisitsNull'}++;
 							# say "*" x 50;
 							# say "subjectId : $subjectId";
 							# p$advaData{$subjectId}->{'visits'};
@@ -177,13 +183,23 @@ sub parse_data {
 					# Printing individual offsets (if two tests) & flatten data.
 					my %r1 = %{$results[0]};
 					my %r2 = ();
-					my ($avaLc1, $avisit, $aVisitNum);
 					my $avaLc2 = '';
+					my $offset1stTo2nd = '';
+					my ($aVisit, $aVisitNum);
+					my $avaLc1 = $r1{'avaLc'} // die;
 					if ($results[1]) {
 						%r2 = %{$results[1]};
+						$aVisit = $r2{'aVisit'} // die;
+						$aVisitNum = $r2{'aVisitNum'} // die;
+						$avaLc2 = $r2{'avaLc'} // die;
+						$offset1stTo2nd = nearest(0.01, $avaLc2 - $avaLc1);
 						# p%r2;
 						# die;
+					} else {
+						$aVisit = $r1{'aVisit'} // die;
+						$aVisitNum = $r1{'aVisitNum'} // die;
 					}
+					say $out "$subjectId;$phase;$ageYears;$sex;$cohort;$randomizationDatetime;$dose1Datetime;$dose2Datetime;$visitName;$visitDay;$visitDatetime;SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay;$aVisit;$aVisitNum;$avaLc1;$avaLc2;$offset1stTo2nd;";
 					# p%r1;
 					# die;
 					# p@results;
@@ -193,6 +209,7 @@ sub parse_data {
 			$stats{'totalSubjects'}->{'6_visitsByNames'}->{$visitName}->{'totalVisits'}++ if $hasTest;
 		}
 	}
+	close $out;
 }
 
 sub calculate_official_antibodies {
@@ -235,11 +252,11 @@ sub calculate_hidden_antibodies {
 }
 
 sub print_subject_sample {
-	open my $out, '>:utf8', '10071066_records_sample.csv';
+	open my $out, '>:utf8', '10031065_records_sample.csv';
 	say $out "VISIT;ISDTC;AVISIT;AVALC;";
-	for my $visitName (sort keys %{$advaData{'10071066'}->{'visits'}}) {
-		my ($visitDate) = split ' ', $advaData{'10071066'}->{'visits'}->{$visitName}->{'visitDatetime'};
-		for my $testData (@{$advaData{'10071066'}->{'visits'}->{$visitName}->{'tests'}->{'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay'}}) {
+	for my $visitName (sort keys %{$advaData{'10031065'}->{'visits'}}) {
+		my ($visitDate) = split ' ', $advaData{'10031065'}->{'visits'}->{$visitName}->{'visitDatetime'};
+		for my $testData (@{$advaData{'10031065'}->{'visits'}->{$visitName}->{'tests'}->{'SARS-CoV-2 serum neutralizing titer 50 (titer) - Virus Neutralization Assay'}}) {
 			my $avaLc = %$testData{'avaLc'} // die;
 			my $aVisit = %$testData{'aVisit'} // '';
 			say $out "$visitName;$visitDate;$aVisit;$avaLc;";

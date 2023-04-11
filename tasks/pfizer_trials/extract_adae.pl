@@ -65,6 +65,9 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
+		# open my $out, '>:utf8', 'sample_ae.json';
+		# print $out encode_json\%values;
+		# close $out;
 		# p%values;
 		# die;
 
@@ -76,6 +79,7 @@ while (<$in>) {
 		my $relation          = $values{'AREL'}     // die;
 		my $aehlgt            = $values{'AEHLGT'}   // die;
 		my $aehlt             = $values{'AEHLT'}    // die;
+		my $aeser             = $values{'AESER'}    // die;
 		my $aeRelTxt          = $values{'AERELTXT'} // die;
 		my $toxicityGrade     = $values{'ATOXGR'}   // die;
 		$toxicityGrade        =~ s/GRADE //;
@@ -93,6 +97,7 @@ while (<$in>) {
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeStdDt'} = $aeStdDt;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aehlgt'} = $aehlgt;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aehlt'} = $aehlt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeser'} = $aeser;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeRelTxt'} = $aeRelTxt;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeEndDt'} = $aeEndDt;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aperiodDc'} = $aperiodDc;

@@ -239,6 +239,13 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 			my $reactionsNum = 0;
 			for my $onsetDate (sort{$a <=> $b} keys %{$fevers{$subjectId}->{'aeListed'}}) {
 				my ($y, $m, $d) = $onsetDate =~ /(....)(..)(..)/;
+				my $reactions = keys %{$fevers{$subjectId}->{'aeListed'}->{$onsetDate}};
+				# say "reactions : $reactions";
+				# $stats{'z_totalReactions'}->{$reactions}++;
+				if ($reactions != 11) {
+					next;
+					p$fevers{$subjectId}->{'aeListed'}->{$onsetDate};
+				}
 				for my $adverseEffects (sort keys %{$fevers{$subjectId}->{'aeListed'}->{$onsetDate}}) {
 					my $severity = $fevers{$subjectId}->{'aeListed'}->{$onsetDate}->{$adverseEffects}->{'severity'} || next;
 					my $afterShot = $fevers{$subjectId}->{'aeListed'}->{$onsetDate}->{$adverseEffects}->{'afterShot'} || die;
@@ -298,8 +305,8 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 		delete $phase1Subjects{$subjectId}->{'visits'};
 		my $positiveNBinding = 0;
 		my $firstCovidDate;
-		for my $visitDate (sort keys %visits) {
-			my $visit = $visits{$visitDate}->{'visit'} // die;
+		for my $visit (sort keys %visits) {
+			my $visitDate = $visits{$visit}->{'visitDate'} // die;
 			my $visitName;
 			if ($visit =~ /V1_/) {
 				$visitName = '1';
@@ -326,7 +333,7 @@ for my $subjectId (sort{$a <=> $b} keys %sentinels) {
 					$firstCovidDate = $visitDate unless $firstCovidDate;
 				}
 			}
-			$phase1Subjects{$subjectId}->{'advaVisits'}->{$visitName} = \%{$visits{$visitDate}};
+			$phase1Subjects{$subjectId}->{'advaVisits'}->{$visitName} = \%{$visits{$visit}};
 			$phase1Subjects{$subjectId}->{'advaVisits'}->{$visitName}->{'visitDate'} = $visitDate;
 		}
 		my $positivePCR = 0;

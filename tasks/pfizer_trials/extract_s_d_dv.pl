@@ -68,6 +68,9 @@ while (<$in>) {
 			$vN++;
 		}
 		# p%values;
+		# open my $out, '>:utf8', 'sample.json';
+		# print $out encode_json\%values;
+		# close $out;
 		# die;
 
 		# Fetching the data we currently focus on.
