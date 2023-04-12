@@ -29,6 +29,9 @@ my $doseCutoffDatetime   = "$dCY-$dCM-$dCD 12:00:00";
 my $doseFromCompdate     = '20201019';
 my ($dFY, $dFM, $dFD)    = $doseFromCompdate =~ /(....)(..)(..)/;
 my $doseFromDatetime     = "$dFY-$dFM-$dFD 12:00:00";
+my @timeAngles           = ('Global', 'To October 18 2020', 'From October 19 2020');
+my @dose1Angles          = ('Global', 'First Dose To October 18 2020', 'First Dose From October 19 2020');
+my @siteAngles           = ('Global', 'All But Sites of Interest', 'Only Sites of Interest', 'Batch ee8493', 'Batch ej0553');
 
 # Loading data required.
 my $adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
@@ -120,9 +123,6 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	$doseDates{'3'} = $dose3Datetime if $dose3Datetime;
 
 	# For each timeAngle on the data, calculating referential times.
-	my @timeAngles  = ('Global', 'To October 18 2020', 'From October 19 2020');
-	my @dose1Angles = ('Global', 'First Dose To October 18 2020', 'First Dose From October 19 2020');
-	my @siteAngles  = ('Global', 'All But Sites of Interest', 'Only Sites of Interest', 'Batch ee8493', 'Batch ej0553');
 	for my $timeAngle (@timeAngles) {
 		# next unless $timeAngle eq 'Global'; ################### DEBUG.
 		# Setting values related to subject's populations.
@@ -481,8 +481,6 @@ for my $timeAngle (sort keys %stats) {
 					}
 					my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 					my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-					say "[$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K]";
-					say "[$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K]";
 					print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
 					           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
 				}
@@ -539,8 +537,6 @@ for my $timeAngle (sort keys %stats) {
 						}
 						my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 						my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-						say "[$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K]";
-						say "[$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K]";
 						print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
 						           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
 					}
@@ -562,14 +558,14 @@ for my $timeAngle (sort keys %stats) {
 						my $placeboSubjectsSAE             = $stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{'totalSubjectsWithSAEs'}                                // 0;
 						my $placeboBNTSubjectsAE           = $stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjects'} // 0;
 						my $placeboBNTSubjectsSAE          = $stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjectsWithSAEs'} // 0;
-						my $rateTotalAEsPer100K            = nearest(0.01, $aehlgtTotalSubjectsAE * 100000 / $personYearsGlobal);
-						my $rateTotalSAEsPer100K           = nearest(0.01, $aehlgtTotalSubjectsSAE * 100000 / $personYearsGlobal);
+						my $rateTotalAEsPer100K            = nearest(0.01, $aehltTotalSubjectsAE * 100000 / $personYearsGlobal);
+						my $rateTotalSAEsPer100K           = nearest(0.01, $aehltTotalSubjectsSAE * 100000 / $personYearsGlobal);
 						my $rateBNT162b2SAEsPer100K        = nearest(0.01, $bNT162b2SubjectsSAE * 100000 / $personYearsBNT162b2);
 						my $rateBNT162b2AEsPer100K         = nearest(0.01, $bNT162b2SubjectsAE * 100000 / $personYearsBNT162b2);
 						my $ratePlaceboSAEsPer100K         = nearest(0.01, $placeboSubjectsSAE * 100000 / $personYearsPlacebo);
 						my $ratePlaceboAEsPer100K          = nearest(0.01, $placeboSubjectsAE * 100000 / $personYearsPlacebo);
-						my $totalPercentOfTotalAEs         = nearest(0.01, $aehlgtTotalSubjectsAE * 100 / $totalSubjects);
-						my $totalPercentOfTotalSAEs        = nearest(0.01, $aehlgtTotalSubjectsSAE * 100 / $totalSubjects);
+						my $totalPercentOfTotalAEs         = nearest(0.01, $aehltTotalSubjectsAE * 100 / $totalSubjects);
+						my $totalPercentOfTotalSAEs        = nearest(0.01, $aehltTotalSubjectsSAE * 100 / $totalSubjects);
 						my $bnt162B2PercentOfTotalAE       = nearest(0.01, $bNT162b2SubjectsAE   * 100 / $totalSubjectsBNT162b2);
 						my $bnt162B2PercentOfTotalSAE      = nearest(0.01, $bNT162b2SubjectsSAE  * 100 / $totalSubjectsBNT162b2);
 						my $placeboPercentOfTotalAE        = nearest(0.01, $placeboSubjectsAE    * 100 / $totalSubjectsPlacebo);
@@ -597,8 +593,6 @@ for my $timeAngle (sort keys %stats) {
 							}
 							my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 							my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-							say "[$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K]";
-							say "[$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K]";
 							print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
 							           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
 						}
