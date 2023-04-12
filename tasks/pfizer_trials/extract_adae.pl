@@ -30,7 +30,9 @@ my %dataLabels  = ();
 my ($dRNum,
 	$expectedValues) = (0, 0);
 my %subjects    = ();
+my %noDates     = ();
 while (<$in>) {
+	chomp $_;
 	$dRNum++;
 
 	# Verifying line.
@@ -87,12 +89,21 @@ while (<$in>) {
 		my $aeEndDt           = $values{'AEENDTC'}  // die;
 		$aeStdDt              =~ s/T/ /;
 		my $aeTerm            = $values{'AETERM'}   // die;
-		$subjects{$subjectId}->{'totalADC19EFRows'}++;
-		my $totalADC19EFRows     = $subjects{$subjectId}->{'totalADC19EFRows'} // die;
+		my ($aeCompdate) = split ' ', $aeStdDt;
+		unless ($aeCompdate) {
+			$noDates{$subjectId} = \%values;
+			next;
+		} else {
+			$aeCompdate =~ s/\D//g;
+			my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
+			unless ($aeY && $aeM && $aeD) {
+				$noDates{$subjectId} = \%values;
+				next;
+			}
+		}
+		$subjects{$subjectId}->{'totalADAERows'}++;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		my ($aeCompdate) = split ' ', $aeStdDt;
-		$aeCompdate =~ s/\D//g;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'toxicityGrade'} = $toxicityGrade;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeStdDt'} = $aeStdDt;
 		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aehlgt'} = $aehlgt;
@@ -108,8 +119,10 @@ while (<$in>) {
 	}
 }
 close $in;
+$dRNum--;
 say "dRNum           : $dRNum";
 say "patients        : " . keys %subjects;
+say "no date         : " . keys %noDates;
 
 my $outputFolder   = "public/doc/pfizer_trials";
 make_path($outputFolder) unless (-d $outputFolder);
@@ -118,3 +131,39 @@ make_path($outputFolder) unless (-d $outputFolder);
 open my $out, '>:utf8', "$outputFolder/pfizer_adae_patients.json";
 print $out encode_json\%subjects;
 close $out;
+
+# Prints missing subjects.
+open my $out2, '>:utf8', "$outputFolder/adae_missing_dates_rows.csv";
+# .CSV Header
+for my $subjectId (sort keys %noDates) {
+	for my $label (sort keys %{$noDates{$subjectId}}) {
+		print $out2 "$label;";
+	}
+	last;
+}
+print $out2 "\n";
+# .CSV Values
+my %sitesTargeted      = ();
+$sitesTargeted{'1133'} = 'ee8493';
+$sitesTargeted{'1135'} = 'ee8493';
+$sitesTargeted{'1146'} = 'ee8493';
+$sitesTargeted{'1170'} = 'ee8493';
+$sitesTargeted{'1001'} = 'ej0553';
+$sitesTargeted{'1002'} = 'ej0553';
+$sitesTargeted{'1003'} = 'ej0553';
+$sitesTargeted{'1007'} = 'ej0553';
+my $inSitesTargeted = 0; # Counting subjects we care about.
+for my $subjectId (sort keys %noDates) {
+	my ($trialSiteId) = $subjectId =~ /^(....)....$/;
+	die unless $trialSiteId;
+	if (exists $sitesTargeted{$subjectId}) {
+		$inSitesTargeted++;
+	}
+	for my $label (sort keys %{$noDates{$subjectId}}) {
+		my $value = $noDates{$subjectId}->{$label} || "";
+		print $out2 "$value;";
+	}
+	print $out2 "\n";
+}
+close $out2;
+say "in sites of interest : $inSitesTargeted";
