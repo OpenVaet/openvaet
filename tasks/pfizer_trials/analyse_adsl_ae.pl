@@ -19,7 +19,7 @@ use File::Path qw(make_path);
 use time;
 
 # Treatment configuration.
-my $toxicityGradeDetails = 0; # Either 0 or 1 (with grade details).
+my $toxicityGradeDetails = 0; # Either 0 or 1 (1 = with grade details).
 my $cutoffCompdate       = '20210313';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
@@ -29,9 +29,12 @@ my $doseCutoffDatetime   = "$dCY-$dCM-$dCD 12:00:00";
 my $doseFromCompdate     = '20201019';
 my ($dFY, $dFM, $dFD)    = $doseFromCompdate =~ /(....)(..)(..)/;
 my $doseFromDatetime     = "$dFY-$dFM-$dFD 12:00:00";
-my @timeAngles           = ('Global', 'To October 18 2020', 'From October 19 2020');
-my @dose1Angles          = ('Global', 'First Dose To October 18 2020', 'First Dose From October 19 2020');
-my @siteAngles           = ('Global', 'All But Sites of Interest', 'Only Sites of Interest', 'Batch ee8493', 'Batch ej0553');
+
+# Setting angles of analysis
+# my @timeAngles           = ('March 13 Cut-Off', 'To October 18 2020', 'From October 19 2020');
+my @timeAngles           = ('March 13 Cut-Off'); # Cut-off on adverse events.
+my @dose1Angles          = ('No Dose 1 Filter', 'First Dose To October 18 2020', 'First Dose From October 19 2020'); # Filtering on dose 1 administration.
+my @siteAngles           = ('No Site Filter', 'All But Sites of Interest', 'Only Sites of Interest', 'Batch ee8493', 'Batch ej0553'); # Filtering by site.
 
 # Loading data required.
 my $adslFile             = 'public/doc/pfizer_trials/pfizer_adsl_patients.json';
@@ -182,6 +185,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 				# AE stats.
 				my ($hasAE, $hasSAE) = (0, 0);
 				if (exists $adaes{$subjectId}) {
+					# For each date on which AEs have been reported
 					for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
 						my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
 						die unless ($aeY && $aeM && $aeD);
@@ -220,7 +224,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 						# say "doseToAEDays             : $doseToAEDays";
 						# say "doseArm                  : $doseArm";
 
-
+						# For Each adverse effect reported on this date.
 						for my $aeObserved (sort keys %{$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}}) {
 							# p$adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved};die;
 							my $aehlgt        = $adaes{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeObserved}->{'aehlgt'}        // die;
@@ -340,10 +344,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 								}
 							}
 						}
-						# say "hasSAE                   : $hasSAE";
-						# say "hasAE                    : $hasAE";
 					}
-					# die;
 				}
 				# Total subjects with AE.
 				if ($hasAE) {
@@ -356,9 +357,6 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 			}
 		}
 	}
-	# if ($dose3Date) {
-	# 	die;
-	# }
 
 	# Flushing subjects cache.
 	%subjectsAEs = ();
@@ -369,6 +367,7 @@ say "";
 # p%stats;
 # die;
 
+my %rates = ();
 for my $timeAngle (sort keys %stats) {
 	for my $dose1Angle (sort keys %{$stats{$timeAngle}}) {
 		for my $siteAngle (sort keys %{$stats{$timeAngle}->{$dose1Angle}}) {
@@ -407,27 +406,27 @@ for my $timeAngle (sort keys %stats) {
 				# p$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade};
 				# say "toxicityGrade              : $toxicityGrade";
 				# p$stats{$timeAngle};
-				say "Printing [adverse_effects/$timeAngle/$dose1Angle/$siteAngle" . "_$toxicityGrade.csv]";
-				make_path("adverse_effects/$timeAngle/$dose1Angle") unless (-d "adverse_effects/$timeAngle/$dose1Angle");
-				open my $out, '>:utf8', "adverse_effects/$timeAngle/$dose1Angle/$siteAngle" . "_$toxicityGrade.csv";
-				print $out "System Organ Class / Preferred Term;;".
-						 "Total - N=$totalSubjects | PY=$personYearsGlobal;;;;;;;;" .
-						 "BNT162b2 (30 mcg) - N=$totalSubjectsBNT162b2 | PY=$personYearsBNT162b2;;;;;;;;" .
-						 "Placebo - N=$totalSubjectsPlacebo | PY=$personYearsPlacebo;;;;;;;;";
+				say "Printing [adverse_effects/$siteAngle/$dose1Angle" . "_$toxicityGrade.csv]";
+				make_path("adverse_effects/$siteAngle") unless (-d "adverse_effects/$siteAngle");
+				open my $out, '>:utf8', "adverse_effects/$siteAngle/$dose1Angle" . "_$toxicityGrade.csv";
+				print $out "System Organ Class / Preferred Term,,".
+						 "Total - N=$totalSubjects | PY=$personYearsGlobal,,,,,,,," .
+						 "BNT162b2 (30 mcg) - N=$totalSubjectsBNT162b2 | PY=$personYearsBNT162b2,,,,,,,," .
+						 "Placebo - N=$totalSubjectsPlacebo | PY=$personYearsPlacebo,,,,,,,,";
 				if ($personYearsPlaceboBNT) {
-					print $out "Placebo -> BNT162b2 (30 mcg) - N=$totalSubjectsPlaceboBNT | PY=$personYearsPlaceboBNT;;;;;;;;";
+					print $out "Placebo -> BNT162b2 (30 mcg) - N=$totalSubjectsPlaceboBNT | PY=$personYearsPlaceboBNT,,,,,,,,";
 				}
 				say $out "";
-				print $out ";;" .
-						   "AEs;Subjects;\%;Per 100K / PY;" .
-						   "SAEs;Subjects;\%;Per 100K / PY;" .
-						   "AEs;Subjects;\%;Per 100K / PY;" .
-						   "SAEs;Subjects;\%;Per 100K / PY;" .
-						   "AEs;Subjects;\%;Per 100K / PY;" .
-						   "SAEs;Subjects;\%;Per 100K / PY;";
+				print $out ",," .
+						   "AEs,Subjects,\%,Per 100K / PY," .
+						   "SAEs,Subjects,\%,Per 100K / PY," .
+						   "AEs,Subjects,\%,Per 100K / PY," .
+						   "SAEs,Subjects,\%,Per 100K / PY," .
+						   "AEs,Subjects,\%,Per 100K / PY," .
+						   "SAEs,Subjects,\%,Per 100K / PY,";
 				if ($personYearsPlaceboBNT) {
-					print $out "AEs;Subjects;\%;Per 100K / PY;" .
-						       "SAEs;Subjects;\%;Per 100K / PY;";
+					print $out "AEs,Subjects,\%,Per 100K / PY," .
+						       "SAEs,Subjects,\%,Per 100K / PY,";
 				}
 				say $out "";
 				my $gradeTotalSubjectsAE           = $stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'totalSubjects'}         // 0;
@@ -465,13 +464,13 @@ for my $timeAngle (sort keys %stats) {
 				# say "totalSAEs                  : $totalSAEs";
 				# say "gradeTotalSubjectsSAE      : $gradeTotalSubjectsSAE";
 				# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-				print $out "All;All;" .
-						   "$totalAEs;$gradeTotalSubjectsAE;$totalPercentOfTotalAEs;$rateTotalAEsPer100K;" .
-						   "$totalSAEs;$gradeTotalSubjectsSAE;$totalPercentOfTotalSAEs;$rateTotalSAEsPer100K;" .
-						   "$aesBNT162b2;$bNT162b2SubjectsAE;$bnt162B2PercentOfTotalAE;$rateBNT162b2AEsPer100K;" .
-						   "$saesBNT162b2;$bNT162b2SubjectsSAE;$bnt162B2PercentOfTotalSAE;$rateBNT162b2SAEsPer100K;" .
-						   "$placeboAEs;$placeboSubjectsAE;$placeboPercentOfTotalAE;$ratePlaceboAEsPer100K;" .
-						   "$placeboSAEs;$placeboSubjectsSAE;$placeboPercentOfTotalSAE;$ratePlaceboSAEsPer100K;";
+				print $out "All,All," .
+						   "$totalAEs,$gradeTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
+						   "$totalSAEs,$gradeTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
+						   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
+						   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
+						   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
+						   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
 				if ($personYearsPlaceboBNT) {
 					my $placeboBNTPercentOfTotalAE     = 0;
 					my $placeboBNTPercentOfTotalSAE    = 0;
@@ -481,8 +480,8 @@ for my $timeAngle (sort keys %stats) {
 					}
 					my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 					my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-					print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
-					           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
+					print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
+					           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
 				}
 				say $out "";
 				for my $aehlgt (sort keys %{$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}}) {
@@ -521,13 +520,13 @@ for my $timeAngle (sort keys %stats) {
 					# say "totalSAEs                  : $totalSAEs";
 					# say "gradeTotalSubjectsSAE      : $aehlgtTotalSubjectsSAE";
 					# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-					print $out "$aehlgt;All;" .
-							   "$totalAEs;$aehlgtTotalSubjectsAE;$totalPercentOfTotalAEs;$rateTotalAEsPer100K;" .
-							   "$totalSAEs;$aehlgtTotalSubjectsSAE;$totalPercentOfTotalSAEs;$rateTotalSAEsPer100K;" .
-							   "$aesBNT162b2;$bNT162b2SubjectsAE;$bnt162B2PercentOfTotalAE;$rateBNT162b2AEsPer100K;" .
-							   "$saesBNT162b2;$bNT162b2SubjectsSAE;$bnt162B2PercentOfTotalSAE;$rateBNT162b2SAEsPer100K;" .
-							   "$placeboAEs;$placeboSubjectsAE;$placeboPercentOfTotalAE;$ratePlaceboAEsPer100K;" .
-							   "$placeboSAEs;$placeboSubjectsSAE;$placeboPercentOfTotalSAE;$ratePlaceboSAEsPer100K;";
+					print $out "$aehlgt,All," .
+							   "$totalAEs,$aehlgtTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
+							   "$totalSAEs,$aehlgtTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
+							   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
+							   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
+							   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
+							   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
 					if ($personYearsPlaceboBNT) {
 						my $placeboBNTPercentOfTotalAE     = 0;
 						my $placeboBNTPercentOfTotalSAE    = 0;
@@ -537,8 +536,8 @@ for my $timeAngle (sort keys %stats) {
 						}
 						my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 						my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-						print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
-						           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
+						print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
+						           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
 					}
 					say $out "";
 					for my $aehlt (sort keys %{$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}}) {
@@ -577,13 +576,13 @@ for my $timeAngle (sort keys %stats) {
 						# say "totalSAEs                  : $totalSAEs";
 						# say "gradeTotalSubjectsSAE      : $aehlgtTotalSubjectsSAE";
 						# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-						print $out ";$aehlt;" .
-								   "$totalAEs;$aehltTotalSubjectsAE;$totalPercentOfTotalAEs;$rateTotalAEsPer100K;" .
-								   "$totalSAEs;$aehltTotalSubjectsSAE;$totalPercentOfTotalSAEs;$rateTotalSAEsPer100K;" .
-								   "$aesBNT162b2;$bNT162b2SubjectsAE;$bnt162B2PercentOfTotalAE;$rateBNT162b2AEsPer100K;" .
-								   "$saesBNT162b2;$bNT162b2SubjectsSAE;$bnt162B2PercentOfTotalSAE;$rateBNT162b2SAEsPer100K;" .
-								   "$placeboAEs;$placeboSubjectsAE;$placeboPercentOfTotalAE;$ratePlaceboAEsPer100K;" .
-								   "$placeboSAEs;$placeboSubjectsSAE;$placeboPercentOfTotalSAE;$ratePlaceboSAEsPer100K;";
+						print $out ",$aehlt," .
+								   "$totalAEs,$aehltTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
+								   "$totalSAEs,$aehltTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
+								   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
+								   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
+								   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
+								   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
 						if ($personYearsPlaceboBNT) {
 							my $placeboBNTPercentOfTotalAE     = 0;
 							my $placeboBNTPercentOfTotalSAE    = 0;
@@ -593,8 +592,8 @@ for my $timeAngle (sort keys %stats) {
 							}
 							my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 							my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-							print $out "$placeboBNTAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$ratePlaceboBNTAEsPer100K;" .
-							           "$placeboBNTSAEs;$placeboBNTSubjectsSAE;$placeboBNTPercentOfTotalSAE;$ratePlaceboBNTSAEsPer100K;";
+							print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
+							           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
 						}
 						say $out "";
 				# 		say $out ";$aehlt;$aesBNT162b2;$saesBNT162b2;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSAEs;$placeboSubjectsAE;$placeboPercentOfTotalAE;$placeboBNTAEs;$placeboBNTSAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$aehltTotalAEs;$aehltTotalSAEs;$aehltTotalSubjects;$totalPercentOfTotalAEs;";
@@ -2211,7 +2210,7 @@ sub time_of_exposure_from_angle {
 		$groupArm = 'BNT162b2 (30 mcg)';
 	}
 	my $treatmentCutoffCompdate = $cutoffCompdate;
-	if ($timeAngle eq 'Global') {
+	if ($timeAngle eq 'March 13 Cut-Off') {
 		if ($dose3Datetime) {
 			die unless $arm eq 'Placebo';
 			$groupArm = 'Placebo -> BNT162b2 (30 mcg)';
