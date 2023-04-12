@@ -19,7 +19,8 @@ use File::Path qw(make_path);
 use time;
 
 # Treatment configuration.
-my $toxicityGradeDetails = 0; # Either 0 or 1 (1 = with grade details).
+my $toxicityGradeDetails = 0;   # Either 0 or 1 (1 = with grade details).
+my $csvSeparator         = ';'; # Whichever char is best for your OS localization.
 my $cutoffCompdate       = '20210313';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
@@ -254,24 +255,24 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'totalSubjects'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
-							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'subjects'}->{$subjectId}->{'subject'}) {
-								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'subjects'}->{$subjectId}->{'subject'} = 1;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'totalSubjects'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'subjects'}->{$subjectId}->{'subject'}) {
+								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'subjects'}->{$subjectId}->{'subject'} = 1;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'totalSubjects'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'totalAEs'}++;
 							if ($aeser) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'totalSAEs'}++;
-								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'subjects'}->{$subjectId}->{'SAE'}) {
-									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'totalSubjectsWithSAEs'}++;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'totalSAEs'}++;
+								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'subjects'}->{$subjectId}->{'SAE'}) {
+									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'totalSubjectsWithSAEs'}++;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
 								}
 								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'subjects'}->{$subjectId}->{'SAE'}) {
 									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
@@ -286,24 +287,24 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
-							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'subject'}) {
-								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'subject'} = 1;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'subject'}) {
+								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'subject'} = 1;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'totalSubjects'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'totalAEs'}++;
 							if ($aeser) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalSAEs'}++;
-								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'}) {
-									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'totalSubjectsWithSAEs'}++;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'totalSAEs'}++;
+								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'}) {
+									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'totalSubjectsWithSAEs'}++;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
 								}
 								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'}) {
 									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
@@ -318,24 +319,24 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSubjects'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
-							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'subject'}) {
-								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'subject'} = 1;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSubjects'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
+							unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'subject'}) {
+								$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'subject'} = 1;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSubjects'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjects'}++;
 							}
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
 							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
-							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalAEs'}++;
+							$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalAEs'}++;
 							if ($aeser) {
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
 								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
-								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSAEs'}++;
-								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'}) {
-									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSubjectsWithSAEs'}++;
-									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'all_grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSAEs'}++;
+								$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSAEs'}++;
+								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'}) {
+									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'totalSubjectsWithSAEs'}++;
+									$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{'All Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{$doseArm}->{'totalSubjectsWithSAEs'}++;
 								}
 								unless (exists $subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'}) {
 									$subjectsAEs{$timeAngle}->{$dose1Angle}->{$siteAngle}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'subjects'}->{$subjectId}->{'SAE'} = 1;
@@ -367,7 +368,6 @@ say "";
 # p%stats;
 # die;
 
-my %rates = ();
 for my $timeAngle (sort keys %stats) {
 	for my $dose1Angle (sort keys %{$stats{$timeAngle}}) {
 		for my $siteAngle (sort keys %{$stats{$timeAngle}->{$dose1Angle}}) {
@@ -401,32 +401,32 @@ for my $timeAngle (sort keys %stats) {
 			# say "personYearsPlaceboBNT      : $personYearsPlaceboBNT";
 			for my $toxicityGrade (sort keys %{$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}}) {
 				if (!$toxicityGradeDetails) {
-					next unless $toxicityGrade eq 'all_grades';
+					next unless $toxicityGrade eq 'All Grades';
 				}
 				# p$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade};
 				# say "toxicityGrade              : $toxicityGrade";
 				# p$stats{$timeAngle};
 				say "Printing [adverse_effects/$siteAngle/$dose1Angle" . "_$toxicityGrade.csv]";
 				make_path("adverse_effects/$siteAngle") unless (-d "adverse_effects/$siteAngle");
-				open my $out, '>:utf8', "adverse_effects/$siteAngle/$dose1Angle" . "_$toxicityGrade.csv";
-				print $out "System Organ Class / Preferred Term,,".
-						 "Total - N=$totalSubjects | PY=$personYearsGlobal,,,,,,,," .
-						 "BNT162b2 (30 mcg) - N=$totalSubjectsBNT162b2 | PY=$personYearsBNT162b2,,,,,,,," .
-						 "Placebo - N=$totalSubjectsPlacebo | PY=$personYearsPlacebo,,,,,,,,";
+				open my $out, '>:utf8', "adverse_effects/$siteAngle/$dose1Angle" . " - $toxicityGrade.csv";
+				print $out "System Organ Class / Preferred Term$csvSeparator$csvSeparator".
+						 "Total - N=$totalSubjects | PY=$personYearsGlobal$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator" .
+						 "BNT162b2 (30 mcg) - N=$totalSubjectsBNT162b2 | PY=$personYearsBNT162b2$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator" .
+						 "Placebo - N=$totalSubjectsPlacebo | PY=$personYearsPlacebo$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator";
 				if ($personYearsPlaceboBNT) {
-					print $out "Placebo -> BNT162b2 (30 mcg) - N=$totalSubjectsPlaceboBNT | PY=$personYearsPlaceboBNT,,,,,,,,";
+					print $out "Placebo -> BNT162b2 (30 mcg) - N=$totalSubjectsPlaceboBNT | PY=$personYearsPlaceboBNT$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator$csvSeparator";
 				}
 				say $out "";
-				print $out ",," .
-						   "AEs,Subjects,\%,Per 100K / PY," .
-						   "SAEs,Subjects,\%,Per 100K / PY," .
-						   "AEs,Subjects,\%,Per 100K / PY," .
-						   "SAEs,Subjects,\%,Per 100K / PY," .
-						   "AEs,Subjects,\%,Per 100K / PY," .
-						   "SAEs,Subjects,\%,Per 100K / PY,";
+				print $out "$csvSeparator$csvSeparator" .
+						   "AEs$csvSeparator"  . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						   "SAEs$csvSeparator" . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						   "AEs$csvSeparator"  . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						   "SAEs$csvSeparator" . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						   "AEs$csvSeparator"  . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						   "SAEs$csvSeparator" . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator";
 				if ($personYearsPlaceboBNT) {
-					print $out "AEs,Subjects,\%,Per 100K / PY," .
-						       "SAEs,Subjects,\%,Per 100K / PY,";
+					print $out "AEs$csvSeparator"  . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator" .
+						       "SAEs$csvSeparator" . "Subjects$csvSeparator\%$csvSeparator" . "Per 100K / PY$csvSeparator";
 				}
 				say $out "";
 				my $gradeTotalSubjectsAE           = $stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'totalSubjects'}         // 0;
@@ -464,13 +464,13 @@ for my $timeAngle (sort keys %stats) {
 				# say "totalSAEs                  : $totalSAEs";
 				# say "gradeTotalSubjectsSAE      : $gradeTotalSubjectsSAE";
 				# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-				print $out "All,All," .
-						   "$totalAEs,$gradeTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
-						   "$totalSAEs,$gradeTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
-						   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
-						   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
-						   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
-						   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
+				print $out "All$csvSeparator" . "All$csvSeparator" .
+						   "$totalAEs$csvSeparator$gradeTotalSubjectsAE$csvSeparator$totalPercentOfTotalAEs$csvSeparator$rateTotalAEsPer100K$csvSeparator" .
+						   "$totalSAEs$csvSeparator$gradeTotalSubjectsSAE$csvSeparator$totalPercentOfTotalSAEs$csvSeparator$rateTotalSAEsPer100K$csvSeparator" .
+						   "$aesBNT162b2$csvSeparator$bNT162b2SubjectsAE$csvSeparator$bnt162B2PercentOfTotalAE$csvSeparator$rateBNT162b2AEsPer100K$csvSeparator" .
+						   "$saesBNT162b2$csvSeparator$bNT162b2SubjectsSAE$csvSeparator$bnt162B2PercentOfTotalSAE$csvSeparator$rateBNT162b2SAEsPer100K$csvSeparator" .
+						   "$placeboAEs$csvSeparator$placeboSubjectsAE$csvSeparator$placeboPercentOfTotalAE$csvSeparator$ratePlaceboAEsPer100K$csvSeparator" .
+						   "$placeboSAEs$csvSeparator$placeboSubjectsSAE$csvSeparator$placeboPercentOfTotalSAE$csvSeparator$ratePlaceboSAEsPer100K$csvSeparator";
 				if ($personYearsPlaceboBNT) {
 					my $placeboBNTPercentOfTotalAE     = 0;
 					my $placeboBNTPercentOfTotalSAE    = 0;
@@ -480,8 +480,8 @@ for my $timeAngle (sort keys %stats) {
 					}
 					my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 					my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-					print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
-					           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
+					print $out "$placeboBNTAEs$csvSeparator$placeboBNTSubjectsAE$csvSeparator$placeboBNTPercentOfTotalAE$csvSeparator$ratePlaceboBNTAEsPer100K$csvSeparator" .
+					           "$placeboBNTSAEs$csvSeparator$placeboBNTSubjectsSAE$csvSeparator$placeboBNTPercentOfTotalSAE$csvSeparator$ratePlaceboBNTSAEsPer100K$csvSeparator";
 				}
 				say $out "";
 				for my $aehlgt (sort keys %{$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}}) {
@@ -520,13 +520,13 @@ for my $timeAngle (sort keys %stats) {
 					# say "totalSAEs                  : $totalSAEs";
 					# say "gradeTotalSubjectsSAE      : $aehlgtTotalSubjectsSAE";
 					# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-					print $out "$aehlgt,All," .
-							   "$totalAEs,$aehlgtTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
-							   "$totalSAEs,$aehlgtTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
-							   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
-							   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
-							   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
-							   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
+					print $out "$aehlgt$csvSeparator" . "All$csvSeparator" .
+							   "$totalAEs$csvSeparator$aehlgtTotalSubjectsAE$csvSeparator$totalPercentOfTotalAEs$csvSeparator$rateTotalAEsPer100K$csvSeparator" .
+							   "$totalSAEs$csvSeparator$aehlgtTotalSubjectsSAE$csvSeparator$totalPercentOfTotalSAEs$csvSeparator$rateTotalSAEsPer100K$csvSeparator" .
+							   "$aesBNT162b2$csvSeparator$bNT162b2SubjectsAE$csvSeparator$bnt162B2PercentOfTotalAE$csvSeparator$rateBNT162b2AEsPer100K$csvSeparator" .
+							   "$saesBNT162b2$csvSeparator$bNT162b2SubjectsSAE$csvSeparator$bnt162B2PercentOfTotalSAE$csvSeparator$rateBNT162b2SAEsPer100K$csvSeparator" .
+							   "$placeboAEs$csvSeparator$placeboSubjectsAE$csvSeparator$placeboPercentOfTotalAE$csvSeparator$ratePlaceboAEsPer100K$csvSeparator" .
+							   "$placeboSAEs$csvSeparator$placeboSubjectsSAE$csvSeparator$placeboPercentOfTotalSAE$csvSeparator$ratePlaceboSAEsPer100K$csvSeparator";
 					if ($personYearsPlaceboBNT) {
 						my $placeboBNTPercentOfTotalAE     = 0;
 						my $placeboBNTPercentOfTotalSAE    = 0;
@@ -536,8 +536,8 @@ for my $timeAngle (sort keys %stats) {
 						}
 						my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 						my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-						print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
-						           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
+						print $out "$placeboBNTAEs$csvSeparator$placeboBNTSubjectsAE$csvSeparator$placeboBNTPercentOfTotalAE$csvSeparator$ratePlaceboBNTAEsPer100K$csvSeparator" .
+						           "$placeboBNTSAEs$csvSeparator$placeboBNTSubjectsSAE$csvSeparator$placeboBNTPercentOfTotalSAE$csvSeparator$ratePlaceboBNTSAEsPer100K$csvSeparator";
 					}
 					say $out "";
 					for my $aehlt (sort keys %{$stats{$timeAngle}->{$dose1Angle}->{$siteAngle}->{'gradeStats'}->{$toxicityGrade}->{'categories'}->{$aehlgt}->{'reactions'}}) {
@@ -576,13 +576,13 @@ for my $timeAngle (sort keys %stats) {
 						# say "totalSAEs                  : $totalSAEs";
 						# say "gradeTotalSubjectsSAE      : $aehlgtTotalSubjectsSAE";
 						# say "totalPercentOfTotalSAEs    : $totalPercentOfTotalSAEs";
-						print $out ",$aehlt," .
-								   "$totalAEs,$aehltTotalSubjectsAE,$totalPercentOfTotalAEs,$rateTotalAEsPer100K," .
-								   "$totalSAEs,$aehltTotalSubjectsSAE,$totalPercentOfTotalSAEs,$rateTotalSAEsPer100K," .
-								   "$aesBNT162b2,$bNT162b2SubjectsAE,$bnt162B2PercentOfTotalAE,$rateBNT162b2AEsPer100K," .
-								   "$saesBNT162b2,$bNT162b2SubjectsSAE,$bnt162B2PercentOfTotalSAE,$rateBNT162b2SAEsPer100K," .
-								   "$placeboAEs,$placeboSubjectsAE,$placeboPercentOfTotalAE,$ratePlaceboAEsPer100K," .
-								   "$placeboSAEs,$placeboSubjectsSAE,$placeboPercentOfTotalSAE,$ratePlaceboSAEsPer100K,";
+						print $out "$csvSeparator$aehlt$csvSeparator" .
+								   "$totalAEs$csvSeparator$aehltTotalSubjectsAE$csvSeparator$totalPercentOfTotalAEs$csvSeparator$rateTotalAEsPer100K$csvSeparator" .
+								   "$totalSAEs$csvSeparator$aehltTotalSubjectsSAE$csvSeparator$totalPercentOfTotalSAEs$csvSeparator$rateTotalSAEsPer100K$csvSeparator" .
+								   "$aesBNT162b2$csvSeparator$bNT162b2SubjectsAE$csvSeparator$bnt162B2PercentOfTotalAE$csvSeparator$rateBNT162b2AEsPer100K$csvSeparator" .
+								   "$saesBNT162b2$csvSeparator$bNT162b2SubjectsSAE$csvSeparator$bnt162B2PercentOfTotalSAE$csvSeparator$rateBNT162b2SAEsPer100K$csvSeparator" .
+								   "$placeboAEs$csvSeparator$placeboSubjectsAE$csvSeparator$placeboPercentOfTotalAE$csvSeparator$ratePlaceboAEsPer100K$csvSeparator" .
+								   "$placeboSAEs$csvSeparator$placeboSubjectsSAE$csvSeparator$placeboPercentOfTotalSAE$csvSeparator$ratePlaceboSAEsPer100K$csvSeparator";
 						if ($personYearsPlaceboBNT) {
 							my $placeboBNTPercentOfTotalAE     = 0;
 							my $placeboBNTPercentOfTotalSAE    = 0;
@@ -592,8 +592,8 @@ for my $timeAngle (sort keys %stats) {
 							}
 							my $ratePlaceboBNTSAEsPer100K         = nearest(0.01, $placeboBNTSubjectsSAE * 100000 / $personYearsPlaceboBNT);
 							my $ratePlaceboBNTAEsPer100K          = nearest(0.01, $placeboBNTSubjectsAE * 100000 / $personYearsPlaceboBNT);
-							print $out "$placeboBNTAEs,$placeboBNTSubjectsAE,$placeboBNTPercentOfTotalAE,$ratePlaceboBNTAEsPer100K," .
-							           "$placeboBNTSAEs,$placeboBNTSubjectsSAE,$placeboBNTPercentOfTotalSAE,$ratePlaceboBNTSAEsPer100K,";
+							print $out "$placeboBNTAEs$csvSeparator$placeboBNTSubjectsAE$csvSeparator$placeboBNTPercentOfTotalAE$csvSeparator$ratePlaceboBNTAEsPer100K$csvSeparator" .
+							           "$placeboBNTSAEs$csvSeparator$placeboBNTSubjectsSAE$csvSeparator$placeboBNTPercentOfTotalSAE$csvSeparator$ratePlaceboBNTSAEsPer100K$csvSeparator";
 						}
 						say $out "";
 				# 		say $out ";$aehlt;$aesBNT162b2;$saesBNT162b2;$bNT162b2Subjects;$bnt162B2PercentOfTotal;$placeboAEs;$placeboSAEs;$placeboSubjectsAE;$placeboPercentOfTotalAE;$placeboBNTAEs;$placeboBNTSAEs;$placeboBNTSubjectsAE;$placeboBNTPercentOfTotalAE;$aehltTotalAEs;$aehltTotalSAEs;$aehltTotalSubjects;$totalPercentOfTotalAEs;";
