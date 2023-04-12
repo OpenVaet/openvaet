@@ -60,7 +60,7 @@ my ($current, $total) = (0, 0);
 $total = keys %adsl;
 for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	$current++;
-	last if $current > 5000;
+	# last if $current > 5000;
 	STDOUT->printflush("\rParsing subjects data - [$current / $total]");
 	my $trialSiteId    = $adsl{$subjectId}->{'trialSiteId'}    // die;
 	my $aai1effl       = $adsl{$subjectId}->{'aai1effl'}       // die;
