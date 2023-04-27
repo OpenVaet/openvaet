@@ -189,6 +189,16 @@ while (<$in>) {
 			($dose3Date)   = split ' ', $dose3Datetime;
 			$dose3Date     =~ s/\D//g;
 		}
+		my $dose4Uts  = $values{'VAX202DT'}  // die;
+		my ($dose4Datetime, $dose4Date);
+		unless ($dose4Uts) {
+			$stats{'noDose2Date'}++;
+		} else {
+			$dose4Uts      = $tp19600101 + $dose4Uts * 86400;
+			$dose4Datetime = time::timestamp_to_datetime($dose4Uts);
+			($dose4Date)   = split ' ', $dose4Datetime;
+			$dose4Date     =~ s/\D//g;
+		}
 		if ($dose1Date) {
 			if ($dose1Date > 20201114) {
 				$stats{'dose1PostCutOff'}->{'total'}++;
@@ -201,14 +211,15 @@ while (<$in>) {
 				}
 			}
 		}
-		my $sex       = $values{'SEX'}   // die;
-		my $deathUts  = $values{'DTHDT'} // die;
+		my $sex             = $values{'SEX'}     // die;
+		my $deathUts        = $values{'DTHDT'}   // die;
+		my $covidAtBaseline = $values{'COVBLST'} // die;
 		my ($deathDate, $deathDatetime);
 		if ($deathUts) {
-			$deathUts      = $tp19600101 + $deathUts * 86400;
-			$deathDatetime = time::timestamp_to_datetime($deathUts);
-			($deathDate)   = split ' ', $deathDatetime;
-			$deathDate     =~ s/\D//g;
+			$deathUts       = $tp19600101 + $deathUts * 86400;
+			$deathDatetime  = time::timestamp_to_datetime($deathUts);
+			($deathDate)    = split ' ', $deathDatetime;
+			$deathDate      =~ s/\D//g;
 			# say $deathDate;
 			# die;
 		}
@@ -236,6 +247,7 @@ while (<$in>) {
 		$subjects{$subjectId}->{'screeningDate'}         = $screeningDate;
 		$subjects{$subjectId}->{'randomizationDatetime'} = $randomizationDatetime;
 		$subjects{$subjectId}->{'randomizationDate'}     = $randomizationDate;
+		$subjects{$subjectId}->{'covidAtBaseline'}       = $covidAtBaseline;
 		$subjects{$subjectId}->{'unblindingDatetime'}    = $unblindingDatetime;
 		$subjects{$subjectId}->{'unblindingDate'}        = $unblindingDate;
 		$subjects{$subjectId}->{'deathDatetime'}         = $deathDatetime;
@@ -246,6 +258,8 @@ while (<$in>) {
 		$subjects{$subjectId}->{'dose2Date'}             = $dose2Date;
 		$subjects{$subjectId}->{'dose3Datetime'}         = $dose3Datetime;
 		$subjects{$subjectId}->{'dose3Date'}             = $dose3Date;
+		$subjects{$subjectId}->{'dose4Datetime'}         = $dose4Datetime;
+		$subjects{$subjectId}->{'dose4Date'}             = $dose4Date;
 		$subjects{$subjectId}->{'hasHIV'}                = $hasHIV;
 		$subjects{$subjectId}->{'ageYears'}              = $ageYears;
 		$subjects{$subjectId}->{'saffl'}                 = $saffl;
