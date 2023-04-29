@@ -20,7 +20,7 @@ use time;
 
 # Treatment configuration.
 my $toxicityGradeDetails = 0;   # Either 0 or 1 (1 = with grade details).
-my $csvSeparator         = ';'; # Whichever char is best for your OS localization.
+my $csvSeparator         = ','; # Whichever char is best for your OS localization.
 my $cutoffCompdate       = '20210313';
 my ($cY, $cM, $cD)       = $cutoffCompdate =~ /(....)(..)(..)/;
 my $cutoffDatetime       = "$cY-$cM-$cD 12:00:00";
@@ -76,7 +76,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 	my $phase          = $adsl{$subjectId}->{'phase'}          // die;
 	my $saffl          = $adsl{$subjectId}->{'saffl'}          // die;
 	my $ageYears       = $adsl{$subjectId}->{'ageYears'}       // die;
-	next unless $ageYears >= 16;
+	next unless $ageYears >= 16 && $ageYears <= 55;
 	my $ageGroup       = age_to_age_group($ageYears);
 	my $arm            = $adsl{$subjectId}->{'arm'}            // die;
 	my $hasHIV         = $adsl{$subjectId}->{'hasHIV'}         // die;
@@ -162,6 +162,10 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 				} elsif ($siteAngle eq 'Batch ee8493') {
 					my $batch = $sitesTargeted{$trialSiteId} // next;
 					next unless $batch eq 'ee8493';
+					if ($dose3Date && ($dose3Date >= 20201019)) {
+						say "*" x 50 unless $ageYears <= 55;
+						say "\nageYears : $ageYears (subject $subjectId)" unless $ageYears <= 55;
+					}
 				} elsif ($siteAngle eq 'Batch ej0553') {
 					my $batch = $sitesTargeted{$trialSiteId} // next;
 					next unless $batch eq 'ej0553';

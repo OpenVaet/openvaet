@@ -19,7 +19,7 @@ use File::Path qw(make_path);
 use time;
 
 # Treatment configuration.
-my $symptomsIncluded     = 0;   # 0 = no symptoms, 1 = symptoms.
+my $symptomsIncluded     = 1;   # 0 = no symptoms, 1 = symptoms.
 my $officialSymptomsOnly = 0;   # 0 = secondary symptoms taken into account ; 1 = secondary symptoms included.
 my $toxicityGradeDetails = 0;   # Either 0 or 1 (1 = with grade details).
 my $csvSeparator         = ';'; # Whichever char is best for your OS localization.
@@ -463,14 +463,12 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 					# say "3";
 					for my $covidVisit (sort keys %symptomsByVisit) {
 						my $symptomDate = $symptomsByVisit{$covidVisit}->{'symptomDate'} // die;
-						my $pcrResult = $symptomsByVisit{$covidVisit}->{'pcrResult'} // die;
-						if ($pcrResult eq 'POS') {
-							my $compDate  = $symptomDate;
-							$compDate     =~ s/\D//g;
-							if ($compDate < $earliestCovid) {
-								$earliestCovid = $compDate;
-								$earliestVisit = $covidVisit;
-							}
+						# say "symptomDate : $symptomDate";
+						my $compDate  = $symptomDate;
+						$compDate     =~ s/\D//g;
+						if ($compDate < $earliestCovid) {
+							$earliestCovid = $compDate;
+							$earliestVisit = $covidVisit;
 						}
 					}
 				}
