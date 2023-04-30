@@ -422,27 +422,40 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 			my $earliestVisit;
 			if ($hasPositiveCentralPCR && $hasSymptoms) {
 				# say "1";
-				for my $covidVisit (sort keys %centralPCRsByVisits) {
-					my $visitDate = $centralPCRsByVisits{$covidVisit}->{'visitDate'} // die;
-					my $pcrResult = $centralPCRsByVisits{$covidVisit}->{'pcrResult'} // die;
-					if ($pcrResult eq 'POS') {
-						my $compDate  = $visitDate;
+				if ($symptomsIncluded) {
+					for my $covidVisit (sort keys %symptomsByVisit) {
+						my $symptomDate = $symptomsByVisit{$covidVisit}->{'symptomDate'} // die;
+						# say "symptomDate : $symptomDate";
+						my $compDate  = $symptomDate;
 						$compDate     =~ s/\D//g;
 						if ($compDate < $earliestCovid) {
 							$earliestCovid = $compDate;
 							$earliestVisit = $covidVisit;
 						}
 					}
-				}
+				} else {
+					for my $covidVisit (sort keys %centralPCRsByVisits) {
+						my $visitDate = $centralPCRsByVisits{$covidVisit}->{'visitDate'} // die;
+						my $pcrResult = $centralPCRsByVisits{$covidVisit}->{'pcrResult'} // die;
+						if ($pcrResult eq 'POS') {
+							my $compDate  = $visitDate;
+							$compDate     =~ s/\D//g;
+							if ($compDate < $earliestCovid) {
+								$earliestCovid = $compDate;
+								$earliestVisit = $covidVisit;
+							}
+						}
+					}
 
-				# Earliest symptom date corresponding to visit.
-				# p$symptomsByVisit{$earliestVisit};
-				# die;
-				my $symptomDate = $symptomsByVisit{$earliestVisit}->{'symptomDate'};
-				if ($symptomDate) {
-					my $symptomComp = $symptomDate;
-					$symptomComp    =~ s/\D//g;
-					$earliestCovid  = $symptomComp if ($symptomComp < $earliestCovid);
+					# Earliest symptom date corresponding to visit.
+					# p$symptomsByVisit{$earliestVisit};
+					# die;
+					my $symptomDate = $symptomsByVisit{$earliestVisit}->{'symptomDate'};
+					if ($symptomDate) {
+						my $symptomComp = $symptomDate;
+						$symptomComp    =~ s/\D//g;
+						$earliestCovid  = $symptomComp if ($symptomComp < $earliestCovid);
+					}
 				}
 			} else {
 				if ($hasPositiveCentralPCR) {

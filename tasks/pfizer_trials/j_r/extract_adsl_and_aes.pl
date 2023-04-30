@@ -27,8 +27,12 @@ my (@adslColumns,
 
 my %adslData     = ();
 my %adaeData     = ();
+my %advaData     = ();
+my $advaFile     = "public/doc/pfizer_trials/pfizer_adva_patients.json";
 
 set_columns();
+
+load_adva();
 
 load_adsl_data();
 
@@ -96,6 +100,18 @@ sub set_columns {
 	);
 }
 
+sub load_adva {
+	open my $in, '<:utf8', $advaFile or die "Missing file [$advaFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%advaData = %$json;
+	say "[$advaFile] -> patients : " . keys %advaData;
+}
+
 sub load_adsl_data {
 	my $adslFile    = "raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0772469-0773670_125742_S1_M5_C4591001-A-D_adsl.csv";
 	die "you must convert the adsl file using readstats and place it in [raw_data/pfizer_trials/xpt_files_to_csv/FDA-CBER-2021-5683-0772469-0773670_125742_S1_M5_C4591001-A-D_adsl.csv] first." unless -f $adslFile;
@@ -151,6 +167,17 @@ sub load_adsl_data {
 			}
 
 			my $subjid = $values{'subjid'} // die;
+
+			# Verifying phase data (only phase 1 30 mcg are kept).
+			my $phase  = $values{'phase'}  // die;
+			my $arm    = $values{'arm'}    // die;
+			unless ($phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000'  || $phase eq 'Phase 2_ds360/ds6000') {
+				unless (exists $advaData{$subjid}) {
+					next;
+				}
+				my $actArm = $advaData{$subjid}->{'actArm'} // die;
+				next if $actArm ne 'BNT162b2 Phase 1 (30 mcg)';
+			}
 			$adslData{$subjid}->{'adslValues'} = \@adslValues;
 		}
 	}
@@ -221,7 +248,7 @@ sub load_adae_data {
 			$aestdy    = 999 if length $aestdy == 0;
 			my $aeser  = $values{'aeser'}  // die;
 			if ($aeser && $aeser eq 'Y') {
-				if (!$aestdy) {
+				if ($aestdy == 999) {
 					$missingDays++;
 				}
 				$adaeData{$subjid}->{'aeserRows'}++;
