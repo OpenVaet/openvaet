@@ -157,8 +157,8 @@ sub load_adsl_data {
 	close $in;
 	$dRNum--;
 	say "ADSL:";
-	say "total rows      : $dRNum";
-	say "subjects        : " . keys %adslData;
+	say "total rows        : $dRNum";
+	say "subjects          : " . keys %adslData;
 }
 
 sub load_adae_data {
@@ -214,14 +214,18 @@ sub load_adae_data {
 				push @adaeValues, $value;
 			}
 			my $subjid = $values{'subjid'}  // die;
-			my $aestdy = $values{'aestdy'} // die;
-			my $aeser   = $values{'aeser'}   // die;
+			my $aestdy = $values{'aestdy'}  // die;
+			if ($aestdy) {
+				die if $aestdy == 999;
+			}
+			$aestdy    = 999 if length $aestdy == 0;
+			my $aeser  = $values{'aeser'}  // die;
 			if ($aeser && $aeser eq 'Y') {
 				if (!$aestdy) {
 					$missingDays++;
 				}
 				$adaeData{$subjid}->{'aeserRows'}++;
-				$adaeData{$subjid}->{'adaeValues'}->{$aestdy}->{$dRNum}->{'adaeValues'} = \@adaeValues;
+				$adaeData{$subjid}->{'adaeValues'}->{$aestdy}->{$dRNum} = \@adaeValues;
 			}
 		}
 	}
@@ -252,17 +256,17 @@ sub print_csv {
 		my $aeserRows  = $adaeData{$subjid}->{'aeserRows'} // 0;
 		print $out "$aeserRows$csvSeparator";
 		if (exists $adaeData{$subjid}->{'aeserRows'}) {
-			for my $aestdy (sort{$a <=> $b} keys %{$adaeData{$subjid}->{'adaeValues'}}) {
+			for my $aeDay (sort{$a <=> $b} keys %{$adaeData{$subjid}->{'adaeValues'}}) {
 				# If we have only one AE on the first day with SAE, printing simplet set of values.
-				if (keys %{$adaeData{$subjid}->{'adaeValues'}->{$aestdy}} == 1) {
-					for my $dRNum (sort keys %{$adaeData{$subjid}->{'adaeValues'}->{$aestdy}}) {
-						my @adaeValues = @{$adaeData{$subjid}->{'adaeValues'}->{$aestdy}->{$dRNum}};
+				if (keys %{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}} == 1) {
+					for my $dRNum (sort keys %{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}}) {
+						my @adaeValues = @{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}->{$dRNum}};
 						for my $adaeValue (@adaeValues) {
 							print $out "$adaeValue$csvSeparator";
 						}
 					}
 				} else { # Otherwise, solving conflicts : we sustain every seriousness tag set to "Y" and "RELATED" if one SAE is judged so.
-					next unless defined $aestdy;
+					next if $aeDay == 999;
 					my (
 						$usubjid,
 						$aeser,
@@ -278,8 +282,8 @@ sub print_csv {
 						$aerel,
 						$aereln
 					);
-					for my $dRNum (sort keys %{$adaeData{$subjid}->{'adaeValues'}->{$aestdy}}) {
-						my @adaeValues = @{$adaeData{$subjid}->{'adaeValues'}->{$aestdy}->{$dRNum}->{'adaeValues'}};
+					for my $dRNum (sort keys %{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}}) {
+						my @adaeValues = @{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}->{$dRNum}};
 						unless ($usubjid) { # Values 0 to 3 arent subject to potential conflicts and are set simultaneously.
 							$usubjid = $adaeValues[0] // die;
 							$aeser   = $adaeValues[1] // die;
@@ -287,7 +291,7 @@ sub print_csv {
 							$aestdy  = $adaeValues[3] // die;
 						}
 						my @yNTags = ($adaeValues[4], $adaeValues[5], $adaeValues[6], $adaeValues[7], $adaeValues[8], $adaeValues[9], $adaeValues[10]);
-						my $yNN    = 0;
+						my $yNN    = 4;
 						for my $yNTag (@yNTags) {
 							if ($yNTag eq 'Y') {
 								if ($yNN == 4) {
