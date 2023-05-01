@@ -29,6 +29,8 @@ my %adslData     = ();
 my %adaeData     = ();
 my %advaData     = ();
 my $advaFile     = "public/doc/pfizer_trials/pfizer_adva_patients.json";
+my $dt19600101   = '1960-01-01 12:00:00';
+my $tp19600101   = time::datetime_to_timestamp($dt19600101);
 
 set_columns();
 
@@ -96,7 +98,9 @@ sub set_columns {
 		'aesmie',
 		'aemeres',
 		'aerel',
-		'aereln'
+		'aereln',
+		'astdt',
+		'astdtf'
 	);
 }
 
@@ -163,14 +167,30 @@ sub load_adsl_data {
 			for my $adslColumn (@adslColumns) {
 				my $value = $values{$adslColumn} // die "adslColumn : [$adslColumn]";
 				die if $value =~ /$csvSeparator/;
+				# Converting dates.
+				if ($value && (
+					$adslColumn eq 'vax101dt' ||
+					$adslColumn eq 'vax102dt' ||
+					$adslColumn eq 'vax201dt' ||
+					$adslColumn eq 'vax202dt' ||
+					$adslColumn eq 'vax10udt' ||
+					$adslColumn eq 'vax20udt' ||
+					$adslColumn eq 'unblnddt' ||
+					$adslColumn eq 'x1csrdt'
+				)) {
+					$value = $tp19600101 + $value * 86400;
+					$value = time::timestamp_to_datetime($value);
+				}
+				# say "$adslColumn : $value";
 				push @adslValues, $value;
 			}
 
 			my $subjid = $values{'subjid'} // die;
 
 			# Verifying phase data (only phase 1 30 mcg are kept).
-			my $phase  = $values{'phase'}  // die;
-			my $arm    = $values{'arm'}    // die;
+			my $phase  = $values{'phase'}   // die;
+			my $arm    = $values{'arm'}     // die;
+			my $age    = $values{'agetr01'} // die;
 			unless ($phase eq 'Phase 3' || $phase eq 'Phase 3_ds6000'  || $phase eq 'Phase 2_ds360/ds6000') {
 				unless (exists $advaData{$subjid}) {
 					next;
@@ -178,6 +198,7 @@ sub load_adsl_data {
 				my $actArm = $advaData{$subjid}->{'actArm'} // die;
 				next if $actArm ne 'BNT162b2 Phase 1 (30 mcg)';
 			}
+			next if $age < 16;
 			$adslData{$subjid}->{'adslValues'} = \@adslValues;
 		}
 	}
@@ -234,10 +255,19 @@ sub load_adae_data {
 				$values{$label} = $value;
 				$vN++;
 			}
+			# p%values;
+			# die;
 			my @adaeValues = ();
 			for my $adaeColumn (@adaeColumns) {
 				my $value = $values{$adaeColumn} // die "adaeColumn : [$adaeColumn]";
 				die if $value =~ /$csvSeparator/;
+				# Converting dates.
+				if ($value && (
+					$adaeColumn eq 'astdt'
+				)) {
+					$value = $tp19600101 + $value * 86400;
+					$value = time::timestamp_to_datetime($value);
+				}
 				push @adaeValues, $value;
 			}
 			my $subjid = $values{'subjid'}  // die;
@@ -291,6 +321,11 @@ sub print_csv {
 						for my $adaeValue (@adaeValues) {
 							print $out "$adaeValue$csvSeparator";
 						}
+						p@adslColumns;
+						p@adslValues;
+						p@adaeColumns;
+						p@adaeValues;
+						die;
 					}
 				} else { # Otherwise, solving conflicts : we sustain every seriousness tag set to "Y" and "RELATED" if one SAE is judged so.
 					next if $aeDay == 999;
@@ -307,15 +342,19 @@ sub print_csv {
 						$aesmie,
 						$aemeres,
 						$aerel,
-						$aereln
+						$aereln,
+						$astdt,
+						$astdtf
 					);
 					for my $dRNum (sort keys %{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}}) {
 						my @adaeValues = @{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}->{$dRNum}};
 						unless ($usubjid) { # Values 0 to 3 arent subject to potential conflicts and are set simultaneously.
-							$usubjid = $adaeValues[0] // die;
-							$aeser   = $adaeValues[1] // die;
-							$aestdtc = $adaeValues[2] // die;
-							$aestdy  = $adaeValues[3] // die;
+							$usubjid = $adaeValues[0]  // die;
+							$aeser   = $adaeValues[1]  // die;
+							$aestdtc = $adaeValues[2]  // die;
+							$aestdy  = $adaeValues[3]  // die;
+							$astdt   = $adaeValues[13] // die;
+							$astdtf  = $adaeValues[14] // die;
 						}
 						my @yNTags = ($adaeValues[4], $adaeValues[5], $adaeValues[6], $adaeValues[7], $adaeValues[8], $adaeValues[9], $adaeValues[10]);
 						my $yNN    = 4;
@@ -378,7 +417,9 @@ sub print_csv {
 						$aesmie,
 						$aemeres,
 						$aerel,
-						$aereln
+						$aereln,
+						$astdt,
+						$astdtf
 					);
 					for my $adaeValue (@adaeValues) {
 						$adaeValue = '' unless defined $adaeValue;
