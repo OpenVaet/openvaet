@@ -24,13 +24,14 @@ my $csvSeparator = ';';
 
 my (@adslColumns,
 	@adaeColumns);
-
-my %adslData     = ();
-my %adaeData     = ();
-my %advaData     = ();
-my $advaFile     = "public/doc/pfizer_trials/pfizer_adva_patients.json";
-my $dt19600101   = '1960-01-01 12:00:00';
-my $tp19600101   = time::datetime_to_timestamp($dt19600101);
+  
+my %adslData       = ();
+my %adaeData       = ();
+my %advaData       = ();
+my $advaFile       = "public/doc/pfizer_trials/pfizer_adva_patients.json";
+my $dt19600101     = '1960-01-01 12:00:00';
+my $tp19600101     = time::datetime_to_timestamp($dt19600101);
+my $cutoffCompdate = '20210313';
 
 set_columns();
 
@@ -164,6 +165,7 @@ sub load_adsl_data {
 			# p%values;
 
 			my @adslValues = ();
+			my $unblindingDate;
 			for my $adslColumn (@adslColumns) {
 				my $value = $values{$adslColumn} // die "adslColumn : [$adslColumn]";
 				die if $value =~ /$csvSeparator/;
@@ -180,6 +182,10 @@ sub load_adsl_data {
 				)) {
 					$value = $tp19600101 + $value * 86400;
 					$value = time::timestamp_to_datetime($value);
+					if ($adslColumn eq 'unblnddt') {
+						($unblindingDate)   = split ' ', $value;
+						$unblindingDate     =~ s/\D//g;
+					}
 				}
 				# say "$adslColumn : $value";
 				push @adslValues, $value;
@@ -199,7 +205,8 @@ sub load_adsl_data {
 				next if $actArm ne 'BNT162b2 Phase 1 (30 mcg)';
 			}
 			next if $age < 16;
-			$adslData{$subjid}->{'adslValues'} = \@adslValues;
+			$adslData{$subjid}->{'unblindingDate'} = $unblindingDate;
+			$adslData{$subjid}->{'adslValues'}     = \@adslValues;
 		}
 	}
 	close $in;
@@ -255,9 +262,13 @@ sub load_adae_data {
 				$values{$label} = $value;
 				$vN++;
 			}
+			my $subjid = $values{'subjid'}  // die;
+			next unless exists $adslData{$subjid};
+			my $unblindingDate = $adslData{$subjid}->{'unblindingDate'} || $cutoffCompdate;
 			# p%values;
 			# die;
 			my @adaeValues = ();
+			my $onsetDate;
 			for my $adaeColumn (@adaeColumns) {
 				my $value = $values{$adaeColumn} // die "adaeColumn : [$adaeColumn]";
 				die if $value =~ /$csvSeparator/;
@@ -267,10 +278,19 @@ sub load_adae_data {
 				)) {
 					$value = $tp19600101 + $value * 86400;
 					$value = time::timestamp_to_datetime($value);
+					my ($date) = split ' ', $value;
+					if ($date) {
+						$date =~ s/\D//g;
+						if ($date && $date =~ /^........$/) {
+							$onsetDate = $date;
+						}
+					}
 				}
 				push @adaeValues, $value;
 			}
-			my $subjid = $values{'subjid'}  // die;
+			if ($onsetDate) {
+				next unless $onsetDate <= $unblindingDate;
+			}
 			my $aestdy = $values{'aestdy'}  // die;
 			if ($aestdy) {
 				die if $aestdy == 999;
@@ -321,11 +341,6 @@ sub print_csv {
 						for my $adaeValue (@adaeValues) {
 							print $out "$adaeValue$csvSeparator";
 						}
-						p@adslColumns;
-						p@adslValues;
-						p@adaeColumns;
-						p@adaeValues;
-						die;
 					}
 				} else { # Otherwise, solving conflicts : we sustain every seriousness tag set to "Y" and "RELATED" if one SAE is judged so.
 					next if $aeDay == 999;
