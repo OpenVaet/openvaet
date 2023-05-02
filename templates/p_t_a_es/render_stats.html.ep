@@ -1,0 +1,73 @@
+<!-- <style>
+  .log-container {
+    width: 70%;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+
+  .log-row {
+    font-size: 16px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .log-subrow {
+    font-size: 14px;
+    background-color: #f2f2f2;
+  }
+
+  .log-item {
+    padding: 10px;
+    text-align: left;
+    border-right: 1px solid #ccc;
+  }
+
+  .log-item:last-child {
+    border-right: none;
+  }
+
+  .log-item--filter {
+    width: 50%;
+    font-weight: bold;
+  }
+</style>
+
+<table class="log-container">
+  <tr class="log-row">
+    <td class="log-item log-item--filter">Category 1</td>
+    <td class="log-item">Value 1</td>
+    <td class="log-item">Excluded 1</td>
+    <td class="log-item">Remaining 1</td>
+  </tr>
+  <tr class="log-row log-subrow">
+    <td class="log-item log-item--filter">Subcategory 1.1</td>
+    <td class="log-item">Value 1.1</td>
+    <td class="log-item">Excluded 1.1</td>
+    <td class="log-item">Remaining 1.1</td>
+  </tr>
+  <tr class="log-row log-subrow">
+    <td class="log-item log-item--filter">Subcategory 1.2</td>
+    <td class="log-item">Value 1.2</td>
+    <td class="log-item">Excluded 1.2</td>
+    <td class="log-item">Remaining 1.2</td>
+  </tr>
+  <tr class="log-row">
+    <td class="log-item log-item--filter">Category 2</td>
+    <td class="log-item">Value 2</td>
+    <td class="log-item">Excluded 2</td>
+    <td class="log-item">Remaining 2</td>
+  </tr>
+  <tr class="log-row log-subrow">
+    <td class="log-item log-item--filter">Subcategory 2.1</td>
+    <td class="log-item">Value 2.1</td>
+    <td class="log-item">Excluded 2.1</td>
+    <td class="log-item">Remaining 2.1</td>
+  </tr>
+  <tr class="log-row log-subrow">
+    <td class="log-item log-item--filter">Subcategory 2.2</td>
+    <td class="log-item">Value 2.2</td>
+    <td class="log-item">Excluded 2.2</td>
+    <td class="log-item">Remaining 2.2</td>
+  </tr>
+</table> -->
+
+ Pending developer nap  🤔

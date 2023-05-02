@@ -1,0 +1,242 @@
+
+<div id="innerRendering" style="width:100%;height:100%;overflow-x:auto;">
+</div>
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+    	loadFilteringLogs();
+    });
+	function loadFilteringLogs() {
+        $("#innerRendering").html('');
+		selectTabButton('filtering');
+
+		console.log('Rendering Logs ...');
+		let path = '<%=$path%>';
+		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
+		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
+		let below16Include = '<%=$below16Include%>';
+		let seniorsIncluded = '<%=$seniorsIncluded%>';
+		let duplicatesInclude = '<%=$duplicatesInclude%>';
+		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
+		let noCRFInclude = '<%=$noCRFInclude%>';
+		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
+		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
+		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
+		let femaleIncluded = '<%=$femaleIncluded%>';
+		let maleIncluded = '<%=$maleIncluded%>';
+		let subjectToUnblinding = '<%=$subjectToUnblinding%>';
+		let cutoffDate = '<%=$cutoffDate%>';
+		let subjectsWithPriorInfect = '<%=$subjectsWithPriorInfect%>';
+		let subjectsWithoutPriorInfect = '<%=$subjectsWithoutPriorInfect%>';
+		let csvSeparator = '<%=$csvSeparator%>';
+		console.log('path : ' + path);
+		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
+		console.log('below16Include : ' + below16Include);
+		console.log('seniorsIncluded : ' + seniorsIncluded);
+		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
+		console.log('duplicatesInclude : ' + duplicatesInclude);
+		console.log('noCRFInclude : ' + noCRFInclude);
+		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
+		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
+		console.log('femaleIncluded : ' + femaleIncluded);
+		console.log('maleIncluded : ' + maleIncluded);
+		console.log('subjectToUnblinding : ' + subjectToUnblinding);
+		console.log('cutoffDate : ' + cutoffDate);
+		console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
+		console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
+		console.log('csvSeparator : ' + csvSeparator);
+		console.log('Filtering subjects ...');
+		let request = $.ajax({
+			url: '/pfizer_trial_after_effects/render_logs',
+			type: 'POST',
+			data: {
+				path: path,
+				aeWithoutDate: aeWithoutDate,
+				phase1IncludeBNT: phase1IncludeBNT,
+				phase1IncludePlacebo: phase1IncludePlacebo,
+				below16Include: below16Include,
+				seniorsIncluded: seniorsIncluded,
+				duplicatesInclude: duplicatesInclude,
+				noCRFInclude: noCRFInclude,
+				hivSubjectsIncluded: hivSubjectsIncluded,
+				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
+				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
+				subjectsWithoutSAEs: subjectsWithoutSAEs,
+				femaleIncluded: femaleIncluded,
+				maleIncluded: maleIncluded,
+				subjectToUnblinding: subjectToUnblinding,
+				cutoffDate: cutoffDate,
+				subjectsWithPriorInfect: subjectsWithPriorInfect,
+				subjectsWithoutPriorInfect: subjectsWithoutPriorInfect,
+				csvSeparator: csvSeparator
+			}
+		});
+        request.done(function(data) {
+            $("#innerRendering").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+	}
+
+	function loadLinRegData() {
+        $("#innerRendering").html('');
+		selectTabButton('linRegData');
+
+		console.log('Rendering LinReg Data ...');
+		let path = '<%=$path%>';
+		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
+		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
+		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
+		let below16Include = '<%=$below16Include%>';
+		let seniorsIncluded = '<%=$seniorsIncluded%>';
+		let duplicatesInclude = '<%=$duplicatesInclude%>';
+		let noCRFInclude = '<%=$noCRFInclude%>';
+		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
+		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
+		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
+		let femaleIncluded = '<%=$femaleIncluded%>';
+		let maleIncluded = '<%=$maleIncluded%>';
+		let subjectToUnblinding = '<%=$subjectToUnblinding%>';
+		let cutoffDate = '<%=$cutoffDate%>';
+		let subjectsWithPriorInfect = '<%=$subjectsWithPriorInfect%>';
+		let subjectsWithoutPriorInfect = '<%=$subjectsWithoutPriorInfect%>';
+		let csvSeparator = '<%=$csvSeparator%>';
+		console.log('path : ' + path);
+		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
+		console.log('below16Include : ' + below16Include);
+		console.log('seniorsIncluded : ' + seniorsIncluded);
+		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
+		console.log('duplicatesInclude : ' + duplicatesInclude);
+		console.log('noCRFInclude : ' + noCRFInclude);
+		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
+		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
+		console.log('femaleIncluded : ' + femaleIncluded);
+		console.log('maleIncluded : ' + maleIncluded);
+		console.log('subjectToUnblinding : ' + subjectToUnblinding);
+		console.log('cutoffDate : ' + cutoffDate);
+		console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
+		console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
+		console.log('csvSeparator : ' + csvSeparator);
+		console.log('Filtering subjects ...');
+		let request = $.ajax({
+			url: '/pfizer_trial_after_effects/render_lin_reg_data',
+			type: 'POST',
+			data: {
+				path: path,
+				aeWithoutDate: aeWithoutDate,
+				phase1IncludeBNT: phase1IncludeBNT,
+				phase1IncludePlacebo: phase1IncludePlacebo,
+				below16Include: below16Include,
+				seniorsIncluded: seniorsIncluded,
+				subjectsWithoutSAEs: subjectsWithoutSAEs,
+				duplicatesInclude: duplicatesInclude,
+				noCRFInclude: noCRFInclude,
+				hivSubjectsIncluded: hivSubjectsIncluded,
+				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
+				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
+				femaleIncluded: femaleIncluded,
+				maleIncluded: maleIncluded,
+				subjectToUnblinding: subjectToUnblinding,
+				cutoffDate: cutoffDate,
+				subjectsWithPriorInfect: subjectsWithPriorInfect,
+				subjectsWithoutPriorInfect: subjectsWithoutPriorInfect,
+				csvSeparator: csvSeparator
+			}
+		});
+        request.done(function(data) {
+            $("#innerRendering").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+	}
+
+	function loadStats() {
+        $("#innerRendering").html('');
+		selectTabButton('stats');
+
+		console.log('Rendering Stats Data ...');
+		let path = '<%=$path%>';
+		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
+		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
+		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
+		let below16Include = '<%=$below16Include%>';
+		let seniorsIncluded = '<%=$seniorsIncluded%>';
+		let duplicatesInclude = '<%=$duplicatesInclude%>';
+		let noCRFInclude = '<%=$noCRFInclude%>';
+		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
+		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
+		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
+		let femaleIncluded = '<%=$femaleIncluded%>';
+		let maleIncluded = '<%=$maleIncluded%>';
+		let subjectToUnblinding = '<%=$subjectToUnblinding%>';
+		let cutoffDate = '<%=$cutoffDate%>';
+		let subjectsWithPriorInfect = '<%=$subjectsWithPriorInfect%>';
+		let subjectsWithoutPriorInfect = '<%=$subjectsWithoutPriorInfect%>';
+		let csvSeparator = '<%=$csvSeparator%>';
+		console.log('path : ' + path);
+		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
+		console.log('below16Include : ' + below16Include);
+		console.log('seniorsIncluded : ' + seniorsIncluded);
+		console.log('duplicatesInclude : ' + duplicatesInclude);
+		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
+		console.log('noCRFInclude : ' + noCRFInclude);
+		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
+		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
+		console.log('femaleIncluded : ' + femaleIncluded);
+		console.log('maleIncluded : ' + maleIncluded);
+		console.log('subjectToUnblinding : ' + subjectToUnblinding);
+		console.log('cutoffDate : ' + cutoffDate);
+		console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
+		console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
+		console.log('csvSeparator : ' + csvSeparator);
+		console.log('Filtering subjects ...');
+		let request = $.ajax({
+			url: '/pfizer_trial_after_effects/render_stats',
+			type: 'POST',
+			data: {
+				path: path,
+				aeWithoutDate: aeWithoutDate,
+				phase1IncludeBNT: phase1IncludeBNT,
+				phase1IncludePlacebo: phase1IncludePlacebo,
+				below16Include: below16Include,
+				seniorsIncluded: seniorsIncluded,
+				duplicatesInclude: duplicatesInclude,
+				noCRFInclude: noCRFInclude,
+				hivSubjectsIncluded: hivSubjectsIncluded,
+				subjectsWithoutSAEs: subjectsWithoutSAEs,
+				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
+				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
+				femaleIncluded: femaleIncluded,
+				maleIncluded: maleIncluded,
+				subjectToUnblinding: subjectToUnblinding,
+				cutoffDate: cutoffDate,
+				subjectsWithPriorInfect: subjectsWithPriorInfect,
+				subjectsWithoutPriorInfect: subjectsWithoutPriorInfect,
+				csvSeparator: csvSeparator
+			}
+		});
+        request.done(function(data) {
+            $("#innerRendering").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+	}
+</script>

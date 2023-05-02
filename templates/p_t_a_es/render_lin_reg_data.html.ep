@@ -1,0 +1,125 @@
+<style>
+  .table-container {
+    width: 100%;
+    height: calc(100% - 40px);
+    margin-top:9px;
+    overflow-x: auto;
+    background-color: #F0F5FF;
+  }
+  
+  table {
+    width: 2100px;
+    border-collapse: collapse;
+    font-size: 10px;
+    line-height: 1.5;
+    font-family: Arial, sans-serif;
+  }
+  
+  thead th {
+    background-color: #91A7C9;
+    color: #FFFFFF;
+    position: sticky;
+    top: 0;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #91A7C9;
+  }
+  
+  tbody td {
+    border: 1px solid #91A7C9;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #C4D4ED;
+  }
+
+  .download-link {
+      margin-top:5px;
+      margin-left:calc(70% - 50px);
+      font-size: 14px;
+  }
+</style>
+
+<a class="download-link" href="/pt_aes/<%=$path%>/filtered_subjects_lin_reg.csv" download>Download Raw Linear Regression Data (.csv)</a>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>usubjid</th>
+        <th>age</th>
+        <th>agetr01</th>
+        <th>agegr1</th>
+        <th>agegr1n</th>
+        <th>race</th>
+        <th>racen</th>
+        <th>ethnic</th>
+        <th>ethnicn</th>
+        <th>arace</th>
+        <th>aracen</th>
+        <th>racegr1</th>
+        <th>racegr1n</th>
+        <th>sex</th>
+        <th>sexn</th>
+        <th>country</th>
+        <th>saffl</th>
+        <th>actarm</th>
+        <th>actarmcd</th>
+        <th>trtsdt</th>
+        <th>vax101dt</th>
+        <th>vax102dt</th>
+        <th>vax201dt</th>
+        <th>vax202dt</th>
+        <th>vax10udt</th>
+        <th>vax20udt</th>
+        <th>reactofl</th>
+        <th>phase</th>
+        <th>phasen</th>
+        <th>unblnddt</th>
+        <th>bmicat</th>
+        <th>bmicatn</th>
+        <th>combodfl</th>
+        <th>covblst</th>
+        <th>hivfl</th>
+        <th>x1csrdt</th>
+        <th>saf1fl</th>
+        <th>saf2fl</th>
+        <th>aeRows</th>
+        <th>aeserRows</th>
+        <th>aeser</th>
+        <th>aestdtc</th>
+        <th>aestdy</th>
+        <th>aescong</th>
+        <th>aesdisab</th>
+        <th>aesdth</th>
+        <th>aeshosp</th>
+        <th>aeslife</th>
+        <th>aesmie</th>
+        <th>aemeres</th>
+        <th>aerel</th>
+        <th>aereln</th>
+        <th>astdt</th>
+        <th>astdtf</th>
+      </tr>
+    </thead>
+    <tbody style="overflow-y:auto;">
+      % my @adslColumns = @$adslColumns;
+      % my %filteredSubjects = %$filteredSubjects;
+      % use Data::Printer;
+      % my $sampleNum = 0;
+      % for my $subjectId (sort{$a <=> $b} keys %filteredSubjects) {
+        <tr>
+          % for my $adslColumn (@adslColumns) {
+            % my $value = $filteredSubjects{$subjectId}->{$adslColumn} // '';
+            <td><%=$value%></td>
+          % }
+        </tr>
+        % $sampleNum++;
+        % last if $sampleNum > 100;
+        % # p$filteredSubjects{$subjectId};
+        % # last;
+      % }
+    </tbody>
+  </table>
+</div>

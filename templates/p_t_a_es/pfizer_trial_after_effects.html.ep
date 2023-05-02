@@ -1,0 +1,259 @@
+% layout 'default';
+% if ($currentLanguage eq 'en') {
+% title 'OPENVAET - Pfizer Trial After Effects';
+% } else {
+% title 'OPENVAET - Effets Secondaires pendant l\'essai Pfizer';
+% }
+<head>
+    <!-- jQuery -->
+    <script src="/js/jquery.js"></script>
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <script src="/js/select2.min.js"></script>
+    <style type="text/css">
+    	.select2-selection__rendered {
+		  font-size: 16px !important;
+		}
+
+		.tab-button {
+			margin-left:8px;
+			width:200px;
+			border: 1px solid black;
+			border-radius: 5px;
+			height: 40px;
+			margin-top: 4px;
+			text-align: center;
+			cursor: pointer;
+			background: #C5D7E8;
+		}
+
+		div.content {
+			overflow-y: hidden;
+		}
+
+		.tab-button:hover {
+			background: #E5F1FF;
+		}
+
+		.tab-button[selected] {
+		  background: #B5C8E7;
+		}
+    </style>
+</head>
+
+<div style="width:100%;max-width:100%;height:100%;">
+	<div style="width:100%;height:100%;display:flex;flex-wrap:wrap;">
+		<div style="width:22%;min-width: 300px;height: 100%;">
+			<div style="height:calc(100% - 20px);width: calc(100% - 10px);margin: auto;padding-top:10px;">
+				<fieldset style="width:90%;">
+					<legend style="font-size:18px;">Population filters</legend>
+
+					<label style="font-size:16px;"><input type="checkbox" id="phase1IncludeBNT" value="phase1IncludeBNT" checked> Include phase 1 BNT162b2 30 mcg</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="phase1IncludePlacebo" value="phase1IncludePlacebo"> Include phase 1 Placebo</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="below16Include" value="below16Include"> Include subjects below 16</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="seniorsIncluded" value="seniorsIncluded" checked> Include subjects 55+</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="duplicatesInclude" value="duplicatesInclude" checked> Include duplicates</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="noCRFInclude" value="noCRFInclude" checked> Include subjects without CRF Vax Data</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="hivSubjectsIncluded" value="hivSubjectsIncluded" checked> Include subjects with HIV</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="femaleIncluded" value="femaleIncluded" checked> Include female subjects</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="maleIncluded" value="maleIncluded" checked> Include male subjects</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="lackOfPIMonitoringInclude" value="lackOfPIMonitoringInclude"> Include subjects with lack of oversight</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="noSafetyPopFlagInclude" value="noSafetyPopFlagInclude"> Include subjects without Safety Population flag</label><br />
+				</fieldset>
+				<fieldset style="width:90%;margin-top: 8px;">
+					<legend style="font-size:18px;">Infection on baseline</legend>
+
+					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithPriorInfect" value="subjectsWithPriorInfect" checked> Include subjects with prior infection</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutPriorInfect" value="subjectsWithoutPriorInfect" checked> Include subjects without prior infection</label><br />
+				</fieldset>
+				<fieldset style="width:90%;margin-top: 8px;">
+					<legend style="font-size:18px;">After-Effects</legend>
+
+					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutSAEs" value="subjectsWithoutSAEs" checked> Include subjects without SAEs</label><br />
+					<label style="font-size:16px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate"> Include AEs without accurate date</label><br />
+				</fieldset>
+				<fieldset style="width:90%;margin-top: 8px;">
+					<legend style="font-size:18px;">Cut-off</legend>
+
+					<label style="font-size:16px;"><input type="checkbox" id="subjectToUnblinding" value="subjectToUnblinding"> Subjects up to their unblinding</label><br />
+				    <label for="cutoffDate" style="font-size:16px;">Cut-Off Date:</label>
+				    <select id="cutoffDate" style="width: 200px;">
+				        <option value="bla">&nbsp;&nbsp;BLA (Mar. 13, 2021)</option>
+				        <option value="end">&nbsp;&nbsp;End Data (Last AE)</option>
+				    </select><br />
+					
+				</fieldset>
+				<fieldset style="width:90%;margin-top: 8px;">
+					<legend style="font-size:18px;">.CSV exports</legend>
+				    <label for="csvSeparator" style="font-size:16px;">.CSV separator:</label>
+				    <select id="csvSeparator" style="width: 200px;">
+				        <option value=";">&nbsp;&nbsp;;</option>
+				        <option value=",">&nbsp;&nbsp;,</option>
+				    </select><br />
+					<input style="display: inline-block; font-weight: 400; text-align: center;vertical-align: middle; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; line-height: 1.5; border-radius: 0.25rem; border: 1px solid #ccc;margin-top: 10px;cursor:pointer;" type="submit" value="Submit" onclick="filter_subjects();return;">
+				</fieldset>
+			</div>
+		</div>
+		<div style="width:78%;max-width: calc(100% - 300px);height:100%;background: white;">
+			<div style="width:100%;height:50px;background:#D8E4ED;display: flex;flex-wrap: wrap;">
+				<div class="tab-button" id="stats">
+					<div style="margin-top: 11px;font-size: 16px;"><b>Stats</b></div>
+				</div>
+				<div class="tab-button" id="linRegData">
+					<div style="margin-top: 11px;font-size: 16px;"><b>Lin. Reg. Raw Data</b></div>
+				</div>
+				<!-- <div class="tab-button" id="rawData">
+					<div style="margin-top: 11px;font-size: 16px;"><b>Raw Data</b></div>
+				</div> -->
+				<div class="tab-button" id="filtering" selected>
+					<div style="margin-top: 11px;font-size: 16px;"><b>Filtering Logs</b></div>
+				</div>
+			</div>
+			<div id="dataDendering" style="width:100%;height:calc(100% - 50px);overflow-y:auto;background: #e7f5fe;">
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+    $( document ).ready(function() {
+	    $('#cutoffDate').select2({
+	        width: 'element',
+	        height: 'resolve',
+	        dropdownAutoWidth : true
+	    });
+	    $('#csvSeparator').select2({
+	        width: 'element',
+	        height: 'resolve',
+	        dropdownAutoWidth : true
+	    });
+	    document.getElementById('stats').addEventListener('click', () => {
+		  selectTabButton('stats');
+		  loadStats();
+		});
+
+		document.getElementById('linRegData').addEventListener('click', () => {
+		  selectTabButton('linRegData');
+		  loadLinRegData();
+		});
+
+		// document.getElementById('rawData').addEventListener('click', () => {
+		//   selectTabButton('rawData');
+		// });
+
+		document.getElementById('filtering').addEventListener('click', () => {
+		  selectTabButton('filtering');
+		  loadFilteringLogs();
+		});
+    });
+    function selectTabButton(buttonId) {
+	  // Remove the `selected` attribute from all elements with the `tab-button` class
+	  const tabButtons = document.querySelectorAll('.tab-button');
+	  tabButtons.forEach((button) => {
+	    button.removeAttribute('selected');
+	  });
+
+	  // Set the `selected` attribute on the currently selected button
+	  const selectedButton = document.getElementById(buttonId);
+	  selectedButton.setAttribute('selected', '');
+	}
+	function filter_subjects() {
+		console.log('Showing loader ...');
+        blankContainer = document.getElementById("blankContainer");
+        blankContainer.style.display  = "inline-block";
+        mainLoader = document.getElementById("mainLoader");
+        mainLoader.style.display  = "inline-block";
+
+		console.log('Getting filters values ...');
+		let phase1IncludeBNT = $('#phase1IncludeBNT').is(':checked');
+		let phase1IncludePlacebo = $('#phase1IncludePlacebo').is(':checked');
+		let below16Include = $('#below16Include').is(':checked');
+		let seniorsIncluded = $('#seniorsIncluded').is(':checked');
+		let duplicatesInclude = $('#duplicatesInclude').is(':checked');
+		let noCRFInclude = $('#noCRFInclude').is(':checked');
+		let hivSubjectsIncluded = $('#hivSubjectsIncluded').is(':checked');
+		let lackOfPIMonitoringInclude = $('#lackOfPIMonitoringInclude').is(':checked');
+		let noSafetyPopFlagInclude = $('#noSafetyPopFlagInclude').is(':checked');
+		let femaleIncluded = $('#femaleIncluded').is(':checked');
+		let maleIncluded = $('#maleIncluded').is(':checked');
+		if (femaleIncluded == false && maleIncluded == false) {
+			alert('One sex at least must be selected.');
+	        blankContainer      = document.getElementById("blankContainer");
+	        blankContainer.style.display  = "none";
+	        mainLoader      = document.getElementById("mainLoader");
+	        mainLoader.style.display  = "none";
+			return;
+		}
+		let subjectToUnblinding = $('#subjectToUnblinding').is(':checked');
+		let cutoffDate = $('#cutoffDate').val();
+		let subjectsWithPriorInfect = $('#subjectsWithPriorInfect').is(':checked');
+		let subjectsWithoutPriorInfect = $('#subjectsWithoutPriorInfect').is(':checked');
+		if (subjectsWithPriorInfect == false && subjectsWithoutPriorInfect == false) {
+			alert('One prior infection at least must be selected.');
+	        blankContainer      = document.getElementById("blankContainer");
+	        blankContainer.style.display  = "none";
+	        mainLoader      = document.getElementById("mainLoader");
+	        mainLoader.style.display  = "none";
+			return;
+		}
+		let csvSeparator = $('#csvSeparator').val();
+		let aeWithoutDate = $('#aeWithoutDate').is(':checked');
+		let subjectsWithoutSAEs = $('#subjectsWithoutSAEs').is(':checked');
+		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
+		console.log('below16Include : ' + below16Include);
+		console.log('seniorsIncluded : ' + seniorsIncluded);
+		console.log('duplicatesInclude : ' + duplicatesInclude);
+		console.log('noCRFInclude : ' + noCRFInclude);
+		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
+		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
+		console.log('femaleIncluded : ' + femaleIncluded);
+		console.log('maleIncluded : ' + maleIncluded);
+		console.log('subjectToUnblinding : ' + subjectToUnblinding);
+		console.log('aeWithoutDate : ' + aeWithoutDate);
+		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
+		console.log('cutoffDate : ' + cutoffDate);
+		console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
+		console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
+		console.log('csvSeparator : ' + csvSeparator);
+		console.log('Filtering subjects ...');
+		let request = $.ajax({
+			url: '/pfizer_trial_after_effects/filter_data',
+			type: 'POST',
+			data: {
+				phase1IncludeBNT: phase1IncludeBNT,
+				phase1IncludePlacebo: phase1IncludePlacebo,
+				below16Include: below16Include,
+				seniorsIncluded: seniorsIncluded,
+				duplicatesInclude: duplicatesInclude,
+				noCRFInclude: noCRFInclude,
+				hivSubjectsIncluded: hivSubjectsIncluded,
+				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
+				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
+				femaleIncluded: femaleIncluded,
+				maleIncluded: maleIncluded,
+				subjectToUnblinding: subjectToUnblinding,
+				aeWithoutDate: aeWithoutDate,
+				subjectsWithoutSAEs: subjectsWithoutSAEs,
+				cutoffDate: cutoffDate,
+				subjectsWithPriorInfect: subjectsWithPriorInfect,
+				subjectsWithoutPriorInfect: subjectsWithoutPriorInfect,
+				csvSeparator: csvSeparator
+			}
+		});
+        request.done(function(data) {
+	        blankContainer      = document.getElementById("blankContainer");
+	        blankContainer.style.display  = "none";
+	        mainLoader      = document.getElementById("mainLoader");
+	        mainLoader.style.display  = "none";
+            $("#dataDendering").html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+
+
+	}
+</script>

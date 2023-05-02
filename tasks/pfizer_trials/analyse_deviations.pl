@@ -112,16 +112,16 @@ for my $subjectId (sort{$a <=> $b} keys %deviationsSupp) {
 			$dvTerm .= " $dvTerm1";
 		}
 		$setsAttributed{$subjectId}->{$dvSeq} = 1;
-		$deviations{$subjectId}->{$deviationId}->{'visitDesignator'} = $visitDesignator;
-		$deviations{$subjectId}->{$deviationId}->{'deviationDate'} = $deviationDate;
-		$deviations{$subjectId}->{$deviationId}->{'dvCat'} = $dvCat;
-		$deviations{$subjectId}->{$deviationId}->{'dvTerm'} = $dvTerm;
-		$deviations{$subjectId}->{$deviationId}->{'dvSeq'} = $dvSeq;
+		$deviations{$subjectId}->{$deviationId}->{'desgtor'} = $visitDesignator;
+		$deviations{$subjectId}->{$deviationId}->{'dvstdtc'} = $deviationDate;
+		$deviations{$subjectId}->{$deviationId}->{'dvcat'} = $dvCat;
+		$deviations{$subjectId}->{$deviationId}->{'dvterm'} = $dvTerm;
+		$deviations{$subjectId}->{$deviationId}->{'dvseq'} = $dvSeq;
 		$deviations{$subjectId}->{$deviationId}->{'source'} = $source;
-		$deviations{$subjectId}->{$deviationId}->{'actSite'} = $actSite;
+		$deviations{$subjectId}->{$deviationId}->{'actsite'} = $actSite;
 		$deviations{$subjectId}->{$deviationId}->{'epoch'} = $epoch;
 		$deviations{$subjectId}->{$deviationId}->{'cape'} = $cape;
-		$deviations{$subjectId}->{$deviationId}->{'dvTerm1'} = $dvTerm1;
+		$deviations{$subjectId}->{$deviationId}->{'dvterm1'} = $dvTerm1;
 		say $out "$subjectId;$deviationId;$visitDesignator;$dvCat;$epoch;$dvSeq;$source;$actSite;$cape;$dvTerm;$deviationDate;";
 		# say "visitDesignator : $visitDesignator";
 		# say "dvCat           : $dvCat";

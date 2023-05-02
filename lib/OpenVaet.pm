@@ -462,6 +462,13 @@ sub startup {
     $r->get('/tools/archive_org_twitter_followers')->to('tools#archive_org_twitter_followers');
     $r->post('/tools/analyze_archive_org_twitter_followers')->to('tools#analyze_archive_org_twitter_followers');
 
+    $r->get('/pfizer_trial_after_effects')->to('PTAEs#pfizer_trial_after_effects');
+    $r->post('/pfizer_trial_after_effects/filter_data')->to('PTAEs#filter_data');
+    $r->post('/pfizer_trial_after_effects/render_logs')->to('PTAEs#render_logs');
+    $r->post('/pfizer_trial_after_effects/render_lin_reg_data')->to('PTAEs#render_lin_reg_data');
+    $r->post('/pfizer_trial_after_effects/render_stats')->to('PTAEs#render_stats');
+
+
     $r->get('/mapping')->to('mapping#mapping');
     $r->post('/mapping/load_mapping')->to('mapping#load_mapping');
 }

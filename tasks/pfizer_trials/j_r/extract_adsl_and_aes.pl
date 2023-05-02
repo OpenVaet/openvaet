@@ -33,6 +33,18 @@ my $dt19600101     = '1960-01-01 12:00:00';
 my $tp19600101     = time::datetime_to_timestamp($dt19600101);
 my $cutoffCompdate = '20210313';
 
+my %stats      = ();
+my %ourSAEs    = ();
+my %retsefSAEs = ();
+my $retsefSAEs = 'tasks/pfizer_trials/j_r/retsef_sae.csv';
+open my $in, '<:utf8', $retsefSAEs;
+while (<$in>) {
+	my ($subjid, $asPlacebo, $asBNT) = split ';', $_;
+	$retsefSAEs{$subjid}->{'asPlacebo'} = $asPlacebo;
+	$retsefSAEs{$subjid}->{'asBNT'}     = $asBNT;
+}
+close $in;
+
 set_columns();
 
 load_adva();
@@ -333,6 +345,7 @@ sub print_csv {
 		my $aeserRows  = $adaeData{$subjid}->{'aeserRows'} // 0;
 		print $out "$aeserRows$csvSeparator";
 		if (exists $adaeData{$subjid}->{'aeserRows'}) {
+			$ourSAEs{$subjid} = 1;
 			for my $aeDay (sort{$a <=> $b} keys %{$adaeData{$subjid}->{'adaeValues'}}) {
 				# If we have only one AE on the first day with SAE, printing simplet set of values.
 				if (keys %{$adaeData{$subjid}->{'adaeValues'}->{$aeDay}} == 1) {
@@ -444,6 +457,10 @@ sub print_csv {
 				last;
 			}
 		} else {
+			if (exists $retsefSAEs{$subjid}) {
+				say "Does have SAE in Retsef listing: [$subjid].";
+				$stats{'inRetsefNotInOurs'}++;
+			}
 			for my $adaeColumn (@adaeColumns) {
 				print $out "$csvSeparator";
 			}
@@ -452,3 +469,11 @@ sub print_csv {
 	}
 }
 
+for my $subjid (sort{$a <=> $b} keys %ourSAEs) {
+	unless (exists $retsefSAEs{$subjid}) {
+		say "Doesn't have SAE in Retsef listing: [$subjid].";
+		$stats{'inOursNotInRetsef'}++;
+	}
+}
+
+p%stats;

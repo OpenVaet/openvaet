@@ -90,30 +90,28 @@ while (<$in>) {
 		$aeStdDt              =~ s/T/ /;
 		my $aeTerm            = $values{'AETERM'}   // die;
 		my ($aeCompdate) = split ' ', $aeStdDt;
-		unless ($aeCompdate) {
-			$noDates{$subjectId} = \%values;
-			next;
-		} else {
+		if ($aeCompdate) {
 			$aeCompdate =~ s/\D//g;
 			my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
 			unless ($aeY && $aeM && $aeD) {
-				$noDates{$subjectId} = \%values;
-				next;
+				$aeCompdate = undef;
 			}
 		}
 		$subjects{$subjectId}->{'totalADAERows'}++;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'toxicityGrade'} = $toxicityGrade;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeStdDt'} = $aeStdDt;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aehlgt'} = $aehlgt;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aehlt'} = $aehlt;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeser'} = $aeser;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeRelTxt'} = $aeRelTxt;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aeEndDt'} = $aeEndDt;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'aperiodDc'} = $aperiodDc;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'relation'} = $relation;
-		$subjects{$subjectId}->{'adverseEffects'}->{$aeCompdate}->{$aeTerm}->{'vPhase'} = $vPhase;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeCompdate'} = $aeCompdate;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'toxicityGrade'} = $toxicityGrade;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeStdDt'} = $aeStdDt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aehlgt'} = $aehlgt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeTerm'} = $aeTerm;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aehlt'} = $aehlt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeser'} = $aeser;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeRelTxt'} = $aeRelTxt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aeEndDt'} = $aeEndDt;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'aperiodDc'} = $aperiodDc;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'relation'} = $relation;
+		$subjects{$subjectId}->{'adverseEffects'}->{$dRNum}->{'vPhase'} = $vPhase;
 		# p$subjects{$subjectId};
 		# die;
 	}
