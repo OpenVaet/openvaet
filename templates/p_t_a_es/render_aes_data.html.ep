@@ -1,0 +1,82 @@
+% my %filteredAEs = %$filteredAEs;
+% my @adaeColumns = @$adaeColumns;
+<style>
+  .table-container {
+    width: 100%;
+    height: calc(100% - 40px);
+    margin-top:9px;
+    overflow-x: auto;
+    background-color: #F0F5FF;
+  }
+  
+  table {
+    width: 100%;
+    min-width: 1300px;
+    border-collapse: collapse;
+    font-size: 10px;
+    line-height: 1.5;
+    font-family: Arial, sans-serif;
+  }
+  
+  thead th {
+    background-color: #91A7C9;
+    color: #FFFFFF;
+    position: sticky;
+    top: 0;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #91A7C9;
+  }
+  
+  tbody td {
+    border: 1px solid #91A7C9;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #C4D4ED;
+  }
+
+  .download-link {
+      margin-top:5px;
+      margin-left:calc(70% - 50px);
+      font-size: 14px;
+  }
+</style>
+
+<a class="download-link" href="/pt_aes/<%=$path%>/filtered_subjects_aes.csv" download>Download Raw AEs Data (.csv)</a>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>subjid</th>
+        <th>adaeRowNum</th>
+      % for my $adaeColumn (@adaeColumns) {
+        <th><%=$adaeColumn%></th>
+      % }
+      </tr>
+    </thead>
+    <tbody style="overflow-y:auto;">
+      % use Data::Printer;
+      % my $sampleNum = 0;
+      % for my $subjid (sort{$a <=> $b} keys %filteredAEs) {
+	      % for my $adaeRNum (sort{$a <=> $b} keys %{$filteredAEs{$subjid}}) {
+	        <tr>
+	            <td><%=$subjid%></td>
+	            <td><%=$adaeRNum%></td>
+	          % for my $adaeColumn (@adaeColumns) {
+	            % my $value = $filteredAEs{$subjid}->{$adaeRNum}->{$adaeColumn} // '';
+	            <td><%=$value%></td>
+	          % }
+	        </tr>
+	        % $sampleNum++;
+	        % last if $sampleNum > 100;
+	        % # p$filteredAEs{$subjid};
+	        % # last;
+	      % }
+        % last if $sampleNum > 100;
+      % }
+    </tbody>
+  </table>
+</div>

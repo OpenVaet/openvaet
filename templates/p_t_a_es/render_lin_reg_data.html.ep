@@ -47,6 +47,7 @@
   <table>
     <thead>
       <tr>
+        <th>subjid</th>
         <th>usubjid</th>
         <th>age</th>
         <th>agetr01</th>

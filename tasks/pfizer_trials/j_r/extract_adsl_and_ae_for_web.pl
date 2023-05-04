@@ -51,6 +51,7 @@ print_json();
 sub set_columns {
 	@adslColumns
 	= (
+		'subjid',
 		'usubjid',
 		'age',
 		'agetr01',
@@ -92,6 +93,7 @@ sub set_columns {
 	);
 	@adaeColumns
 	= (
+		'subjid',
 		'usubjid',
 		'aeser',
 		'aestdtc',
@@ -106,7 +108,9 @@ sub set_columns {
 		'aerel',
 		'aereln',
 		'astdt',
-		'astdtf'
+		'astdtf',
+		'aehlgt',
+		'aehlt'
 	);
 }
 

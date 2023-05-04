@@ -11,32 +11,40 @@
     <script src="/js/select2.min.js"></script>
     <style type="text/css">
     	.select2-selection__rendered {
-		  font-size: 16px !important;
+			font-size: 16px !important;
 		}
 
-		.tab-button {
-			margin-left:8px;
-			width:200px;
-			border: 1px solid black;
-			border-radius: 5px;
-			height: 40px;
-			margin-top: 4px;
-			text-align: center;
-			cursor: pointer;
-			background: #C5D7E8;
+		.main-tabs {
+			background-color: #e5f5fc;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 10px;
+		}
+
+		.main-tab-button {
+		    background-color: #c8e1f9;
+		    border: none;
+		    color: #000;
+		    padding: 10px 20px;
+		    cursor: pointer;
+		    font-size: 16px;
+		    margin-right: 10px;
 		}
 
 		div.content {
 			overflow-y: hidden;
 		}
 
-		.tab-button:hover {
-			background: #E5F1FF;
+		.main-tab-button:hover {
+    		background-color: #a5c9e5;
 		}
 
-		.tab-button[selected] {
-		  background: #B5C8E7;
+		.main-tab-button[selected] {
+		    background-color: #fff;
+		    border-bottom: 2px solid #008CBA;
 		}
+
     </style>
 </head>
 
@@ -44,7 +52,7 @@
 	<div style="width:100%;height:100%;display:flex;flex-wrap:wrap;">
 		<div style="width:22%;min-width: 300px;height: 100%;">
 			<div style="height:calc(100% - 20px);width: calc(100% - 10px);margin: auto;padding-top:10px;">
-				<fieldset style="width:90%;">
+				<fieldset style="width:88.5%;">
 					<legend style="font-size:18px;">Population filters</legend>
 
 					<label style="font-size:16px;"><input type="checkbox" id="phase1IncludeBNT" value="phase1IncludeBNT" checked> Include phase 1 BNT162b2 30 mcg</label><br />
@@ -59,30 +67,29 @@
 					<label style="font-size:16px;"><input type="checkbox" id="lackOfPIMonitoringInclude" value="lackOfPIMonitoringInclude"> Include subjects with lack of oversight</label><br />
 					<label style="font-size:16px;"><input type="checkbox" id="noSafetyPopFlagInclude" value="noSafetyPopFlagInclude"> Include subjects without Safety Population flag</label><br />
 				</fieldset>
-				<fieldset style="width:90%;margin-top: 8px;">
+				<fieldset style="width:88.5%;margin-top: 8px;">
 					<legend style="font-size:18px;">Infection on baseline</legend>
 
 					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithPriorInfect" value="subjectsWithPriorInfect" checked> Include subjects with prior infection</label><br />
 					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutPriorInfect" value="subjectsWithoutPriorInfect" checked> Include subjects without prior infection</label><br />
 				</fieldset>
-				<fieldset style="width:90%;margin-top: 8px;">
+				<fieldset style="width:88.5%;margin-top: 8px;">
 					<legend style="font-size:18px;">After-Effects</legend>
 
 					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutSAEs" value="subjectsWithoutSAEs" checked> Include subjects without SAEs</label><br />
 					<label style="font-size:16px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate"> Include AEs without accurate date</label><br />
 				</fieldset>
-				<fieldset style="width:90%;margin-top: 8px;">
+				<fieldset style="width:88.5%;margin-top: 8px;">
 					<legend style="font-size:18px;">Cut-off</legend>
-
-					<label style="font-size:16px;"><input type="checkbox" id="subjectToUnblinding" value="subjectToUnblinding"> Subjects up to their unblinding</label><br />
 				    <label for="cutoffDate" style="font-size:16px;">Cut-Off Date:</label>
 				    <select id="cutoffDate" style="width: 200px;">
 				        <option value="bla">&nbsp;&nbsp;BLA (Mar. 13, 2021)</option>
 				        <option value="end">&nbsp;&nbsp;End Data (Last AE)</option>
 				    </select><br />
-					
+
+					<label style="font-size:16px;"><input type="checkbox" id="subjectToUnblinding" value="subjectToUnblinding"> Subjects up to their unblinding</label><br />
 				</fieldset>
-				<fieldset style="width:90%;margin-top: 8px;">
+				<fieldset style="width:88.5%;margin-top: 8px;">
 					<legend style="font-size:18px;">.CSV exports</legend>
 				    <label for="csvSeparator" style="font-size:16px;">.CSV separator:</label>
 				    <select id="csvSeparator" style="width: 200px;">
@@ -94,17 +101,17 @@
 			</div>
 		</div>
 		<div style="width:78%;max-width: calc(100% - 300px);height:100%;background: white;">
-			<div style="width:100%;height:50px;background:#D8E4ED;display: flex;flex-wrap: wrap;">
-				<div class="tab-button" id="stats">
+			<div class="main-tabs">
+				<div class="main-tab-button" id="stats">
 					<div style="margin-top: 11px;font-size: 16px;"><b>Stats</b></div>
 				</div>
-				<div class="tab-button" id="linRegData">
+				<div class="main-tab-button" id="linRegData">
 					<div style="margin-top: 11px;font-size: 16px;"><b>Lin. Reg. Raw Data</b></div>
 				</div>
-				<!-- <div class="tab-button" id="rawData">
-					<div style="margin-top: 11px;font-size: 16px;"><b>Raw Data</b></div>
-				</div> -->
-				<div class="tab-button" id="filtering" selected>
+				<div class="main-tab-button" id="aeRawData">
+					<div style="margin-top: 11px;font-size: 16px;"><b>AEs Raw Data</b></div>
+				</div>
+				<div class="main-tab-button" id="filtering" selected>
 					<div style="margin-top: 11px;font-size: 16px;"><b>Filtering Logs</b></div>
 				</div>
 			</div>
@@ -136,9 +143,10 @@
 		  loadLinRegData();
 		});
 
-		// document.getElementById('rawData').addEventListener('click', () => {
-		//   selectTabButton('rawData');
-		// });
+		document.getElementById('aeRawData').addEventListener('click', () => {
+		  selectTabButton('aeRawData');
+		  loadAEData();
+		});
 
 		document.getElementById('filtering').addEventListener('click', () => {
 		  selectTabButton('filtering');
@@ -146,8 +154,8 @@
 		});
     });
     function selectTabButton(buttonId) {
-	  // Remove the `selected` attribute from all elements with the `tab-button` class
-	  const tabButtons = document.querySelectorAll('.tab-button');
+	  // Remove the `selected` attribute from all elements with the `main-tab-button` class
+	  const tabButtons = document.querySelectorAll('.main-tab-button');
 	  tabButtons.forEach((button) => {
 	    button.removeAttribute('selected');
 	  });

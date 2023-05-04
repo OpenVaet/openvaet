@@ -240,7 +240,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 			# For each date on which AEs have been reported
 			for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
 				my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
-				die unless ($aeY && $aeM && $aeD);
+				next unless ($aeY && $aeM && $aeD);
 				# Skipping AE if observed after cut-off.
 				next if $aeCompdate > $treatmentCutoffCompdate;
 				my %doseDatesByDates = ();
@@ -592,7 +592,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 						# For each date on which AEs have been reported
 						for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
 							my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
-							die unless ($aeY && $aeM && $aeD);
+							next unless ($aeY && $aeM && $aeD);
 							# Skipping AE if observed after cut-off.
 							next if $aeCompdate > $treatmentCutoffCompdate;
 							my %doseDatesByDates = ();
@@ -830,7 +830,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 					# For each date on which AEs have been reported
 					for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
 						my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
-						die unless ($aeY && $aeM && $aeD);
+						next unless ($aeY && $aeM && $aeD);
 						# Skipping AE if observed after cut-off.
 						next if $aeCompdate > $treatmentCutoffCompdate;
 						my %doseDatesByDates = ();
@@ -1045,7 +1045,7 @@ for my $subjectId (sort{$a <=> $b} keys %adsl) {
 				# For each date on which AEs have been reported
 				for my $aeCompdate (sort{$a <=> $b} keys %{$adaes{$subjectId}->{'adverseEffects'}}) {
 					my ($aeY, $aeM, $aeD) = $aeCompdate =~ /(....)(..)(..)/;
-					die unless ($aeY && $aeM && $aeD);
+					next unless ($aeY && $aeM && $aeD);
 					# Skipping AE if observed after cut-off.
 					next if $aeCompdate > $treatmentCutoffCompdate;
 					my %doseDatesByDates = ();
@@ -1798,177 +1798,81 @@ sub time_of_exposure_from_simple {
 }
 
 sub time_of_exposure_from_conflicting {
-	my ($label, $arm, $dose1Datetime, $dose2Datetime, $dose3Datetime, $dose4Datetime, $dose1Date, $dose2Date, $dose3Date, $dose4Date, $deathDatetime, $deathCompdate, $lastDosePriorCovidDatetime, $lastDosePriorCovidDate, $lastDosePriorCovid, $earliestCovid) = @_;
-	# say "$label, $arm, $dose1Datetime, $dose2Datetime, $dose3Datetime, $dose4Datetime, $dose1Date, $dose2Date, $dose3Date, $dose4Date, $deathDatetime, $deathCompdate, $lastDosePriorCovidDatetime, $lastDosePriorCovidDate, $lastDosePriorCovid, $earliestCovid";
-	# die;
-	my ($doeBNT162b2, $doePlacebo, $doePlaceboToBNT162b2) = (0, 0, 0);
-	my $groupArm = $arm;
-	my $treatmentCutoffCompdate = $cutoffCompdate;
+    my ($label, $arm, $dose1Datetime, $dose2Datetime, $dose3Datetime, $dose4Datetime, $dose1Date, $dose2Date, $dose3Date, $dose4Date, $deathDatetime, $deathCompdate, $lastDosePriorCovidDatetime, $lastDosePriorCovidDate, $lastDosePriorCovid, $earliestCovid) = @_;
+	say "$label, $arm, $dose1Datetime, $dose2Datetime, $dose3Datetime, $dose4Datetime, $dose1Date, $dose2Date, $dose3Date, $dose4Date, $deathDatetime, $deathCompdate, $lastDosePriorCovidDatetime, $lastDosePriorCovidDate, $lastDosePriorCovid, $earliestCovid";
+    my ($doeBNT162b2, $doePlacebo, $doePlaceboToBNT162b2) = (0, 0, 0);
+    my $groupArm = $arm;
 	if ($arm ne 'Placebo') {
 		$groupArm = 'BNT162b2 (30 mcg)';
 	}
-	if ($lastDosePriorCovid == 1) {
-		# If label eq 'Prior Exposure', Time is accrued up to dose 2. Else, time is accrued from dose 2 to end (death or cutoff).
-		if ($label eq 'Doses Without Infection' && ($dose2Datetime || $dose3Datetime)) {
-			my $daysBetweenDoseAndCutOff;
-			if ($dose2Datetime) {
-				if ($deathDatetime && ($deathCompdate < $dose2Date)) {
-					$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-				} else {
-					$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $dose2Datetime);
-				}
-			} else {
-				if ($dose3Datetime) {
-					if ($deathDatetime && ($deathCompdate < $dose3Date)) {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-					} else {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-					}
-				} else {
-					if ($deathDatetime && ($deathCompdate < $treatmentCutoffCompdate)) {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-					} else {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-					}
-				}
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && ($dose2Datetime || $dose3Datetime)) {
-			if ($dose3Datetime) {
-				die unless $arm eq 'Placebo';
-				$groupArm = 'Placebo -> BNT162b2 (30 mcg)';
-				$doePlacebo = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-				if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-					$doePlaceboToBNT162b2 = time::calculate_days_difference($dose3Datetime, $deathDatetime);
-				} else {
-					$doePlaceboToBNT162b2 = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
-				}
-			} else {
-				my $daysBetweenDoseAndCutOff;
-				if ($dose2Datetime) {
-					if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose2Datetime, $deathDatetime);
-					} else {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose2Datetime, $cutoffDatetime);
-					}
-				} else {
-					if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $deathDatetime);
-					} else {
-						$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
-					}
-				}
-				if ($arm eq 'Placebo') {
-					$doePlacebo  += $daysBetweenDoseAndCutOff;
-				} else {
-					$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-				}
-			}
-		} elsif ($label eq 'Doses Without Infection' && (!$dose2Datetime && !$dose3Datetime)) {
-			my $daysBetweenDoseAndCutOff;
-			if ($deathDatetime && ($deathCompdate < $treatmentCutoffCompdate)) {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-			} else {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && (!$dose2Datetime && !$dose3Datetime)) {
-
-		} else {
-			die "label : [$label]";
-		}
-	} elsif ($lastDosePriorCovid == 2) {
-		# If label eq 'Prior Exposure', Time is accrued up to dose 3. Else, time is accrued from dose 3 to end (death or cutoff).
-		if ($label eq 'Doses Without Infection' && $dose3Datetime) {
-			my $daysBetweenDoseAndCutOff;
-			if ($deathDatetime && ($deathCompdate < $dose3Date)) {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-			} else {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && $dose3Datetime) {
-			die unless $arm eq 'Placebo';
-			$groupArm = 'Placebo -> BNT162b2 (30 mcg)';
-			$doePlacebo = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
-			if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-				$doePlaceboToBNT162b2 = time::calculate_days_difference($dose3Datetime, $deathDatetime);
-			} else {
-				$doePlaceboToBNT162b2 = time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
-			}
-		} elsif ($label eq 'Doses Without Infection' && !$dose3Datetime) {
-			my $daysBetweenDoseAndCutOff;
-			if ($deathDatetime && ($deathCompdate < $treatmentCutoffCompdate)) {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-			} else {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && !$dose3Datetime) {
-			
-		} else {
-			die "label : [$label]";
-		}
-	} elsif ($lastDosePriorCovid == 3) {
-		# If label eq 'Prior Exposure', Time is accrued up to dose 4. Else, time is accrued from dose 4 to end (death or cutoff).
-		if ($label eq 'Doses Without Infection' && $dose4Datetime) {
-			my $daysBetweenDoseAndCutOff;
-			if ($deathDatetime && ($deathCompdate < $dose3Date)) {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-			} else {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $dose4Datetime);
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && $dose4Datetime) {
-			die unless $arm eq 'Placebo';
-			$groupArm = 'Placebo -> BNT162b2 (30 mcg)';
-			$doePlacebo = time::calculate_days_difference($dose1Datetime, $dose4Datetime);
-			if ($deathDatetime && ($deathCompdate < $cutoffCompdate)) {
-				$doePlaceboToBNT162b2 = time::calculate_days_difference($dose4Datetime, $deathDatetime);
-			} else {
-				$doePlaceboToBNT162b2 = time::calculate_days_difference($dose4Datetime, $cutoffDatetime);
-			}
-		} elsif ($label eq 'Doses Without Infection' && !$dose4Datetime) {
-			my $daysBetweenDoseAndCutOff;
-			if ($deathDatetime && ($deathCompdate < $treatmentCutoffCompdate)) {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
-			} else {
-				$daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $cutoffDatetime);
-			}
-			if ($arm eq 'Placebo') {
-				$doePlacebo  += $daysBetweenDoseAndCutOff;
-			} else {
-				$doeBNT162b2 += $daysBetweenDoseAndCutOff;	
-			}
-		} elsif ($label eq 'Doses Post Infection' && !$dose4Datetime) {
-			
-		} else {
-			die "label : [$label]";
-		}
-	} elsif ($lastDosePriorCovid == 4) {
-		die;
-	} else {
-		die;
-	}
+    my $treatmentCutoffCompdate = $cutoffCompdate;
+    if ($lastDosePriorCovid >= 1 && $lastDosePriorCovid <= 3) {
+        my ($daysBetweenDoseAndCutOff, $lastDoseDatetime);
+        if ($lastDosePriorCovid == 1) {
+            $lastDoseDatetime = $dose2Datetime || $dose3Datetime;
+        } elsif ($lastDosePriorCovid == 2) {
+            $lastDoseDatetime = $dose3Datetime;
+        } elsif ($lastDosePriorCovid == 3) {
+            $lastDoseDatetime = $dose4Datetime;
+        }
+        my ($lastDoseDate) = split ' ', $lastDoseDatetime;
+        if ($label eq 'Doses Without Infection' && $lastDoseDatetime) {
+            if ($deathDatetime && ($deathCompdate < $lastDoseDate)) {
+                $daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $deathDatetime);
+            } else {
+                $daysBetweenDoseAndCutOff = time::calculate_days_difference($dose1Datetime, $lastDoseDatetime);
+            }
+            if ($arm eq 'Placebo') {
+                $doePlacebo += $daysBetweenDoseAndCutOff;
+            } else {
+                $doeBNT162b2 += $daysBetweenDoseAndCutOff;
+            }
+        } elsif ($label eq 'Doses Post Infection' && $lastDoseDatetime) {
+            if ($lastDosePriorCovid == 1 && $dose2Datetime && $dose3Datetime) {
+                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
+                $doePlacebo = time::calculate_days_difference($dose2Datetime, $dose3Datetime);
+                $doePlaceboToBNT162b2 = ($deathDatetime && ($deathCompdate < $cutoffCompdate)) ?
+                    time::calculate_days_difference($dose3Datetime, $deathDatetime) :
+                    time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
+            } elsif ($lastDosePriorCovid == 1 && $dose3Datetime) {
+                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
+                $doePlacebo = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
+                $doePlaceboToBNT162b2 = ($deathDatetime && ($deathCompdate < $cutoffCompdate)) ?
+                    time::calculate_days_difference($dose3Datetime, $deathDatetime) :
+                    time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
+            } elsif ($lastDosePriorCovid == 1 && $dose2Datetime) {
+	            if ($deathDatetime && ($deathCompdate < $lastDoseDate)) {
+	                $daysBetweenDoseAndCutOff = time::calculate_days_difference($dose2Datetime, $deathDatetime);
+	            } else {
+	                $daysBetweenDoseAndCutOff = time::calculate_days_difference($dose2Datetime, $cutoffDatetime);
+	            }
+	            if ($arm eq 'Placebo') {
+	                $doePlacebo += $daysBetweenDoseAndCutOff;
+	            } else {
+	                $doeBNT162b2 += $daysBetweenDoseAndCutOff;
+	            }
+            } elsif ($lastDosePriorCovid == 2 && $dose3Datetime) {
+                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
+                $doePlacebo = time::calculate_days_difference($dose1Datetime, $dose3Datetime);
+                $doePlaceboToBNT162b2 = ($deathDatetime && ($deathCompdate < $cutoffCompdate)) ?
+                    time::calculate_days_difference($dose3Datetime, $deathDatetime) :
+                    time::calculate_days_difference($dose3Datetime, $cutoffDatetime);
+            } elsif ($lastDosePriorCovid == 2 && $dose4Datetime) {
+                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
+                $doePlacebo = time::calculate_days_difference($dose1Datetime, $dose4Datetime);
+                $doePlaceboToBNT162b2 = ($deathDatetime && ($deathCompdate < $cutoffCompdate)) ?
+                    time::calculate_days_difference($dose4Datetime, $deathDatetime) :
+                    time::calculate_days_difference($dose4Datetime, $cutoffDatetime);
+            } elsif ($lastDosePriorCovid == 3 && $dose4Datetime) {
+                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
+                $doePlacebo = time::calculate_days_difference($dose1Datetime, $dose4Datetime);
+                $doePlaceboToBNT162b2 = ($deathDatetime && ($deathCompdate < $cutoffCompdate)) ?
+                    time::calculate_days_difference($dose4Datetime, $deathDatetime) :
+                    time::calculate_days_difference($dose4Datetime, $cutoffDatetime);
+            } else { die "lastDosePriorCovid : $lastDosePriorCovid" }
+        } else { die "$label eq 'Doses Without Infection' && $lastDoseDatetime" }
+    } else {
+    	die;
+    }
 	return ($groupArm, $doeBNT162b2, $doePlacebo, $doePlaceboToBNT162b2, $treatmentCutoffCompdate);
 }

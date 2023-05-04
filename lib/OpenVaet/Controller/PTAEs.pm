@@ -10,6 +10,7 @@ use session;
 use time;
 
 my @adslColumns = qw(
+  subjid
   usubjid
   age
   agetr01
@@ -64,6 +65,25 @@ my @adslColumns = qw(
   aereln
   astdt
   astdtf
+);
+
+my @adaeColumns = qw(
+  aeser
+  aestdtc
+  aestdy
+  aescong
+  aesdisab
+  aesdth
+  aeshosp
+  aeslife
+  aesmie
+  aemeres
+  aerel
+  aereln
+  astdt
+  astdtf
+  aehlgt
+  aehlt
 );
 
 sub pfizer_trial_after_effects {
@@ -226,35 +246,24 @@ sub filter_data {
 	close $in;
 	$json = decode_json($json);
 
-	# Define ADAE columns to integrate for first AE compatible.
-	my @adaeColumns = qw(
-	  aeser
-	  aestdtc
-	  aestdy
-	  aescong
-	  aesdisab
-	  aesdth
-	  aeshosp
-	  aeslife
-	  aesmie
-	  aemeres
-	  aerel
-	  aereln
-	  astdt
-	  astdtf
-	);
-
 	# Parsing JSON input.
 	my %json = %$json;
 	my $filteringLogs = '';
 	$filteringLogs .= "\n";
 	my %filteringStats = ();
 	my %filteredSubjects = ();
+	my %filteredAEs = ();
 	open my $out5, '>:utf8', "public/pt_aes/$path/filtered_subjects_lin_reg.csv" or die $!;
 	for my $adslColumn (@adslColumns) {
 		print $out5 "$adslColumn$csvSeparator";
 	}
 	say $out5 '';
+	open my $out6, '>:utf8', "public/pt_aes/$path/filtered_subjects_aes.csv" or die $!;
+	print $out6 "subjid$csvSeparator";
+	for my $adaeColumn (@adaeColumns) {
+		print $out6 "$adaeColumn$csvSeparator";
+	}
+	say $out6 '';
 	for my $subjectId (sort{$a <=> $b} keys %json) {
 		$filteringStats{'totalSubjectsOverall'}++;
 
@@ -479,9 +488,11 @@ sub filter_data {
 		my %saesByDates = ();
 		if (exists $json{$subjectId}->{'adaeRows'}) {
 			for my $adaeRNum (sort{$a <=> $b} keys %{$json{$subjectId}->{'adaeRows'}}) {
-				my $aeser = $json{$subjectId}->{'adaeRows'}->{$adaeRNum}->{'aeser'} // die;
-				my $astdt = $json{$subjectId}->{'adaeRows'}->{$adaeRNum}->{'astdt'} // die;
-				if ($aeWithoutDate ne 'true' && !$astdt) {
+				my $aeser  = $json{$subjectId}->{'adaeRows'}->{$adaeRNum}->{'aeser'}  // die;
+				my $astdt  = $json{$subjectId}->{'adaeRows'}->{$adaeRNum}->{'astdt'}  // die;
+				my $astdtf = $json{$subjectId}->{'adaeRows'}->{$adaeRNum}->{'astdtf'} // die;
+				if ($aeWithoutDate ne 'true' && $astdtf && ($astdtf eq 'M' || $astdtf eq 'D')) {
+					# p$json{$subjectId};
 					$filteringStats{'totalAEsWithoutDate'}++;
 					$filteringStats{'aesWithoutDate'}->{$subjectId}++;
 					if ($aeser && $aeser eq 'Y') {
@@ -562,14 +573,40 @@ sub filter_data {
 		$filteringStats{'totalSubjectsPostFilter'}->{'total'}++;
 		$filteringStats{'totalSubjectsPostFilter'}->{'byArms'}->{$categoArm}++;
 
-		# printing .CSV row.
+		# Calculating time of exposure in each group.
+		my
+		(
+			$dayobsPiBnt, $dayobsPiPlacebo, $dayobsPiCrossov,
+			$dayobsNpiBnt, $dayobsNpiPlacebo, $dayobsNpiCrossov
+		) = (
+			0, 0, 0, 0, 0, 0
+		);
+		
+
+		# printing LinReg .CSV row.
 		for my $adslColumn (@adslColumns) {
 			my $value = $filteredSubjects{$subjectId}->{$adslColumn} // '';
 			print $out5 "$value$csvSeparator";
 		}
 		say $out5 '';
+
+		# Incrementing AEs statistics.
+		if ($aeRows) {
+			for my $dt (sort{$a <=> $b} keys %saesByDates) {
+				for my $adaeRNum (sort{$a <=> $b} keys %{$saesByDates{$dt}}) {
+					print $out6 "$subjectId$csvSeparator";
+					for my $adaeColumn (@adaeColumns) {
+						my $value = $saesByDates{$dt}->{$adaeRNum}->{$adaeColumn} // '';
+						$filteredAEs{$subjectId}->{$adaeRNum}->{$adaeColumn} = $value;
+						print $out6 "$value$csvSeparator";
+					}
+					say $out6 '';
+				}
+			}
+		}
 	}
 	close $out5;
+	close $out6;
 
 	# Formatting filtering details.
 	open my $out2, '>:utf8', "public/pt_aes/$path/filtering_details.txt";
@@ -701,6 +738,29 @@ sub filter_data {
 	}
 	say $out2 "-" x 50;
 	say $out2 "-" x 50;
+	my $totalWithoutSAEs = $filteringStats{'totalWithoutSAEs'} // 0;
+	say $out2 "Include subjects without SAEs: [$subjectsWithoutSAEs] ($totalWithoutSAEs)";
+	for my $subjectId (sort{$a <=> $b} keys %{$filteringStats{'withoutSAEs'}}) {
+		say $out2 $subjectId;
+	}
+	say $out2 "-" x 50;
+	say $out2 "-" x 50;
+	my $totalAEsWithoutDate = $filteringStats{'totalAEsWithoutDate'} // 0;
+	say $out2 "Include AEs without accurate date: [$aeWithoutDate] ($totalAEsWithoutDate)";
+	for my $subjectId (sort{$a <=> $b} keys %{$filteringStats{'aesWithoutDate'}}) {
+		my $total = $filteringStats{'aesWithoutDate'}->{$subjectId} // die;
+		say $out2 "$subjectId ($total)";
+	}
+	say $out2 "-" x 50;
+	say $out2 "-" x 50;
+	my $totalAEsPostUnblind = $filteringStats{'totalAEsPostUnblind'} // 0;
+	say $out2 "Include AEs post unblinding: [$subjectToUnblinding] ($totalAEsPostUnblind)";
+	for my $subjectId (sort{$a <=> $b} keys %{$filteringStats{'aesPostUnblind'}}) {
+		my $total = $filteringStats{'aesPostUnblind'}->{$subjectId} // die;
+		say $out2 "$subjectId ($total)";
+	}
+	say $out2 "-" x 50;
+	say $out2 "-" x 50;
 	close $out2;
 
 	# Debug.
@@ -734,6 +794,9 @@ sub filter_data {
 	open my $out4, '>:utf8', "public/pt_aes/$path/filtered_subjects_lin_reg.json" or die $!;
 	print $out4 encode_json\%filteredSubjects;
 	close $out4;
+	open my $out7, '>:utf8', "public/pt_aes/$path/filtered_subjects_aes.json" or die $!;
+	print $out7 encode_json\%filteredAEs;
+	close $out7;
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -786,24 +849,24 @@ sub render_logs {
 	my $subjectsWithPriorInfect = $self->param('subjectsWithPriorInfect') // die;
 	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
 	my $csvSeparator = $self->param('csvSeparator') // die;
-	say "path : [$path]";
-	say "phase1IncludeBNT : $phase1IncludeBNT";
-	say "phase1IncludePlacebo : $phase1IncludePlacebo";
-	say "below16Include : $below16Include";
-	say "seniorsIncluded : $seniorsIncluded";
-	say "duplicatesInclude : $duplicatesInclude";
-	say "noCRFInclude : $noCRFInclude";
-	say "hivSubjectsIncluded : $hivSubjectsIncluded";
-	say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
-	say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
-	say "femaleIncluded : $femaleIncluded";
-	say "maleIncluded : $maleIncluded";
-	say "subjectToUnblinding : $subjectToUnblinding";
-	say "cutoffDate : $cutoffDate";
-	say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
-	say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
-	say "aeWithoutDate : $aeWithoutDate";
-	say "csvSeparator : $csvSeparator";
+	# say "path : [$path]";
+	# say "phase1IncludeBNT : $phase1IncludeBNT";
+	# say "phase1IncludePlacebo : $phase1IncludePlacebo";
+	# say "below16Include : $below16Include";
+	# say "seniorsIncluded : $seniorsIncluded";
+	# say "duplicatesInclude : $duplicatesInclude";
+	# say "noCRFInclude : $noCRFInclude";
+	# say "hivSubjectsIncluded : $hivSubjectsIncluded";
+	# say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
+	# say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
+	# say "femaleIncluded : $femaleIncluded";
+	# say "maleIncluded : $maleIncluded";
+	# say "subjectToUnblinding : $subjectToUnblinding";
+	# say "cutoffDate : $cutoffDate";
+	# say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
+	# say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
+	# say "aeWithoutDate : $aeWithoutDate";
+	# say "csvSeparator : $csvSeparator";
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -868,24 +931,24 @@ sub render_lin_reg_data {
 	my $subjectsWithPriorInfect = $self->param('subjectsWithPriorInfect') // die;
 	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
 	my $csvSeparator = $self->param('csvSeparator') // die;
-	say "path : [$path]";
-	say "phase1IncludeBNT : $phase1IncludeBNT";
-	say "phase1IncludePlacebo : $phase1IncludePlacebo";
-	say "below16Include : $below16Include";
-	say "seniorsIncluded : $seniorsIncluded";
-	say "duplicatesInclude : $duplicatesInclude";
-	say "noCRFInclude : $noCRFInclude";
-	say "hivSubjectsIncluded : $hivSubjectsIncluded";
-	say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
-	say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
-	say "femaleIncluded : $femaleIncluded";
-	say "maleIncluded : $maleIncluded";
-	say "subjectToUnblinding : $subjectToUnblinding";
-	say "cutoffDate : $cutoffDate";
-	say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
-	say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
-	say "aeWithoutDate : $aeWithoutDate";
-	say "csvSeparator : $csvSeparator";
+	# say "path : [$path]";
+	# say "phase1IncludeBNT : $phase1IncludeBNT";
+	# say "phase1IncludePlacebo : $phase1IncludePlacebo";
+	# say "below16Include : $below16Include";
+	# say "seniorsIncluded : $seniorsIncluded";
+	# say "duplicatesInclude : $duplicatesInclude";
+	# say "noCRFInclude : $noCRFInclude";
+	# say "hivSubjectsIncluded : $hivSubjectsIncluded";
+	# say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
+	# say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
+	# say "femaleIncluded : $femaleIncluded";
+	# say "maleIncluded : $maleIncluded";
+	# say "subjectToUnblinding : $subjectToUnblinding";
+	# say "cutoffDate : $cutoffDate";
+	# say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
+	# say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
+	# say "aeWithoutDate : $aeWithoutDate";
+	# say "csvSeparator : $csvSeparator";
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -951,24 +1014,24 @@ sub render_stats {
 	my $subjectsWithPriorInfect = $self->param('subjectsWithPriorInfect') // die;
 	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
 	my $csvSeparator = $self->param('csvSeparator') // die;
-	say "path : [$path]";
-	say "phase1IncludeBNT : $phase1IncludeBNT";
-	say "phase1IncludePlacebo : $phase1IncludePlacebo";
-	say "below16Include : $below16Include";
-	say "seniorsIncluded : $seniorsIncluded";
-	say "duplicatesInclude : $duplicatesInclude";
-	say "noCRFInclude : $noCRFInclude";
-	say "hivSubjectsIncluded : $hivSubjectsIncluded";
-	say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
-	say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
-	say "femaleIncluded : $femaleIncluded";
-	say "maleIncluded : $maleIncluded";
-	say "subjectToUnblinding : $subjectToUnblinding";
-	say "cutoffDate : $cutoffDate";
-	say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
-	say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
-	say "aeWithoutDate : $aeWithoutDate";
-	say "csvSeparator : $csvSeparator";
+	# say "path : [$path]";
+	# say "phase1IncludeBNT : $phase1IncludeBNT";
+	# say "phase1IncludePlacebo : $phase1IncludePlacebo";
+	# say "below16Include : $below16Include";
+	# say "seniorsIncluded : $seniorsIncluded";
+	# say "duplicatesInclude : $duplicatesInclude";
+	# say "noCRFInclude : $noCRFInclude";
+	# say "hivSubjectsIncluded : $hivSubjectsIncluded";
+	# say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
+	# say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
+	# say "femaleIncluded : $femaleIncluded";
+	# say "maleIncluded : $maleIncluded";
+	# say "subjectToUnblinding : $subjectToUnblinding";
+	# say "cutoffDate : $cutoffDate";
+	# say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
+	# say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
+	# say "aeWithoutDate : $aeWithoutDate";
+	# say "csvSeparator : $csvSeparator";
 
     my %languages = ();
     $languages{'fr'} = 'French';
@@ -1008,6 +1071,89 @@ sub render_stats {
 	    currentLanguage => $currentLanguage,
 	    languages => \%languages,
 	    filteringStats => \%filteringStats
+	);
+}
+
+sub render_aes_data {
+	my $self = shift;
+	my $currentLanguage = $self->param('currentLanguage') // 'en';
+	my $path = $self->param('path') // die;
+	my $phase1IncludeBNT = $self->param('phase1IncludeBNT') // die;
+	my $aeWithoutDate = $self->param('aeWithoutDate') // die;
+	my $phase1IncludePlacebo = $self->param('phase1IncludePlacebo') // die;
+	my $subjectsWithoutSAEs = $self->param('subjectsWithoutSAEs') // die;
+	my $below16Include = $self->param('below16Include') // die;
+	my $seniorsIncluded = $self->param('seniorsIncluded') // die;
+	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
+	my $noCRFInclude = $self->param('noCRFInclude') // die;
+	my $hivSubjectsIncluded = $self->param('hivSubjectsIncluded') // die;
+	my $lackOfPIMonitoringInclude = $self->param('lackOfPIMonitoringInclude') // die;
+	my $noSafetyPopFlagInclude = $self->param('noSafetyPopFlagInclude') // die;
+	my $femaleIncluded = $self->param('femaleIncluded') // die;
+	my $maleIncluded = $self->param('maleIncluded') // die;
+	my $subjectToUnblinding = $self->param('subjectToUnblinding') // die;
+	my $cutoffDate = $self->param('cutoffDate') // die;
+	my $subjectsWithPriorInfect = $self->param('subjectsWithPriorInfect') // die;
+	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
+	my $csvSeparator = $self->param('csvSeparator') // die;
+	# say "path : [$path]";
+	# say "phase1IncludeBNT : $phase1IncludeBNT";
+	# say "phase1IncludePlacebo : $phase1IncludePlacebo";
+	# say "below16Include : $below16Include";
+	# say "seniorsIncluded : $seniorsIncluded";
+	# say "duplicatesInclude : $duplicatesInclude";
+	# say "noCRFInclude : $noCRFInclude";
+	# say "hivSubjectsIncluded : $hivSubjectsIncluded";
+	# say "lackOfPIMonitoringInclude : $lackOfPIMonitoringInclude";
+	# say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
+	# say "femaleIncluded : $femaleIncluded";
+	# say "maleIncluded : $maleIncluded";
+	# say "subjectToUnblinding : $subjectToUnblinding";
+	# say "cutoffDate : $cutoffDate";
+	# say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
+	# say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
+	# say "aeWithoutDate : $aeWithoutDate";
+	# say "csvSeparator : $csvSeparator";
+
+    my %languages = ();
+    $languages{'fr'} = 'French';
+    $languages{'en'} = 'English';
+
+	# Loading filtering log abstract.
+	open my $in1, '<:utf8', "public/pt_aes/$path/filtered_subjects_aes.json";
+	my $json1;
+	while (<$in1>) {
+		$json1 .= $_;
+	}
+	close $in1;
+	$json1 = decode_json($json1);
+	my %filteredAEs = %$json1;
+	# p%filteredAEs;
+
+	$self->render(
+		path => $path,
+	    phase1IncludeBNT => $phase1IncludeBNT,
+	    phase1IncludePlacebo => $phase1IncludePlacebo,
+	    aeWithoutDate => $aeWithoutDate,
+	    below16Include => $below16Include,
+	    seniorsIncluded => $seniorsIncluded,
+	    duplicatesInclude => $duplicatesInclude,
+	    noCRFInclude => $noCRFInclude,
+	    hivSubjectsIncluded => $hivSubjectsIncluded,
+	    lackOfPIMonitoringInclude => $lackOfPIMonitoringInclude,
+	    noSafetyPopFlagInclude => $noSafetyPopFlagInclude,
+	    femaleIncluded => $femaleIncluded,
+	    subjectsWithoutSAEs => $subjectsWithoutSAEs,
+	    maleIncluded => $maleIncluded,
+	    subjectToUnblinding => $subjectToUnblinding,
+	    cutoffDate => $cutoffDate,
+	    subjectsWithPriorInfect => $subjectsWithPriorInfect,
+	    subjectsWithoutPriorInfect => $subjectsWithoutPriorInfect,
+	    csvSeparator => $csvSeparator,
+	    currentLanguage => $currentLanguage,
+	    languages => \%languages,
+	    filteredAEs => \%filteredAEs,
+	    adaeColumns => \@adaeColumns
 	);
 }
 
