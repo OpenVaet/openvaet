@@ -44,17 +44,17 @@ my $testsRefsFile        = 'public/doc/pfizer_trials/pfizer_di.json';
 
 my %adsl                 = ();
 my %adaes                = ();
-my %advaData             = ();
 my %faces                = ();
 my %pcrRecords           = ();
+my %advaData             = ();
 my %symptoms             = ();
 my %testsRefs            = ();
 load_adsl();
 load_adae();
 load_adva();
+load_pcr_tests();
 load_faces();
 load_symptoms();
-load_pcr_tests();
 load_tests_refs();
 
 my %stats       = ();
@@ -1528,18 +1528,6 @@ sub load_adva {
 	say "[$advaFile] -> patients : " . keys %advaData;
 }
 
-sub load_adae {
-	open my $in, '<:utf8', $adaeFile or die "Missing file [$adaeFile]";
-	my $json;
-	while (<$in>) {
-		$json .= $_;
-	}
-	close $in;
-	$json = decode_json($json);
-	%adaes = %$json;
-	say "[$adaeFile] -> subjects : " . keys %adaes;
-}
-
 sub load_pcr_tests {
 	open my $in, '<:utf8', $pcrRecordsFile;
 	my $json;
@@ -1551,6 +1539,18 @@ sub load_pcr_tests {
 	%pcrRecords = %$json;
 	# p$pcrRecords{'44441222'};
 	say "[$pcrRecordsFile] -> subjects : " . keys %pcrRecords;
+}
+
+sub load_adae {
+	open my $in, '<:utf8', $adaeFile or die "Missing file [$adaeFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%adaes = %$json;
+	say "[$adaeFile] -> subjects : " . keys %adaes;
 }
 
 sub load_symptoms {

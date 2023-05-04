@@ -8,7 +8,7 @@
   }
   
   table {
-    width: 2100px;
+    width: 2400px;
     border-collapse: collapse;
     font-size: 10px;
     line-height: 1.5;
@@ -41,71 +41,19 @@
       font-size: 14px;
   }
 </style>
+% my @adslColumns = @$adslColumns;
 
 <a class="download-link" href="/pt_aes/<%=$path%>/filtered_subjects_lin_reg.csv" download>Download Raw Linear Regression Data (.csv)</a>
 <div class="table-container">
   <table>
     <thead>
       <tr>
-        <th>subjid</th>
-        <th>usubjid</th>
-        <th>age</th>
-        <th>agetr01</th>
-        <th>agegr1</th>
-        <th>agegr1n</th>
-        <th>race</th>
-        <th>racen</th>
-        <th>ethnic</th>
-        <th>ethnicn</th>
-        <th>arace</th>
-        <th>aracen</th>
-        <th>racegr1</th>
-        <th>racegr1n</th>
-        <th>sex</th>
-        <th>sexn</th>
-        <th>country</th>
-        <th>saffl</th>
-        <th>actarm</th>
-        <th>actarmcd</th>
-        <th>trtsdt</th>
-        <th>vax101dt</th>
-        <th>vax102dt</th>
-        <th>vax201dt</th>
-        <th>vax202dt</th>
-        <th>vax10udt</th>
-        <th>vax20udt</th>
-        <th>reactofl</th>
-        <th>phase</th>
-        <th>phasen</th>
-        <th>unblnddt</th>
-        <th>bmicat</th>
-        <th>bmicatn</th>
-        <th>combodfl</th>
-        <th>covblst</th>
-        <th>hivfl</th>
-        <th>x1csrdt</th>
-        <th>saf1fl</th>
-        <th>saf2fl</th>
-        <th>aeRows</th>
-        <th>aeserRows</th>
-        <th>aeser</th>
-        <th>aestdtc</th>
-        <th>aestdy</th>
-        <th>aescong</th>
-        <th>aesdisab</th>
-        <th>aesdth</th>
-        <th>aeshosp</th>
-        <th>aeslife</th>
-        <th>aesmie</th>
-        <th>aemeres</th>
-        <th>aerel</th>
-        <th>aereln</th>
-        <th>astdt</th>
-        <th>astdtf</th>
+        % for my $adslColumn (@adslColumns) {
+          <th><%=$adslColumn%></th>
+        % }
       </tr>
     </thead>
     <tbody style="overflow-y:auto;">
-      % my @adslColumns = @$adslColumns;
       % my %filteredSubjects = %$filteredSubjects;
       % use Data::Printer;
       % my $sampleNum = 0;

@@ -1,0 +1,179 @@
+
+<style type="text/css">
+  
+</style>
+% my %stats = %$stats;
+
+% my $totalSubjects                = $stats{'totalSubjects'}         // next;
+% my $totalSubjectsBNT162b2        = $stats{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjects'}            // die;
+% my $totalSubjectsPlacebo         = $stats{'byArms'}->{'Placebo'}->{'totalSubjects'}                      // die;
+% my $totalSubjectsCrossov         = $stats{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjects'} // 0;
+% my $totalSubjectsWithAE          = $stats{'aes'}->{'totalSubjects'}   // next;
+% my $totalSubjectsWithSAEs        = $stats{'saes'}->{'totalSubjects'} // 0;
+% my $dayobsCrossov                = $stats{'dayobsCrossov'}         // 0;
+% my $dayobsBnt                    = $stats{'dayobsBnt'}             // die;
+% my $dayobsPlacebo                = $stats{'dayobsPlacebo'}         // die;
+% my $doeGlobal                    = $stats{'doeGlobal'}             // die;
+% my $personYearsCrossov           = $stats{'personYearsCrossov'}             // die;
+% my $personYearsBNT162b2          = $stats{'personYearsBNT162b2'}             // die;
+% my $personYearsPlacebo           = $stats{'personYearsPlacebo'}             // die;
+% my $personYearsGlobal            = $stats{'personYearsGlobal'}             // die;
+  <a class="download-link" href="/pt_aes/<%=$path%>/<%=$currentTabName%>_All_Grades.csv" download>Download Statistics (.csv)</a>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" colspan="2" class="sticky-header">System Organ Class / Preferred Term</th>
+            <th colspan="4">Total - N=<%=$totalSubjects%> | PY=<%=$personYearsGlobal%></th>
+            <th colspan="4">BNT162b2 30 mcg - N=<%=$totalSubjectsBNT162b2%> | PY=<%=$personYearsBNT162b2%></th>
+            <th colspan="4">Placebo - N=<%=$totalSubjectsPlacebo%> | PY=<%=$personYearsPlacebo%></th>
+            % if ($personYearsCrossov) {
+              <th colspan="4">Placebo -> BNT162b2 - N=<%=$totalSubjectsCrossov%> | PY=<%=$personYearsCrossov%></th>
+            % }
+          </tr>
+          <tr>
+            <th>Events</th>
+            <th>Subjects</th>
+            <th>%</th>
+            <th>Per 100K / PY</th>
+            <th>Events</th>
+            <th>Subjects</th>
+            <th>%</th>
+            <th>Per 100K / PY</th>
+            <th>Events</th>
+            <th>Subjects</th>
+            <th>%</th>
+            <th>Per 100K / PY</th>
+            % if ($personYearsCrossov) {
+              <th>Events</th>
+              <th>Subjects</th>
+              <th>%</th>
+              <th>Per 100K / PY</th>
+            % }
+          </tr>
+        </thead>
+        <tbody>
+          % # Rendering global stats.
+          % my $gradeTotalSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalSubjects'}  // 0;
+          % my $totalEvents              = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalEvents'}    // 0;
+          % my $bntEvents                = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}               // 0;
+          % my $placeboEvents            = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalEvents'}                         // 0;
+          % my $placeboBNTEvents         = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}    // 0;
+          % my $bNT162b2Subjects         = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}             // 0;
+          % my $placeboSubjects          = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalSubjects'}                       // 0;
+          % my $placeboBNTSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}  // 0;
+          % my $rateTotalPer100K         = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateTotalPer100K'} // die;
+          % my $rateBNT162b2Per100K      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateBNT162b2Per100K'} // die;
+          % my $ratePlaceboPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'ratePlaceboPer100K'} // die;
+          % my $totalPercentOfTotal      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalPercentOfTotal'} // die;
+          % my $bntPercentOfTotal        = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'bntPercentOfTotal'} // die;
+          % my $placeboPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'placeboPercentOfTotal'} // die;
+          % my $crossOvPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'crossOvPercentOfTotal'} // 0;
+          % my $rateCrossOvPer100K = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateCrossOvPer100K'} // 0;
+          <tr>
+            <th class="sticky-left">All</th>
+            <th class="sticky-left">All</th>
+            <td><%=$totalEvents%></td>
+            <td><%=$gradeTotalSubjects%></td>
+            <td><%=$totalPercentOfTotal%></td>
+            <td><%=$rateTotalPer100K%></td>
+            <td><%=$bntEvents%></td>
+            <td><%=$bNT162b2Subjects%></td>
+            <td><%=$bntPercentOfTotal%></td>
+            <td><%=$rateBNT162b2Per100K%></td>
+            <td><%=$placeboEvents%></td>
+            <td><%=$placeboSubjects%></td>
+            <td><%=$placeboPercentOfTotal%></td>
+            <td><%=$ratePlaceboPer100K%></td>
+            % if ($personYearsCrossov) {
+              <td><%=$placeboBNTEvents%></td>
+              <td><%=$placeboBNTSubjects%></td>
+              <td><%=$crossOvPercentOfTotal%></td>
+              <td><%=$rateCrossOvPer100K%></td>
+            % }
+          </tr>
+          % for my $aehlgt (sort keys %{$stats{'gradeStats'}->{'All_Grades'}->{'categories'}}) {
+            % # Rendering category stats.
+            % my $gradeTotalSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'totalSubjects'}  // next;
+            % my $totalEvents              = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'totalEvents'}    // 0;
+            % my $bntEvents                = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}               // 0;
+            % my $placeboEvents            = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalEvents'}                         // 0;
+            % my $placeboBNTEvents         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}    // 0;
+            % my $bNT162b2Subjects         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}             // 0;
+            % my $placeboSubjects          = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalSubjects'}                       // 0;
+            % my $placeboBNTSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}  // 0;
+            % my $rateTotalPer100K         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'rateTotalPer100K'}      // die;
+            % my $rateBNT162b2Per100K      = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'rateBNT162b2Per100K'}   // die;
+            % my $ratePlaceboPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'ratePlaceboPer100K'}    // die;
+            % my $totalPercentOfTotal      = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'totalPercentOfTotal'}   // die;
+            % my $bntPercentOfTotal        = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'bntPercentOfTotal'}     // die;
+            % my $placeboPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'placeboPercentOfTotal'} // die;
+            % my $crossOvPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'crossOvPercentOfTotal'} // 0;
+            % my $rateCrossOvPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{$displayedEvents}->{'rateCrossOvPer100K'}    // 0;
+            <tr>
+              <th class="sticky-left"><%=$aehlgt%></th>
+              <th class="sticky-left">All</th>
+              <td><%=$totalEvents%></td>
+              <td><%=$gradeTotalSubjects%></td>
+              <td><%=$totalPercentOfTotal%></td>
+              <td><%=$rateTotalPer100K%></td>
+              <td><%=$bntEvents%></td>
+              <td><%=$bNT162b2Subjects%></td>
+              <td><%=$bntPercentOfTotal%></td>
+              <td><%=$rateBNT162b2Per100K%></td>
+              <td><%=$placeboEvents%></td>
+              <td><%=$placeboSubjects%></td>
+              <td><%=$placeboPercentOfTotal%></td>
+              <td><%=$ratePlaceboPer100K%></td>
+              % if ($personYearsCrossov) {
+                <td><%=$placeboBNTEvents%></td>
+                <td><%=$placeboBNTSubjects%></td>
+                <td><%=$crossOvPercentOfTotal%></td>
+                <td><%=$rateCrossOvPer100K%></td>
+              % }
+            </tr>
+            % for my $aehlt (sort keys %{$stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}}) {
+              % # Rendering category stats.
+              % my $gradeTotalSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'totalSubjects'}  // next;
+              % my $totalEvents              = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'totalEvents'}    // 0;
+              % my $bntEvents                = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}               // 0;
+              % my $placeboEvents            = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalEvents'}                         // 0;
+              % my $placeboBNTEvents         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}    // 0;
+              % my $bNT162b2Subjects         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}             // 0;
+              % my $placeboSubjects          = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalSubjects'}                       // 0;
+              % my $placeboBNTSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}  // 0;
+              % my $rateTotalPer100K         = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'rateTotalPer100K'}      // die;
+              % my $rateBNT162b2Per100K      = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'rateBNT162b2Per100K'}   // die;
+              % my $ratePlaceboPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'ratePlaceboPer100K'}    // die;
+              % my $totalPercentOfTotal      = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'totalPercentOfTotal'}   // die;
+              % my $bntPercentOfTotal        = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'bntPercentOfTotal'}     // die;
+              % my $placeboPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'placeboPercentOfTotal'} // die;
+              % my $crossOvPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'crossOvPercentOfTotal'} // 0;
+              % my $rateCrossOvPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{'categories'}->{$aehlgt}->{'reactions'}->{$aehlt}->{$displayedEvents}->{'rateCrossOvPer100K'}    // 0;
+              <tr>
+                <th class="sticky-left"><%=$aehlgt%></th>
+                <th class="sticky-left"><%=$aehlt%></th>
+                <td><%=$totalEvents%></td>
+                <td><%=$gradeTotalSubjects%></td>
+                <td><%=$totalPercentOfTotal%></td>
+                <td><%=$rateTotalPer100K%></td>
+                <td><%=$bntEvents%></td>
+                <td><%=$bNT162b2Subjects%></td>
+                <td><%=$bntPercentOfTotal%></td>
+                <td><%=$rateBNT162b2Per100K%></td>
+                <td><%=$placeboEvents%></td>
+                <td><%=$placeboSubjects%></td>
+                <td><%=$placeboPercentOfTotal%></td>
+                <td><%=$ratePlaceboPer100K%></td>
+                % if ($personYearsCrossov) {
+                  <td><%=$placeboBNTEvents%></td>
+                  <td><%=$placeboBNTSubjects%></td>
+                  <td><%=$crossOvPercentOfTotal%></td>
+                  <td><%=$rateCrossOvPer100K%></td>
+                % }
+              </tr>
+            % }
+          % }
+        </tbody>
+      </table>
+    </div>

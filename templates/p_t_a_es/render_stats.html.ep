@@ -62,7 +62,8 @@
     width: 90%;
     min-width: 1500px;
     margin: 0 auto;
-    background-color: #fff;
+    margin-top: 10px;
+    background-color: #e5f5fc;
     box-shadow: 0 0 5px #ccc;
     display: none;
     min-height: calc(100% - 150px);
@@ -126,455 +127,32 @@
   tbody tr:hover {
     background-color: #d9e4f0;
   }
+  .download-link {
+      margin-top:5px;
+      margin-left:calc(70% - 50px);
+      font-size: 14px;
+  }
 </style>
 
   <div class="tabs">
+    <button class="tab-button" onclick="openTab('summaryData')">Summary</button>
     <button class="tab-button active" onclick="openTab('withPrior')">With Prior Infection</button>
     <button class="tab-button" onclick="openTab('withoutPrior')">Without Prior Infection</button>
   </div>
-  <label for="displayedEvent" style="font-size:16px;margin-left: 30px;font-weight: bold;">Event Displayed:</label>
-  <select id="displayedEvent" style="width: 200px;">
-      <option value="sae" selected>&nbsp;SAEs</option>
-      <option value="ae">&nbsp;AEs</option>
-  </select><br />
+  <label for="displayedEvents" style="font-size:16px;margin-left: 30px;font-weight: bold;">Events Displayed:</label>
+  <select id="displayedEvents" style="width: 200px;">
+      <option value="saes" selected>&nbsp;SAEs</option>
+      <option value="aes">&nbsp;AEs</option>
+  </select>
+  <br />
   <div class="tab-content active" id="withPrior">
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th rowspan="2" colspan="2" class="sticky-header">System Organ Class / Preferred Term</th>
-            <th colspan="4">Total</th>
-            <th colspan="4">BNT162b2 30 mcg</th>
-            <th colspan="4">Placebo</th>
-            <th colspan="4">Placebo -> BNT162b2</th>
-          </tr>
-          <tr>
-            <th>Events</th>
-            <th>Subjects</th>
-            <th>%</th>
-            <th>Per 100K / PY</th>
-            <th>Events</th>
-            <th>Subjects</th>
-            <th>%</th>
-            <th>Per 100K / PY</th>
-            <th>Events</th>
-            <th>Subjects</th>
-            <th>%</th>
-            <th>Per 100K / PY</th>
-            <th>Events</th>
-            <th>Subjects</th>
-            <th>%</th>
-            <th>Per 100K / PY</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 1</th>
-            <th class="sticky-left">Left Column 2</th>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-            <td>Data 1-1</td>
-            <td>Data 1-2</td>
-            <td>Data 1-3</td>
-            <td>Data 1-4</td>
-            <td>Data 1-5</td>
-            <td>Data 1-6</td>
-            <td>Data 1-7</td>
-            <td>Data 1-8</td>
-          </tr>
-          <tr>
-            <th class="sticky-left">Left Column 3</th>
-            <th class="sticky-left">Left Column 4</th>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-            <td>Data 2-1</td>
-            <td>Data 2-2</td>
-            <td>Data 2-3</td>
-            <td>Data 2-4</td>
-            <td>Data 2-5</td>
-            <td>Data 2-6</td>
-            <td>Data 2-7</td>
-            <td>Data 2-8</td>
-          </tr>
-          <!-- Add more rows as needed -->
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <div class="tab-content" id="withoutPrior">
+  </div>
+
+
+  <div class="tab-content" id="summaryData">
     <table class="log-container">
       <tr class="log-row">
         <td class="log-item log-item--filter">Category 1</td>
@@ -617,7 +195,9 @@
 
 
 <script type="text/javascript">
+  var currentTab = 'withPrior';
   function openTab(tabName) {
+    currentTab = tabName;
     var i, tabContent, tabButton;
 
     // Hide all tab content and deactivate all tab buttons
@@ -634,22 +214,101 @@
     // Show the selected tab content and activate the corresponding tab button
     document.getElementById(tabName).classList.add("active");
     event.currentTarget.classList.add("active");
+    if (tabName != 'summaryData') {
+      loadAEs();
+    }
   }
 
   $( document ).ready(function() {
-    $('#displayedEvent').select2({
+    $('#displayedEvents').select2({
         width: 'element',
         height: 'resolve',
         dropdownAutoWidth : true
     });
-    $('#displayedEvent').on("select2:select select2:unselect", function(e) {
+    $('#displayedEvents').on("select2:select select2:unselect", function(e) {
         loadAEs();
     });
     loadAEs();
   });
 
   function loadAEs() {
-    let displayedEvent = $('#displayedEvent').val();
-    console.log('displayedEvent : ' + displayedEvent);
+    $("#withPrior").html('');
+    $("#withoutPrior").html('');
+    let displayedEvents = $('#displayedEvents').val();
+    console.log('currentTab      : ' + currentTab);
+    console.log('displayedEvents : ' + displayedEvents);
+    let path = '<%=$path%>';
+    let aeWithoutDate = '<%=$aeWithoutDate%>';
+    let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
+    let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
+    let below16Include = '<%=$below16Include%>';
+    let seniorsIncluded = '<%=$seniorsIncluded%>';
+    let duplicatesInclude = '<%=$duplicatesInclude%>';
+    let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
+    let noCRFInclude = '<%=$noCRFInclude%>';
+    let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
+    let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
+    let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
+    let femaleIncluded = '<%=$femaleIncluded%>';
+    let maleIncluded = '<%=$maleIncluded%>';
+    let subjectToUnblinding = '<%=$subjectToUnblinding%>';
+    let cutoffDate = '<%=$cutoffDate%>';
+    let subjectsWithPriorInfect = '<%=$subjectsWithPriorInfect%>';
+    let subjectsWithoutPriorInfect = '<%=$subjectsWithoutPriorInfect%>';
+    let csvSeparator = '<%=$csvSeparator%>';
+    console.log('path : ' + path);
+    console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+    console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
+    console.log('below16Include : ' + below16Include);
+    console.log('seniorsIncluded : ' + seniorsIncluded);
+    console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
+    console.log('duplicatesInclude : ' + duplicatesInclude);
+    console.log('noCRFInclude : ' + noCRFInclude);
+    console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
+    console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+    console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
+    console.log('femaleIncluded : ' + femaleIncluded);
+    console.log('maleIncluded : ' + maleIncluded);
+    console.log('subjectToUnblinding : ' + subjectToUnblinding);
+    console.log('cutoffDate : ' + cutoffDate);
+    console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
+    console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
+    console.log('csvSeparator : ' + csvSeparator);
+    console.log('Filtering subjects ...');
+    let request = $.ajax({
+      url: '/pfizer_trial_after_effects/stats_details',
+      type: 'POST',
+      data: {
+        path: path,
+        currentTab: currentTab,
+        displayedEvents: displayedEvents,
+        aeWithoutDate: aeWithoutDate,
+        phase1IncludeBNT: phase1IncludeBNT,
+        phase1IncludePlacebo: phase1IncludePlacebo,
+        below16Include: below16Include,
+        seniorsIncluded: seniorsIncluded,
+        duplicatesInclude: duplicatesInclude,
+        noCRFInclude: noCRFInclude,
+        hivSubjectsIncluded: hivSubjectsIncluded,
+        lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
+        noSafetyPopFlagInclude: noSafetyPopFlagInclude,
+        subjectsWithoutSAEs: subjectsWithoutSAEs,
+        femaleIncluded: femaleIncluded,
+        maleIncluded: maleIncluded,
+        subjectToUnblinding: subjectToUnblinding,
+        cutoffDate: cutoffDate,
+        subjectsWithPriorInfect: subjectsWithPriorInfect,
+        subjectsWithoutPriorInfect: subjectsWithoutPriorInfect,
+        csvSeparator: csvSeparator
+      }
+    });
+    request.done(function(data) {
+        $("#" + currentTab).html(data);
+    });
+
+    // Printing error message if case of failure
+    request.fail(function(jqXHR, textStatus) {
+        alert("Something went wrong : " + textStatus)
+    });
   }
 </script>

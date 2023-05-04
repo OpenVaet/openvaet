@@ -468,6 +468,7 @@ sub startup {
     $r->post('/pfizer_trial_after_effects/render_lin_reg_data')->to('PTAEs#render_lin_reg_data');
     $r->post('/pfizer_trial_after_effects/render_stats')->to('PTAEs#render_stats');
     $r->post('/pfizer_trial_after_effects/render_aes_data')->to('PTAEs#render_aes_data');
+    $r->post('/pfizer_trial_after_effects/stats_details')->to('PTAEs#stats_details');
 
 
     $r->get('/mapping')->to('mapping#mapping');

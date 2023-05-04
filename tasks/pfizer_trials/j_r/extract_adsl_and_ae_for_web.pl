@@ -29,16 +29,20 @@ my %adslData       = ();
 my %devData        = ();
 my %advaData       = ();
 my $advaFile       = "public/doc/pfizer_trials/pfizer_adva_patients.json";
-my $devData     = "public/doc/pfizer_trials/deviations_data_currated.json";
+my $pcrRecordsFile = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
+my $devData        = "public/doc/pfizer_trials/deviations_data_currated.json";
 my $dt19600101     = '1960-01-01 12:00:00';
 my $tp19600101     = time::datetime_to_timestamp($dt19600101);
 my $cutoffCompdate = '20210313';
 
-my %stats      = ();
+my %pcrRecords     = ();
+my %stats          = ();
 
 set_columns();
 
 load_adva();
+
+load_pcr_tests();
 
 load_supp_dv();
 
@@ -89,7 +93,8 @@ sub set_columns {
 		'hivfl',
 		'x1csrdt',
 		'saf1fl',
-		'saf2fl'
+		'saf2fl',
+		'dthdt'
 	);
 	@adaeColumns
 	= (
@@ -124,6 +129,19 @@ sub load_adva {
 	$json = decode_json($json);
 	%advaData = %$json;
 	say "[$advaFile] -> patients : " . keys %advaData;
+}
+
+sub load_pcr_tests {
+	open my $in, '<:utf8', $pcrRecordsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%pcrRecords = %$json;
+	# p$pcrRecords{'44441222'};
+	say "[$pcrRecordsFile] -> subjects : " . keys %pcrRecords;
 }
 
 sub load_supp_dv {
@@ -199,7 +217,8 @@ sub load_adsl_data {
 					$adslColumn eq 'vax10udt' ||
 					$adslColumn eq 'vax20udt' ||
 					$adslColumn eq 'unblnddt' ||
-					$adslColumn eq 'x1csrdt'
+					$adslColumn eq 'x1csrdt'  ||
+					$adslColumn eq 'dthdt'
 				)) {
 					$value = $tp19600101 + $value * 86400;
 					$value = time::timestamp_to_datetime($value);
@@ -219,6 +238,10 @@ sub load_adsl_data {
 			} else {
 				$adslData{$subjid}->{'deviations'} = {};
 			}
+
+			# Loading subject's tests.
+			subject_central_pcrs_by_visits($subjid);
+			subject_central_nbindings_by_visits($subjid);
 		}
 	}
 	close $in;
@@ -304,6 +327,46 @@ sub print_json {
 	open my $out, '>:utf8', 'adverse_effects_raw_data.json';
 	print $out encode_json\%adslData;
 	close $out;
+}
+
+sub subject_central_pcrs_by_visits {
+	my ($subjid) = @_;
+	for my $visitDate (sort keys %{$pcrRecords{$subjid}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'};
+		my $visitCompdate = $visitDate;
+		$visitCompdate    =~ s/\D//g;
+
+		my $mborres = $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'Cepheid RT-PCR assay for SARS-CoV-2'}->{'mbResult'} // die;
+		my $visit = $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		if (exists $adslData{$subjid}->{'pcrs'}->{$visit}->{'mborres'} && ($adslData{$subjid}->{'pcrs'}->{$visit}->{'mborres'} ne $mborres)) {
+			next unless $mborres eq 'POS'; # If several conflicting tests on the same date, we only sustain the last positive one.
+		}
+		$adslData{$subjid}->{'pcrs'}->{$visit}->{'visitdt'}   = $visitDate;
+		$adslData{$subjid}->{'pcrs'}->{$visit}->{'mborres'}   = $mborres;
+		$adslData{$subjid}->{'pcrs'}->{$visit}->{'visitcpdt'} = $visitCompdate;
+	}
+}
+
+sub subject_central_nbindings_by_visits {
+	my ($subjid) = @_;
+	for my $visit (sort keys %{$advaData{$subjid}->{'visits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $advaData{$subjid}->{'visits'}->{$visit}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'};
+		# p$advaData{$subjid}->{'visits'}->{$visit};
+		# die;
+		my $avalc     = $advaData{$subjid}->{'visits'}->{$visit}->{'tests'}->{'N-binding antibody - N-binding Antibody Assay'} // die;
+		my $visitcpdt = $advaData{$subjid}->{'visits'}->{$visit}->{'visitDate'}     // die;
+		my $visitdt   = $advaData{$subjid}->{'visits'}->{$visit}->{'visitDatetime'} // die;
+		if (exists $adslData{$subjid}->{'nBindings'}->{$visit}->{'avalc'} && ($adslData{$subjid}->{'nBindings'}->{$visit}->{'avalc'} ne $avalc)) {
+			next unless $avalc eq 'POS'; # If several conflicting tests on the same date, we only sustain the last positive one.
+		}
+		$adslData{$subjid}->{'nBindings'}->{$visit}->{'visitdt'}   = $visitdt;
+		$adslData{$subjid}->{'nBindings'}->{$visit}->{'avalc'}     = $avalc;
+		$adslData{$subjid}->{'nBindings'}->{$visit}->{'visitcpdt'} = $visitcpdt;
+	}
 }
 
 p%stats;
