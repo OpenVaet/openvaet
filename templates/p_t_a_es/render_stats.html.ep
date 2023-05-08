@@ -136,8 +136,16 @@
 
   <div class="tabs">
     <button class="tab-button" onclick="openTab('summaryData')">Summary</button>
+    % if ($subjectsWithPriorInfect eq 'true' && $subjectsWithoutPriorInfect eq 'true') {
     <button class="tab-button active" onclick="openTab('withPrior')">With Prior Infection</button>
     <button class="tab-button" onclick="openTab('withoutPrior')">Without Prior Infection</button>
+    % } elsif ($subjectsWithPriorInfect eq 'true' && $subjectsWithoutPriorInfect eq 'false') {
+    <button class="tab-button active" onclick="openTab('withPrior')">With Prior Infection</button>
+    % } elsif ($subjectsWithPriorInfect eq 'false' && $subjectsWithoutPriorInfect eq 'true') {
+    <button class="tab-button active" onclick="openTab('withoutPrior')">Without Prior Infection</button>
+    % } else {
+      % die;
+    % }
   </div>
   <label for="displayedEvents" style="font-size:16px;margin-left: 30px;font-weight: bold;">Events Displayed:</label>
   <select id="displayedEvents" style="width: 200px;">
@@ -145,14 +153,24 @@
       <option value="aes">&nbsp;AEs</option>
   </select>
   <br />
+  % if ($subjectsWithPriorInfect eq 'true') {
   <div class="tab-content active" id="withPrior">
   </div>
 
   <div class="tab-content" id="withoutPrior">
   </div>
+  % } else {
+  <div class="tab-content" id="withPrior">
+  </div>
 
+  <div class="tab-content active" id="withoutPrior">
+  </div>
+  % }
 
-  <div class="tab-content" id="summaryData">
+% my %stats = %$stats;
+% # my 
+
+  <div class="tab-content" style="top:15px;" id="summaryData">
     <table class="log-container">
       <tr class="log-row">
         <td class="log-item log-item--filter">Category 1</td>
@@ -195,7 +213,11 @@
 
 
 <script type="text/javascript">
+  % if ($subjectsWithPriorInfect eq 'true') {
   var currentTab = 'withPrior';
+  % } else {
+  var currentTab = 'withoutPrior';
+  % }
   function openTab(tabName) {
     currentTab = tabName;
     var i, tabContent, tabButton;
@@ -239,15 +261,18 @@
     console.log('displayedEvents : ' + displayedEvents);
     let path = '<%=$path%>';
     let aeWithoutDate = '<%=$aeWithoutDate%>';
+    let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+    let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
     let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
     let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
+    let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
     let below16Include = '<%=$below16Include%>';
     let seniorsIncluded = '<%=$seniorsIncluded%>';
     let duplicatesInclude = '<%=$duplicatesInclude%>';
     let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
     let noCRFInclude = '<%=$noCRFInclude%>';
+    let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
     let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
-    let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
     let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
     let femaleIncluded = '<%=$femaleIncluded%>';
     let maleIncluded = '<%=$maleIncluded%>';
@@ -263,9 +288,10 @@
     console.log('seniorsIncluded : ' + seniorsIncluded);
     console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
     console.log('duplicatesInclude : ' + duplicatesInclude);
+    console.log('subjectsWithSymptoms : ' + subjectsWithSymptoms);
     console.log('noCRFInclude : ' + noCRFInclude);
+    console.log('crossOverCountOnlyBNT : ' + crossOverCountOnlyBNT);
     console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-    console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
     console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
     console.log('femaleIncluded : ' + femaleIncluded);
     console.log('maleIncluded : ' + maleIncluded);
@@ -274,23 +300,25 @@
     console.log('subjectsWithPriorInfect : ' + subjectsWithPriorInfect);
     console.log('subjectsWithoutPriorInfect : ' + subjectsWithoutPriorInfect);
     console.log('csvSeparator : ' + csvSeparator);
-    console.log('Filtering subjects ...');
     let request = $.ajax({
       url: '/pfizer_trial_after_effects/stats_details',
       type: 'POST',
       data: {
         path: path,
         currentTab: currentTab,
+        subjectsWithCentralPCR: subjectsWithCentralPCR,
+        subjectsWithNBinding: subjectsWithNBinding,
         displayedEvents: displayedEvents,
         aeWithoutDate: aeWithoutDate,
         phase1IncludeBNT: phase1IncludeBNT,
         phase1IncludePlacebo: phase1IncludePlacebo,
         below16Include: below16Include,
         seniorsIncluded: seniorsIncluded,
+        subjectsWithSymptoms: subjectsWithSymptoms,
         duplicatesInclude: duplicatesInclude,
         noCRFInclude: noCRFInclude,
+        crossOverCountOnlyBNT: crossOverCountOnlyBNT,
         hivSubjectsIncluded: hivSubjectsIncluded,
-        lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
         noSafetyPopFlagInclude: noSafetyPopFlagInclude,
         subjectsWithoutSAEs: subjectsWithoutSAEs,
         femaleIncluded: femaleIncluded,

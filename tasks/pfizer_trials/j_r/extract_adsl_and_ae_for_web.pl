@@ -31,14 +31,22 @@ my %advaData       = ();
 my $advaFile       = "public/doc/pfizer_trials/pfizer_adva_patients.json";
 my $pcrRecordsFile = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
 my $devData        = "public/doc/pfizer_trials/deviations_data_currated.json";
+my $symptomsFile   = 'public/doc/pfizer_trials/pfizer_patients_symptoms.json';
+my $faceFile       = 'public/doc/pfizer_trials/pfizer_face_patients.json';
 my $dt19600101     = '1960-01-01 12:00:00';
 my $tp19600101     = time::datetime_to_timestamp($dt19600101);
 my $cutoffCompdate = '20210313';
 
 my %pcrRecords     = ();
 my %stats          = ();
+my %symptoms       = ();
+my %faces          = ();
 
 set_columns();
+
+load_symptoms();
+
+load_faces();
 
 load_adva();
 
@@ -128,7 +136,7 @@ sub load_adva {
 	close $in;
 	$json = decode_json($json);
 	%advaData = %$json;
-	say "[$advaFile] -> patients : " . keys %advaData;
+	say "[$advaFile] -> subjects : " . keys %advaData;
 }
 
 sub load_pcr_tests {
@@ -153,7 +161,33 @@ sub load_supp_dv {
 	close $in;
 	$json = decode_json($json);
 	%devData = %$json;
-	say "[$devData] -> patients : " . keys %devData;
+	say "[$devData] -> subjects : " . keys %devData;
+}
+
+sub load_symptoms {
+	open my $in, '<:utf8', $symptomsFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%symptoms = %$json;
+	say "[$symptomsFile] -> subjects : " . keys %symptoms;
+}
+
+sub load_faces {
+	open my $in, '<:utf8', $faceFile;
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%faces = %$json;
+	# p%faces;
+	# die;
+	say "[$faceFile] -> subjects : " . keys %faces;
 }
 
 sub load_adsl_data {
@@ -242,6 +276,7 @@ sub load_adsl_data {
 			# Loading subject's tests.
 			subject_central_pcrs_by_visits($subjid);
 			subject_central_nbindings_by_visits($subjid);
+			subject_symptoms_by_visits($subjid);
 		}
 	}
 	close $in;
@@ -367,6 +402,91 @@ sub subject_central_nbindings_by_visits {
 		$adslData{$subjid}->{'nBindings'}->{$visit}->{'avalc'}     = $avalc;
 		$adslData{$subjid}->{'nBindings'}->{$visit}->{'visitcpdt'} = $visitcpdt;
 	}
+}
+
+sub subject_symptoms_by_visits {
+	my ($subjid) = @_;
+	for my $symptomDatetime (sort keys %{$symptoms{$subjid}->{'symptomsReports'}}) {
+		my ($symptomDate)   = split ' ', $symptomDatetime;
+		my $compsympt = $symptomDate;
+		$compsympt =~ s/\D//g;
+
+		# Comment these lines to stick with the visit date.
+		my ($formerSymptomDate, $onsetStartOffset);
+		if (exists $faces{$subjid}->{$symptomDate}) {
+			my $altStartDate = $faces{$subjid}->{$symptomDate}->{'symptomsDates'}->{'First Symptom Date'} // die;
+			unless ($altStartDate eq $symptomDate) {
+				if ($altStartDate =~ /^....-..-..$/) {
+					my $compalt = $altStartDate;
+					$compalt =~ s/\D//g;
+					if ($compalt < $compsympt) {
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'total'}++;
+						$formerSymptomDate = $symptomDate;
+						$onsetStartOffset  = time::calculate_days_difference("$symptomDate 12:00:00", "$altStartDate 12:00:00");
+						# $stats{'faceData'}->{'symptoms'}->{'correctedStart'}->{'offsets'}->{$onsetStartOffset}++;
+						$symptomDate = $altStartDate;
+					}
+				} else {
+					# $stats{'faceData'}->{'symptoms'}->{'invalidDate'}++;
+				}
+			} else {
+				# $stats{'faceData'}->{'symptoms'}->{'sameDate'}++;
+			}
+		} else {
+			# $stats{'faceData'}->{'symptoms'}->{'noVisitData'}++;
+		}
+		# $stats{'faceData'}->{'symptoms'}->{'totalRowsParsed'}++;
+		my $symptomCompdate = $symptomDate;
+		$symptomCompdate    =~ s/\D//g;
+		my $totalSymptoms   = 0;
+		my $hasOfficialSymptoms = 0;
+		my $endDatetime = $symptoms{$subjid}->{'symptomsReports'}->{$symptomDatetime}->{'endDatetime'};
+		my $visitName = $symptoms{$subjid}->{'symptomsReports'}->{$symptomDatetime}->{'visitName'} // die;
+		for my $symptomName (sort keys %{$symptoms{$subjid}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}}) {
+			next unless $symptoms{$subjid}->{'symptomsReports'}->{$symptomDatetime}->{'symptoms'}->{$symptomName} eq 'Y';
+			my $symptomCategory = symptom_category_from_symptom($symptomName);
+			$adslData{$subjid}->{'symptoms'}->{$visitName}->{'symptoms'}->{$symptomName}->{'symptomCategory'} = $symptomCategory;
+			$totalSymptoms++;
+		}
+		next unless $totalSymptoms;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'onsetStartOffset'}    = $onsetStartOffset;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'formerSymptomDate'}   = $formerSymptomDate;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'symptomCompdate'}     = $symptomCompdate;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'symptomDate'}         = $symptomDate;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'totalSymptoms'}       = $totalSymptoms;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'endDatetime'}         = $endDatetime;
+		$adslData{$subjid}->{'symptoms'}->{$visitName}->{'hasOfficialSymptoms'} = $hasOfficialSymptoms;
+	}
+}
+
+sub symptom_category_from_symptom {
+	my $symptomName = shift;
+	my $symptomCategory;
+	if (
+		$symptomName eq 'NEW OR INCREASED COUGH' ||
+		$symptomName eq 'NEW OR INCREASED SORE THROAT' ||
+		$symptomName eq 'CHILLS' ||
+		$symptomName eq 'FEVER' ||
+		$symptomName eq 'DIARRHEA' ||
+		$symptomName eq 'NEW LOSS OF TASTE OR SMELL' ||
+		$symptomName eq 'NEW OR INCREASED SHORTNESS OF BREATH' ||
+		$symptomName eq 'NEW OR INCREASED MUSCLE PAIN' ||
+		$symptomName eq 'VOMITING'
+	) {
+		$symptomCategory = 'OFFICIAL';
+	} elsif (
+		$symptomName eq 'NEW OR INCREASED NASAL CONGESTION' ||
+		$symptomName eq 'HEADACHE' ||
+		$symptomName eq 'FATIGUE' ||
+		$symptomName eq 'RHINORRHOEA' ||
+		$symptomName eq 'NAUSEA' ||
+		$symptomName eq 'NEW OR INCREASED WHEEZING'
+	) {
+		$symptomCategory = 'SECONDARY';
+	} else {
+		die "symptomName : $symptomName";
+	}
+	return $symptomCategory;
 }
 
 p%stats;

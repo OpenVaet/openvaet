@@ -48,6 +48,8 @@
 % my $overallMinusScreenFail = $totalSubjectsOverall - $totalScreenFailures;
 % my $totalNotAssigned = $filteringStats{'totalNotAssigned'} // die;
 % my $minusNotAssigned = $overallMinusScreenFail - $totalNotAssigned;
+% my $totalNotTreated = $filteringStats{'totalNotTreated'} // die;
+% my $minusNotTreated = $minusNotAssigned - $totalNotTreated;
 
 <div style="width:100%;text-align:center;font-size: 16px;margin-top:15px;">
 	<b>Subjects prior any filtering :</b> <%=$totalSubjectsOverall%>
@@ -72,17 +74,23 @@
     <div class="log-item"><%=$totalNotAssigned%></div>
     <div class="log-item"><%=$minusNotAssigned%></div>
   </div>
+  <div class="log-row">
+    <div class="log-item" style="width: 50%;">Preliminary filters : Not Treated</div>
+    <div class="log-item">default</div>
+    <div class="log-item"><%=$totalNotTreated%></div>
+    <div class="log-item"><%=$minusNotTreated%></div>
+  </div>
 </div>
 
 % my $totalSubjectsPreFilters = $filteringStats{'totalSubjectsPreFilters'}->{'total'} // die;
-% my $totalSubjectsPreFiltersBnt = $filteringStats{'totalSubjectsPreFilters'}->{'byArms'}->{'BNT162b2 30 mcg'} // die;
+% my $totalSubjectsPreFiltersBnt = $filteringStats{'totalSubjectsPreFilters'}->{'byArms'}->{'BNT162b2 (30 mcg)'} // die;
 % my $totalSubjectsPreFiltersPlacebo = $filteringStats{'totalSubjectsPreFilters'}->{'byArms'}->{'Placebo'} // die;
 <div style="width:100%;text-align:center;font-size: 16px;margin-top:15px;">
-	<b>Subjects post Preliminary filters :</b> <%=$totalSubjectsPreFilters%> (<%=$totalSubjectsPreFiltersBnt%> BNT162b2 30 mcg & <%=$totalSubjectsPreFiltersPlacebo%> Placebo)
+	<b>Subjects post Preliminary filters :</b> <%=$totalSubjectsPreFilters%> (<%=$totalSubjectsPreFiltersBnt%> BNT162b2 (30 mcg) & <%=$totalSubjectsPreFiltersPlacebo%> Placebo)
 </div>
 
 % my $totalPhase1BNT = $filteringStats{'totalPhase1BNT'} // $filteringStats{'totalPhase1BNTNotB2_30mcg'} // 0;
-% my $minusBNT = $minusNotAssigned - $totalPhase1BNT;
+% my $minusBNT = $minusNotTreated - $totalPhase1BNT;
 % my $totalPhase1Placebo = $filteringStats{'totalPhase1Placebo'} // 0;
 % my $minusPlacebo = $minusBNT - $totalPhase1Placebo;
 % my $totalBelow16 = $filteringStats{'totalBelow16'} // 0;
@@ -99,10 +107,8 @@
 % my $minusFemale = $minusHIV - $totalFemales;
 % my $totalMales = $filteringStats{'totalMales'} // 0;
 % my $minusMale = $minusFemale - $totalMales;
-% my $totalLackOfPIOverSight = $filteringStats{'totalLackOfPIOverSight'} // 0;
-% my $minusLackOfPIOverSight = $minusMale - $totalLackOfPIOverSight;
 % my $totalExcludedFromSafety = $filteringStats{'totalExcludedFromSafety'} // 0;
-% my $minusNoSafetyPopFlag = $minusLackOfPIOverSight - $totalExcludedFromSafety;
+% my $minusNoSafetyPopFlag = $minusMale - $totalExcludedFromSafety;
 % my $totalWithPriorInfection = $filteringStats{'totalWithPriorInfection'} // 0;
 % my $minusSubjectsWithPriorInfection = $minusNoSafetyPopFlag - $totalWithPriorInfection;
 % my $totalWithoutPriorInfection = $filteringStats{'totalWithoutPriorInfection'} // 0;
@@ -117,7 +123,7 @@
     <div class="log-header-item">Remaining</div>
   </div>
   <div class="log-row">
-    <div class="log-item" style="width: 50%;">Include phase 1 BNT162b2 30 mcg</div>
+    <div class="log-item" style="width: 50%;">Include phase 1 BNT162b2 (30 mcg)</div>
     <div class="log-item"><%=$phase1IncludeBNT%></div>
     <div class="log-item"><%=$totalPhase1BNT // 0%></div>
     <div class="log-item"><%=$minusBNT%></div>
@@ -171,12 +177,6 @@
     <div class="log-item"><%=$minusMale%></div>
   </div>
   <div class="log-row">
-    <div class="log-item" style="width: 50%;">Include Lack of PI Monitoring</div>
-    <div class="log-item"><%=$lackOfPIMonitoringInclude%></div>
-    <div class="log-item"><%=$filteringStats{'totalLackOfPIOverSight'} // 0%></div>
-    <div class="log-item"><%=$minusLackOfPIOverSight%></div>
-  </div>
-  <div class="log-row">
     <div class="log-item" style="width: 50%;">Include No Safety Population Flagged</div>
     <div class="log-item"><%=$noSafetyPopFlagInclude%></div>
     <div class="log-item"><%=$filteringStats{'totalExcludedFromSafety'} // 0%></div>
@@ -203,10 +203,10 @@
 </div>
 
 % my $totalSubjectsPostFilter = $filteringStats{'totalSubjectsPostFilter'}->{'total'} // die;
-% my $totalSubjectsPostFilterBnt = $filteringStats{'totalSubjectsPostFilter'}->{'byArms'}->{'BNT162b2 30 mcg'} // die;
+% my $totalSubjectsPostFilterBnt = $filteringStats{'totalSubjectsPostFilter'}->{'byArms'}->{'BNT162b2 (30 mcg)'} // die;
 % my $totalSubjectsPostFilterPlacebo = $filteringStats{'totalSubjectsPostFilter'}->{'byArms'}->{'Placebo'} // die;
 <div style="width:100%;text-align:center;font-size: 16px;margin-top:15px;">
-	<b>Subjects post filters :</b> <%=$totalSubjectsPostFilter%> (<%=$totalSubjectsPostFilterBnt%> BNT162b2 30 mcg & <%=$totalSubjectsPostFilterPlacebo%> Placebo)
+	<b>Subjects post filters :</b> <%=$totalSubjectsPostFilter%> (<%=$totalSubjectsPostFilterBnt%> BNT162b2 (30 mcg) & <%=$totalSubjectsPostFilterPlacebo%> Placebo)
 </div>
 
 <a class="log-download-link" href="/pt_aes/<%=$path%>/filtering_details.txt" download>Download detailed log (.txt)</a>

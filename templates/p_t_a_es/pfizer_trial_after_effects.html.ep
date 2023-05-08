@@ -11,7 +11,7 @@
     <script src="/js/select2.min.js"></script>
     <style type="text/css">
     	.select2-selection__rendered {
-			font-size: 16px !important;
+			font-size: 15px !important;
 		}
 
 		.main-tabs {
@@ -28,7 +28,7 @@
 		    color: #000;
 		    padding: 10px 20px;
 		    cursor: pointer;
-		    font-size: 16px;
+		    font-size: 15px;
 		    margin-right: 10px;
 		}
 
@@ -51,47 +51,55 @@
 <div style="width:100%;max-width:100%;height:100%;">
 	<div style="width:100%;height:100%;display:flex;flex-wrap:wrap;">
 		<div style="width:22%;min-width: 300px;height: 100%;">
-			<div style="height:calc(100% - 20px);width: calc(100% - 10px);margin: auto;padding-top:10px;">
-				<fieldset style="width:88.5%;">
+			<div style="height:calc(100% - 20px);width: calc(100% - 20px);margin: auto;padding-top:10px;overflow-y: auto;">
+				<fieldset style="width:calc(87.5% - 10px);">
 					<legend style="font-size:18px;">Population filters</legend>
-
-					<label style="font-size:16px;"><input type="checkbox" id="phase1IncludeBNT" value="phase1IncludeBNT" checked> Include phase 1 BNT162b2 30 mcg</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="phase1IncludePlacebo" value="phase1IncludePlacebo"> Include phase 1 Placebo</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="below16Include" value="below16Include"> Include subjects below 16</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="seniorsIncluded" value="seniorsIncluded" checked> Include subjects 55+</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="duplicatesInclude" value="duplicatesInclude" checked> Include duplicates</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="noCRFInclude" value="noCRFInclude" checked> Include subjects without CRF Vax Data</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="hivSubjectsIncluded" value="hivSubjectsIncluded" checked> Include subjects with HIV</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="femaleIncluded" value="femaleIncluded" checked> Include female subjects</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="maleIncluded" value="maleIncluded" checked> Include male subjects</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="lackOfPIMonitoringInclude" value="lackOfPIMonitoringInclude"> Include subjects with lack of oversight</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="noSafetyPopFlagInclude" value="noSafetyPopFlagInclude"> Include subjects without Safety Population flag</label><br />
+					<input style="display: inline-block; font-weight: 400; text-align: center;vertical-align: middle; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; line-height: 1.5; border-radius: 0.25rem; border: 1px solid #ccc;margin-top: 10px;cursor:pointer;" type="submit" value="Submit" onclick="filter_subjects();return;">
+					<br />
+					<label style="font-size:15px;"><input type="checkbox" id="phase1IncludeBNT" value="phase1IncludeBNT" checked> Include phase 1 BNT162b2 30 mcg</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="phase1IncludePlacebo" value="phase1IncludePlacebo"> Include phase 1 Placebo</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="below16Include" value="below16Include"> Include subjects below 16</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="seniorsIncluded" value="seniorsIncluded" checked> Include subjects 55+</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="duplicatesInclude" value="duplicatesInclude" checked> Include duplicates</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="noCRFInclude" value="noCRFInclude" checked> Include subjects without CRF Vax Data</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="hivSubjectsIncluded" value="hivSubjectsIncluded" checked> Include subjects with HIV</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="femaleIncluded" value="femaleIncluded" checked> Include female subjects</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="maleIncluded" value="maleIncluded" checked> Include male subjects</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="noSafetyPopFlagInclude" value="noSafetyPopFlagInclude"> Include subjects without Safety Population flag</label><br />
 				</fieldset>
-				<fieldset style="width:88.5%;margin-top: 8px;">
-					<legend style="font-size:18px;">Infection on baseline</legend>
+				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
+					<legend style="font-size:18px;">Infection on Dose 1 (baseline)</legend>
 
-					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithPriorInfect" value="subjectsWithPriorInfect" checked> Include subjects with prior infection</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutPriorInfect" value="subjectsWithoutPriorInfect" checked> Include subjects without prior infection</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithPriorInfect" value="subjectsWithPriorInfect" checked> Include subjects with prior infection</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithoutPriorInfect" value="subjectsWithoutPriorInfect" checked> Include subjects without prior infection</label><br />
 				</fieldset>
-				<fieldset style="width:88.5%;margin-top: 8px;">
+				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
+					<legend style="font-size:18px;">Infection Post Dose 1</legend>
+
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithCentralPCR" value="subjectsWithCentralPCR" checked> Include subjects with Central PCR</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithNBinding" value="subjectsWithNBinding" checked> Include subjects with N-Binding</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithSymptoms" value="subjectsWithSymptoms"> Include subjects with Covid Visits</label><br />
+				</fieldset>
+				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
 					<legend style="font-size:18px;">After-Effects</legend>
 
-					<label style="font-size:16px;"><input type="checkbox" id="subjectsWithoutSAEs" value="subjectsWithoutSAEs" checked> Include subjects without SAEs</label><br />
-					<label style="font-size:16px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate"> Include AEs without accurate date</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithoutSAEs" value="subjectsWithoutSAEs" checked> Include subjects without SAEs</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate"> Include AEs without accurate date</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="crossOverCountOnlyBNT" value="crossOverCountOnlyBNT"> Cross-Overs only counted for BNT time</label><br />
 				</fieldset>
-				<fieldset style="width:88.5%;margin-top: 8px;">
-					<legend style="font-size:18px;">Cut-off</legend>
-				    <label for="cutoffDate" style="font-size:16px;">Cut-Off Date:</label>
+				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
+					<legend style="font-size:18px;">Cut-off & Scope</legend>
+				    <label for="cutoffDate" style="font-size:15px;">Cut-Off Date:</label>
 				    <select id="cutoffDate" style="width: 200px;">
 				        <option value="bla">&nbsp;&nbsp;BLA (Mar. 13, 2021)</option>
 				        <option value="end">&nbsp;&nbsp;End Data (Last AE)</option>
 				    </select><br />
 
-					<label style="font-size:16px;"><input type="checkbox" id="subjectToUnblinding" value="subjectToUnblinding"> Subjects up to their unblinding</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectToUnblinding" value="subjectToUnblinding"> Subjects up to their unblinding</label><br />
 				</fieldset>
-				<fieldset style="width:88.5%;margin-top: 8px;">
+				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
 					<legend style="font-size:18px;">.CSV exports</legend>
-				    <label for="csvSeparator" style="font-size:16px;">.CSV separator:</label>
+				    <label for="csvSeparator" style="font-size:15px;">.CSV separator:</label>
 				    <select id="csvSeparator" style="width: 200px;">
 				        <option value=";">&nbsp;&nbsp;;</option>
 				        <option value=",">&nbsp;&nbsp;,</option>
@@ -103,16 +111,16 @@
 		<div style="width:78%;max-width: calc(100% - 300px);height:100%;background: white;">
 			<div class="main-tabs">
 				<div class="main-tab-button" id="stats">
-					<div style="margin-top: 11px;font-size: 16px;"><b>Stats</b></div>
+					<div style="margin-top: 11px;font-size: 15px;"><b>Stats</b></div>
 				</div>
 				<div class="main-tab-button" id="linRegData">
-					<div style="margin-top: 11px;font-size: 16px;"><b>Lin. Reg. Raw Data</b></div>
+					<div style="margin-top: 11px;font-size: 15px;"><b>Lin. Reg. Raw Data</b></div>
 				</div>
 				<div class="main-tab-button" id="aeRawData">
-					<div style="margin-top: 11px;font-size: 16px;"><b>AEs Raw Data</b></div>
+					<div style="margin-top: 11px;font-size: 15px;"><b>AEs Raw Data</b></div>
 				</div>
 				<div class="main-tab-button" id="filtering" selected>
-					<div style="margin-top: 11px;font-size: 16px;"><b>Filtering Logs</b></div>
+					<div style="margin-top: 11px;font-size: 15px;"><b>Filtering Logs</b></div>
 				</div>
 			</div>
 			<div id="dataDendering" style="width:100%;height:calc(100% - 50px);overflow-y:auto;background: #e7f5fe;">
@@ -172,14 +180,17 @@
         mainLoader.style.display  = "inline-block";
 
 		console.log('Getting filters values ...');
+		let subjectsWithCentralPCR = $('#subjectsWithCentralPCR').is(':checked');
+		let subjectsWithNBinding = $('#subjectsWithNBinding').is(':checked');
+		let subjectsWithSymptoms = $('#subjectsWithSymptoms').is(':checked');
 		let phase1IncludeBNT = $('#phase1IncludeBNT').is(':checked');
 		let phase1IncludePlacebo = $('#phase1IncludePlacebo').is(':checked');
 		let below16Include = $('#below16Include').is(':checked');
 		let seniorsIncluded = $('#seniorsIncluded').is(':checked');
 		let duplicatesInclude = $('#duplicatesInclude').is(':checked');
+		let crossOverCountOnlyBNT = $('#crossOverCountOnlyBNT').is(':checked');
 		let noCRFInclude = $('#noCRFInclude').is(':checked');
 		let hivSubjectsIncluded = $('#hivSubjectsIncluded').is(':checked');
-		let lackOfPIMonitoringInclude = $('#lackOfPIMonitoringInclude').is(':checked');
 		let noSafetyPopFlagInclude = $('#noSafetyPopFlagInclude').is(':checked');
 		let femaleIncluded = $('#femaleIncluded').is(':checked');
 		let maleIncluded = $('#maleIncluded').is(':checked');
@@ -207,13 +218,16 @@
 		let aeWithoutDate = $('#aeWithoutDate').is(':checked');
 		let subjectsWithoutSAEs = $('#subjectsWithoutSAEs').is(':checked');
 		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
+		console.log('subjectsWithCentralPCR : ' + subjectsWithCentralPCR);
+		console.log('subjectsWithNBinding : ' + subjectsWithNBinding);
+		console.log('subjectsWithSymptoms : ' + subjectsWithSymptoms);
 		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
 		console.log('below16Include : ' + below16Include);
 		console.log('seniorsIncluded : ' + seniorsIncluded);
 		console.log('duplicatesInclude : ' + duplicatesInclude);
+		console.log('crossOverCountOnlyBNT : ' + crossOverCountOnlyBNT);
 		console.log('noCRFInclude : ' + noCRFInclude);
 		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
 		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
 		console.log('femaleIncluded : ' + femaleIncluded);
 		console.log('maleIncluded : ' + maleIncluded);
@@ -229,14 +243,17 @@
 			url: '/pfizer_trial_after_effects/filter_data',
 			type: 'POST',
 			data: {
+				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithNBinding: subjectsWithNBinding,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
 				below16Include: below16Include,
 				seniorsIncluded: seniorsIncluded,
 				duplicatesInclude: duplicatesInclude,
+				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
+				subjectsWithSymptoms : subjectsWithSymptoms,
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
-				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
 				femaleIncluded: femaleIncluded,
 				maleIncluded: maleIncluded,

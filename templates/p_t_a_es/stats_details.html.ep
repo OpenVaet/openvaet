@@ -54,22 +54,22 @@
         </thead>
         <tbody>
           % # Rendering global stats.
-          % my $gradeTotalSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalSubjects'}  // 0;
-          % my $totalEvents              = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalEvents'}    // 0;
+          % my $gradeTotalSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalSubjects'}                                                // 0;
+          % my $totalEvents              = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalEvents'}                                                  // 0;
           % my $bntEvents                = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}               // 0;
           % my $placeboEvents            = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalEvents'}                         // 0;
           % my $placeboBNTEvents         = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalEvents'}    // 0;
           % my $bNT162b2Subjects         = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}             // 0;
           % my $placeboSubjects          = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo'}->{$displayedEvents}->{'totalSubjects'}                       // 0;
           % my $placeboBNTSubjects       = $stats{'gradeStats'}->{'All_Grades'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{$displayedEvents}->{'totalSubjects'}  // 0;
-          % my $rateTotalPer100K         = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateTotalPer100K'} // die;
-          % my $rateBNT162b2Per100K      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateBNT162b2Per100K'} // die;
-          % my $ratePlaceboPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'ratePlaceboPer100K'} // die;
-          % my $totalPercentOfTotal      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalPercentOfTotal'} // die;
-          % my $bntPercentOfTotal        = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'bntPercentOfTotal'} // die;
-          % my $placeboPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'placeboPercentOfTotal'} // die;
-          % my $crossOvPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'crossOvPercentOfTotal'} // 0;
-          % my $rateCrossOvPer100K = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateCrossOvPer100K'} // 0;
+          % my $rateTotalPer100K         = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateTotalPer100K'}                                             // die;
+          % my $rateBNT162b2Per100K      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateBNT162b2Per100K'}                                          // die;
+          % my $ratePlaceboPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'ratePlaceboPer100K'}                                           // die;
+          % my $totalPercentOfTotal      = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'totalPercentOfTotal'}                                          // die;
+          % my $bntPercentOfTotal        = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'bntPercentOfTotal'}                                            // die;
+          % my $placeboPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'placeboPercentOfTotal'}                                        // die;
+          % my $crossOvPercentOfTotal    = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'crossOvPercentOfTotal'}                                        // 0;
+          % my $rateCrossOvPer100K       = $stats{'gradeStats'}->{'All_Grades'}->{$displayedEvents}->{'rateCrossOvPer100K'}                                           // 0;
           <tr>
             <th class="sticky-left">All</th>
             <th class="sticky-left">All</th>

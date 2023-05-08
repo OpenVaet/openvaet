@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
     $( document ).ready(function() {
-    	loadStats();
+    	loadFilteringLogs();
     });
 	function loadFilteringLogs() {
         $("#innerRendering").html('');
@@ -12,16 +12,19 @@
 
 		console.log('Rendering Logs ...');
 		let path = '<%=$path%>';
+		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
+		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
 		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
 		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
 		let below16Include = '<%=$below16Include%>';
 		let seniorsIncluded = '<%=$seniorsIncluded%>';
+		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
 		let duplicatesInclude = '<%=$duplicatesInclude%>';
 		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
 		let noCRFInclude = '<%=$noCRFInclude%>';
 		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
-		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
 		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
 		let femaleIncluded = '<%=$femaleIncluded%>';
 		let maleIncluded = '<%=$maleIncluded%>';
@@ -39,7 +42,7 @@
 		console.log('duplicatesInclude : ' + duplicatesInclude);
 		console.log('noCRFInclude : ' + noCRFInclude);
 		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
+		console.log('subjectsWithSymptoms : ' + subjectsWithSymptoms);
 		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
 		console.log('femaleIncluded : ' + femaleIncluded);
 		console.log('maleIncluded : ' + maleIncluded);
@@ -55,14 +58,17 @@
 			data: {
 				path: path,
 				aeWithoutDate: aeWithoutDate,
+				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithNBinding: subjectsWithNBinding,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
 				below16Include: below16Include,
+				subjectsWithSymptoms : subjectsWithSymptoms,
+				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
 				seniorsIncluded: seniorsIncluded,
 				duplicatesInclude: duplicatesInclude,
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
-				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
 				subjectsWithoutSAEs: subjectsWithoutSAEs,
 				femaleIncluded: femaleIncluded,
@@ -91,6 +97,10 @@
 		console.log('Rendering LinReg Data ...');
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
+		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
+		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
 		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
 		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
 		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
@@ -99,7 +109,6 @@
 		let duplicatesInclude = '<%=$duplicatesInclude%>';
 		let noCRFInclude = '<%=$noCRFInclude%>';
 		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
-		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
 		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
 		let femaleIncluded = '<%=$femaleIncluded%>';
 		let maleIncluded = '<%=$maleIncluded%>';
@@ -117,7 +126,6 @@
 		console.log('duplicatesInclude : ' + duplicatesInclude);
 		console.log('noCRFInclude : ' + noCRFInclude);
 		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
 		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
 		console.log('femaleIncluded : ' + femaleIncluded);
 		console.log('maleIncluded : ' + maleIncluded);
@@ -132,7 +140,11 @@
 			type: 'POST',
 			data: {
 				path: path,
+				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
+				subjectsWithSymptoms : subjectsWithSymptoms,
 				aeWithoutDate: aeWithoutDate,
+				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithNBinding: subjectsWithNBinding,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
 				below16Include: below16Include,
@@ -141,7 +153,6 @@
 				duplicatesInclude: duplicatesInclude,
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
-				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
 				femaleIncluded: femaleIncluded,
 				maleIncluded: maleIncluded,
@@ -169,6 +180,10 @@
 		console.log('Rendering Stats Data ...');
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
+		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
+		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
 		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
 		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
 		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
@@ -177,7 +192,6 @@
 		let duplicatesInclude = '<%=$duplicatesInclude%>';
 		let noCRFInclude = '<%=$noCRFInclude%>';
 		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
-		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
 		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
 		let femaleIncluded = '<%=$femaleIncluded%>';
 		let maleIncluded = '<%=$maleIncluded%>';
@@ -195,7 +209,6 @@
 		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
 		console.log('noCRFInclude : ' + noCRFInclude);
 		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
 		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
 		console.log('femaleIncluded : ' + femaleIncluded);
 		console.log('maleIncluded : ' + maleIncluded);
@@ -210,7 +223,11 @@
 			type: 'POST',
 			data: {
 				path: path,
+				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
+				subjectsWithSymptoms : subjectsWithSymptoms,
 				aeWithoutDate: aeWithoutDate,
+				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithNBinding: subjectsWithNBinding,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
 				below16Include: below16Include,
@@ -219,7 +236,6 @@
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
 				subjectsWithoutSAEs: subjectsWithoutSAEs,
-				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
 				femaleIncluded: femaleIncluded,
 				maleIncluded: maleIncluded,
@@ -247,6 +263,10 @@
 		console.log('Rendering AEs Data ...');
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
+		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
+		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
 		let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
 		let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
 		let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
@@ -255,7 +275,6 @@
 		let duplicatesInclude = '<%=$duplicatesInclude%>';
 		let noCRFInclude = '<%=$noCRFInclude%>';
 		let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
-		let lackOfPIMonitoringInclude = '<%=$lackOfPIMonitoringInclude%>';
 		let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
 		let femaleIncluded = '<%=$femaleIncluded%>';
 		let maleIncluded = '<%=$maleIncluded%>';
@@ -273,7 +292,6 @@
 		console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
 		console.log('noCRFInclude : ' + noCRFInclude);
 		console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
-		console.log('lackOfPIMonitoringInclude : ' + lackOfPIMonitoringInclude);
 		console.log('noSafetyPopFlagInclude : ' + noSafetyPopFlagInclude);
 		console.log('femaleIncluded : ' + femaleIncluded);
 		console.log('maleIncluded : ' + maleIncluded);
@@ -288,6 +306,10 @@
 			type: 'POST',
 			data: {
 				path: path,
+				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
+				subjectsWithSymptoms : subjectsWithSymptoms,
+				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithNBinding: subjectsWithNBinding,
 				aeWithoutDate: aeWithoutDate,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
@@ -297,7 +319,6 @@
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
 				subjectsWithoutSAEs: subjectsWithoutSAEs,
-				lackOfPIMonitoringInclude: lackOfPIMonitoringInclude,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
 				femaleIncluded: femaleIncluded,
 				maleIncluded: maleIncluded,
