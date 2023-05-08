@@ -109,8 +109,10 @@
 % my $minusMale = $minusFemale - $totalMales;
 % my $totalExcludedFromSafety = $filteringStats{'totalExcludedFromSafety'} // 0;
 % my $minusNoSafetyPopFlag = $minusMale - $totalExcludedFromSafety;
+% my $totalWithoutCOVBLST = $filteringStats{'totalWithoutCOVBLST'} // 0;
+% my $minusSubjectsWithoutCOVBLST = $minusNoSafetyPopFlag - $totalWithoutCOVBLST;
 % my $totalWithPriorInfection = $filteringStats{'totalWithPriorInfection'} // 0;
-% my $minusSubjectsWithPriorInfection = $minusNoSafetyPopFlag - $totalWithPriorInfection;
+% my $minusSubjectsWithPriorInfection = $minusSubjectsWithoutCOVBLST - $totalWithPriorInfection;
 % my $totalWithoutPriorInfection = $filteringStats{'totalWithoutPriorInfection'} // 0;
 % my $minusSubjectsWithoutPriorInfection = $minusSubjectsWithPriorInfection - $totalWithoutPriorInfection;
 % my $totalWithoutSAEs = $filteringStats{'totalWithoutSAEs'} // 0;
@@ -181,6 +183,12 @@
     <div class="log-item"><%=$noSafetyPopFlagInclude%></div>
     <div class="log-item"><%=$filteringStats{'totalExcludedFromSafety'} // 0%></div>
     <div class="log-item"><%=$minusNoSafetyPopFlag%></div>
+  </div>
+  <div class="log-row">
+    <div class="log-item" style="width: 50%;">Include subjects with void COVBLST</div>
+    <div class="log-item"><%=$subjectsWithVoidCOVBLST%></div>
+    <div class="log-item"><%=$filteringStats{'totalWithoutCOVBLST'} // 0%></div>
+    <div class="log-item"><%=$minusSubjectsWithoutCOVBLST%></div>
   </div>
   <div class="log-row">
     <div class="log-item" style="width: 50%;">Include Subjects with Prior Infection</div>

@@ -12,6 +12,7 @@
 
 		console.log('Rendering Logs ...');
 		let path = '<%=$path%>';
+		let subjectsWithVoidCOVBLST = '<%=$subjectsWithVoidCOVBLST%>';
 		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
 		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
 		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
@@ -57,6 +58,7 @@
 			type: 'POST',
 			data: {
 				path: path,
+				subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
 				aeWithoutDate: aeWithoutDate,
 				subjectsWithCentralPCR: subjectsWithCentralPCR,
 				subjectsWithNBinding: subjectsWithNBinding,
@@ -97,6 +99,7 @@
 		console.log('Rendering LinReg Data ...');
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let subjectsWithVoidCOVBLST = '<%=$subjectsWithVoidCOVBLST%>';
 		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
 		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
 		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
@@ -140,6 +143,7 @@
 			type: 'POST',
 			data: {
 				path: path,
+				subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
 				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
 				subjectsWithSymptoms : subjectsWithSymptoms,
 				aeWithoutDate: aeWithoutDate,
@@ -180,6 +184,7 @@
 		console.log('Rendering Stats Data ...');
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
+		let subjectsWithVoidCOVBLST = '<%=$subjectsWithVoidCOVBLST%>';
 		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
 		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
 		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
@@ -223,6 +228,7 @@
 			type: 'POST',
 			data: {
 				path: path,
+				subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
 				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
 				subjectsWithSymptoms : subjectsWithSymptoms,
 				aeWithoutDate: aeWithoutDate,
@@ -264,6 +270,7 @@
 		let path = '<%=$path%>';
 		let aeWithoutDate = '<%=$aeWithoutDate%>';
 		let crossOverCountOnlyBNT = '<%=$crossOverCountOnlyBNT%>';
+		let subjectsWithVoidCOVBLST = '<%=$subjectsWithVoidCOVBLST%>';
 		let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
 		let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
 		let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
@@ -306,6 +313,7 @@
 			type: 'POST',
 			data: {
 				path: path,
+				subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
 				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
 				subjectsWithSymptoms : subjectsWithSymptoms,
 				subjectsWithCentralPCR: subjectsWithCentralPCR,

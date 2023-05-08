@@ -83,7 +83,7 @@
   }
 
   .table-container {
-    max-width: 1500px;
+    max-width: 100%;
     overflow-x: auto;
     overflow-y: auto;
     margin: 20px auto;
@@ -272,6 +272,7 @@
     let subjectsWithoutSAEs = '<%=$subjectsWithoutSAEs%>';
     let noCRFInclude = '<%=$noCRFInclude%>';
     let subjectsWithSymptoms = '<%=$subjectsWithSymptoms%>';
+    let subjectsWithVoidCOVBLST = '<%=$subjectsWithVoidCOVBLST%>';
     let hivSubjectsIncluded = '<%=$hivSubjectsIncluded%>';
     let noSafetyPopFlagInclude = '<%=$noSafetyPopFlagInclude%>';
     let femaleIncluded = '<%=$femaleIncluded%>';
@@ -315,6 +316,7 @@
         below16Include: below16Include,
         seniorsIncluded: seniorsIncluded,
         subjectsWithSymptoms: subjectsWithSymptoms,
+        subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
         duplicatesInclude: duplicatesInclude,
         noCRFInclude: noCRFInclude,
         crossOverCountOnlyBNT: crossOverCountOnlyBNT,
