@@ -1,6 +1,6 @@
 <style>
   .log-container {
-    width: 70%;
+    width: 90%;
     margin: 0 auto;
     border-collapse: collapse;
   }
@@ -26,7 +26,7 @@
   }
 
   .log-item--filter {
-    width: 50%;
+    width: 30%;
     font-weight: bold;
   }
 
@@ -135,9 +135,9 @@
 </style>
 
   <div class="tabs">
-    <button class="tab-button" onclick="openTab('summaryData')">Summary</button>
+    <button class="tab-button active" onclick="openTab('summaryData')">Summary</button>
     % if ($subjectsWithPriorInfect eq 'true' && $subjectsWithoutPriorInfect eq 'true') {
-    <button class="tab-button active" onclick="openTab('withPrior')">With Prior Infection</button>
+    <button class="tab-button" onclick="openTab('withPrior')">With Prior Infection</button>
     <button class="tab-button" onclick="openTab('withoutPrior')">Without Prior Infection</button>
     % } elsif ($subjectsWithPriorInfect eq 'true' && $subjectsWithoutPriorInfect eq 'false') {
     <button class="tab-button active" onclick="openTab('withPrior')">With Prior Infection</button>
@@ -154,7 +154,7 @@
   </select>
   <br />
   % if ($subjectsWithPriorInfect eq 'true') {
-  <div class="tab-content active" id="withPrior">
+  <div class="tab-content" id="withPrior">
   </div>
 
   <div class="tab-content" id="withoutPrior">
@@ -163,52 +163,80 @@
   <div class="tab-content" id="withPrior">
   </div>
 
-  <div class="tab-content active" id="withoutPrior">
+  <div class="tab-content" id="withoutPrior">
   </div>
   % }
 
 % my %stats = %$stats;
-% # my 
+% my $totalSubjects                        = $stats{'bySummaryArms'}->{'totalSubjects'}                                                       // die;
+% my $totalSubjectsBNT162b2                = $stats{'bySummaryArms'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjects'}                    // die;
+% my $totalSubjectsPlacebo                 = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                              // die;
+% my $totalSubjectsPlaceboBNT162b2         = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjects'}         // die;
+% my $totalSubjectsWithAEs                 = $stats{'bySummaryArms'}->{'totalSubjectsWithAEs'}                                                // die;
+% my $totalSubjectsWithAEsBNT162b2         = $stats{'bySummaryArms'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjectsWithAEs'}             // die;
+% my $totalSubjectsWithAEsPlacebo          = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo'}->{'totalSubjectsWithAEs'}                       // die;
+% my $totalSubjectsWithAEsPlaceboBNT162b2  = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjectsWithAEs'}  // die;
+% my $totalSubjectsWithSAEs                = $stats{'bySummaryArms'}->{'totalSubjectsWithSAEs'}                                               // die;
+% my $totalSubjectsWithSAEsBNT162b2        = $stats{'bySummaryArms'}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjectsWithSAEs'}            // die;
+% my $totalSubjectsWithSAEsPlacebo         = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo'}->{'totalSubjectsWithSAEs'}                      // die;
+% my $totalSubjectsWithSAEsPlaceboBNT162b2 = $stats{'bySummaryArms'}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjectsWithSAEs'} // die;
 
-  <div class="tab-content" style="top:15px;" id="summaryData">
+  <div class="tab-content active" style="top:15px;padding-top: 20px;" id="summaryData">
+    <table class="log-container">
+      <tr class="log-row" style="text-align: center;font-weight: bold;">
+        <td class="log-item log-item--filter">Population</td>
+        <td class="log-item">BNT162b2 30 mcg</td>
+        <td class="log-item">Placebo</td>
+        <td class="log-item">Placebo -> BNT162b2 30 mcg</td>
+        <td class="log-item">Total</td>
+      </tr>
+    </table>
     <table class="log-container">
       <tr class="log-row">
-        <td class="log-item log-item--filter">Category 1</td>
-        <td class="log-item">Value 1</td>
-        <td class="log-item">Excluded 1</td>
-        <td class="log-item">Remaining 1</td>
+        <td class="log-item log-item--filter">Total subjects</td>
+        <td class="log-item"><%=$totalSubjectsBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjectsPlacebo%></td>
+        <td class="log-item"><%=$totalSubjectsPlaceboBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjects%></td>
       </tr>
       <tr class="log-row log-subrow">
-        <td class="log-item log-item--filter">Subcategory 1.1</td>
-        <td class="log-item">Value 1.1</td>
-        <td class="log-item">Excluded 1.1</td>
-        <td class="log-item">Remaining 1.1</td>
+        <td class="log-item log-item--filter">Severe Adverse Effects</td>
+        <td class="log-item"><%=$totalSubjectsWithSAEsBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjectsWithSAEsPlacebo%></td>
+        <td class="log-item"><%=$totalSubjectsWithSAEsPlaceboBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjectsWithSAEs%></td>
       </tr>
       <tr class="log-row log-subrow">
-        <td class="log-item log-item--filter">Subcategory 1.2</td>
-        <td class="log-item">Value 1.2</td>
-        <td class="log-item">Excluded 1.2</td>
-        <td class="log-item">Remaining 1.2</td>
+        <td class="log-item log-item--filter">Adverse Effects</td>
+        <td class="log-item"><%=$totalSubjectsWithAEsBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjectsWithAEsPlacebo%></td>
+        <td class="log-item"><%=$totalSubjectsWithAEsPlaceboBNT162b2%></td>
+        <td class="log-item"><%=$totalSubjectsWithAEs%></td>
       </tr>
+    </table>
+    <!-- <table class="log-container">
       <tr class="log-row">
         <td class="log-item log-item--filter">Category 2</td>
         <td class="log-item">Value 2</td>
         <td class="log-item">Excluded 2</td>
+        <td class="log-item">Remaining 1</td>
         <td class="log-item">Remaining 2</td>
       </tr>
       <tr class="log-row log-subrow">
         <td class="log-item log-item--filter">Subcategory 2.1</td>
         <td class="log-item">Value 2.1</td>
         <td class="log-item">Excluded 2.1</td>
+        <td class="log-item">Remaining 1</td>
         <td class="log-item">Remaining 2.1</td>
       </tr>
       <tr class="log-row log-subrow">
         <td class="log-item log-item--filter">Subcategory 2.2</td>
         <td class="log-item">Value 2.2</td>
         <td class="log-item">Excluded 2.2</td>
+        <td class="log-item">Remaining 1</td>
         <td class="log-item">Remaining 2.2</td>
       </tr>
-    </table>
+    </table> -->
   </div>
 
 
@@ -250,7 +278,6 @@
     $('#displayedEvents').on("select2:select select2:unselect", function(e) {
         loadAEs();
     });
-    loadAEs();
   });
 
   function loadAEs() {

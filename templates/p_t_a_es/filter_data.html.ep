@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
     $( document ).ready(function() {
-    	loadFilteringLogs();
+    	loadStats();
     });
 	function loadFilteringLogs() {
         $("#innerRendering").html('');

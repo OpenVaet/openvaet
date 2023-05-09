@@ -117,29 +117,32 @@ sub pfizer_trial_after_effects {
 
 sub filter_data {
 	my $self = shift;
-	my $currentLanguage = $self->param('currentLanguage') // 'en';
-	my $subjectsWithVoidCOVBLST = $self->param('subjectsWithVoidCOVBLST') // die;
-	my $subjectsWithoutSAEs = $self->param('subjectsWithoutSAEs') // die;
-	my $subjectsWithCentralPCR = $self->param('subjectsWithCentralPCR') // die;
-	my $subjectsWithNBinding = $self->param('subjectsWithNBinding') // die;
-	my $phase1IncludeBNT = $self->param('phase1IncludeBNT') // die;
-	my $phase1IncludePlacebo = $self->param('phase1IncludePlacebo') // die;
-	my $below16Include = $self->param('below16Include') // die;
-	my $seniorsIncluded = $self->param('seniorsIncluded') // die;
-	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
-	my $noCRFInclude = $self->param('noCRFInclude') // die;
-	my $hivSubjectsIncluded = $self->param('hivSubjectsIncluded') // die;
-	my $noSafetyPopFlagInclude = $self->param('noSafetyPopFlagInclude') // die;
-	my $femaleIncluded = $self->param('femaleIncluded') // die;
-	my $maleIncluded = $self->param('maleIncluded') // die;
-	my $subjectToUnblinding = $self->param('subjectToUnblinding') // die;
-	my $cutoffDate = $self->param('cutoffDate') // die;
-	my $subjectsWithPriorInfect = $self->param('subjectsWithPriorInfect') // die;
-	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
-	my $crossOverCountOnlyBNT = $self->param('crossOverCountOnlyBNT') // die;
+
+	# Retrieves params from POST request.
+	my $currentLanguage            = $self->param('currentLanguage')            // 'en';
+	my $subjectsWithVoidCOVBLST    = $self->param('subjectsWithVoidCOVBLST')    // die;
+	my $subjectsWithoutSAEs        = $self->param('subjectsWithoutSAEs')        // die;
+	my $subjectsWithCentralPCR     = $self->param('subjectsWithCentralPCR')     // die;
+	my $subjectsWithNBinding       = $self->param('subjectsWithNBinding')       // die;
+	my $phase1IncludeBNT           = $self->param('phase1IncludeBNT')           // die;
+	my $phase1IncludePlacebo       = $self->param('phase1IncludePlacebo')       // die;
+	my $below16Include             = $self->param('below16Include')             // die;
+	my $seniorsIncluded            = $self->param('seniorsIncluded')            // die;
+	my $duplicatesInclude          = $self->param('duplicatesInclude')          // die;
+	my $noCRFInclude               = $self->param('noCRFInclude')               // die;
+	my $hivSubjectsIncluded        = $self->param('hivSubjectsIncluded')        // die;
+	my $noSafetyPopFlagInclude     = $self->param('noSafetyPopFlagInclude')     // die;
+	my $femaleIncluded             = $self->param('femaleIncluded')             // die;
+	my $maleIncluded               = $self->param('maleIncluded')               // die;
+	my $subjectToUnblinding        = $self->param('subjectToUnblinding')        // die;
+	my $cutoffDate                 = $self->param('cutoffDate')                 // die;
+	my $subjectsWithPriorInfect    = $self->param('subjectsWithPriorInfect')    // die;
+	my $subjectsWithSymptoms       = $self->param('subjectsWithSymptoms')       // die;
+	my $crossOverCountOnlyBNT      = $self->param('crossOverCountOnlyBNT')      // die;
+	my $csvSeparator               = $self->param('csvSeparator')               // die;
+	my $aeWithoutDate              = $self->param('aeWithoutDate')              // die;
 	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
-	my $csvSeparator = $self->param('csvSeparator') // die;
-	my $aeWithoutDate = $self->param('aeWithoutDate') // die;
+
 	# Printing filtering statistics (required for the Filtering Logs).
 	my @params = (
 		$phase1IncludeBNT,
@@ -301,7 +304,7 @@ sub filter_data {
 		print $out6 "$adaeColumn$csvSeparator";
 	}
 	say $out6 '';
-	my %subjectsByArms = ();
+	my %summaryStats = ();
 	for my $subjectId (sort{$a <=> $b} keys %json) {
 		$filteringStats{'totalSubjectsOverall'}++;
 
@@ -496,12 +499,13 @@ sub filter_data {
 		$filteredSubjects{$subjectId} = \%{$json{$subjectId}};
 		delete $filteredSubjects{$subjectId}->{'deviations'};
 
-		$subjectsByArms{'categoArm'}->{$categoArm}++;
 
 		# If the subject made it so far, integrating its data to the end data (stats, lin reg data).
 		# Calculating total serious AE to cut-off or unblinding, depending on the constrain.
 		my $aeserRows = 0;
 		my $aeRows    = 0;
+		my $aeserRowsPostDose3 = 0;
+		my $aeRowsPostDose3    = 0;
 		my $unblindingDatetime = $json{$subjectId}->{'unblnddt'} // die;
 		my ($unblindingDate);
 		if ($unblindingDatetime) {
@@ -597,6 +601,7 @@ sub filter_data {
 			}
 		}
 
+		# Increments global stats
 		$filteringStats{'totalSubjectsPostFilter'}->{'total'}++;
 		$filteringStats{'totalSubjectsPostFilter'}->{'byArms'}->{$categoArm}++;
 
@@ -620,8 +625,8 @@ sub filter_data {
 
 		# Testing for errors in the population regarding unknown tests (none, doesn't affect totals).
 		# next if $nBindingV1 eq 'MIS' || $centralPcrV1 eq 'MIS' || $centralPcrV1 eq 'IND';
-		# $tests{'nBinding'}->{$nBindingV1}++;
-		# $tests{'pcr'}->{$centralPcrV1}++;
+		$tests{'nBinding'}->{$nBindingV1}++;
+		$tests{'pcr'}->{$centralPcrV1}++;
 
 		# Setting Covid at baseline own tags.
 		my $covblst = $json{$subjectId}->{'covblst'} // die;
@@ -747,11 +752,13 @@ sub filter_data {
 						if ($aeser eq 'Y') {
 							$aeser  = 1;
 							$hasSAE = 1;
+							$aeserRowsPostDose3++ if $closestDose > 2;
 						} elsif ($aeser eq 'N') {
 							$aeser = 0;
 						} else {
 							$aeser = 0;
 						}
+						$aeRowsPostDose3++    if $closestDose > 2;
 						$hasAE = 1;
 						# say "*" x 50;
 						# say "aehlgt                   : $aehlgt";
@@ -1113,11 +1120,13 @@ sub filter_data {
 									if ($aeser eq 'Y') {
 										$aeser  = 1;
 										$hasSAE = 1;
+										$aeserRowsPostDose3++ if $closestDose > 2;
 									} elsif ($aeser eq 'N') {
 										$aeser = 0;
 									} else {
 										$aeser = 0;
 									}
+									$aeRowsPostDose3++    if $closestDose > 2;
 									$hasAE = 1;
 									# say "*" x 50;
 									# say "aehlgt                   : $aehlgt";
@@ -1337,11 +1346,13 @@ sub filter_data {
 								if ($aeser eq 'Y') {
 									$aeser  = 1;
 									$hasSAE = 1;
+									$aeserRowsPostDose3++ if $closestDose > 2;
 								} elsif ($aeser eq 'N') {
 									$aeser = 0;
 								} else {
 									$aeser = 0;
 								}
+								$aeRowsPostDose3++    if $closestDose > 2;
 								$hasAE = 1;
 								# say "*" x 50;
 								# say "aehlgt                   : $aehlgt";
@@ -1549,11 +1560,13 @@ sub filter_data {
 							if ($aeser eq 'Y') {
 								$aeser  = 1;
 								$hasSAE = 1;
+								$aeserRowsPostDose3++ if $closestDose > 2;
 							} elsif ($aeser eq 'N') {
 								$aeser = 0;
 							} else {
 								$aeser = 0;
 							}
+							$aeRowsPostDose3++    if $closestDose > 2;
 							$hasAE = 1;
 							# say "*" x 50;
 							# say "aehlgt                   : $aehlgt";
@@ -1686,6 +1699,47 @@ sub filter_data {
 		$filteredSubjects{$subjectId}->{'dayobsNpiCrossov'}  = $dayobsNpiCrossov;
 
 
+		# Increments synthetic stats.
+		my $summaryArm = $categoArm;
+		if ($summaryArm eq 'Placebo' && $vax201dt) {
+			$summaryArm = 'Placebo -> BNT162b2 (30 mcg)';
+		}
+		if ($summaryArm eq 'Placebo -> BNT162b2 (30 mcg)') {
+			$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjects'}++;
+			$summaryStats{'byCategoryArms'}->{'totalSubjects'}++;
+			$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjects'}++;
+			$summaryStats{'bySummaryArms'}->{'totalSubjects'}++;
+			if ($aeRowsPostDose3) {
+				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'totalSubjectsWithAEs'}++;
+			}
+			if ($aeserRowsPostDose3) {
+				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'totalSubjectsWithSAEs'}++;
+			}
+		} else {
+			$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjects'}++;
+			$summaryStats{'byCategoryArms'}->{'totalSubjects'}++;
+			$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjects'}++;
+			$summaryStats{'bySummaryArms'}->{'totalSubjects'}++;
+			if ($aeRows) {
+				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'totalSubjectsWithAEs'}++;
+			}
+			if ($aeserRows) {
+				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithSAEs'}++;
+				$summaryStats{'bySummaryArms'}->{'totalSubjectsWithSAEs'}++;
+			}
+		}
+
 		# printing LinReg .CSV row.
 		for my $adslColumn (@adslColumns) {
 			my $value = $filteredSubjects{$subjectId}->{$adslColumn} // '';
@@ -1712,6 +1766,7 @@ sub filter_data {
 	close $out6;
 
 	p%tests;
+	p%summaryStats;
 
 	# Formatting filtering details.
 	open my $out2, '>:utf8', "public/pt_aes/$path/filtering_details.txt";
@@ -2212,6 +2267,11 @@ sub filter_data {
 	print $out8 encode_json\%stats;
 	close $out8;
 
+	# printing summary stats.
+	open my $out9, '>:utf8', "public/pt_aes/$path/summary_stats.json" or die $!;
+	print $out9 encode_json\%summaryStats;
+	close $out9;
+
     my %languages = ();
     $languages{'fr'} = 'French';
     $languages{'en'} = 'English';
@@ -2653,7 +2713,7 @@ sub render_stats {
     $languages{'en'} = 'English';
 
 	# Loading filtering log abstract.
-	open my $in1, '<:utf8', "public/pt_aes/$path/detailed_stats.json";
+	open my $in1, '<:utf8', "public/pt_aes/$path/summary_stats.json";
 	my $json1;
 	while (<$in1>) {
 		$json1 .= $_;
@@ -2661,9 +2721,6 @@ sub render_stats {
 	close $in1;
 	$json1 = decode_json($json1);
 	my %stats = %$json1;
-	for my $label (sort keys %stats) {
-		delete $stats{$label}->{'gradeStats'};
-	}
 	p%stats;
 
 	$self->render(
