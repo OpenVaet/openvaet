@@ -52,6 +52,7 @@ my %testsRefs            = ();
 load_adsl();
 load_adae();
 load_adva();
+load_supp_dv();
 load_pcr_tests();
 load_faces();
 load_symptoms();
@@ -1590,6 +1591,18 @@ sub load_tests_refs {
 	$json = decode_json($json);
 	%testsRefs = %$json;
 	say "[$testsRefsFile] -> tests    : " . keys %testsRefs;
+}
+
+sub load_supp_dv {
+	open my $in, '<:utf8', $devData or die "Missing file [$devData]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%devData = %$json;
+	say "[$devData] -> patients : " . keys %devData;
 }
 
 sub subject_central_pcrs_by_visits {

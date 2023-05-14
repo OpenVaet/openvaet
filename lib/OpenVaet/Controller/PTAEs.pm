@@ -283,6 +283,7 @@ sub filter_data {
 	$json = decode_json($json);
 
 	my %tests = ();
+	my %debug = ();
 
 	# Parsing JSON input.
 	my %json = %$json;
@@ -657,6 +658,17 @@ sub filter_data {
 		my $vax101dt     = $json{$subjectId}->{'vax101dt'} // die;
 		my $vax102dt     = $json{$subjectId}->{'vax102dt'} // die;
 		my $vax201dt     = $json{$subjectId}->{'vax201dt'} // die;
+		if ($vax201dt && $unblindingDate) {
+			my ($vax201cp) = split ' ', $vax201dt;
+			$vax201cp =~ s/\D//g;
+			if ($vax201cp < $unblindingDate) {
+				die "indeed";
+				my $daysBetween = time::calculate_days_difference($unblindingDatetime, $vax201dt);
+				say "$subjectId - $unblindingDatetime | $vax201dt - $vax201cp > $unblindingDate";
+				$debug{'byDays'}->{$daysBetween}->{'total'}++;
+				$debug{'total'}++;
+			}
+		}
 		my $vax202dt     = $json{$subjectId}->{'vax202dt'} // die;
 		my $dthdt        = $json{$subjectId}->{'dthdt'}    // die;
 		my $deathcptdt;
@@ -1766,6 +1778,7 @@ sub filter_data {
 	close $out6;
 
 	p%tests;
+	p%debug;
 	p%summaryStats;
 
 	# Formatting filtering details.
@@ -2377,7 +2390,11 @@ sub time_of_exposure_from_simple {
 		if ($dthdt && ($deathcptdt < $limitDate)) {
 			$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $dthdt);
 		} else {
-			$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+			my ($v2cp) = split ' ', $vax201dt;
+			$v2cp =~ s/\D//g;
+			if ($limitDate > $v2cp) {
+				$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+			}
 		}
 	} else {
 		my $daysBetweenDoseAndCutOff;
@@ -2417,16 +2434,30 @@ sub time_of_exposure_from_conflicting {
         }
         my ($lastDoseDate) = split ' ', $lastDoseDatetime;
         $lastDoseDate =~ s/\D//g;
-        if ($label eq 'Doses_Without_Infection' && $lastDoseDatetime) {
-            if ($dthdt && ($deathcptdt < $lastDoseDate)) {
-                $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax101dt, $dthdt);
-            } else {
-                $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax101dt, $lastDoseDatetime);
-            }
-            if ($actarm eq 'Placebo') {
-                $dayobsPiPlacebo += $daysBetweenDoseAndCutOff;
-            } else {
-                $dayobsPiBnt     += $daysBetweenDoseAndCutOff;
+        if ($label eq 'Doses_Without_Infection') {
+        	if (!$vax201dt && !$vax202dt) {
+	            $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax101dt, $lastDoseDatetime);
+	            if ($actarm eq 'Placebo') {
+	                $dayobsPiPlacebo += $daysBetweenDoseAndCutOff;
+	            } else {
+	                $dayobsPiBnt     += $daysBetweenDoseAndCutOff;
+	            }
+        	} else {
+        		die unless $vax201dt;
+	            $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax101dt, $vax201dt);
+	            if ($actarm eq 'Placebo') {
+	                $dayobsPiPlacebo += $daysBetweenDoseAndCutOff;
+	            } else {
+	                $dayobsPiBnt     += $daysBetweenDoseAndCutOff;
+	            }
+        	}
+            if ($lastDosePriorCovid > 2) {
+            	die unless $vax201dt && $vax202dt;
+				my ($v3cp) = split ' ', $vax201dt;
+				$v3cp =~ s/\D//g;
+				if ($v3cp <= $limitDate) {
+	                $dayobsPiCrossov = time::calculate_days_difference($vax201dt, $vax201dt);
+				}
             }
 	        if ($lastDosePriorCovid == 1) {
 	        	if ($vax102dt) {
@@ -2436,31 +2467,39 @@ sub time_of_exposure_from_conflicting {
         		}
 	        } elsif ($lastDosePriorCovid == 2) {
         		($treatmentCutoffCompdate) = split ' ', $vax201dt;
-	            $lastDoseDatetime = $vax201dt;
 	        } elsif ($lastDosePriorCovid == 3) {
         		($treatmentCutoffCompdate) = split ' ', $vax202dt;
-	            $lastDoseDatetime = $vax202dt;
 	        }
             $treatmentCutoffCompdate   =~ s/\D//g;
-        } elsif ($label eq 'Doses_With_Infection' && $lastDoseDatetime) {
+        } elsif ($label eq 'Doses_With_Infection') {
             if ($lastDosePriorCovid == 1 && $vax102dt && $vax201dt) {
                 $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
                 $dayobsPiPlacebo = time::calculate_days_difference($vax102dt, $vax201dt);
-                $dayobsPiCrossov = ($dthdt && ($deathcptdt < $limitDate)) ?
-                    time::calculate_days_difference($vax201dt, $dthdt) :
-                    time::calculate_days_difference($vax201dt, $limitDateh);
+				my ($v3cp) = split ' ', $vax201dt;
+				$v3cp =~ s/\D//g;
+                if ($dthdt && ($deathcptdt < $limitDate) && ($limitDate > $v3cp)) {
+                	$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $dthdt);
+                } elsif ($limitDate > $v3cp) {
+					$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+                }
             } elsif ($lastDosePriorCovid == 1 && $vax201dt) {
                 $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
                 $dayobsPiPlacebo = time::calculate_days_difference($vax101dt, $vax201dt);
-                $dayobsPiCrossov = ($dthdt && ($deathcptdt < $limitDate)) ?
-                    time::calculate_days_difference($vax201dt, $dthdt) :
-                    time::calculate_days_difference($vax201dt, $limitDateh);
+				my ($v3cp) = split ' ', $vax201dt;
+				$v3cp =~ s/\D//g;
+                if ($dthdt && ($deathcptdt < $limitDate) && ($limitDate > $v3cp)) {
+                	$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $dthdt);
+                } elsif ($limitDate > $v3cp) {
+					$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+                }
             } elsif ($lastDosePriorCovid == 1 && $vax102dt) {
-	            if ($dthdt && ($deathcptdt < $lastDoseDate)) {
-	                $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax102dt, $dthdt);
-	            } else {
-	                $daysBetweenDoseAndCutOff = time::calculate_days_difference($vax102dt, $limitDateh);
-	            }
+				my ($v2cp) = split ' ', $vax102dt;
+				$v2cp =~ s/\D//g;
+                if ($dthdt && ($deathcptdt < $limitDate) && ($limitDate > $v2cp)) {
+                	$daysBetweenDoseAndCutOff = time::calculate_days_difference($vax102dt, $dthdt);
+                } elsif ($limitDate > $v2cp) {
+					$daysBetweenDoseAndCutOff = time::calculate_days_difference($vax102dt, $limitDateh);
+                }
 	            if ($actarm eq 'Placebo') {
 	                $dayobsPiPlacebo += $daysBetweenDoseAndCutOff;
 	            } else {
@@ -2469,23 +2508,34 @@ sub time_of_exposure_from_conflicting {
             } elsif ($lastDosePriorCovid == 2 && $vax201dt) {
                 $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
                 $dayobsPiPlacebo = time::calculate_days_difference($vax101dt, $vax201dt);
-                $dayobsPiCrossov = ($dthdt && ($deathcptdt < $limitDate)) ?
-                    time::calculate_days_difference($vax201dt, $dthdt) :
-                    time::calculate_days_difference($vax201dt, $limitDateh);
-            } elsif ($lastDosePriorCovid == 2 && $vax202dt) {
-                $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
-                $dayobsPiPlacebo = time::calculate_days_difference($vax101dt, $vax202dt);
-                $dayobsPiCrossov = ($dthdt && ($deathcptdt < $limitDate)) ?
-                    time::calculate_days_difference($vax202dt, $dthdt) :
-                    time::calculate_days_difference($vax202dt, $limitDateh);
+				my ($v3cp) = split ' ', $vax201dt;
+				$v3cp =~ s/\D//g;
+                if ($dthdt && ($deathcptdt < $limitDate) && ($limitDate > $v3cp)) {
+                	$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $dthdt);
+                } elsif ($limitDate > $v3cp) {
+					$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+                }
             } elsif ($lastDosePriorCovid == 3 && $vax202dt) {
                 $groupArm = 'Placebo -> BNT162b2 (30 mcg)';
                 $dayobsPiPlacebo = time::calculate_days_difference($vax101dt, $vax202dt);
-                $dayobsPiCrossov = ($dthdt && ($deathcptdt < $limitDate)) ?
-                    time::calculate_days_difference($vax202dt, $dthdt) :
-                    time::calculate_days_difference($vax202dt, $limitDateh);
+                if ($dthdt && ($deathcptdt < $limitDate)) {
+                    $dayobsPiCrossov = time::calculate_days_difference($vax202dt, $dthdt)
+                } else {
+					my ($v2cp) = split ' ', $vax202dt;
+					$v2cp =~ s/\D//g;
+					if ($limitDate > $v2cp) {
+						$dayobsPiCrossov = time::calculate_days_difference($vax202dt, $limitDateh);
+					}
+                }
+				my ($v4cp) = split ' ', $vax202dt;
+				$v4cp =~ s/\D//g;
+                if ($dthdt && ($deathcptdt < $limitDate) && ($limitDate > $v4cp)) {
+                	$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $dthdt);
+                } elsif ($limitDate > $v4cp) {
+					$dayobsPiCrossov = time::calculate_days_difference($vax201dt, $limitDateh);
+                }
             } else { die "lastDosePriorCovid : $lastDosePriorCovid" }
-        } else { die "$label eq 'Doses_Without_Infection' && $lastDoseDatetime" }
+        } else { die "$label && $lastDoseDatetime" }
     } else {
     	die;
     }

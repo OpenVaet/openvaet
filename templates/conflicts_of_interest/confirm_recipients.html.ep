@@ -1,5 +1,10 @@
 % my %statistics = %$statistics;
-% my $latestTransmissionDate = $statistics{'latestTransmissionDate'}          // die;
+% my $latestTransmissionDate = $statistics{'latestTransmissionDate'};
+% if (!$latestTransmissionDate) {
+	<div class="text_separator"></div>
+	<div class="text_separator"></div>
+	Aucune entrée avec montant rapporté pour ce nom. Vous pouvez executer une nouvelle recherche.
+% } else {
 % my $totalSum               = $statistics{'totalSum'}->{'amount'}            // die;
 % my $totalTransactions      = $statistics{'totalSum'}->{'totalTransactions'} // die;
 <div class="text_separator"></div>
@@ -100,4 +105,5 @@ Total des conflits d'intérêts : <b><%=$totalSum%> €</b> (<%=$totalTransactio
 			<div style="width:40px"></div>
 		</div>
 	% }
+% }
 % }

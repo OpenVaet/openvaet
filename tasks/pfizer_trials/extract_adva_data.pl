@@ -73,6 +73,10 @@ while (<$in>) {
 
 		# Fetching the data we currently focus on.
 		my $subjectId   = $values{'SUBJID'}  // die;
+		if ($subjectId eq '10031065') {
+			p%values;
+			die;
+		}
 		my $uSubjectId  = $values{'USUBJID'} // die;
 		my $trialSiteId = $values{'SITEID'}  // die;
 		my $adt         = $values{'ADT'}     // die;
