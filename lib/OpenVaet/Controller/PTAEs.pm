@@ -1755,6 +1755,20 @@ sub filter_data {
 		# printing LinReg .CSV row.
 		for my $adslColumn (@adslColumns) {
 			my $value = $filteredSubjects{$subjectId}->{$adslColumn} // '';
+            if (
+				$adslColumn eq 'vax101dt' ||
+				$adslColumn eq 'vax102dt' ||
+				$adslColumn eq 'vax201dt' ||
+				$adslColumn eq 'vax202dt' ||
+				$adslColumn eq 'trtsdt'   ||
+				$adslColumn eq 'vax10udt' ||
+				$adslColumn eq 'vax20udt' ||
+				$adslColumn eq 'unblnddt' ||
+				$adslColumn eq 'x1csrdt'  ||
+				$adslColumn eq 'dthdt'
+			) {
+				($value) = split ' ', $value;
+			}
 			print $out5 "$value$csvSeparator";
 		}
 		say $out5 '';
