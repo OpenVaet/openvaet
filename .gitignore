@@ -11,6 +11,10 @@ chromedriver.exe
 
 public/build
 
+public/doc/pfizer_trials
+
+telegram_data
+
 public/web
 
 public/pfizer_documents
