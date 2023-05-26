@@ -516,6 +516,43 @@ sub filter_data {
 		my %aesByDates  = ();
 		my %saesByDates = ();
 
+		# Organizing doses received in a hashtable allowing easy numerical sorting.
+		my $vax101dt     = $json{$subjectId}->{'vax101dt'} // die;
+		my $vax102dt     = $json{$subjectId}->{'vax102dt'} // die;
+		my $vax201dt     = $json{$subjectId}->{'vax201dt'} // die;
+		my $vax201cp;
+		if ($vax201dt) {
+			($vax201cp)  = split ' ', $vax201dt;
+			$vax201cp    =~ s/\D//g;
+		}
+		if ($vax201dt && $unblindingDate) {
+			if ($vax201cp < $unblindingDate) {
+				die "indeed";
+				my $daysBetween = time::calculate_days_difference($unblindingDatetime, $vax201dt);
+				say "$subjectId - $unblindingDatetime | $vax201dt - $vax201cp > $unblindingDate";
+				$debug{'byDays'}->{$daysBetween}->{'total'}++;
+				$debug{'total'}++;
+			}
+		}
+		my $vax202dt     = $json{$subjectId}->{'vax202dt'} // die;
+		my $vax202cp;
+		if ($vax202dt) {
+			($vax202cp)   = split ' ', $vax202dt;
+			$vax202cp     =~ s/\D//g;
+		}
+		my $dthdt        = $json{$subjectId}->{'dthdt'}    // die;
+		my $deathcptdt;
+		if ($dthdt) {
+			($deathcptdt) = split ' ', $dthdt;
+			$deathcptdt   =~ s/\D//g;
+		}
+		my %doseDates    = ();
+		$doseDates{'1'}  = $vax101dt;
+		die unless $vax101dt;
+		$doseDates{'2'}  = $vax102dt if $vax102dt;
+		$doseDates{'3'}  = $vax201dt if $vax201dt;
+		$doseDates{'4'}  = $vax202dt if $vax202dt;
+
 		# Filtering based on after effects settings.
 		if (exists $json{$subjectId}->{'adaeRows'}) {
 			for my $adaeRNum (sort{$a <=> $b} keys %{$json{$subjectId}->{'adaeRows'}}) {
@@ -536,6 +573,9 @@ sub filter_data {
 				if ($astdt) {
 					($astcpdt) = split ' ', $astdt;
 					$astcpdt   =~ s/\D//g;
+					if ($crossOverCountOnlyBNT eq 'true' && $vax201dt) {
+						next unless $vax201cp <= $astcpdt;
+					}
 					die unless $astcpdt =~ /^........$/;
 					if ($astcpdt > $cutoffCompdate) {
 						$filteringStats{'totalAEsPostCutOff'}++;
@@ -568,6 +608,11 @@ sub filter_data {
 				}
 				$aesByDates{$astcpdt}->{$adaeRNum} = \%{$json{$subjectId}->{'adaeRows'}->{$adaeRNum}};
 				$aeRows++;
+				if ($aeser eq 'Y' && $vax201cp && ($vax201cp <= $astcpdt)) {
+					# unless (exists $cross_overs{$subjectId}) {
+						# We can count the cross overs with SAEs here.
+					# }
+				}
 			}
 		}
 
@@ -653,35 +698,6 @@ sub filter_data {
 		$filteredSubjects{$subjectId}->{'posNBinding'}      = $posNBinding;
 		$filteredSubjects{$subjectId}->{'covblstRecalc'}    = $covblstRecalc;
 		$filteredSubjects{$subjectId}->{'covblstRecalcSrc'} = $covblstRecalcSrc;
-
-		# Organizing doses received in a hashtable allowing easy numerical sorting.
-		my $vax101dt     = $json{$subjectId}->{'vax101dt'} // die;
-		my $vax102dt     = $json{$subjectId}->{'vax102dt'} // die;
-		my $vax201dt     = $json{$subjectId}->{'vax201dt'} // die;
-		if ($vax201dt && $unblindingDate) {
-			my ($vax201cp) = split ' ', $vax201dt;
-			$vax201cp =~ s/\D//g;
-			if ($vax201cp < $unblindingDate) {
-				die "indeed";
-				my $daysBetween = time::calculate_days_difference($unblindingDatetime, $vax201dt);
-				say "$subjectId - $unblindingDatetime | $vax201dt - $vax201cp > $unblindingDate";
-				$debug{'byDays'}->{$daysBetween}->{'total'}++;
-				$debug{'total'}++;
-			}
-		}
-		my $vax202dt     = $json{$subjectId}->{'vax202dt'} // die;
-		my $dthdt        = $json{$subjectId}->{'dthdt'}    // die;
-		my $deathcptdt;
-		if ($dthdt) {
-			($deathcptdt) = split ' ', $dthdt;
-			$deathcptdt   =~ s/\D//g;
-		}
-		my %doseDates    = ();
-		$doseDates{'1'}  = $vax101dt;
-		die unless $vax101dt;
-		$doseDates{'2'}  = $vax102dt if $vax102dt;
-		$doseDates{'3'}  = $vax201dt if $vax201dt;
-		$doseDates{'4'}  = $vax202dt if $vax202dt;
 
 		# If the subject had Covid at baseline he will be accruing time only for the "infected prior dose" group.
 		my
@@ -1698,7 +1714,6 @@ sub filter_data {
 		die if !$dayobsPiBnt && !$dayobsPiPlacebo && !$dayobsPiCrossov &&
 			   !$dayobsNpiBnt && !$dayobsNpiPlacebo && !$dayobsNpiCrossov;
 
-
 		unless (exists $filteredSubjects{$subjectId}->{'earliestCovid'}) {
 			$filteredSubjects{$subjectId}->{'earliestCovid'} = undef;
 			$filteredSubjects{$subjectId}->{'earliestCovidVisit'} = undef;
@@ -1710,6 +1725,10 @@ sub filter_data {
 		$filteredSubjects{$subjectId}->{'dayobsNpiPlacebo'}  = $dayobsNpiPlacebo;
 		$filteredSubjects{$subjectId}->{'dayobsNpiCrossov'}  = $dayobsNpiCrossov;
 
+		# if ($subjectId eq '10391075') {
+		# 	p$filteredSubjects{$subjectId};
+		# 	die;
+		# }
 
 		# Increments synthetic stats.
 		my $summaryArm = $categoArm;
@@ -1765,11 +1784,16 @@ sub filter_data {
 				$adslColumn eq 'vax20udt' ||
 				$adslColumn eq 'unblnddt' ||
 				$adslColumn eq 'x1csrdt'  ||
-				$adslColumn eq 'dthdt'
+				$adslColumn eq 'dthdt'    ||
+				$adslColumn eq 'astdt'
 			) {
 				($value) = split ' ', $value;
 			}
-			print $out5 "$value$csvSeparator";
+			if ($value) {
+				print $out5 "$value$csvSeparator";
+			} else {
+				print $out5 "$csvSeparator";
+			}
 		}
 		say $out5 '';
 
