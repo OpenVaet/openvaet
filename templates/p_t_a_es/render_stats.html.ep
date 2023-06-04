@@ -289,6 +289,7 @@
     let path = '<%=$path%>';
     let aeWithoutDate = '<%=$aeWithoutDate%>';
     let subjectsWithCentralPCR = '<%=$subjectsWithCentralPCR%>';
+    let subjectsWithLocalPCR = '<%=$subjectsWithLocalPCR%>';
     let subjectsWithNBinding = '<%=$subjectsWithNBinding%>';
     let phase1IncludeBNT = '<%=$phase1IncludeBNT%>';
     let phase1IncludePlacebo = '<%=$phase1IncludePlacebo%>';
@@ -317,6 +318,7 @@
     console.log('subjectsWithoutSAEs : ' + subjectsWithoutSAEs);
     console.log('duplicatesInclude : ' + duplicatesInclude);
     console.log('subjectsWithSymptoms : ' + subjectsWithSymptoms);
+    console.log('subjectsWithSymptomsAndNoPCR : ' + subjectsWithSymptomsAndNoPCR);
     console.log('noCRFInclude : ' + noCRFInclude);
     console.log('crossOverCountOnlyBNT : ' + crossOverCountOnlyBNT);
     console.log('hivSubjectsIncluded : ' + hivSubjectsIncluded);
@@ -335,6 +337,7 @@
         path: path,
         currentTab: currentTab,
         subjectsWithCentralPCR: subjectsWithCentralPCR,
+        subjectsWithLocalPCR: subjectsWithLocalPCR,
         subjectsWithNBinding: subjectsWithNBinding,
         displayedEvents: displayedEvents,
         aeWithoutDate: aeWithoutDate,
@@ -343,6 +346,7 @@
         below16Include: below16Include,
         seniorsIncluded: seniorsIncluded,
         subjectsWithSymptoms: subjectsWithSymptoms,
+        subjectsWithSymptomsAndNoPCR: subjectsWithSymptomsAndNoPCR,
         subjectsWithVoidCOVBLST : subjectsWithVoidCOVBLST,
         duplicatesInclude: duplicatesInclude,
         noCRFInclude: noCRFInclude,

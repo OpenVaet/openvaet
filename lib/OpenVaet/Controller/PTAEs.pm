@@ -53,6 +53,20 @@ my @adslColumns = qw(
   saf2fl
   aeRows
   aeserRows
+  aeCrossOverRows
+  aeserCrossOverRows
+  aeserPostSymptomsRows
+  aePostSymptomsRows
+  aeserPriorSymptomsRows
+  aePriorSymptomsRows
+  aeserCrossOverPostSymptomsRows
+  aeCrossOverPostSymptomsRows
+  aeserCrossOverPriorSymptomsRows
+  aeCrossOverPriorSymptomsRows
+  earliestSymptoms
+  earliestSymptomsVisit
+  earliestSymptomsCrossOver
+  earliestSymptomsCrossOverVisit
   aeser
   aestdtc
   aestdy
@@ -119,29 +133,31 @@ sub filter_data {
 	my $self = shift;
 
 	# Retrieves params from POST request.
-	my $currentLanguage            = $self->param('currentLanguage')            // 'en';
-	my $subjectsWithVoidCOVBLST    = $self->param('subjectsWithVoidCOVBLST')    // die;
-	my $subjectsWithoutSAEs        = $self->param('subjectsWithoutSAEs')        // die;
-	my $subjectsWithCentralPCR     = $self->param('subjectsWithCentralPCR')     // die;
-	my $subjectsWithNBinding       = $self->param('subjectsWithNBinding')       // die;
-	my $phase1IncludeBNT           = $self->param('phase1IncludeBNT')           // die;
-	my $phase1IncludePlacebo       = $self->param('phase1IncludePlacebo')       // die;
-	my $below16Include             = $self->param('below16Include')             // die;
-	my $seniorsIncluded            = $self->param('seniorsIncluded')            // die;
-	my $duplicatesInclude          = $self->param('duplicatesInclude')          // die;
-	my $noCRFInclude               = $self->param('noCRFInclude')               // die;
-	my $hivSubjectsIncluded        = $self->param('hivSubjectsIncluded')        // die;
-	my $noSafetyPopFlagInclude     = $self->param('noSafetyPopFlagInclude')     // die;
-	my $femaleIncluded             = $self->param('femaleIncluded')             // die;
-	my $maleIncluded               = $self->param('maleIncluded')               // die;
-	my $subjectToUnblinding        = $self->param('subjectToUnblinding')        // die;
-	my $cutoffDate                 = $self->param('cutoffDate')                 // die;
-	my $subjectsWithPriorInfect    = $self->param('subjectsWithPriorInfect')    // die;
-	my $subjectsWithSymptoms       = $self->param('subjectsWithSymptoms')       // die;
-	my $crossOverCountOnlyBNT      = $self->param('crossOverCountOnlyBNT')      // die;
-	my $csvSeparator               = $self->param('csvSeparator')               // die;
-	my $aeWithoutDate              = $self->param('aeWithoutDate')              // die;
-	my $subjectsWithoutPriorInfect = $self->param('subjectsWithoutPriorInfect') // die;
+	my $currentLanguage              = $self->param('currentLanguage')              // 'en';
+	my $subjectsWithVoidCOVBLST      = $self->param('subjectsWithVoidCOVBLST')      // die;
+	my $subjectsWithoutSAEs          = $self->param('subjectsWithoutSAEs')          // die;
+	my $subjectsWithCentralPCR       = $self->param('subjectsWithCentralPCR')       // die;
+	my $subjectsWithLocalPCR         = $self->param('subjectsWithLocalPCR')         // die;
+	my $subjectsWithNBinding         = $self->param('subjectsWithNBinding')         // die;
+	my $phase1IncludeBNT             = $self->param('phase1IncludeBNT')             // die;
+	my $phase1IncludePlacebo         = $self->param('phase1IncludePlacebo')         // die;
+	my $below16Include               = $self->param('below16Include')               // die;
+	my $seniorsIncluded              = $self->param('seniorsIncluded')              // die;
+	my $duplicatesInclude            = $self->param('duplicatesInclude')            // die;
+	my $noCRFInclude                 = $self->param('noCRFInclude')                 // die;
+	my $hivSubjectsIncluded          = $self->param('hivSubjectsIncluded')          // die;
+	my $noSafetyPopFlagInclude       = $self->param('noSafetyPopFlagInclude')       // die;
+	my $femaleIncluded               = $self->param('femaleIncluded')               // die;
+	my $maleIncluded                 = $self->param('maleIncluded')                 // die;
+	my $subjectToUnblinding          = $self->param('subjectToUnblinding')          // die;
+	my $cutoffDate                   = $self->param('cutoffDate')                   // die;
+	my $subjectsWithPriorInfect      = $self->param('subjectsWithPriorInfect')      // die;
+	my $subjectsWithSymptoms         = $self->param('subjectsWithSymptoms')         // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
+	my $crossOverCountOnlyBNT        = $self->param('crossOverCountOnlyBNT')        // die;
+	my $csvSeparator                 = $self->param('csvSeparator')                 // die;
+	my $aeWithoutDate                = $self->param('aeWithoutDate')                // die;
+	my $subjectsWithoutPriorInfect   = $self->param('subjectsWithoutPriorInfect')   // die;
 
 	# Printing filtering statistics (required for the Filtering Logs).
 	my @params = (
@@ -150,7 +166,9 @@ sub filter_data {
 		$below16Include,
 		$subjectsWithNBinding,
 		$subjectsWithCentralPCR,
+		$subjectsWithLocalPCR,
 		$subjectsWithSymptoms,
+		$subjectsWithSymptomsAndNoPCR,
 		$seniorsIncluded,
 		$duplicatesInclude,
 		$noCRFInclude,
@@ -172,7 +190,9 @@ sub filter_data {
 		'below16Include',
 		'subjectsWithNBinding',
 		'subjectsWithCentralPCR',
+		'subjectsWithLocalPCR',
 		'subjectsWithSymptoms',
+		'subjectsWithSymptomsAndNoPCR',
 		'seniorsIncluded',
 		'duplicatesInclude',
 		'noCRFInclude',
@@ -201,7 +221,7 @@ sub filter_data {
 		$params{$label} = $param;
 		$pNum++;
 	}
-	$params{'cutoffDate'} = $cutoffDate;
+	$params{'cutoffDate'}   = $cutoffDate;
 	$params{'csvSeparator'} = $csvSeparator;
 	$path .= "_$cutoffDate";
 	make_path("public/pt_aes/$path") unless (-d "public/pt_aes/$path");
@@ -236,42 +256,45 @@ sub filter_data {
 	$allDuplicates{'10891112'}  = 11341006;
 	$allDuplicates{'11231105'}  = 10711213;
 	$allDuplicates{'10711213'}  = 11231105;
-	$duplicates{'10561101'}  = 11331382;
+	$duplicates{'10561101'}     = 11331382;
 	# $duplicates{'11331382'}  = 10561101;
-	$duplicates{'11101123'}  = 11331405;
+	$duplicates{'11101123'}     = 11331405;
 	# $duplicates{'11331405'}  = 11101123;
-	$duplicates{'11491117'}  = 12691090;
+	$duplicates{'11491117'}     = 12691090;
 	# $duplicates{'12691090'}  = 11491117;
-	$duplicates{'12691070'}  = 11351357;
+	$duplicates{'12691070'}     = 11351357;
 	# $duplicates{'11351357'}  = 12691070;
-	$duplicates{'11341006'}  = 10891112;
+	$duplicates{'11341006'}     = 10891112;
 	# $duplicates{'10891112'}  = 11341006;
-	$duplicates{'11231105'}  = 10711213;
+	$duplicates{'11231105'}     = 10711213;
 	# $duplicates{'10711213'}  = 11231105;
 	$noCRFVaxData{'11631006'}   = 1;
 	$noCRFVaxData{'11631005'}   = 1;
 	$noCRFVaxData{'11631008'}   = 1;
-	say "path : [$path]";
-	say "phase1IncludeBNT : $phase1IncludeBNT";
-	say "phase1IncludePlacebo : $phase1IncludePlacebo";
-	say "below16Include : $below16Include";
-	say "seniorsIncluded : $seniorsIncluded";
-	say "duplicatesInclude : $duplicatesInclude";
-	say "noCRFInclude : $noCRFInclude";
-	say "hivSubjectsIncluded : $hivSubjectsIncluded";
-	say "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
-	say "femaleIncluded : $femaleIncluded";
-	say "maleIncluded : $maleIncluded";
-	say "subjectToUnblinding : $subjectToUnblinding";
-	say "subjectsWithNBinding : $subjectsWithNBinding";
-	say "subjectsWithSymptoms : $subjectsWithSymptoms";
-	say "subjectsWithCentralPCR : $subjectsWithCentralPCR";
-	say "cutoffDate : $cutoffDate";
-	say "crossOverCountOnlyBNT : $crossOverCountOnlyBNT";
-	say "subjectsWithPriorInfect : $subjectsWithPriorInfect";
-	say "subjectsWithoutPriorInfect : $subjectsWithoutPriorInfect";
-	say "subjectsWithVoidCOVBLST : $subjectsWithVoidCOVBLST";
-	say "csvSeparator : $csvSeparator";
+	say "path                         : [$path]";
+	say "phase1IncludeBNT             : $phase1IncludeBNT";
+	say "phase1IncludePlacebo         : $phase1IncludePlacebo";
+	say "below16Include               : $below16Include";
+	say "seniorsIncluded              : $seniorsIncluded";
+	say "duplicatesInclude            : $duplicatesInclude";
+	say "noCRFInclude                 : $noCRFInclude";
+	say "hivSubjectsIncluded          : $hivSubjectsIncluded";
+	say "noSafetyPopFlagInclude       : $noSafetyPopFlagInclude";
+	say "femaleIncluded               : $femaleIncluded";
+	say "maleIncluded                 : $maleIncluded";
+	say "subjectToUnblinding          : $subjectToUnblinding";
+	say "subjectsWithNBinding         : $subjectsWithNBinding";
+	say "subjectsWithSymptoms         : $subjectsWithSymptoms";
+	say "subjectsWithSymptomsAndNoPCR : $subjectsWithSymptomsAndNoPCR";
+	say "subjectsWithCentralPCR       : $subjectsWithCentralPCR";
+	say "subjectsWithLocalPCR         : $subjectsWithLocalPCR";
+	say "subjectsWithoutSAEs          : $subjectsWithoutSAEs";
+	say "cutoffDate                   : $cutoffDate";
+	say "crossOverCountOnlyBNT        : $crossOverCountOnlyBNT";
+	say "subjectsWithPriorInfect      : $subjectsWithPriorInfect";
+	say "subjectsWithoutPriorInfect   : $subjectsWithoutPriorInfect";
+	say "subjectsWithVoidCOVBLST      : $subjectsWithVoidCOVBLST";
+	say "csvSeparator                 : $csvSeparator";
 
 	# Loading subjects targeted.
 	open my $in, '<:utf8', 'adverse_effects_raw_data.json';
@@ -287,13 +310,13 @@ sub filter_data {
 
 	# Parsing JSON input.
 	my %json = %$json;
-	my $filteringLogs = '';
-	$filteringLogs .= "\n";
-	my %filteringStats = ();
+	my $filteringLogs    = '';
+	$filteringLogs      .= "\n";
+	my %filteringStats   = ();
 	my %filteredSubjects = ();
-	my %filteredAEs = ();
-	my %stats       = ();
-	my %subjectsAEs = (); # Avoids to count duplictes on subjects AEs.
+	my %filteredAEs      = ();
+	my %stats            = ();
+	my %subjectsAEs      = (); # Avoids to count duplictes on subjects AEs.
 	open my $out5, '>:utf8', "public/pt_aes/$path/filtered_subjects_lin_reg.csv" or die $!;
 	for my $adslColumn (@adslColumns) {
 		print $out5 "$adslColumn$csvSeparator";
@@ -306,6 +329,9 @@ sub filter_data {
 	}
 	say $out6 '';
 	my %summaryStats = ();
+	my %cross_overs = ();
+	my $crossOverSubjects = 0;
+	my $hasCovidInfection = 0;
 	for my $subjectId (sort{$a <=> $b} keys %json) {
 		$filteringStats{'totalSubjectsOverall'}++;
 
@@ -503,55 +529,62 @@ sub filter_data {
 
 		# If the subject made it so far, integrating its data to the end data (stats, lin reg data).
 		# Calculating total serious AE to cut-off or unblinding, depending on the constrain.
-		my $aeserRows = 0;
-		my $aeRows    = 0;
-		my $aeserRowsPostDose3 = 0;
-		my $aeRowsPostDose3    = 0;
+		my $aeserRows                       = 0;
+		my $aeRows                          = 0;
+		my $aeserCrossOverRows              = 0;
+		my $aeCrossOverRows                 = 0;
+		my $aeserPostSymptomsRows           = 0;
+		my $aePostSymptomsRows              = 0;
+		my $aeserPriorSymptomsRows          = 0;
+		my $aePriorSymptomsRows             = 0;
+		my $aeserCrossOverPostSymptomsRows  = 0;
+		my $aeCrossOverPostSymptomsRows     = 0;
+		my $aeserCrossOverPriorSymptomsRows = 0;
+		my $aeCrossOverPriorSymptomsRows    = 0;
 		my $unblindingDatetime = $json{$subjectId}->{'unblnddt'} // die;
 		my ($unblindingDate);
 		if ($unblindingDatetime) {
-			($unblindingDate) = split ' ', $unblindingDatetime;
-			$unblindingDate =~ s/\D//g;
+			($unblindingDate)  = split ' ', $unblindingDatetime;
+			$unblindingDate    =~ s/\D//g;
 		}
-		my %aesByDates  = ();
-		my %saesByDates = ();
+		my %aesByDates         = ();
+		my %saesByDates        = ();
 
 		# Organizing doses received in a hashtable allowing easy numerical sorting.
-		my $vax101dt     = $json{$subjectId}->{'vax101dt'} // die;
-		my $vax102dt     = $json{$subjectId}->{'vax102dt'} // die;
-		my $vax201dt     = $json{$subjectId}->{'vax201dt'} // die;
+		my $vax101dt           = $json{$subjectId}->{'vax101dt'} // die;
+		my $vax102dt           = $json{$subjectId}->{'vax102dt'} // die;
+		my $vax201dt           = $json{$subjectId}->{'vax201dt'} // die;
 		my $vax201cp;
 		if ($vax201dt) {
-			($vax201cp)  = split ' ', $vax201dt;
-			$vax201cp    =~ s/\D//g;
+			($vax201cp)        = split ' ', $vax201dt;
+			$vax201cp          =~ s/\D//g;
 		}
 		if ($vax201dt && $unblindingDate) {
 			if ($vax201cp < $unblindingDate) {
 				die "indeed";
 				my $daysBetween = time::calculate_days_difference($unblindingDatetime, $vax201dt);
-				say "$subjectId - $unblindingDatetime | $vax201dt - $vax201cp > $unblindingDate";
 				$debug{'byDays'}->{$daysBetween}->{'total'}++;
 				$debug{'total'}++;
 			}
 		}
-		my $vax202dt     = $json{$subjectId}->{'vax202dt'} // die;
+		my $vax202dt      = $json{$subjectId}->{'vax202dt'} // die;
 		my $vax202cp;
 		if ($vax202dt) {
 			($vax202cp)   = split ' ', $vax202dt;
 			$vax202cp     =~ s/\D//g;
 		}
-		my $dthdt        = $json{$subjectId}->{'dthdt'}    // die;
+		my $dthdt         = $json{$subjectId}->{'dthdt'}    // die;
 		my $deathcptdt;
 		if ($dthdt) {
 			($deathcptdt) = split ' ', $dthdt;
 			$deathcptdt   =~ s/\D//g;
 		}
-		my %doseDates    = ();
-		$doseDates{'1'}  = $vax101dt;
+		my %doseDates     = ();
+		$doseDates{'1'}   = $vax101dt;
 		die unless $vax101dt;
-		$doseDates{'2'}  = $vax102dt if $vax102dt;
-		$doseDates{'3'}  = $vax201dt if $vax201dt;
-		$doseDates{'4'}  = $vax202dt if $vax202dt;
+		$doseDates{'2'}   = $vax102dt if $vax102dt;
+		$doseDates{'3'}   = $vax201dt if $vax201dt;
+		$doseDates{'4'}   = $vax202dt if $vax202dt;
 
 		# Filtering based on after effects settings.
 		if (exists $json{$subjectId}->{'adaeRows'}) {
@@ -609,15 +642,17 @@ sub filter_data {
 				$aesByDates{$astcpdt}->{$adaeRNum} = \%{$json{$subjectId}->{'adaeRows'}->{$adaeRNum}};
 				$aeRows++;
 				if ($aeser eq 'Y' && $vax201cp && ($vax201cp <= $astcpdt)) {
-					# unless (exists $cross_overs{$subjectId}) {
+					unless (exists $cross_overs{$subjectId}) {
 						# We can count the cross overs with SAEs here.
-					# }
+						$cross_overs{$subjectId} = 1;
+						$crossOverSubjects++;
+					}
 				}
 			}
 		}
 
 		# Incrementing post AE parsing stats.
-		$filteredSubjects{$subjectId}->{'aeRows'} = $aeRows;
+		$filteredSubjects{$subjectId}->{'aeRows'}    = $aeRows;
 		$filteredSubjects{$subjectId}->{'aeserRows'} = $aeserRows;
 		if ($aeserRows) {
 			die unless keys %saesByDates;
@@ -665,6 +700,8 @@ sub filter_data {
 			}
 		}
 		my $posPCR       = subject_central_pcrs_by_visits($subjectId, $limitDate, %{$json{$subjectId}});
+		my $posLocalPCR  = subject_local_pcrs_by_visits($subjectId, $limitDate, %{$json{$subjectId}});
+		# say "posLocalPCR : $posLocalPCR";
 		my $posNBinding  = subject_central_nbindings_by_visits($subjectId, $limitDate, %{$json{$subjectId}});
 		my $nBindingV1   = $filteredSubjects{$subjectId}->{'nBindings'}->{'V1_DAY1_VAX1_L'}->{'avalc'} // 'MIS';
 		my $centralPcrV1 = $filteredSubjects{$subjectId}->{'pcrs'}->{'V1_DAY1_VAX1_L'}->{'mborres'}    // 'MIS';
@@ -695,19 +732,52 @@ sub filter_data {
 			}
 		}
 		$filteredSubjects{$subjectId}->{'posPCR'}           = $posPCR;
+		$filteredSubjects{$subjectId}->{'posLocalPCR'}      = $posLocalPCR;
 		$filteredSubjects{$subjectId}->{'posNBinding'}      = $posNBinding;
 		$filteredSubjects{$subjectId}->{'covblstRecalc'}    = $covblstRecalc;
 		$filteredSubjects{$subjectId}->{'covblstRecalcSrc'} = $covblstRecalcSrc;
 
+		# Evaluating earliest symptoms date.
+		my ($earliestSymptoms, $earliestSymptomsVisit) = (99999999, undef);
+		my ($earliestSymptomsCrossOver, $earliestSymptomsCrossOverVisit) = (99999999, undef);
+		for my $visit (sort keys %{$json{$subjectId}->{'symptoms'}}) {
+			my $symptomCompdate = $json{$subjectId}->{'symptoms'}->{$visit}->{'symptomCompdate'} // die;
+
+			# Skips the visit unless it fits with the phase 3.
+			next unless $symptomCompdate >= 20200720;
+			next unless $symptomCompdate <= $cutoffCompdate;
+			die unless keys %{$json{$subjectId}->{'symptoms'}->{$visit}->{'symptoms'}};
+			if ($symptomCompdate < $earliestSymptoms) {
+				$earliestSymptoms      = $symptomCompdate;
+				$earliestSymptomsVisit = $visit;
+			}
+			if ($vax201cp && ($symptomCompdate > $vax201cp) && ($symptomCompdate < $earliestSymptomsCrossOver)) {
+				$earliestSymptomsCrossOver      = $symptomCompdate;
+				$earliestSymptomsCrossOverVisit = $visit;
+			}
+		}
+		if (!defined $earliestSymptomsVisit) {
+			$earliestSymptoms = undef;
+		}
+		if (!defined $earliestSymptomsCrossOverVisit) {
+			$earliestSymptomsCrossOver = undef;
+		}
+		$filteredSubjects{$subjectId}->{'earliestSymptoms'}               = $earliestSymptoms;
+		$filteredSubjects{$subjectId}->{'earliestSymptomsVisit'}          = $earliestSymptomsVisit;
+		$filteredSubjects{$subjectId}->{'earliestSymptomsCrossOver'}      = $earliestSymptomsCrossOver;
+		$filteredSubjects{$subjectId}->{'earliestSymptomsCrossOverVisit'} = $earliestSymptomsCrossOverVisit;
+
+
 		# If the subject had Covid at baseline he will be accruing time only for the "infected prior dose" group.
 		my
 		(
-			$dayobsPiBnt, $dayobsPiPlacebo, $dayobsPiCrossov,
+			$dayobsPiBnt,  $dayobsPiPlacebo,  $dayobsPiCrossov,
 			$dayobsNpiBnt, $dayobsNpiPlacebo, $dayobsNpiCrossov
 		) = (
 			0, 0, 0, 0, 0, 0
 		);
 		if ($covblstRecalc) {
+			# $hasCovidInfection++;
 			# Setting values related to subject's populations.
 			(my $groupArm, $dayobsPiBnt, $dayobsPiPlacebo, $dayobsPiCrossov) = time_of_exposure_from_simple($actarm, $vax101dt, $vax102dt, $vax201dt, $dthdt, $deathcptdt, $limitDateh, $limitDate);
 
@@ -780,13 +850,13 @@ sub filter_data {
 						if ($aeser eq 'Y') {
 							$aeser  = 1;
 							$hasSAE = 1;
-							$aeserRowsPostDose3++ if $closestDose > 2;
+							$aeserCrossOverRows++ if $closestDose > 2;
 						} elsif ($aeser eq 'N') {
 							$aeser = 0;
 						} else {
 							$aeser = 0;
 						}
-						$aeRowsPostDose3++    if $closestDose > 2;
+						$aeCrossOverRows++ if $closestDose > 2;
 						$hasAE = 1;
 						# say "*" x 50;
 						# say "aehlgt                   : $aehlgt";
@@ -794,6 +864,20 @@ sub filter_data {
 						# say "aeser                    : $aeser";
 						# say "toxicityGrade            : $toxicityGrade";
 						# die;
+						if ($earliestSymptoms && ($aeCompdate >= $earliestSymptoms)) {
+							$aePostSymptomsRows++;
+							$aeserPostSymptomsRows++ if ($aeser eq 'Y');
+						} else {
+							$aePriorSymptomsRows++;
+							$aeserPriorSymptomsRows++ if ($aeser eq 'Y');
+						}
+						if ($earliestSymptomsCrossOver && ($aeCompdate >= $earliestSymptomsCrossOver)) {
+							$aeCrossOverPostSymptomsRows++;
+							$aeserCrossOverPostSymptomsRows++ if ($aeser eq 'Y');
+						} else {
+							$aeCrossOverPriorSymptomsRows++;
+							$aeserCrossOverPriorSymptomsRows++ if ($aeser eq 'Y');
+						}
 
 						# Grade level - global stat & by toxicity stats.
 						unless (exists $subjectsAEs{'Doses_With_Infection'}->{$toxicityGrade}->{'subjects'}->{$subjectId}->{'subject'}) {
@@ -905,20 +989,16 @@ sub filter_data {
 			# If not he will be accruing time of exposure for the "non infected group"
 			# up to his infection if it occures before dose 2, 3 or 4
 			my $hasInfection  = 0;
-			my $subjectsWithCentralPCR = $self->param('subjectsWithCentralPCR') // die;
-			my $subjectsWithNBinding = $self->param('subjectsWithNBinding') // die;
 			if ($subjectsWithSymptoms eq 'true') {
 				my $hasSymptoms = subject_symptoms_by_visits($subjectId, $limitDate, %{$json{$subjectId}});
-				if ($posPCR || $hasSymptoms || $posNBinding) {
+				if ($posPCR || $hasSymptoms || $posNBinding || $posLocalPCR) {
 					$hasInfection = 1;
 				}
-			} elsif ($subjectsWithCentralPCR eq 'true' && $subjectsWithNBinding eq 'true') {
-				if ($posPCR || $posNBinding) {
+			}
+			if ($subjectsWithCentralPCR eq 'true' || $subjectsWithNBinding eq 'true' || $subjectsWithLocalPCR eq 'true') {
+				if (($posPCR && $subjectsWithCentralPCR eq 'true') || ($posNBinding && $subjectsWithNBinding eq 'true') || ($posLocalPCR && $subjectsWithLocalPCR eq 'true')) {
 					$hasInfection = 1;
-				}
-			} elsif ($subjectsWithCentralPCR eq 'true' || $subjectsWithNBinding eq 'true') {
-				if (($posPCR && $subjectsWithCentralPCR eq 'true') || ($posNBinding && $subjectsWithNBinding eq 'true')) {
-					$hasInfection = 1;
+					$hasCovidInfection++;
 				}
 			}
 			if ($hasInfection) {
@@ -936,6 +1016,18 @@ sub filter_data {
 						if ($symptomCompdate < $earliestCovid) {
 							$earliestCovid = $symptomCompdate;
 							$earliestVisit = $visit;
+						}
+					}
+				}
+				if ($subjectsWithLocalPCR eq 'true') {
+					for my $visit (sort keys %{$json{$subjectId}->{'localPcrs'}}) {
+						my $visitcpdt = $json{$subjectId}->{'localPcrs'}->{$visit}->{'visitcpdt'} // next;
+						my $mborres   = $json{$subjectId}->{'localPcrs'}->{$visit}->{'mborres'}   // die;
+						if ($mborres eq 'POS') {
+							if ($visitcpdt < $earliestCovid) {
+								$earliestCovid = $visitcpdt;
+								$earliestVisit = $visit;
+							}
 						}
 					}
 				}
@@ -1148,13 +1240,13 @@ sub filter_data {
 									if ($aeser eq 'Y') {
 										$aeser  = 1;
 										$hasSAE = 1;
-										$aeserRowsPostDose3++ if $closestDose > 2;
+										$aeserCrossOverRows++ if $closestDose > 2;
 									} elsif ($aeser eq 'N') {
 										$aeser = 0;
 									} else {
 										$aeser = 0;
 									}
-									$aeRowsPostDose3++    if $closestDose > 2;
+									$aeCrossOverRows++    if $closestDose > 2;
 									$hasAE = 1;
 									# say "*" x 50;
 									# say "aehlgt                   : $aehlgt";
@@ -1374,13 +1466,13 @@ sub filter_data {
 								if ($aeser eq 'Y') {
 									$aeser  = 1;
 									$hasSAE = 1;
-									$aeserRowsPostDose3++ if $closestDose > 2;
+									$aeserCrossOverRows++ if $closestDose > 2;
 								} elsif ($aeser eq 'N') {
 									$aeser = 0;
 								} else {
 									$aeser = 0;
 								}
-								$aeRowsPostDose3++    if $closestDose > 2;
+								$aeCrossOverRows++    if $closestDose > 2;
 								$hasAE = 1;
 								# say "*" x 50;
 								# say "aehlgt                   : $aehlgt";
@@ -1588,13 +1680,13 @@ sub filter_data {
 							if ($aeser eq 'Y') {
 								$aeser  = 1;
 								$hasSAE = 1;
-								$aeserRowsPostDose3++ if $closestDose > 2;
+								$aeserCrossOverRows++ if $closestDose > 2;
 							} elsif ($aeser eq 'N') {
 								$aeser = 0;
 							} else {
 								$aeser = 0;
 							}
-							$aeRowsPostDose3++    if $closestDose > 2;
+							$aeCrossOverRows++    if $closestDose > 2;
 							$hasAE = 1;
 							# say "*" x 50;
 							# say "aehlgt                   : $aehlgt";
@@ -1718,13 +1810,25 @@ sub filter_data {
 			$filteredSubjects{$subjectId}->{'earliestCovid'} = undef;
 			$filteredSubjects{$subjectId}->{'earliestCovidVisit'} = undef;
 		}
-		$filteredSubjects{$subjectId}->{'dayobsPiBnt'}       = $dayobsPiBnt;
-		$filteredSubjects{$subjectId}->{'dayobsPiPlacebo'}   = $dayobsPiPlacebo;
-		$filteredSubjects{$subjectId}->{'dayobsPiCrossov'}   = $dayobsPiCrossov;
-		$filteredSubjects{$subjectId}->{'dayobsNpiBnt'}      = $dayobsNpiBnt;
-		$filteredSubjects{$subjectId}->{'dayobsNpiPlacebo'}  = $dayobsNpiPlacebo;
-		$filteredSubjects{$subjectId}->{'dayobsNpiCrossov'}  = $dayobsNpiCrossov;
+		$filteredSubjects{$subjectId}->{'dayobsPiBnt'}        = $dayobsPiBnt;
+		$filteredSubjects{$subjectId}->{'dayobsPiPlacebo'}    = $dayobsPiPlacebo;
+		$filteredSubjects{$subjectId}->{'dayobsPiCrossov'}    = $dayobsPiCrossov;
+		$filteredSubjects{$subjectId}->{'dayobsNpiBnt'}       = $dayobsNpiBnt;
+		$filteredSubjects{$subjectId}->{'dayobsNpiPlacebo'}   = $dayobsNpiPlacebo;
+		$filteredSubjects{$subjectId}->{'dayobsNpiCrossov'}   = $dayobsNpiCrossov;
+		$filteredSubjects{$subjectId}->{'aeCrossOverRows'}    = $aeCrossOverRows;
+		$filteredSubjects{$subjectId}->{'aeserCrossOverRows'} = $aeserCrossOverRows;
+		$filteredSubjects{$subjectId}->{'aeserPostSymptomsRows'} = $aeserPostSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aePostSymptomsRows'} = $aePostSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aeserPriorSymptomsRows'} = $aeserPriorSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aePriorSymptomsRows'} = $aePriorSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aeserCrossOverPostSymptomsRows'} = $aeserCrossOverPostSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aeCrossOverPostSymptomsRows'} = $aeCrossOverPostSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aeserCrossOverPriorSymptomsRows'} = $aeserCrossOverPriorSymptomsRows;
+		$filteredSubjects{$subjectId}->{'aeCrossOverPriorSymptomsRows'} = $aeCrossOverPriorSymptomsRows;
 
+  
+  
 		# if ($subjectId eq '10391075') {
 		# 	p$filteredSubjects{$subjectId};
 		# 	die;
@@ -1740,13 +1844,13 @@ sub filter_data {
 			$summaryStats{'byCategoryArms'}->{'totalSubjects'}++;
 			$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjects'}++;
 			$summaryStats{'bySummaryArms'}->{'totalSubjects'}++;
-			if ($aeRowsPostDose3) {
+			if ($aeCrossOverRows) {
 				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithAEs'}++;
 				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithAEs'}++;
 				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithAEs'}++;
 				$summaryStats{'bySummaryArms'}->{'totalSubjectsWithAEs'}++;
 			}
-			if ($aeserRowsPostDose3) {
+			if ($aeserCrossOverRows) {
 				$summaryStats{'byCategoryArms'}->{'byArms'}->{$categoArm}->{'totalSubjectsWithSAEs'}++;
 				$summaryStats{'byCategoryArms'}->{'totalSubjectsWithSAEs'}++;
 				$summaryStats{'bySummaryArms'}->{'byArms'}->{$summaryArm}->{'totalSubjectsWithSAEs'}++;
@@ -1815,9 +1919,12 @@ sub filter_data {
 	close $out5;
 	close $out6;
 
-	p%tests;
-	p%debug;
-	p%summaryStats;
+	say "crossOverSubjects : $crossOverSubjects";
+	say "hasCovidInfection : $hasCovidInfection";
+
+	# p%tests;
+	# p%debug;
+	# p%summaryStats;
 
 	# Formatting filtering details.
 	open my $out2, '>:utf8', "public/pt_aes/$path/filtering_details.txt";
@@ -1829,7 +1936,10 @@ sub filter_data {
 	say $out2 "noCRFInclude : $noCRFInclude";
 	say $out2 "hivSubjectsIncluded : $hivSubjectsIncluded";
 	say $out2 "subjectsWithCentralPCR : $subjectsWithCentralPCR";
+	say $out2 "subjectsWithLocalPCR : $subjectsWithLocalPCR";
 	say $out2 "subjectsWithNBinding : $subjectsWithNBinding";
+	say $out2 "subjectsWithSymptoms : $subjectsWithSymptoms";
+	say $out2 "subjectsWithSymptomsAndNoPCR : $subjectsWithSymptomsAndNoPCR";
 	say $out2 "noSafetyPopFlagInclude : $noSafetyPopFlagInclude";
 	say $out2 "femaleIncluded : $femaleIncluded";
 	say $out2 "maleIncluded : $maleIncluded";
@@ -2028,20 +2138,20 @@ sub filter_data {
 		# p$stats{$label};
 		# say "label    : $label";
 		# say "ageGroup : $ageGroup";
-		my $totalSubjects                = $stats{$label}->{'totalSubjects'}         // next;
-		my $totalSubjectsBNT162b2        = $stats{$label}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjects'}            // die;
-		my $totalSubjectsPlacebo         = $stats{$label}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                      // die;
-		my $totalSubjectsCrossov         = $stats{$label}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjects'} // 0;
-		my $totalSubjectsWithAE          = $stats{$label}->{'aes'}->{'totalSubjects'}   // next;
-		my $totalSubjectsWithSAEs        = $stats{$label}->{'saes'}->{'totalSubjects'} // 0;
-		my $dayobsCrossov                = $stats{$label}->{'dayobsCrossov'}         // 0;
-		my $dayobsBnt                    = $stats{$label}->{'dayobsBnt'}             // die;
-		my $dayobsPlacebo                = $stats{$label}->{'dayobsPlacebo'}         // die;
-		my $doeGlobal                    = $dayobsCrossov + $dayobsPlacebo + $dayobsBnt;
-		my $personYearsCrossov           = nearest(0.01, $dayobsCrossov / 365);
-		my $personYearsBNT162b2          = nearest(0.01, $dayobsBnt     / 365);
-		my $personYearsPlacebo           = nearest(0.01, $dayobsPlacebo / 365);
-		my $personYearsGlobal            = nearest(0.01, $doeGlobal     / 365);
+		my $totalSubjects         = $stats{$label}->{'totalSubjects'}           // next;
+		my $totalSubjectsBNT162b2 = $stats{$label}->{'byArms'}->{'BNT162b2 (30 mcg)'}->{'totalSubjects'}            // die;
+		my $totalSubjectsPlacebo  = $stats{$label}->{'byArms'}->{'Placebo'}->{'totalSubjects'}                      // die;
+		my $totalSubjectsCrossov  = $stats{$label}->{'byArms'}->{'Placebo -> BNT162b2 (30 mcg)'}->{'totalSubjects'} // 0;
+		my $totalSubjectsWithAE   = $stats{$label}->{'aes'}->{'totalSubjects'}  // next;
+		my $totalSubjectsWithSAEs = $stats{$label}->{'saes'}->{'totalSubjects'} // 0;
+		my $dayobsCrossov         = $stats{$label}->{'dayobsCrossov'}           // 0;
+		my $dayobsBnt             = $stats{$label}->{'dayobsBnt'}               // die;
+		my $dayobsPlacebo         = $stats{$label}->{'dayobsPlacebo'}           // die;
+		my $doeGlobal             = $dayobsCrossov + $dayobsPlacebo + $dayobsBnt;
+		my $personYearsCrossov    = nearest(0.01, $dayobsCrossov / 365);
+		my $personYearsBNT162b2   = nearest(0.01, $dayobsBnt     / 365);
+		my $personYearsPlacebo    = nearest(0.01, $dayobsPlacebo / 365);
+		my $personYearsGlobal     = nearest(0.01, $doeGlobal     / 365);
 		$stats{$label}->{'doeGlobal'}           = $doeGlobal;
 		$stats{$label}->{'personYearsCrossov'}  = $personYearsCrossov;
 		$stats{$label}->{'personYearsBNT162b2'} = $personYearsBNT162b2;
@@ -2329,9 +2439,11 @@ sub filter_data {
 
 	$self->render(
 		path => $path,
+		subjectsWithLocalPCR => $subjectsWithLocalPCR,
 		subjectsWithCentralPCR => $subjectsWithCentralPCR,
 		subjectsWithNBinding => $subjectsWithNBinding,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 	    below16Include => $below16Include,
@@ -2375,6 +2487,28 @@ sub subject_central_pcrs_by_visits {
 		}
 	}
 	return $posPCR;
+}
+
+sub subject_local_pcrs_by_visits {
+	my ($subjectId, $cutoffCompdate, %subjectData) = @_;
+	# p$subjectData{'localPcrs'};
+	my $posLocalPCR = 0;
+	for my $visit (sort keys %{$subjectData{'localPcrs'}}) {
+		my $visitcpdt = $subjectData{'localPcrs'}->{$visit}->{'visitcpdt'} // die;
+		my $mborres   = $subjectData{'localPcrs'}->{$visit}->{'mborres'}   // die;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitcpdt >= 20200720;
+		next unless $visitcpdt <= $cutoffCompdate;
+		if ($mborres eq 'POS') {
+			$posLocalPCR = 1;
+		} elsif ($mborres eq 'NEG') {
+		} elsif ($mborres eq 'IND' || $mborres eq '') {
+		} else {
+			die "mborres : $mborres";
+		}
+	}
+	return $posLocalPCR;	
 }
 
 sub subject_symptoms_by_visits {
@@ -2589,6 +2723,7 @@ sub render_logs {
 	my $phase1IncludePlacebo = $self->param('phase1IncludePlacebo') // die;
 	my $below16Include = $self->param('below16Include') // die;
 	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
 	my $seniorsIncluded = $self->param('seniorsIncluded') // die;
 	my $subjectsWithoutSAEs = $self->param('subjectsWithoutSAEs') // die;
 	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
@@ -2643,6 +2778,7 @@ sub render_logs {
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    below16Include => $below16Include,
 	    seniorsIncluded => $seniorsIncluded,
 	    duplicatesInclude => $duplicatesInclude,
@@ -2679,6 +2815,7 @@ sub render_lin_reg_data {
 	my $seniorsIncluded = $self->param('seniorsIncluded') // die;
 	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
 	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
 	my $noCRFInclude = $self->param('noCRFInclude') // die;
 	my $hivSubjectsIncluded = $self->param('hivSubjectsIncluded') // die;
 	my $crossOverCountOnlyBNT = $self->param('crossOverCountOnlyBNT') // die;
@@ -2728,6 +2865,7 @@ sub render_lin_reg_data {
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    aeWithoutDate => $aeWithoutDate,
 	    below16Include => $below16Include,
 	    seniorsIncluded => $seniorsIncluded,
@@ -2758,6 +2896,7 @@ sub render_stats {
 	my $path = $self->param('path') // die;
 	my $phase1IncludeBNT = $self->param('phase1IncludeBNT') // die;
 	my $aeWithoutDate = $self->param('aeWithoutDate') // die;
+	my $subjectsWithLocalPCR       = $self->param('subjectsWithLocalPCR')       // die;
 	my $subjectsWithCentralPCR = $self->param('subjectsWithCentralPCR') // die;
 	my $subjectsWithNBinding = $self->param('subjectsWithNBinding') // die;
 	my $phase1IncludePlacebo = $self->param('phase1IncludePlacebo') // die;
@@ -2765,6 +2904,7 @@ sub render_stats {
 	my $subjectsWithVoidCOVBLST = $self->param('subjectsWithVoidCOVBLST') // die;
 	my $below16Include = $self->param('below16Include') // die;
 	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
 	my $crossOverCountOnlyBNT = $self->param('crossOverCountOnlyBNT') // die;
 	my $seniorsIncluded = $self->param('seniorsIncluded') // die;
 	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
@@ -2816,6 +2956,7 @@ sub render_stats {
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    aeWithoutDate => $aeWithoutDate,
 	    below16Include => $below16Include,
 	    subjectsWithVoidCOVBLST => $subjectsWithVoidCOVBLST,
@@ -2824,6 +2965,7 @@ sub render_stats {
 	    noCRFInclude => $noCRFInclude,
 	    hivSubjectsIncluded => $hivSubjectsIncluded,
 		subjectsWithCentralPCR => $subjectsWithCentralPCR,
+		subjectsWithLocalPCR => $subjectsWithLocalPCR,
 		subjectsWithNBinding => $subjectsWithNBinding,
 	    noSafetyPopFlagInclude => $noSafetyPopFlagInclude,
 	    femaleIncluded => $femaleIncluded,
@@ -2854,8 +2996,10 @@ sub render_aes_data {
 	my $crossOverCountOnlyBNT = $self->param('crossOverCountOnlyBNT') // die;
 	my $duplicatesInclude = $self->param('duplicatesInclude') // die;
 	my $subjectsWithVoidCOVBLST = $self->param('subjectsWithVoidCOVBLST') // die;
+	my $subjectsWithLocalPCR       = $self->param('subjectsWithLocalPCR')       // die;
 	my $noCRFInclude = $self->param('noCRFInclude') // die;
 	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
 	my $hivSubjectsIncluded = $self->param('hivSubjectsIncluded') // die;
 	my $noSafetyPopFlagInclude = $self->param('noSafetyPopFlagInclude') // die;
 	my $femaleIncluded = $self->param('femaleIncluded') // die;
@@ -2903,6 +3047,7 @@ sub render_aes_data {
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    aeWithoutDate => $aeWithoutDate,
 	    below16Include => $below16Include,
 	    seniorsIncluded => $seniorsIncluded,
@@ -2932,11 +3077,13 @@ sub stats_details {
 	my $currentLanguage = $self->param('currentLanguage') // 'en';
 	my $path = $self->param('path') // die;
 	my $crossOverCountOnlyBNT = $self->param('crossOverCountOnlyBNT') // die;
+	my $subjectsWithLocalPCR       = $self->param('subjectsWithLocalPCR')       // die;
 	my $subjectsWithCentralPCR = $self->param('subjectsWithCentralPCR') // die;
 	my $subjectsWithVoidCOVBLST = $self->param('subjectsWithVoidCOVBLST') // die;
 	my $subjectsWithNBinding = $self->param('subjectsWithNBinding') // die;
 	my $phase1IncludeBNT = $self->param('phase1IncludeBNT') // die;
 	my $subjectsWithSymptoms = $self->param('subjectsWithSymptoms') // die;
+	my $subjectsWithSymptomsAndNoPCR = $self->param('subjectsWithSymptomsAndNoPCR') // die;
 	my $phase1IncludePlacebo = $self->param('phase1IncludePlacebo') // die;
 	my $subjectsWithoutSAEs = $self->param('subjectsWithoutSAEs') // die;
 	my $aeWithoutDate = $self->param('aeWithoutDate') // die;
@@ -3005,6 +3152,7 @@ sub stats_details {
 	    phase1IncludeBNT => $phase1IncludeBNT,
 	    phase1IncludePlacebo => $phase1IncludePlacebo,
 		subjectsWithSymptoms => $subjectsWithSymptoms,
+		subjectsWithSymptomsAndNoPCR => $subjectsWithSymptomsAndNoPCR,
 	    aeWithoutDate => $aeWithoutDate,
 	    below16Include => $below16Include,
 	    seniorsIncluded => $seniorsIncluded,

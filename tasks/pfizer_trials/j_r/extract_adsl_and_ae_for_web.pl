@@ -33,6 +33,7 @@ my $pcrRecordsFile = 'public/doc/pfizer_trials/pfizer_mb_patients.json';
 my $devData        = "public/doc/pfizer_trials/deviations_data_currated.json";
 my $symptomsFile   = 'public/doc/pfizer_trials/pfizer_patients_symptoms.json';
 my $faceFile       = 'public/doc/pfizer_trials/pfizer_face_patients.json';
+my $testsRefsFile  = 'public/doc/pfizer_trials/pfizer_di.json';
 my $dt19600101     = '1960-01-01 12:00:00';
 my $tp19600101     = time::datetime_to_timestamp($dt19600101);
 my $cutoffCompdate = '20210313';
@@ -41,6 +42,7 @@ my %pcrRecords     = ();
 my %stats          = ();
 my %symptoms       = ();
 my %faces          = ();
+my %testsRefs      = ();
 
 set_columns();
 
@@ -49,6 +51,8 @@ load_symptoms();
 load_faces();
 
 load_adva();
+
+load_tests_refs();
 
 load_pcr_tests();
 
@@ -137,6 +141,18 @@ sub load_adva {
 	$json = decode_json($json);
 	%advaData = %$json;
 	say "[$advaFile] -> subjects : " . keys %advaData;
+}
+
+sub load_tests_refs {
+	open my $in, '<:utf8', $testsRefsFile or die "Missing file [$testsRefsFile]";
+	my $json;
+	while (<$in>) {
+		$json .= $_;
+	}
+	close $in;
+	$json = decode_json($json);
+	%testsRefs = %$json;
+	say "[$testsRefsFile] -> tests    : " . keys %testsRefs;
 }
 
 sub load_pcr_tests {
@@ -275,6 +291,7 @@ sub load_adsl_data {
 
 			# Loading subject's tests.
 			subject_central_pcrs_by_visits($subjid);
+			subject_local_pcrs_by_visits($subjid);
 			subject_central_nbindings_by_visits($subjid);
 			subject_symptoms_by_visits($subjid);
 		}
@@ -381,6 +398,51 @@ sub subject_central_pcrs_by_visits {
 		$adslData{$subjid}->{'pcrs'}->{$visit}->{'visitdt'}   = $visitDate;
 		$adslData{$subjid}->{'pcrs'}->{$visit}->{'mborres'}   = $mborres;
 		$adslData{$subjid}->{'pcrs'}->{$visit}->{'visitcpdt'} = $visitCompdate;
+	}
+}
+
+sub subject_local_pcrs_by_visits {
+	my ($subjid) = @_;
+	for my $visitDate (sort keys %{$pcrRecords{$subjid}->{'mbVisits'}}) {
+
+		# Skips the visits unless it contains PCRs.
+		next unless exists $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'};
+		# p$pcrRecords{$subjid};
+		# die;
+		my $visitCompdate = $visitDate;
+		$visitCompdate =~ s/\D//g;
+
+		# Skips the visit unless it fits with the phase 3.
+		next unless $visitCompdate >= 20200720;
+		my $mborres   = $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'mbResult'} // die;
+		my $visitName = $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'visit'} // die;
+		my $spDevId   = $pcrRecords{$subjid}->{'mbVisits'}->{$visitDate}->{'SEVERE ACUTE RESP SYNDROME CORONAVIRUS 2'}->{'spDevId'}  // die;
+		my ($deviceType, $tradeName);
+		if ($spDevId) {
+			die "spDevId: $spDevId" unless $spDevId && looks_like_number $spDevId;
+			die unless exists $testsRefs{$spDevId};
+			$deviceType = $testsRefs{$spDevId}->{'Device Type'} // die;
+			$tradeName  = $testsRefs{$spDevId}->{'Trade Name'}  // die;
+			$spDevId = "$deviceType - $tradeName ($spDevId)";
+		} else {
+			$spDevId = 'Not Provided';
+		}
+		if ($mborres eq 'POSITIVE') {
+			$mborres = 'POS';
+		} elsif ($mborres eq 'NEGATIVE') {
+			$mborres = 'NEG';
+		} elsif ($mborres eq 'INDETERMINATE' || $mborres eq '') {
+			$mborres = 'IND';
+		} else {
+			die "mborres : $mborres";
+		}
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'visitcpdt'}  = $visitCompdate;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'spDevId'}    = $spDevId;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'deviceType'} = $deviceType;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'tradeName'}  = $tradeName;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'visitdt'}    = $visitDate;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'mborres'}    = $mborres;
+		$adslData{$subjid}->{'localPcrs'}->{$visitName}->{'spDevId'}    = $spDevId;
 	}
 }
 

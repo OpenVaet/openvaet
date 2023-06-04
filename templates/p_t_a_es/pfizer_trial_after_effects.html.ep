@@ -70,7 +70,7 @@
 				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
 					<legend style="font-size:18px;">Infection on Dose 1 (baseline)</legend>
 
-					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithVoidCOVBLST" value="subjectsWithVoidCOVBLST"> Include subjects with void COVBLST</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithVoidCOVBLST" value="subjectsWithVoidCOVBLST" checked> Include subjects with void COVBLST</label><br />
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithPriorInfect" value="subjectsWithPriorInfect" checked> Include subjects with prior infection</label><br />
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithoutPriorInfect" value="subjectsWithoutPriorInfect" checked> Include subjects without prior infection</label><br />
 				</fieldset>
@@ -78,14 +78,16 @@
 					<legend style="font-size:18px;">Infection Post Dose 1</legend>
 
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithCentralPCR" value="subjectsWithCentralPCR" checked> Include subjects with Central PCR</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithLocalPCR" value="subjectsWithLocalPCR" checked> Include subjects with Local PCR</label><br />
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithNBinding" value="subjectsWithNBinding" checked> Include subjects with N-Binding</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithSymptomsAndNoPCR" value="subjectsWithSymptomsAndNoPCR"> Include subjects with Covid Visits And No PCR</label><br />
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithSymptoms" value="subjectsWithSymptoms"> Include subjects with Covid Visits</label><br />
 				</fieldset>
 				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
 					<legend style="font-size:18px;">After-Effects</legend>
 
 					<label style="font-size:15px;"><input type="checkbox" id="subjectsWithoutSAEs" value="subjectsWithoutSAEs" checked> Include subjects without SAEs</label><br />
-					<label style="font-size:15px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate"> Include AEs without accurate date</label><br />
+					<label style="font-size:15px;"><input type="checkbox" id="aeWithoutDate" value="aeWithoutDate" checked> Include AEs without accurate date</label><br />
 					<label style="font-size:15px;"><input type="checkbox" id="crossOverCountOnlyBNT" value="crossOverCountOnlyBNT"> Cross-Overs only counted for BNT time</label><br />
 				</fieldset>
 				<fieldset style="width:calc(88.5% - 10px);margin-top: 8px;">
@@ -182,9 +184,11 @@
 
 		console.log('Getting filters values ...');
 		let subjectsWithCentralPCR = $('#subjectsWithCentralPCR').is(':checked');
+		let subjectsWithLocalPCR = $('#subjectsWithLocalPCR').is(':checked');
 		let subjectsWithVoidCOVBLST = $('#subjectsWithVoidCOVBLST').is(':checked');
 		let subjectsWithNBinding = $('#subjectsWithNBinding').is(':checked');
 		let subjectsWithSymptoms = $('#subjectsWithSymptoms').is(':checked');
+		let subjectsWithSymptomsAndNoPCR = $('#subjectsWithSymptomsAndNoPCR').is(':checked');
 		let phase1IncludeBNT = $('#phase1IncludeBNT').is(':checked');
 		let phase1IncludePlacebo = $('#phase1IncludePlacebo').is(':checked');
 		let below16Include = $('#below16Include').is(':checked');
@@ -222,8 +226,10 @@
 		console.log('phase1IncludeBNT : ' + phase1IncludeBNT);
 		console.log('subjectsWithVoidCOVBLST : ' + subjectsWithVoidCOVBLST);
 		console.log('subjectsWithCentralPCR : ' + subjectsWithCentralPCR);
+		console.log('subjectsWithLocalPCR : ' + subjectsWithLocalPCR);
 		console.log('subjectsWithNBinding : ' + subjectsWithNBinding);
 		console.log('subjectsWithSymptoms : ' + subjectsWithSymptoms);
+		console.log('subjectsWithSymptomsAndNoPCR : ' + subjectsWithSymptomsAndNoPCR);
 		console.log('phase1IncludePlacebo : ' + phase1IncludePlacebo);
 		console.log('below16Include : ' + below16Include);
 		console.log('seniorsIncluded : ' + seniorsIncluded);
@@ -248,6 +254,7 @@
 			data: {
 				subjectsWithVoidCOVBLST: subjectsWithVoidCOVBLST,
 				subjectsWithCentralPCR: subjectsWithCentralPCR,
+				subjectsWithLocalPCR: subjectsWithLocalPCR,
 				subjectsWithNBinding: subjectsWithNBinding,
 				phase1IncludeBNT: phase1IncludeBNT,
 				phase1IncludePlacebo: phase1IncludePlacebo,
@@ -256,6 +263,7 @@
 				duplicatesInclude: duplicatesInclude,
 				crossOverCountOnlyBNT : crossOverCountOnlyBNT,
 				subjectsWithSymptoms : subjectsWithSymptoms,
+				subjectsWithSymptomsAndNoPCR : subjectsWithSymptomsAndNoPCR,
 				noCRFInclude: noCRFInclude,
 				hivSubjectsIncluded: hivSubjectsIncluded,
 				noSafetyPopFlagInclude: noSafetyPopFlagInclude,
