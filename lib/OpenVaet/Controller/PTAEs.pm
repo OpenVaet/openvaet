@@ -335,7 +335,7 @@ sub filter_data {
 	for my $subjectId (sort{$a <=> $b} keys %json) {
 		$filteringStats{'totalSubjectsOverall'}++;
 
-		# Preliminary filterings (excluding actarmcd = Screen failures & Not assigned)
+		# Preliminary filterings (excluding actarmcd = Screen failures, Not assigned, No treatment)
 		my $actarmcd = $json{$subjectId}->{'actarmcd'} // die;
 		if ($actarmcd eq 'SCRNFAIL') {
 			$filteringStats{'totalScreenFailures'}++;
@@ -559,32 +559,24 @@ sub filter_data {
 			($vax201cp)        = split ' ', $vax201dt;
 			$vax201cp          =~ s/\D//g;
 		}
-		if ($vax201dt && $unblindingDate) {
-			if ($vax201cp < $unblindingDate) {
-				die "indeed";
-				my $daysBetween = time::calculate_days_difference($unblindingDatetime, $vax201dt);
-				$debug{'byDays'}->{$daysBetween}->{'total'}++;
-				$debug{'total'}++;
-			}
-		}
-		my $vax202dt      = $json{$subjectId}->{'vax202dt'} // die;
+		my $vax202dt           = $json{$subjectId}->{'vax202dt'} // die;
 		my $vax202cp;
 		if ($vax202dt) {
-			($vax202cp)   = split ' ', $vax202dt;
-			$vax202cp     =~ s/\D//g;
+			($vax202cp)        = split ' ', $vax202dt;
+			$vax202cp          =~ s/\D//g;
 		}
-		my $dthdt         = $json{$subjectId}->{'dthdt'}    // die;
+		my $dthdt              = $json{$subjectId}->{'dthdt'}    // die;
 		my $deathcptdt;
 		if ($dthdt) {
-			($deathcptdt) = split ' ', $dthdt;
-			$deathcptdt   =~ s/\D//g;
+			($deathcptdt)      = split ' ', $dthdt;
+			$deathcptdt        =~ s/\D//g;
 		}
-		my %doseDates     = ();
-		$doseDates{'1'}   = $vax101dt;
+		my %doseDates          = ();
+		$doseDates{'1'}        = $vax101dt;
 		die unless $vax101dt;
-		$doseDates{'2'}   = $vax102dt if $vax102dt;
-		$doseDates{'3'}   = $vax201dt if $vax201dt;
-		$doseDates{'4'}   = $vax202dt if $vax202dt;
+		$doseDates{'2'}        = $vax102dt if $vax102dt;
+		$doseDates{'3'}        = $vax201dt if $vax201dt;
+		$doseDates{'4'}        = $vax202dt if $vax202dt;
 
 		# Filtering based on after effects settings.
 		if (exists $json{$subjectId}->{'adaeRows'}) {
@@ -809,7 +801,7 @@ sub filter_data {
 					my %doseDatesByDates = ();
 					for my $dNum (sort{$a <=> $b} keys %doseDates) {
 						my $dt = $doseDates{$dNum} // die;
-						my ($cpDt) = split ' ', $dNum;
+						my ($cpDt) = split ' ', $dt;
 						$cpDt =~ s/\D//g;
 						next unless $cpDt < $aeCompdate;
 						my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
@@ -1179,7 +1171,7 @@ sub filter_data {
 								my %doseDatesByDates = ();
 								for my $dNum (sort{$a <=> $b} keys %doseDates) {
 									my $dt = $doseDates{$dNum} // die;
-									my ($cpDt) = split ' ', $dNum;
+									my ($cpDt) = split ' ', $dt;
 									$cpDt =~ s/\D//g;
 									next unless $cpDt < $aeCompdate;
 									my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
@@ -1422,7 +1414,7 @@ sub filter_data {
 							my %doseDatesByDates = ();
 							for my $dNum (sort{$a <=> $b} keys %doseDates) {
 								my $dt = $doseDates{$dNum} // die;
-								my ($cpDt) = split ' ', $dNum;
+								my ($cpDt) = split ' ', $dt;
 								$cpDt =~ s/\D//g;
 								next unless $cpDt < $aeCompdate;
 								my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
@@ -1641,7 +1633,7 @@ sub filter_data {
 						my %doseDatesByDates = ();
 						for my $dNum (sort{$a <=> $b} keys %doseDates) {
 							my $dt = $doseDates{$dNum} // die;
-							my ($cpDt) = split ' ', $dNum;
+							my ($cpDt) = split ' ', $dt;
 							$cpDt =~ s/\D//g;
 							next unless $cpDt < $aeCompdate;
 							my $daysBetween = time::calculate_days_difference("$aeY-$aeM-$aeD 12:00:00", $dt);
@@ -1830,7 +1822,7 @@ sub filter_data {
   
   
 		# if ($subjectId eq '10391075') {
-		# 	p$filteredSubjects{$subjectId};
+			# p$filteredSubjects{$subjectId};
 		# 	die;
 		# }
 
@@ -1924,7 +1916,7 @@ sub filter_data {
 
 	# p%tests;
 	# p%debug;
-	# p%summaryStats;
+	p%summaryStats;
 
 	# Formatting filtering details.
 	open my $out2, '>:utf8', "public/pt_aes/$path/filtering_details.txt";
