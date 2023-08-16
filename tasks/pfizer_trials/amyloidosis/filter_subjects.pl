@@ -62,7 +62,6 @@ say "Filtering data on $cohortsFiltered cohorts, $subjectsFiltered subjects and 
 
 parse_adlb();
 
-
 sub parse_adlb {
 	say "parsing ADLB ...";
 	my %dataLabels       = ();
@@ -146,6 +145,7 @@ sub parse_adlb {
 			if ($cohortAnalysis) {
 				next unless exists $cohortsAnalyzed{$cohort};
 			}
+			next unless exists $paramsAnalyzed{$param};
 			$subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'tests'}->{$param}->{'avaLc'} = $avaLc;
 			$subjects{$subjectId}->{'cohort'}          = $cohort;
 			$subjects{$subjectId}->{'subjectId'}       = $subjectId;
@@ -177,13 +177,11 @@ for my $subjectId (sort{$a <=> $b} keys %subjects) {
 		my $visitDatetime = $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'visitDatetime'} // die;
 		for my $param (sort keys %{$subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'tests'}}) {
 			my $avaLc = $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'tests'}->{$param}->{'avaLc'} // die;
-			say $out "$cohort;$subjectId;$aVisitNum;$daysToDose1;$visitDatetime;$param;$avaLc;";
+			say $out "$cohort;$subjectId;$aVisitNum;$daysToDose1;$visitDatetime;$param;$avaLc";
 		}
 	}
 }
 close $out;
-
-
 
 sub load_parameters_equiv {
 	open my $in, '<:utf8', 'tasks/pfizer_trials/amyloidosis/params_equivalence.csv';

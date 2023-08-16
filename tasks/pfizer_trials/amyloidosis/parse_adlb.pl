@@ -28,7 +28,7 @@ my %subjects      = ();
 my $dataCsv       = Text::CSV_XS->new ({ binary => 1 });
 my %params = ();
 parse_adlb();
-p%params;
+# p%params;
 
 sub parse_adlb {
 	say "parsing ADLB ...";
@@ -40,6 +40,7 @@ sub parse_adlb {
 	my $lastVisitName = 0;
 	my $lastSubjectId = 0;
 	open my $in, '<:utf8', $adlbFile;
+	open my $outDouble, '>:utf8', 'double_tests_adlb.csv';
 	while (<$in>) {
 		$dRNum++;
 
@@ -105,7 +106,7 @@ sub parse_adlb {
 			# say "1 - randomizationTimestamp : $randomizationTimestamp";
 			my $dose1Timestamp = $values{'TRTSDTM'} // die;
 			unless (looks_like_number $dose1Timestamp) {
-				# say "No randomization data";
+				say "No dose 1 data";
 				$noDose1Data++;
 				next;
 				p%values;
@@ -114,22 +115,8 @@ sub parse_adlb {
 			my $dose1Datetime  = time::sas_timestamp_to_datetime($dose1Timestamp);
 			# say "--> dose1Datetime  : $dose1Datetime";
 			# say "--> dose1Datetime          : $dose1Datetime";
-			if (exists $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{$param}) {
-				if ($subjects{$subjectId}->{'visits'}->{$aVisitNum}->{$param} ne $avaLc) {
-					my %tmp = ();
-					$tmp{$subjectId}->{'subjectId'}       = $subjectId;
-					$tmp{$subjectId}->{'uSubjectId'}      = $uSubjectId;
-					$tmp{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
-					$tmp{$subjectId}->{'sex'}             = $sex;
-					$tmp{$subjectId}->{'age'}             = $age;
-					$tmp{$subjectId}->{'dose1Datetime'}   = $dose1Datetime;
-					$tmp{$subjectId}->{'visits'}->{$aVisitNum}->{'visitDate'} = $visitDate;
-					$tmp{$subjectId}->{'visits'}->{$aVisitNum}->{'visitDate'} = $visitDate;
-					$tmp{$subjectId}->{'visits'}->{$aVisitNum}->{$param}  = $avaLc;
-					p%tmp;
-					die;
-				}
-				die unless $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'visitDate'} eq $visitDate;
+			if (exists $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'tests'}->{$param}) {
+				say $outDouble "$subjectId;$aVisitNum;$param;" . $subjects{$subjectId}->{'visits'}->{$aVisitNum}->{'tests'}->{$param};
 			}
 			if (
 				$param eq 'COVID-19 S1 IgG (U/mL) - Luminex Immunoassay' ||
@@ -164,6 +151,7 @@ sub parse_adlb {
 		}
 	}
 	close $in;
+	close $outDouble;
 	$dRNum--;
 	say "dRNum       : $dRNum";
 	say "noDose1Data : $noDose1Data";

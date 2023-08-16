@@ -214,6 +214,7 @@ while (<$in>) {
 		my $sex             = $values{'SEX'}     // die;
 		my $deathUts        = $values{'DTHDT'}   // die;
 		my $covidAtBaseline = $values{'COVBLST'} // die;
+		my $incl7fl         = $values{'INCL7FL'} // die;
 		my ($deathDate, $deathDatetime);
 		if ($deathUts) {
 			$deathUts       = $tp19600101 + $deathUts * 86400;
@@ -261,6 +262,7 @@ while (<$in>) {
 		$subjects{$subjectId}->{'dose4Datetime'}         = $dose4Datetime;
 		$subjects{$subjectId}->{'dose4Date'}             = $dose4Date;
 		$subjects{$subjectId}->{'hasHIV'}                = $hasHIV;
+		$subjects{$subjectId}->{'incl7fl'}               = $incl7fl;
 		$subjects{$subjectId}->{'ageYears'}              = $ageYears;
 		$subjects{$subjectId}->{'saffl'}                 = $saffl;
 		$subjects{$subjectId}->{'phase'}                 = $phase;

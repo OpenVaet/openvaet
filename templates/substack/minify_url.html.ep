@@ -1,0 +1,25 @@
+<div style="width: 100%;text-align: center;margin-top:2vh;">
+	Copy/Past this URL and use it on your posts :
+</div>
+
+<input class="url-minified" type="text" id="urlMinified" value="https://openvaet.org/f<%==$urlMd5%>" placeholder="URL to minify">
+
+<div id="input-result" class="input-result">
+    <button class="url-button" onclick="copyInputContent();return;">Copy</button>
+</div>
+
+<script>
+	function copyInputContent(inputId) {
+	  // Get the input element
+	  var input = document.getElementById('urlMinified');
+
+	  // Select the text inside the input element
+	  input.select();
+
+	  // Execute the copy command
+	  document.execCommand("copy");
+
+	  // Deselect the text
+	  input.setSelectionRange(0, 0);
+	}
+</script>

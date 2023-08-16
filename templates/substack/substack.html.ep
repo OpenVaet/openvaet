@@ -1,0 +1,74 @@
+% layout 'default';
+% title 'OPENVAET - Substack URL Minifier';
+
+<style type="text/css">
+    .error-container {
+        width: 300px;
+        text-align: center;
+        margin: auto;
+        margin-top: 5vh;
+        font-size: 1.2rem;
+    }
+    .input-container {
+        width: 300px;
+        text-align: center;
+        margin: auto;
+        margin-top: 5vh;
+        font-size: 1.2rem;
+    }
+    .input-result {
+        width: 100%;
+    }
+    .url-to-minify {
+        width: 100%;
+        height: 42px;
+    }
+    .url-minified {
+        margin-top: 2vh;
+        width: 100%;
+        height: 42px;
+    }
+    .url-button {
+        margin-top: 2vh;
+        padding: 5px 10px;
+        font-weight: bold;
+    }
+</style>
+
+% if (!$userId) {
+    <div class="error-container">
+        Please connect in the top right corner to minify an URL.
+    </div>
+% } else {
+    <div class="input-container">
+        <input class="url-to-minify" type="text" id="urlToMinify" placeholder="URL to minify">
+        <div id="input-result" class="input-result">
+            <button class="url-button" onclick="minifyUrl();return;">Minify</button>
+        </div>
+    </div>
+% }
+
+<script type="text/javascript">
+    function minifyUrl() {
+        $('#input-result').html('Generating Preview ...');
+        let urlToMinify = $('#urlToMinify').val();
+        console.log('urlToMinify : ' + urlToMinify);
+
+        let request = $.ajax({
+            url: "/substack/minify_url",
+            type: "POST",
+            data: {
+                urlToMinify : urlToMinify
+            }
+        });
+
+        request.done(function(data) {
+            $('#input-result').html(data);
+        });
+
+        // Printing error message if case of failure
+        request.fail(function(jqXHR, textStatus) {
+            alert("Something went wrong : " + textStatus)
+        });
+    }
+</script>

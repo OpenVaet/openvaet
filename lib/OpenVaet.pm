@@ -14,7 +14,7 @@ use config;
 
 # This method will run once at server start
 sub startup {
-	my $self = shift;
+    my $self = shift;
     $self->plugin('Config');
     $self->config(
         hypnotoad => {
@@ -61,8 +61,8 @@ sub startup {
     # BCrypt passwords encryption.
     $self->plugin('bcrypt', { cost => 4 });
 
-	# Configure the application
-	$self->secrets($config->{'secrets'});
+    # Configure the application
+    $self->secrets($config->{'secrets'});
 
     # Data DB handler
     my $dbh;
@@ -228,8 +228,8 @@ sub startup {
     # Enums.
     $self->helper(enums => sub { return \%enums; } );
 
-	# Router
-	my $r = $self->routes;
+    # Router
+    my $r = $self->routes;
 
     # Basic protection : just check if the user is connected.
     my $auth = $r->under(
@@ -292,33 +292,35 @@ sub startup {
     $auth->post('/user_account/change_password')->to('user_account#change_password');
 
     ### Website browsing route (public).
-	$r->get('/')->to('index#index');
+    $r->get('/')->to('index#index');
+    $r->get('/substack')->to('substack#substack');
+    $r->post('/substack/minify_url')->to('substack#minify_url');
     $r->post('/index/index_content')->to('index#index_content');
-	$r->post('/contact_email')->to('index#contact_email');
-	$r->post('/index/events_by_substances')->to('index#events_by_substances');
+    $r->post('/contact_email')->to('index#contact_email');
+    $r->post('/index/events_by_substances')->to('index#events_by_substances');
     $r->post('/index/events_details')->to('index#events_details');
-	$r->get('/disclaimer')->to('disclaimer#disclaimer');
-	$r->get('/contact_us')->to('contact_us#contact_us');
-	$r->post('/contact_us/send_contact_us')->to('contact_us#send_contact_us');
-	$r->get('/data')->to('data#data');
-	$r->get('/data/cdc')->to('cdc#cdc');
-	$r->get('/data/cdc/state_year_reports')->to('cdc#state_year_reports');
-	$r->post('/data/cdc/load_state_years')->to('cdc#load_state_years');
-	$r->get('/data/cdc/notices')->to('cdc#notices');
-	$r->post('/data/cdc/load_notices_filters')->to('cdc#load_notices_filters');
-	$r->post('/data/cdc/load_notices')->to('cdc#load_notices');
-	$r->get('/data/ecdc')->to('ecdc#ecdc');
-	$r->get('/data/ecdc/substances')->to('ecdc#substances');
-	$r->post('/data/ecdc/load_substances')->to('ecdc#load_substances');
-	$r->post('/data/ecdc/set_ecdc_drug_indexation')->to('ecdc#set_ecdc_drug_indexation');
-	$r->get('/data/ecdc/substance_details')->to('ecdc#substance_details');
-	$r->get('/data/ecdc/notices')->to('ecdc#notices');
-	$r->post('/data/ecdc/load_notices')->to('ecdc#load_notices');
-	$r->post('/data/ecdc/load_notices_filters')->to('ecdc#load_notices_filters');
-	$r->get('/data/data_gouv_fr')->to('data_gouv_fr#data_gouv_fr');
-	$r->get('/data/oms')->to('oms#oms');
-	$r->get('/changelog')->to('changelog#changelog');
-	$r->get('/studies')->to('studies#studies');
+    $r->get('/disclaimer')->to('disclaimer#disclaimer');
+    $r->get('/contact_us')->to('contact_us#contact_us');
+    $r->post('/contact_us/send_contact_us')->to('contact_us#send_contact_us');
+    $r->get('/data')->to('data#data');
+    $r->get('/data/cdc')->to('cdc#cdc');
+    $r->get('/data/cdc/state_year_reports')->to('cdc#state_year_reports');
+    $r->post('/data/cdc/load_state_years')->to('cdc#load_state_years');
+    $r->get('/data/cdc/notices')->to('cdc#notices');
+    $r->post('/data/cdc/load_notices_filters')->to('cdc#load_notices_filters');
+    $r->post('/data/cdc/load_notices')->to('cdc#load_notices');
+    $r->get('/data/ecdc')->to('ecdc#ecdc');
+    $r->get('/data/ecdc/substances')->to('ecdc#substances');
+    $r->post('/data/ecdc/load_substances')->to('ecdc#load_substances');
+    $r->post('/data/ecdc/set_ecdc_drug_indexation')->to('ecdc#set_ecdc_drug_indexation');
+    $r->get('/data/ecdc/substance_details')->to('ecdc#substance_details');
+    $r->get('/data/ecdc/notices')->to('ecdc#notices');
+    $r->post('/data/ecdc/load_notices')->to('ecdc#load_notices');
+    $r->post('/data/ecdc/load_notices_filters')->to('ecdc#load_notices_filters');
+    $r->get('/data/data_gouv_fr')->to('data_gouv_fr#data_gouv_fr');
+    $r->get('/data/oms')->to('oms#oms');
+    $r->get('/changelog')->to('changelog#changelog');
+    $r->get('/studies')->to('studies#studies');
     $r->get('/studies/vaers_fertility')->to('studies#vaers_fertility');
     $r->get('/studies/verifying_170_cases')->to('verifying_170_cases#verifying_170_cases');
     $r->get('/studies/review_nejm_fda_data')->to('review_nejm_fda_data#review_nejm_fda_data');
@@ -334,8 +336,8 @@ sub startup {
     $r->post('/review_nejm_fda_data/load_efficacy_by_sites')->to('review_nejm_fda_data#load_efficacy_by_sites');
     $r->post('/review_nejm_fda_data/load_efficacy_by_sites_countries')->to('review_nejm_fda_data#load_efficacy_by_sites_countries');
     $r->post('/review_nejm_fda_data/load_efficacy_cases_week_by_week')->to('review_nejm_fda_data#load_efficacy_cases_week_by_week');
-	$r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
-	$r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
+    $r->get('/studies/vaers_fertility/pregnancies_confirmation')->to('studies#pregnancies_confirmation');
+    $r->post('/studies/vaers_fertility/load_pregnancy_confirmation')->to('studies#load_pregnancy_confirmation');
     $r->post('/studies/vaers_fertility/set_report_pregnancy_attribute')->to('studies#set_report_pregnancy_attribute');
     $r->get('/studies/vaers_fertility/pregnancies_arbitrations')->to('studies#pregnancies_arbitrations');
     $r->post('/studies/vaers_fertility/load_pregnancies_arbitrations_filters')->to('studies#load_pregnancies_arbitrations_filters');
@@ -473,6 +475,14 @@ sub startup {
 
     $r->get('/mapping')->to('mapping#mapping');
     $r->post('/mapping/load_mapping')->to('mapping#load_mapping');
+
+
+    ##### START SUBSTACK URLS.
+    $r->get('/fc81496f4e170bd08ac679f4d706911b6')->to('Cc81496f4e170bd08ac679f4d706911b6#fc81496f4e170bd08ac679f4d706911b6');
+    $r->get('/fc81496f4e170bd08ac679f4d706911b6')->to('Cc81496f4e170bd08ac679f4d706911b6#fc81496f4e170bd08ac679f4d706911b6');
+    $r->get('/fc81496f4e170bd08ac679f4d706911b6')->to('Cc81496f4e170bd08ac679f4d706911b6#fc81496f4e170bd08ac679f4d706911b6');
+    $r->get('/f27b871ab8fd34517fd7e4b4fb82c60bb')->to('C27b871ab8fd34517fd7e4b4fb82c60bb#f27b871ab8fd34517fd7e4b4fb82c60bb');
+    ##### END SUBSTACK URLS.
 }
 
 sub connect_dbi
@@ -485,3 +495,21 @@ sub connect_dbi
 }
 
 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

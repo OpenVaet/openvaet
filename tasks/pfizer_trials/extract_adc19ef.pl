@@ -32,6 +32,7 @@ my ($dRNum,
 my %subjects    = ();
 while (<$in>) {
 	$dRNum++;
+	chomp $_;
 
 	# Verifying line.
 	my $line = $_;
@@ -65,19 +66,20 @@ while (<$in>) {
 			$values{$label} = $value;
 			$vN++;
 		}
-		# p%values;
-		# die;
 
 		# Fetching the data we currently focus on.
 		my $subjectId         = $values{'SUBJID'}  // die;
 		my $uSubjectId        = $values{'USUBJID'} // die;
 		my $pdp27FL           = $values{'PDP27FL'} // die;
+		my $nmpdocfl          = $values{'NMPDOCFL'} // die;
+		next unless $nmpdocfl && $nmpdocfl eq 'Y';
 		die if (exists $subjects{$subjectId}->{'pdp27FL'} && ($subjects{$subjectId}->{'pdp27FL'} ne $pdp27FL));
 		$subjects{$subjectId}->{'totalADC19EFRows'}++;
-		my $totalADC19EFRows     = $subjects{$subjectId}->{'totalADC19EFRows'} // die;
+		my $totalADC19EFRows  = $subjects{$subjectId}->{'totalADC19EFRows'} // die;
 		$subjects{$subjectId}->{'uSubjectIds'}->{$uSubjectId} = 1;
 		$subjects{$subjectId}->{'uSubjectId'} = $uSubjectId;
 		$subjects{$subjectId}->{'pdp27FL'}    = $pdp27FL;
+		$subjects{$subjectId}->{'nmpdocfl'}   = $nmpdocfl;
 		# p$subjects{$subjectId};
 		# die;
 	}
