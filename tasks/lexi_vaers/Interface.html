@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VAERS Report Reviewer</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a32;
+      --ink: #e9ecf1;
+      --muted: #9aa3b2;
+      --accent: #6aa9ff;
+      --accent-2: #4dd0b5;
+      --warn: #ffbf69;
+      --danger: #ff6b6b;
+      --ok: #38d39f;
+      --border: #233055;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      color: var(--ink); background: radial-gradient(1200px 600px at 10% -10%, #17244a, transparent) no-repeat, var(--bg);
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(11,16,32,.8), rgba(11,16,32,.5));
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    header h1 { font-size: 18px; margin: 0; letter-spacing: .4px; }
+    header .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+    main { max-width: 1100px; margin: 18px auto 60px; padding: 0 16px; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+      border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-2 { grid-template-columns: 1.5fr 1fr; }
+
+    .loader { display: grid; gap: 10px; }
+    textarea { width: 100%; min-height: 140px; resize: vertical; color: var(--ink); background: #0f1831; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+    input[type="file"] { color-scheme: dark; }
+
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .toolbar .spacer { flex: 1; }
+
+    button, .btn {
+      appearance: none; border: 1px solid var(--border); background: #0f1831; color: var(--ink);
+      padding: 10px 12px; border-radius: 12px; cursor: pointer; transition: .15s transform, .15s background, .15s border-color;
+    }
+    button:hover { transform: translateY(-1px); border-color: #335299; }
+    button.primary { background: linear-gradient(180deg, #2a64cf, #274b9b); border-color: #3356a1; }
+    button.secondary { background: linear-gradient(180deg, #1b2646, #18213e); }
+    button.warn { background: linear-gradient(180deg, #6a5220, #5b4311); border-color: #7a5a1a; }
+    button[disabled] { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .progress { display: grid; gap: 8px; }
+    .bar { height: 10px; background: #0f1831; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+    .bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    .meta { color: var(--muted); }
+
+    .kv { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); background: #0f1831; color: var(--muted); font-size: 12px; }
+    .badge.ok { color: #bff7e4; border-color: #267f66; background: #0e2a24; }
+    .badge.warn { color: #ffe7bf; border-color: #7a5a1a; background: #2a2310; }
+
+    details { background: #0f1831; border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+    details summary { cursor: pointer; color: var(--muted); }
+    pre { white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; margin: 8px 0 0; }
+
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { text-align: left; color: var(--muted); background: #0f1831; }
+    tr:last-child td { border-bottom: none; }
+
+    .status-pill { padding: 6px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); }
+    .status-related { background: #0e2a24; color: #bff7e4; border-color: #267f66; }
+    .status-not { background: #2a1010; color: #ffb5b5; border-color: #7a2c2c; }
+    .status-skipped { background: #2a2310; color: #ffe7bf; border-color: #7a5a1a; }
+
+    footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 14px; color: var(--muted); background: linear-gradient(180deg, transparent, rgba(0,0,0,.35)); pointer-events: none; }
+    footer .inner { pointer-events: auto; max-width: 1100px; margin: 0 auto; background: #0f1831; border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+    kbd { background: #121a32; border: 1px solid var(--border); border-bottom-color: #1b2a52; padding: 2px 6px; border-radius: 6px; font-size: 12px; }
+
+    .hide { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VAERS Report Reviewer</h1>
+    <span id="dataset-badge" class="badge hide"></span>
+    <div class="right">
+      <button id="btn-show-related" title="View related reports">Related Only (0)</button>
+      <button id="btn-export" title="Export processed statuses">Export Statuses</button>
+      <label class="btn" for="import-file">Import</label>
+      <input id="import-file" type="file" accept="application/json,.json" class="hide" />
+    </div>
+  </header>
+
+  <main>
+    <section id="loader" class="card loader">
+      <h2 style="margin:0">1) Load your reports</h2>
+      <div class="toolbar">
+        <input id="json-file" type="file" accept="application/json,.json" />
+        <button id="btn-load-file">Load file</button>
+        <div class="spacer"></div>
+        <button id="btn-load-demo" class="secondary" title="Load a tiny demo dataset">Load demo</button>
+      </div>
+      <textarea id="json-input" placeholder="Paste the JSON array of reports here (one-line or pretty)."></textarea>
+      <div class="toolbar">
+        <button id="btn-load-text" class="primary">Load from text</button>
+      </div>
+      <p class="meta">Your data never leaves this page. Processing happens locally in your browser.</p>
+    </section>
+
+    <section id="workbench" class="grid cols-2 hide">
+      <div class="card" id="report-card">
+        <div class="toolbar" style="margin-bottom:8px">
+          <div id="progress-text" class="meta">0 processed</div>
+          <div class="spacer"></div>
+          <div id="current-status-pill" class="status-pill hide"></div>
+        </div>
+        <div class="progress" style="margin-bottom:12px">
+          <div class="bar"><i id="progress-bar"></i></div>
+        </div>
+
+        <div class="kv" style="margin-bottom:10px">
+          <div>VAERS ID</div>
+          <div><strong id="vaers-id">–</strong></div>
+
+          <div>Vaccination date</div>
+          <div id="vaccination-date">–</div>
+
+          <div>Onset date</div>
+          <div id="onset-date">–</div>
+
+          <div>Sex</div>
+          <div id="sex">–</div>
+        </div>
+
+        <div style="display:flex; gap:8px; align-items:center; margin:10px 0">
+          <span id="pfizer-hint" class="badge hide">Pfizer product detected in products_listed</span>
+          <span id="reporter-pfizer-hint" class="badge hide warn">Mentions "Pfizer" in narrative (may refer to reporter)</span>
+        </div>
+
+        <details open id="det-narrative">
+          <summary><strong>Narrative</strong></summary>
+          <pre id="narrative">–</pre>
+        </details>
+
+        <h3 style="margin:16px 0 8px">Products listed</h3>
+        <div style="overflow:auto">
+          <table id="products">
+            <thead>
+              <tr>
+                <th>Manufacturer</th>
+                <th>Vaccine</th>
+                <th>Type</th>
+                <th>Dose</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="toolbar" style="margin-top:14px">
+          <button id="btn-prev" title="Previous report (←)">◀ Prev</button>
+          <button id="btn-next" title="Next report (→)">Next ▶</button>
+          <div class="spacer"></div>
+          <input id="jump-id" placeholder="Jump to VAERS ID…" style="background:#0f1831;border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--ink);width:200px" />
+          <button id="btn-jump">Go</button>
+        </div>
+      </div>
+
+      <div class="card" id="actions">
+        <h3 style="margin-top:0">2) Classify this report</h3>
+        <p class="meta" style="margin-top:-6px">Is this report related to administration of a <strong>Pfizer</strong> product?</p>
+        <div class="grid" style="grid-template-columns: 1fr; gap: 10px; margin-top:10px">
+          <button id="btn-related" class="primary" title="R">✔ Mark <strong>Related</strong> (Pfizer)</button>
+          <button id="btn-not-related" class="secondary" title="N">✖ Mark <strong>Not related</strong></button>
+          <button id="btn-skip" class="warn" title="S">⏭ Skip this report</button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:16px 0" />
+
+        <h3 style="margin:0 0 8px">3) Save / Restore progress</h3>
+        <div class="grid" style="grid-template-columns: 1fr; gap: 8px">
+          <button id="btn-export-2">Export statuses</button>
+          <div class="toolbar">
+            <label class="btn" for="import-file-2">Import statuses…</label>
+            <input id="import-file-2" type="file" accept="application/json,.json" class="hide" />
+          </div>
+          <p class="meta">Progress also auto-saves to this browser. You can safely close the tab and come back later.</p>
+        </div>
+      </div>
+    </section>
+    <section id="related-panel" class="card hide">
+    <div class="toolbar">
+      <h3 style="margin:0">Reports marked as <span class="status-pill status-related">RELATED</span></h3>
+      <div class="spacer"></div>
+      <button id="btn-related-close">Close</button>
+    </div>
+    <div style="overflow:auto; max-height: 55vh">
+      <table id="related-table">
+        <thead>
+          <tr>
+            <th>VAERS ID</th>
+            <th>Vaccination date</th>
+            <th>Onset date</th>
+            <th>Sex</th>
+            <th>Products</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="meta" id="related-empty" style="margin-top:8px">No reports marked as related yet.</p>
+  </section>
+
+  </main>
+
+  <footer>
+    <div class="inner">
+      Shortcuts: <kbd>R</kbd> related, <kbd>N</kbd> not related, <kbd>S</kbd> skip, <kbd>←</kbd>/<kbd>→</kbd> navigate, <kbd>G</kbd> go to VAERS ID.
+    </div>
+  </footer>
+
+  <script>
+    // --- State ---
+    let reports = [];
+    let idx = 0;
+    let statuses = {}; // vaers_id -> { status: 'related' | 'not_related' | 'skipped', ts: ISO }
+    let datasetHash = null;
+
+    // --- Elements ---
+    const el = (id) => document.getElementById(id);
+
+    const E = {
+      loader: el('loader'), workbench: el('workbench'),
+      jsonFile: el('json-file'), btnLoadFile: el('btn-load-file'),
+      jsonInput: el('json-input'), btnLoadText: el('btn-load-text'), btnLoadDemo: el('btn-load-demo'),
+      // report
+      progressText: el('progress-text'), progressBar: el('progress-bar'),
+      vaersId: el('vaers-id'), vaccDate: el('vaccination-date'), onsetDate: el('onset-date'), sex: el('sex'),
+      pfizerHint: el('pfizer-hint'), reporterPfizerHint: el('reporter-pfizer-hint'),
+      narrative: el('narrative'), productsTbody: document.querySelector('#products tbody'),
+      btnPrev: el('btn-prev'), btnNext: el('btn-next'),
+      jumpId: el('jump-id'), btnJump: el('btn-jump'),
+      // actions
+      btnRelated: el('btn-related'), btnNotRelated: el('btn-not-related'), btnSkip: el('btn-skip'),
+      statusPill: el('current-status-pill'),
+      // import/export
+      btnExport: el('btn-export'), importFile: el('import-file'),
+      btnExport2: el('btn-export-2'), importFile2: el('import-file-2'),
+      datasetBadge: el('dataset-badge'),
+      btnShowRelated: el('btn-show-related'), relatedPanel: el('related-panel'), relatedTbody: document.querySelector('#related-table tbody'), relatedEmpty: el('related-empty'), btnRelatedClose: el('btn-related-close'),
+    };
+
+    // --- Utilities ---
+    function fnv1a(str) {
+      let h = 0x811c9dc5; // 2166136261
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) >>> 0;
+      }
+      return ('00000000' + h.toString(16)).slice(-8);
+    }
+
+    function datasetKey() { return `vaers_statuses_${datasetHash}`; }
+
+    function saveLocal() {
+      if (!datasetHash) return;
+      localStorage.setItem(datasetKey(), JSON.stringify(statuses));
+    }
+
+    function loadLocal() {
+      try {
+        const s = localStorage.getItem(datasetKey());
+        if (s) statuses = JSON.parse(s) || {};
+      } catch {}
+    }
+
+    const STATUS = {
+      RELATED: 'related', NOT: 'not_related', SKIPPED: 'skipped'
+    };
+    // --- Related-only view ---
+    function relatedReports() {
+      return reports.filter(r => (statuses[String(r.vaers_id)]?.status) === STATUS.RELATED);
+    }
+    function updateRelatedButton() {
+      if (!E.btnShowRelated) return;
+      const n = relatedReports().length;
+      E.btnShowRelated.textContent = `Related Only (${n})`;
+      E.btnShowRelated.disabled = n === 0;
+    }
+    function toggleRelatedPanel(show) {
+      if (typeof show === 'undefined') show = E.relatedPanel.classList.contains('hide');
+      E.relatedPanel.classList.toggle('hide', !show);
+      if (show) renderRelated();
+    }
+    function renderRelated() {
+      const rels = relatedReports();
+      const tbody = E.relatedTbody; tbody.innerHTML = '';
+      if (!rels.length) { E.relatedEmpty.style.display = 'block'; return; }
+      E.relatedEmpty.style.display = 'none';
+      rels.forEach(r => {
+        const tr = document.createElement('tr'); tr.style.cursor = 'pointer';
+        const products = (Array.isArray(r.products_listed) ? r.products_listed : []).map(p => (p.manufacturer_name || p.vaccine_name || '')).filter(Boolean).join('; ');
+        tr.innerHTML = `
+          <td>${escapeHtml(r.vaers_id ?? '')}</td>
+          <td>${escapeHtml(r.vaccination_date ?? '')}</td>
+          <td>${escapeHtml(r.onset_date ?? '')}</td>
+          <td>${escapeHtml(sexLabel(r.sex))}</td>
+          <td>${escapeHtml(products)}</td>
+        `;
+        tr.addEventListener('click', () => { const i = reports.indexOf(r); if (i !== -1) { go(i); toggleRelatedPanel(false); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function isPfizerProduct(p) {
+      const m = (p.manufacturer_name || '').toUpperCase();
+      const v = (p.vaccine_name || '').toUpperCase();
+      return m.includes('PFIZER') || v.includes('PFIZER');
+    }
+
+    function detectPfizerInProducts(list) {
+      if (!Array.isArray(list)) return false;
+      return list.some(isPfizerProduct);
+    }
+
+    function show(elm, yes) { elm.classList.toggle('hide', !yes); }
+
+    function sexLabel(v) {
+      // Sample data used 1=female, 2=male. If unclear, show value.
+      if (v === 1 || v === '1') return 'Female';
+      if (v === 2 || v === '2') return 'Male';
+      if (v === 0 || v === '0' || v == null) return 'Unknown';
+      return String(v);
+    }
+
+    function setStatus(vaersId, status) {
+      statuses[vaersId] = { status, ts: new Date().toISOString() };
+      saveLocal();
+      updateStatusPill();
+    }
+
+    function currentReport() { return reports[idx]; }
+
+    function firstUnprocessedIndex(from = 0) {
+      for (let i = from; i < reports.length; i++) {
+        const id = reports[i]?.vaers_id;
+        if (!id) continue;
+        if (!statuses[id]) return i;
+      }
+      return -1;
+    }
+
+    function updateProgress() {
+      const total = reports.length;
+      const done = Object.keys(statuses).filter(id => statuses[id]).length;
+      E.progressText.textContent = `${done} / ${total} processed`;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      E.progressBar.style.width = pct + '%';
+    }
+
+    function updateStatusPill() {
+      const id = currentReport()?.vaers_id;
+      const rec = id ? statuses[id] : null;
+      const pill = E.statusPill;
+      pill.className = 'status-pill';
+      if (!rec) { show(pill, false); return; }
+      show(pill, true);
+      if (rec.status === STATUS.RELATED) { pill.classList.add('status-related'); pill.textContent = 'Status: RELATED'; }
+      else if (rec.status === STATUS.NOT) { pill.classList.add('status-not'); pill.textContent = 'Status: NOT RELATED'; }
+      else if (rec.status === STATUS.SKIPPED) { pill.classList.add('status-skipped'); pill.textContent = 'Status: SKIPPED'; }
+      else { pill.textContent = `Status: ${rec.status}`; }
+    }
+
+    function render() {
+      const r = currentReport();
+      if (!r) return;
+      // header badge
+      E.datasetBadge.textContent = `Dataset ${datasetHash}`;
+      show(E.datasetBadge, true);
+
+      // fields
+      E.vaersId.textContent = r.vaers_id ?? '–';
+      E.vaccDate.textContent = r.vaccination_date ?? '–';
+      E.onsetDate.textContent = r.onset_date ?? '–';
+      E.sex.textContent = sexLabel(r.sex);
+
+      // hints
+      const hasPfizerProduct = detectPfizerInProducts(r.products_listed);
+      show(E.pfizerHint, hasPfizerProduct);
+      const mentionsPfizerInNarr = /\bpfizer\b/i.test(r.narrative || '');
+      show(E.reporterPfizerHint, mentionsPfizerInNarr && !hasPfizerProduct);
+
+      // narrative
+      E.narrative.textContent = (r.narrative ?? '').trim() || '—';
+
+      // products
+      E.productsTbody.innerHTML = '';
+      (Array.isArray(r.products_listed) ? r.products_listed : []).forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(p.manufacturer_name ?? '')}</td>
+          <td>${escapeHtml(p.vaccine_name ?? '')}</td>
+          <td>${escapeHtml(p.vaccine_type ?? '')}</td>
+          <td>${escapeHtml(p.dose ?? '')}</td>
+        `;
+        E.productsTbody.appendChild(tr);
+      });
+
+      updateStatusPill();
+      updateProgress();
+      updateRelatedButton();
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      E.btnPrev.disabled = idx <= 0;
+      E.btnNext.disabled = idx >= reports.length - 1;
+    }
+
+    function go(i) {
+      if (i < 0 || i >= reports.length) return;
+      idx = i; render();
+    }
+
+    function goNext(unprocessedOnly = false) {
+      if (!unprocessedOnly) return go(idx + 1);
+      const i = firstUnprocessedIndex(idx + 1);
+      if (i !== -1) go(i);
+      else if (idx < reports.length - 1) go(idx + 1);
+    }
+
+    function goPrev() { go(idx - 1); }
+
+    function markAndAdvance(status) {
+      const id = currentReport()?.vaers_id;
+      if (!id) return;
+      setStatus(id, status);
+      updateRelatedButton();
+      const nextUnprocessed = firstUnprocessedIndex(idx + 1);
+      if (nextUnprocessed !== -1) go(nextUnprocessed); else goNext(false);
+    }
+
+    function exportStatuses() {
+      const payload = {
+        version: 1,
+        exported_at: new Date().toISOString(),
+        dataset_hash: datasetHash,
+        total_reports: reports.length,
+        statuses
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `vaers_statuses_${datasetHash}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importStatuses(file) {
+      if (!file) return;
+      const fr = new FileReader();
+      fr.onload = () => {
+        try {
+          const data = JSON.parse(fr.result);
+          if (!data || typeof data !== 'object') throw new Error('Not a JSON object');
+          const incoming = data.statuses || data; // allow raw map
+          if (!incoming || typeof incoming !== 'object') throw new Error('No statuses found');
+          let merged = 0;
+          for (const [id, rec] of Object.entries(incoming)) {
+            if (reports.find(r => String(r.vaers_id) === String(id))) {
+              statuses[id] = rec && typeof rec === 'object' ? rec : { status: String(rec) };
+              merged++;
+            }
+          }
+          saveLocal();
+          updateProgress();
+          updateStatusPill();
+          alert(`Imported ${merged} statuses${data.dataset_hash && data.dataset_hash !== datasetHash ? ` (from a different dataset ${data.dataset_hash})` : ''}.`);
+          const i = firstUnprocessedIndex();
+          if (i !== -1) go(i);
+        } catch (e) {
+          alert('Import failed: ' + e.message);
+        }
+      };
+      fr.readAsText(file);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function loadReportsFromArray(arr) {
+      if (!Array.isArray(arr)) throw new Error('Expected a JSON array');
+      reports = arr.filter(x => x && typeof x === 'object');
+      if (!reports.length) throw new Error('The array is empty');
+      datasetHash = fnv1a(JSON.stringify(reports.map(r => r.vaers_id)));
+      statuses = {};
+      loadLocal();
+      E.loader.classList.add('hide');
+      E.workbench.classList.remove('hide');
+      const first = firstUnprocessedIndex(0);
+      idx = first !== -1 ? first : 0;
+      render();
+    }
+
+    // --- Events ---
+    E.btnLoadFile.addEventListener('click', () => {
+      const f = E.jsonFile.files?.[0];
+      if (!f) { alert('Choose a JSON file first.'); return; }
+      const fr = new FileReader();
+      fr.onload = () => {
+        try { loadReportsFromArray(JSON.parse(fr.result)); }
+        catch (e) { alert('Could not parse JSON: ' + e.message); }
+      };
+      fr.readAsText(f);
+    });
+
+    E.btnLoadText.addEventListener('click', () => {
+      const t = E.jsonInput.value.trim();
+      if (!t) { alert('Paste your JSON first.'); return; }
+      try { loadReportsFromArray(JSON.parse(t)); }
+      catch (e) { alert('Could not parse JSON: ' + e.message); }
+    });
+
+    E.btnLoadDemo.addEventListener('click', () => {
+      const demo = [
+        { "deceased_date": "2021-01-04", "died": 1, "hospitalized": "0", "life_threatening": "0", "narrative": "Unresponsive; A spontaneous report was received from Pfizer concerning a 32-year old, female patient who received Moderna's COVID-19 vaccine (mRNA-1273) and had a sudden death...", "onset_date": "2021-01-04", "patient_age": null, "permanent_disability": "0", "product_administred_by": "Unknown", "products_listed": [ { "dose": "1", "manufacturer_name": "MODERNA", "vaccine_name": "COVID19 (COVID19 (MODERNA))", "vaccine_type": "COVID19" } ], "reception_date": "2021-03-04", "sex": 1, "spllt_type": "USMODERNATX, INC.MOD20210", "symptoms_listed": [ "sudden death" ], "vaccination_date": "2020-12-28", "vaers_id": "1071128" },
+        { "deceased_date": "2021-01-09", "died": 1, "hospitalized": "0", "life_threatening": "0", "narrative": "Unresponsive; A spontaneous report was received from Pfizer concerning a 43-year old, male patient who received Moderna's COVID-19 vaccine (mRNA-1273) and had a sudden death...", "onset_date": "2021-01-09", "patient_age": null, "permanent_disability": "0", "product_administred_by": "Unknown", "products_listed": [ { "dose": "1", "manufacturer_name": "MODERNA", "vaccine_name": "COVID19 (COVID19 (MODERNA))", "vaccine_type": "COVID19" } ], "reception_date": "2021-03-04", "sex": 2, "spllt_type": "USMODERNATX, INC.MOD20210", "symptoms_listed": [ "death" ], "vaccination_date": "2021-01-08", "vaers_id": "1071129" }
+      ];
+      loadReportsFromArray(demo);
+    });
+
+    E.btnPrev.addEventListener('click', () => goPrev());
+    E.btnNext.addEventListener('click', () => goNext());
+
+    E.btnRelated.addEventListener('click', () => markAndAdvance(STATUS.RELATED));
+    E.btnNotRelated.addEventListener('click', () => markAndAdvance(STATUS.NOT));
+    E.btnSkip.addEventListener('click', () => markAndAdvance(STATUS.SKIPPED));
+
+    E.btnExport.addEventListener('click', exportStatuses);
+    E.btnExport2.addEventListener('click', exportStatuses);
+
+    E.importFile.addEventListener('change', (e) => importStatuses(e.target.files?.[0]));
+    E.importFile2.addEventListener('change', (e) => importStatuses(e.target.files?.[0]));
+
+    E.btnShowRelated.addEventListener('click', () => toggleRelatedPanel(true));
+    E.btnRelatedClose.addEventListener('click', () => toggleRelatedPanel(false));
+
+    E.btnJump.addEventListener('click', () => {
+      const id = E.jumpId.value.trim();
+      if (!id) return;
+      const i = reports.findIndex(r => String(r.vaers_id) === id);
+      if (i !== -1) go(i); else alert('VAERS ID not found in this dataset.');
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (E.workbench.classList.contains('hide')) return;
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return; // don't hijack while typing
+      if (e.key === 'ArrowLeft') { goPrev(); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { goNext(); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 'r') { markAndAdvance(STATUS.RELATED); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 'n') { markAndAdvance(STATUS.NOT); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 's') { markAndAdvance(STATUS.SKIPPED); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 'g') { E.jumpId.focus(); e.preventDefault(); }
+    });
+  </script>
+</body>
+</html>

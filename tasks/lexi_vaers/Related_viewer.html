@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VAERS Related Reports – Viewer</title>
+  <style>
+    :root {
+      --bg: #0c0f1a; --panel: #121628; --ink: #e8ecf3; --muted: #9aa6b2; --border:#27314a; --accent:#6aa9ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin:0; font:14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial; color:var(--ink); background:var(--bg); }
+    header { position: sticky; top:0; z-index:5; display:flex; gap:12px; align-items:center; padding:12px 16px; background:rgba(12,15,26,.8); backdrop-filter: blur(6px); border-bottom:1px solid var(--border); }
+    header h1 { margin:0; font-size:18px; letter-spacing:.3px; }
+    header .right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+    main { max-width: 900px; margin: 18px auto 60px; padding: 0 16px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid var(--border); border-radius:14px; padding:14px; }
+    .stack { display:grid; gap:12px; }
+    textarea { width:100%; min-height: 120px; color:var(--ink); background:#0f1630; border:1px solid var(--border); border-radius:12px; padding:10px 12px; resize: vertical; }
+    button { appearance:none; border:1px solid var(--border); background:#0f1630; color:var(--ink); padding:10px 12px; border-radius:12px; cursor:pointer; transition: .15s transform, .15s border-color; }
+    button:hover { transform: translateY(-1px); border-color:#3a5396; }
+    button:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    table { width:100%; border-collapse: collapse; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    th, td { padding:10px 12px; border-bottom:1px solid var(--border); }
+    th { text-align:left; color:var(--muted); background:#0f1630; }
+    tr:last-child td { border-bottom:none; }
+    .kv { display:grid; grid-template-columns: 150px 1fr; gap:6px 12px; }
+    .meta { color: var(--muted); }
+    .nav { display:flex; gap:8px; align-items:center; }
+    .spacer { flex: 1; }
+    .progress { font-variant-numeric: tabular-nums; }
+    footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 8px 14px; color: var(--muted); background: linear-gradient(180deg, transparent, rgba(0,0,0,.35)); pointer-events: none; }
+    footer .inner { pointer-events: auto; max-width: 900px; margin: 0 auto; background: #0f1630; border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+    .hide { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VAERS Related Reports – Viewer</h1>
+    <div class="right">
+      <label class="btn" for="file-input"><button>Open JSON</button></label>
+      <input id="file-input" type="file" accept="application/json,.json" class="hide" />
+    </div>
+  </header>
+
+  <main>
+    <!-- Loader -->
+    <section id="loader" class="card stack">
+      <h2 style="margin:0">1) Load your related-only JSON</h2>
+      <div class="nav">
+        <input id="file-input-2" type="file" accept="application/json,.json" />
+        <button id="btn-load-file">Load file</button>
+        <div class="spacer"></div>
+        <button id="btn-demo">Load demo</button>
+      </div>
+      <textarea id="json-text" placeholder='Paste a JSON array of related reports here.
+Example: [{"vaers_id":"123","narrative":"...","products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19"}]}]'></textarea>
+      <div class="nav">
+        <button id="btn-load-text">Load from text</button>
+        <div class="spacer"></div>
+        <span class="meta">All parsing happens locally in your browser.</span>
+      </div>
+    </section>
+
+    <!-- Viewer -->
+    <section id="viewer" class="card stack hide">
+      <div class="nav">
+        <div id="progress" class="progress">Report <span id="idx">1</span> / <span id="count">1</span></div>
+        <div class="spacer"></div>
+        <button id="prev" title="Previous (←)">◀ Prev</button>
+        <button id="next" title="Next (→)">Next ▶</button>
+      </div>
+
+      <div class="kv">
+        <div>VAERS ID</div>
+        <div><strong id="vaers-id">–</strong></div>
+        <div>Vaccination date</div>
+        <div id="vaccination-date">–</div>
+        <div>Onset date</div>
+        <div id="onset-date">–</div>
+        <div>Sex</div>
+        <div id="sex">–</div>
+        <div>Age</div>
+        <div id="age">–</div>
+      </div>
+
+      <details open>
+        <summary><strong>Narrative</strong></summary>
+        <pre id="narrative" style="white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; margin: 8px 0 0;">–</pre>
+      </details>
+
+      <h3 style="margin:8px 0">Products listed</h3>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Manufacturer</th>
+              <th>Vaccine</th>
+              <th>Type</th>
+              <th>Dose</th>
+            </tr>
+          </thead>
+          <tbody id="products"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">Shortcuts: <kbd>←</kbd>/<kbd>→</kbd> to navigate.</div>
+  </footer>
+
+  <script>
+    // --- State ---
+    let reports = []; let idx = 0;
+
+    // --- Elements ---
+    const $ = (id) => document.getElementById(id);
+    const E = {
+      loader: $('loader'), viewer: $('viewer'),
+      file1: $('file-input'), file2: $('file-input-2'), btnLoadFile: $('btn-load-file'),
+      jsonText: $('json-text'), btnLoadText: $('btn-load-text'), btnDemo: $('btn-demo'),
+      prev: $('prev'), next: $('next'),
+      idx: $('idx'), count: $('count'),
+      vaersId: $('vaers-id'), vaccDate: $('vaccination-date'), onsetDate: $('onset-date'), sex: $('sex'), age: $('age'),
+      narrative: $('narrative'), products: $('products')
+    };
+
+    // --- Utils ---
+    function escapeHtml(str){ return String(str ?? '')
+      .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;"); }
+    function sexLabel(v){ if (v===1||v==='1') return 'Female'; if (v===2||v==='2') return 'Male'; if (v===0||v==='0'||v==null) return 'Unknown'; return String(v); }
+    function ageLabel(v){
+      if (v == null || v === '') return 'Unknown';
+      const n = parseFloat(v);
+      if (Number.isFinite(n)) {
+        const rounded = Math.round(n * 100) / 100;
+        return String(rounded % 1 === 0 ? Math.trunc(rounded) : rounded);
+      }
+      return String(v);
+    }
+
+    function loadArray(arr){
+      if (!Array.isArray(arr) || !arr.length) throw new Error('Expected a non-empty JSON array');
+      reports = arr.filter(x => x && typeof x === 'object');
+      if (!reports.length) throw new Error('No valid objects found in array');
+      idx = 0;
+      E.loader.classList.add('hide');
+      E.viewer.classList.remove('hide');
+      render();
+    }
+
+    function render(){
+      const r = reports[idx]; if (!r) return;
+      E.idx.textContent = String(idx + 1); E.count.textContent = String(reports.length);
+      E.prev.disabled = idx <= 0; E.next.disabled = idx >= reports.length - 1;
+      E.vaersId.textContent = r.vaers_id ?? '–';
+      E.vaccDate.textContent = r.vaccination_date ?? '–';
+      E.onsetDate.textContent = r.onset_date ?? '–';
+      E.sex.textContent = sexLabel(r.sex);
+      E.age.textContent = ageLabel(r.patient_age);
+      E.narrative.textContent = (r.narrative ?? '').trim() || '—';
+      // products
+      E.products.innerHTML = '';
+      const list = Array.isArray(r.products_listed) ? r.products_listed : [];
+      if (!list.length){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" class="meta">No products listed</td>`;
+        E.products.appendChild(tr);
+      } else {
+        list.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${escapeHtml(p.manufacturer_name)}</td>
+            <td>${escapeHtml(p.vaccine_name)}</td>
+            <td>${escapeHtml(p.vaccine_type)}</td>
+            <td>${escapeHtml(p.dose)}</td>`;
+          E.products.appendChild(tr);
+        });
+      }
+    }
+
+    // --- Navigation ---
+    function go(delta){ const n = idx + delta; if (n < 0 || n >= reports.length) return; idx = n; render(); }
+
+    // --- Events ---
+    E.btnLoadFile.addEventListener('click', ()=>{
+      const f = E.file2.files?.[0]; if (!f){ alert('Choose a JSON file first.'); return; }
+      const fr = new FileReader(); fr.onload = ()=>{ try { loadArray(JSON.parse(fr.result)); } catch(e){ alert('Could not parse JSON: ' + e.message); } }; fr.readAsText(f);
+    });
+
+    E.file1.addEventListener('change', e => { if (e.target.files?.[0]) { const fr = new FileReader(); fr.onload = ()=>{ try { loadArray(JSON.parse(fr.result)); } catch(err){ alert('Parse error: '+err.message); } }; fr.readAsText(e.target.files[0]); } });
+
+    E.btnLoadText.addEventListener('click', ()=>{ const t = E.jsonText.value.trim(); if (!t){ alert('Paste your JSON first.'); return; } try { loadArray(JSON.parse(t)); } catch(e){ alert('Could not parse JSON: ' + e.message); } });
+
+    E.btnDemo.addEventListener('click', ()=>{
+      const demo = [
+        { "vaers_id":"R1001", "vaccination_date":"2021-01-02", "onset_date":"2021-01-03", "sex":1, "patient_age":"76.0", "narrative":"Example related case narrative…", "products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19 mRNA","vaccine_type":"COVID19","dose":"1"}] },
+        { "vaers_id":"R1002", "vaccination_date":"2021-01-05", "onset_date":"2021-01-06", "sex":2, "patient_age":"54", "narrative":"Another related case narrative…", "products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19 mRNA","vaccine_type":"COVID19","dose":"2"}] }
+      ];
+      loadArray(demo);
+    });
+
+    E.prev.addEventListener('click', ()=>go(-1));
+    E.next.addEventListener('click', ()=>go(1));
+
+    window.addEventListener('keydown', (e)=>{
+      if (E.viewer.classList.contains('hide')) return;
+      if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+      if (e.key === 'ArrowLeft') { go(-1); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { go(1); e.preventDefault(); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VAERS Related Reports – One‑Pager</title>
+  <style>
+    :root {
+      --bg: #0c0f1a; --paper: #ffffff; --ink: #222; --muted: #5b6574; --line: #d7dbe4; --accent: #0b5fff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin:0; font: 13.5px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial; color:#e8ecf3; background: var(--bg); }
+
+    header { position: sticky; top:0; z-index: 5; display:flex; gap:12px; align-items:center; padding:10px 14px; background: rgba(12,15,26,.85); backdrop-filter: blur(6px); border-bottom: 1px solid #27314a; }
+    header h1 { margin:0; font-size: 18px; letter-spacing:.2px; }
+    header .right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+    button { appearance:none; border:1px solid #2b3652; background:#111834; color:#e8ecf3; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    button:hover { border-color:#3d5aa8; transform: translateY(-1px); }
+    input[type="file"], textarea { color-scheme: dark; }
+
+    main { max-width: 980px; margin: 16px auto 80px; padding: 0 16px; }
+
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015)); border:1px solid #27314a; border-radius: 14px; padding: 14px; }
+    .stack { display:grid; gap:12px; }
+    .row { display:flex; gap:8px; align-items:center; }
+    .spacer { flex:1; }
+    .meta { color:#9aa6b2; }
+    textarea { width:100%; min-height: 120px; resize: vertical; background:#0f1630; border:1px solid #27314a; border-radius: 12px; padding:10px 12px; color:#e8ecf3; }
+
+    /* Printable page */
+    .paper { background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+    .paper h2 { margin: 0 0 8px; font-size: 18px; }
+    .paper .subtitle { color: var(--muted); margin-bottom: 14px; }
+
+    .report { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 12px; background: #fff; }
+    .report h3 { margin: 0 0 6px; font-size: 16px; }
+    .kv { display:grid; grid-template-columns: 140px 1fr; gap: 4px 10px; margin-bottom: 8px; font-size: 13px; }
+    .narrative { white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; background: #fafbff; border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-top: 6px; }
+
+    table { width:100%; border-collapse: collapse; margin-top: 6px; }
+    th, td { text-align:left; padding: 6px 8px; border-top: 1px solid var(--line); font-size: 12.5px; }
+    th { background:#f6f8ff; color:#333; position: sticky; top: 0; }
+
+    .hide { display:none !important; }
+
+    /* Print styles */
+    @media print {
+      @page { size: A4; margin: 14mm; }
+      body { background: white; color: var(--ink); }
+      header, .screen-only { display: none !important; }
+      main { max-width: none; margin: 0; padding: 0; }
+      .paper { border: none; border-radius: 0; padding: 0; }
+      .report { page-break-inside: avoid; break-inside: avoid; box-shadow: none; }
+      .narrative { background: white; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VAERS Related Reports – One‑Pager</h1>
+    <div class="right">
+      <input id="file-input" type="file" accept="application/json,.json" class="screen-only" />
+      <button id="btn-load-file" class="screen-only">Load JSON file</button>
+      <button id="btn-print" class="screen-only">Print</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Loader (screen only) -->
+    <section id="loader" class="card stack screen-only">
+      <h2 style="margin:0">1) Paste or open your related-only JSON</h2>
+      <div class="row">
+        <div class="spacer"></div>
+        <button id="btn-demo">Load demo</button>
+      </div>
+      <textarea id="json-text" placeholder='Paste a JSON array of related reports here.
+Example: [{"vaers_id":"123","patient_age":"76.0","narrative":"...","products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19"}]}]'></textarea>
+      <div class="row">
+        <button id="btn-load-text">Render one‑pager</button>
+        <div class="spacer"></div>
+        <span class="meta">Tip: after rendering, use the <strong>Print</strong> button to export to PDF.</span>
+      </div>
+    </section>
+
+    <!-- One‑pager output -->
+    <section id="paper" class="paper hide" aria-live="polite">
+      <h2>Related VAERS Reports</h2>
+      <div class="subtitle" id="paper-subtitle">—</div>
+      <div id="reports"></div>
+    </section>
+  </main>
+
+  <script>
+    // State
+    let reports = [];
+
+    // Elements
+    const $ = (id) => document.getElementById(id);
+    const E = {
+      file: $('file-input'), btnLoadFile: $('btn-load-file'), btnPrint: $('btn-print'),
+      loader: $('loader'), jsonText: $('json-text'), btnLoadText: $('btn-load-text'), btnDemo: $('btn-demo'),
+      paper: $('paper'), subtitle: $('paper-subtitle'), list: $('reports')
+    };
+
+    // Utils
+    function escapeHtml(str){ return String(str ?? '')
+      .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;"); }
+    function sexLabel(v){ if (v===1||v==='1') return 'Female'; if (v===2||v==='2') return 'Male'; if (v===0||v==='0'||v==null) return 'Unknown'; return String(v); }
+    function ageLabel(v){
+      if (v == null || v === '') return 'Unknown';
+      const n = parseFloat(v);
+      if (Number.isFinite(n)) {
+        const rounded = Math.round(n * 100) / 100;
+        return (rounded % 1 === 0 ? Math.trunc(rounded) : rounded) + ' years';
+      }
+      return String(v);
+    }
+
+    function loadArray(arr){
+      if (!Array.isArray(arr) || !arr.length) throw new Error('Expected a non-empty JSON array');
+      reports = arr.filter(x => x && typeof x === 'object');
+      if (!reports.length) throw new Error('No valid objects found in array');
+      renderAll();
+    }
+
+    function renderAll(){
+      // UI state
+      E.loader.classList.add('hide');
+      E.paper.classList.remove('hide');
+
+      // Subtitle
+      const now = new Date();
+      E.subtitle.textContent = `${reports.length} report(s) • Rendered ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+      // Clear
+      E.list.innerHTML = '';
+
+      // Build each report block
+      reports.forEach((r, i) => {
+        const wrap = document.createElement('article');
+        wrap.className = 'report';
+        wrap.setAttribute('data-vaers-id', r.vaers_id ?? '');
+
+        // Header line
+        const h3 = document.createElement('h3');
+        h3.textContent = `#${i+1} — VAERS ${r.vaers_id ?? '—'}`;
+        wrap.appendChild(h3);
+
+        // Key-values
+        const kv = document.createElement('div'); kv.className = 'kv';
+        kv.innerHTML = `
+          <div>Vaccination date</div><div>${escapeHtml(r.vaccination_date ?? '—')}</div>
+          <div>Onset date</div><div>${escapeHtml(r.onset_date ?? '—')}</div>
+          <div>Sex</div><div>${escapeHtml(sexLabel(r.sex))}</div>
+          <div>Age</div><div>${escapeHtml(ageLabel(r.patient_age))}</div>
+        `;
+        wrap.appendChild(kv);
+
+        // Narrative
+        const narLabel = document.createElement('div');
+        narLabel.innerHTML = '<strong>Narrative</strong>';
+        wrap.appendChild(narLabel);
+        const nar = document.createElement('pre');
+        nar.className = 'narrative';
+        nar.textContent = (r.narrative ?? '').trim() || '—';
+        wrap.appendChild(nar);
+
+        // Products
+        const prodTitle = document.createElement('h4');
+        prodTitle.textContent = 'Products listed';
+        prodTitle.style.margin = '8px 0 4px';
+        wrap.appendChild(prodTitle);
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = '<tr><th>Manufacturer</th><th>Vaccine</th><th>Type</th><th>Dose</th></tr>';
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        const list = Array.isArray(r.products_listed) ? r.products_listed : [];
+        if (!list.length){
+          const tr = document.createElement('tr');
+          const td = document.createElement('td'); td.colSpan = 4; td.textContent = 'No products listed'; td.style.color = '#666';
+          tr.appendChild(td); tbody.appendChild(tr);
+        } else {
+          list.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${escapeHtml(p.manufacturer_name)}</td>
+              <td>${escapeHtml(p.vaccine_name)}</td>
+              <td>${escapeHtml(p.vaccine_type)}</td>
+              <td>${escapeHtml(p.dose)}</td>`;
+            tbody.appendChild(tr);
+          });
+        }
+        table.appendChild(tbody);
+        wrap.appendChild(table);
+
+        E.list.appendChild(wrap);
+      });
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Events
+    E.btnLoadFile.addEventListener('click', ()=>{
+      const f = E.file.files?.[0]; if (!f){ alert('Choose a JSON file first.'); return; }
+      const fr = new FileReader(); fr.onload = ()=>{ try { loadArray(JSON.parse(fr.result)); } catch(e){ alert('Could not parse JSON: ' + e.message); } }; fr.readAsText(f);
+    });
+
+    E.file.addEventListener('change', e => { const f = e.target.files?.[0]; if (!f) return; const fr = new FileReader(); fr.onload = ()=>{ try { loadArray(JSON.parse(fr.result)); } catch(err){ alert('Parse error: '+err.message); } }; fr.readAsText(f); });
+
+    E.btnLoadText.addEventListener('click', ()=>{ const t = E.jsonText.value.trim(); if (!t){ alert('Paste your JSON first.'); return; } try { loadArray(JSON.parse(t)); } catch(e){ alert('Could not parse JSON: ' + e.message); } });
+
+    E.btnDemo.addEventListener('click', ()=>{
+      const demo = [
+        { "vaers_id":"R1001", "vaccination_date":"2021-01-02", "onset_date":"2021-01-03", "sex":1, "patient_age":"76.0", "narrative":"Example related case narrative…", "products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19 mRNA","vaccine_type":"COVID19","dose":"1"}] },
+        { "vaers_id":"R1002", "vaccination_date":"2021-01-05", "onset_date":"2021-01-06", "sex":2, "patient_age":"54", "narrative":"Another related case narrative…", "products_listed":[{"manufacturer_name":"PFIZER","vaccine_name":"COVID-19 mRNA","vaccine_type":"COVID19","dose":"2"}] }
+      ];
+      loadArray(demo);
+    });
+
+    E.btnPrint.addEventListener('click', ()=> window.print());
+  </script>
+</body>
+</html>
