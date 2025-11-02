@@ -1,0 +1,2414 @@
+[
+    {
+        "deceased_date": "2021-03-08",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "first vaccine (Moderna) was injected on 02/03/2021, second vaccine (pfizer) was injected on 03/02/2021, my Mother was dead on 03/08/2021. with no symptoms on 03/07/2021.",
+        "onset_date": "2021-03-08",
+        "patient_age": "76.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-03-16",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "autopsy",
+            "death"
+        ],
+        "vaccination_date": "2021-02-03",
+        "vaers_id": "1104177"
+    },
+    {
+        "deceased_date": "2021-04-10",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "death Narrative:  Patient was not previously COVID-19 positive and did not have any predisposing factors(PMH, allergies, etc.) for experiencing an adverse drug event. The ADR did not occur at the time of the administration of the vaccine nor was there an ADR that occurred between the observation period and the date of death. Patient has a PMH significant for T2DM, CAD, hyperlipidemia, Parkinson's disease, HTN, Diffuse interstitial Pulmonary fibrosis. No cause of death listed or any notation. Patient deceased on 4/10/202. 2nd dose of Pfizer given 3/13",
+        "onset_date": "2021-04-10",
+        "patient_age": "76.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-04-28",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "death"
+        ],
+        "vaccination_date": "2021-03-13",
+        "vaers_id": "1269854"
+    },
+    {
+        "deceased_date": "2021-04-27",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "I am unsure if this illness was related to his recent vaccination. However, after seeing reading this article about possible link between covid vaccination and the development of myocarditis, I felt compelled to report:  https://www.reuters.com/world/middle-east/israel-examining-heart-inflammation-cases-people-who-received-pfizer-covid-shot-2021-04-25/.  The patient in question is a 53 year old man with a history of previous carotid artery dissection and hyperlipidemia transferred to our hospital from an outside facility for presumed myocarditis. He rapidly decompensated, required intubation, multiple vasopressors, was initiated and ultimately expired.",
+        "onset_date": "2021-04-22",
+        "patient_age": "53.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "COVID19 (COVID19 (UNKNOWN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-05-04",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "cardiac failure",
+            "coxsackie virus test",
+            "coxsackie virus test negative",
+            "death",
+            "endotracheal intubation",
+            "influenza virus test negative",
+            "lung assist device therapy",
+            "myocarditis",
+            "sars-cov-2 test negative"
+        ],
+        "vaccination_date": "2021-04-01",
+        "vaers_id": "1285361"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "This patient  was a new patient at an assisted living facility. She was admitted late in the week. I was present at her ALF and was vaccinating residents against covid. No records were available for review from the previous facility. On April 17th I visited the facility        ( Saturday) and patient was one of the patients that had a request for the vaccine. I could not obtain her previous medical records; as I mentioned site was down that weekend. So I proceeded to performa vaccination on her. Family was not available on the phone either. Later on it became known to us that she had received two Pfizer vaccines at her previous LTC facility.. On the day of her visit , a Hospice Consult was requested. She was under Hospice care until she expired of natural causes more than 3 months later. No adverse events were noted though the family is very unhappy with hte fact that she received 3 vaccinations",
+        "onset_date": "2021-04-17",
+        "patient_age": "97.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Senior Living",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-08-06",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "death",
+            "extra dose administered",
+            "feeling abnormal",
+            "no adverse event",
+            "vomiting"
+        ],
+        "vaccination_date": "2021-04-17",
+        "vaers_id": "1371992"
+    },
+    {
+        "deceased_date": "2021-08-17",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "HEMORRHAGIC STROKE; MEDICATION ERROR (RECEIVED A FULL SERIES OF PFIZER FOLLOWED BY JNJ VACCINE); This spontaneous report received from a consumer via a company representative concerned a 48 year old male. The patient's height, and weight were not reported. The patient's past medical history included: hemorrhagic stroke, and concurrent conditions included: controlled hypertension, hyperlipidemia, and overweight. The patient received covid-19 vaccine (suspension for injection, route of admin not reported, batch number: Unknown, expiry: unknown) dose was not reported, 1 total administered on 11-AUG-2021 for prophylactic vaccination. The batch number was not reported. Per procedure, no follow-up will be requested for this case. Concomitant medications included bnt 162 for prophylactic vaccination.  The patient received a full series of Pfizer sometime between MAR-2021 and MAY-2021.  On JUL-2021, Laboratory data included: Lab tests were normal. On 01-AUG-2021, Laboratory data included: Platelet count (NR: not provided) 4800 and the patient had 3 brain bleeds. On 11-AUG-2021, the patient had medication error (received a full series of pfizer followed by JNJ vaccine). On 16-AUG-2021, the patient experienced hemorrhagic stroke and was hospitalized for one day. On 17-AUG-2021, the patient died from hemorrhagic stroke. It was unknown if an autopsy was performed or not. The action taken with covid-19 vaccine was not applicable. The outcome of the medication error (received a full series of Pfizer followed by JNJ vaccine) was not reported. This report was serious (Death, and Hospitalization Caused / Prolonged).; Sender's Comments: V0: 20210837606 -covid-19 vaccine ad26.cov2.s- Hemorrhagic stroke. This event(s) is considered unassessable. The event(s) has a compatible/suggestive temporal relationship, is unlabeled, and has unknown scientific plausibility. There is no information on any other factors potentially associated with the event(s).; Reported Cause(s) of Death: Hemorrhagic stroke",
+        "onset_date": "2021-08-11",
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-08-28",
+        "sex": 2,
+        "spllt_type": "USJNJFOC20210837606",
+        "symptoms_listed":
+        [
+            "haemorrhagic stroke",
+            "laboratory test",
+            "medication error",
+            "platelet count"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "1642957"
+    },
+    {
+        "deceased_date": "2021-08-18",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Moderna COVID-19 Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccines on 4/21/2021 and 5/18/2021. Patient admitted on 7/31/2021 for cardiogenic shock complicated by acute renal failure, coagulopathy and acute respiratory failure. To assist in management of the cardiogenic shock pt was placed on axillary IABP and dobutamine for inotropic support. Pt was decongested with combination of aquadex and diuretics with improvement in filling conditions. Unfortunately, patient developed persistent fever on 8/11 and was placed on broad spectrum antibiotics, ID was consulted and underwent extensive infectious evaluation.She did have MRSA in pneumonia PCR and candida albicans has grown in urine culture. On 8/16/21 morning pt decompensated hemodynamicallly requiring levophed and vasopressin and continued evaluation revealed that pt had positive IgM COVID antibodies and it was suspected that pt developed a new COVID infection. She continued to decline over the next 48 hours with worsening hemodynamics and renal function and therefore a dialsysis catheter was placed and pt was started on renal replacement therapy. Family was kept uptodate about the patients clinical status and at this point decided to transition focus of care to comfort. Pt then expired the morning of 8/18/21.",
+        "onset_date": "2021-07-31",
+        "patient_age": "58.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-08-30",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute kidney injury",
+            "acute respiratory failure",
+            "covid-19",
+            "candida infection",
+            "cardiogenic shock",
+            "catheter placement",
+            "coagulopathy",
+            "culture urine positive",
+            "death",
+            "intra-aortic balloon placement",
+            "pneumonia staphylococcal",
+            "pyrexia",
+            "renal impairment",
+            "renal replacement therapy",
+            "sars-cov-2 antibody test positive",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-05-18",
+        "vaers_id": "1655865"
+    },
+    {
+        "deceased_date": "2021-09-02",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Moderna COVID-19 Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccines on 5/1/2021 and 5/29/2021. Presented to ED on 8/11/2021 with complaints of worsening symptoms over the past 10-11 days including generalized fatigue, body aches, weakness, decreased appetite, nausea, vomiting, diarrhea, dyspnea, and cough. Intubated 8/19.  His course was complicated by L pneumothorax requiring Left chest tube placement X 2.  He was given Decadron 10 d through 8/21. Completed course of Remdesevir 5 days. Course complicated by MSSA pneumonia and concern for fungal pneumonia. Was being treated with Ancef and Micafungin. However he rapidly declined on 9/2. The patient was with significant.  hypotension and bradycardia, despite vasopressin and levophed gtts. Atropine x 1 given.  Patient with full cardiac arrest at 1255 and CPR was initiated. Epinephrine 1mg given.  1257 pulse check revealed a pulse that progressed into vtach at 1259, shock x 1 at 200J with PEA and subsequent sinus tachycardia. 1303 patient again went into vtach and another shock x 1 at 200J given and amiodarone bolus of 150mg administered. Return of sinus tachycardia.  ABG revealed acidosis and 3 amps of bicarb were administered. At that time the patient's family was called and the wife and daughter arrived at bedside. The family decided at that time to make the patient comfort care. He was taken off the ventilator and passed at 1350.",
+        "onset_date": "2021-08-11",
+        "patient_age": "48.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-09-08",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acidosis",
+            "asthenia",
+            "blood antidiuretic hormone",
+            "blood gases abnormal",
+            "bradycardia",
+            "covid-19",
+            "cardiac arrest",
+            "chest tube insertion",
+            "cough",
+            "death",
+            "decreased appetite",
+            "diarrhoea",
+            "dyspnoea",
+            "endotracheal intubation",
+            "fatigue",
+            "general physical health deterioration",
+            "hypotension",
+            "inappropriate schedule of product administration",
+            "mechanical ventilation",
+            "nausea",
+            "pain",
+            "pneumonia staphylococcal",
+            "pneumothorax",
+            "pulseless electrical activity",
+            "resuscitation",
+            "sars-cov-2 test positive",
+            "sinus tachycardia",
+            "ventricular tachycardia",
+            "vomiting"
+        ],
+        "vaccination_date": "2021-05-29",
+        "vaers_id": "1683354"
+    },
+    {
+        "deceased_date": "2021-04-01",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Patient received Pfizer vaccine (COMIRNATY) and wa admitted a week later with acute lung rejection and was attributed to antibody mediated rejection. Patient deteriorated rapidly requiring intubation, mechanical ventilation and ECMO and passed away eventually",
+        "onset_date": "2021-02-06",
+        "patient_age": "63.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2021-09-15",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "death",
+            "endotracheal intubation",
+            "general physical health deterioration",
+            "lung assist device therapy",
+            "lung transplant rejection",
+            "mechanical ventilation",
+            "transplant rejection"
+        ],
+        "vaccination_date": "2021-01-27",
+        "vaers_id": "1700713"
+    },
+    {
+        "deceased_date": "2021-10-09",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "ADDENDUM TO PREVIOUS SUBMISSION (VAERS #648055) Pt passed away on 10/9/2021 from complications of COVID-19 \"Brief Narrative (including pertinent consultations and lab/radiology results): 74 y.o. female with a past medical history significant for Obesity, DM type II, Depression, COPD, HL, hospital stay 9/12-9/15 for covid, re-admitted 9/16 for nausea, vomiting,worsening hypoxemia. She was vaccinated in March with Pfizer. On this admission, she was on the hospitalist service from 9/16 to 9/21, when she was transferred to the ICU service for ongoing hypoxia. She was on the ICU service 9/21-9/25 and never intubated, but was on max Bipap support and iNO. She was transferred back to the hospitalist service 9/26 but remained in the ICU due to having to be on iNO. Other treatments included tociluzumab, remdesivir, and high dose steroids.     Unfortunately, despite all of these treatments, she did not improve, and in fact, worsened to the point where the next step would be intubation. Palliative care was consulted, and she said that she would not want to be on a ventilator long term. If she were intubated, she would likely never be extubated, so being intubated did not align with her wishes. She opted to be DNR/I. The iNo was weaned off, and her oxygen levels decreased despite 100% Bipap. Patient said that she wanted to be made comfortable, so comfort cares were initiated. Her friend was able to come in, and she passed away peacefully. \"  Date of Death: 10/9/2021  Time of Death: 10:06 pm Autopsy Completed: No   IMMEDIATE CAUSE (Final disease or condition resulting in death) Approximate interval:  Onset to death (e.g., days, months, years) Primary: Covid 19 pneumonia  weeks Secondary: ARDS weeks Secondary: diabetes mellitus  years Secondary: N/A N/A  Above notes signed by  MD in patient's EMR",
+        "onset_date": "2021-09-12",
+        "patient_age": "74.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-10-11",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute respiratory distress syndrome",
+            "covid-19",
+            "covid-19 pneumonia",
+            "chest x-ray normal",
+            "condition aggravated",
+            "death",
+            "diabetes mellitus",
+            "dyspnoea",
+            "general physical health deterioration",
+            "hypoxia",
+            "intensive care",
+            "nausea",
+            "oxygen saturation decreased",
+            "positive airway pressure therapy",
+            "pyrexia",
+            "sars-cov-2 test positive",
+            "vomiting"
+        ],
+        "vaccination_date": "2021-03-01",
+        "vaers_id": "1708485"
+    },
+    {
+        "deceased_date": "2021-10-06",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Moderna COVID-19 Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccines on 2/11/2021 and 3/11/2021. Presented to ED on 9/19/2021 with a 6 day history of cough and worsening shortness of breath. On admission was hypoxic on room air that improved with 5 L of oxygen via nasal cannula. Patient was treated with dexamethasone, remdesivir, and baricitinib. Ultimately had progressive hypoxemia requiring mask BiPAP making it difficult to eat or drink and on the evening of 9/30 was intubated.  Over the next 7 days he continued to deteriorate with worsening hypoxemia requiring prone ventilation strategy.  Despite maximization of ventilator efforts he never improved.  Moreover, he developed persistent hypotension and renal failure with minimal urine output ultimately with acidosis and hyperkalemia.  Palliative care was involved with family discussions.  He was transitioned to DNR status and expired on 10/6/2021.",
+        "onset_date": "2021-09-13",
+        "patient_age": "76.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-10-14",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acidosis",
+            "covid-19",
+            "cough",
+            "death",
+            "dyspnoea",
+            "endotracheal intubation",
+            "feeding disorder",
+            "general physical health deterioration",
+            "hyperkalaemia",
+            "hypotension",
+            "hypoxia",
+            "mechanical ventilation",
+            "positive airway pressure therapy",
+            "renal failure",
+            "sars-cov-2 test positive",
+            "urine output decreased"
+        ],
+        "vaccination_date": "2021-03-11",
+        "vaers_id": "1785380"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Covid diagnosis; Covid diagnosis; This is a spontaneous report from a non-contactable Nurse. The nurse reported the same event for three patients. This is the 1st of three reports.    A patient of unspecified age and gender received bnt162b2 (COVID-19 VACCINE - MANUFACTURER UNKNOWN) via an unspecified route of administration on an unspecified date as single dose for COVID-19 immunisation. Medical history and concomitant medications were unknown. The patient had a Covid diagnosis and died. It was unknown if autopsy was performed. The reporter mentioned that she knew 3 people who were vaccinated that went into the hospital that came out with a Covid diagnosis; one of whom died. She did not say which vaccine they had gotten. Outcome of the event Covid diagnosis was fatal.   No follow-up attempts are possible; information about lot/batch number cannot be obtained. No further information is expected.; Sender's Comments: As there is limited information in the case provided, the causal association between the event and the suspect drug cannot be excluded. The case will be reassessed once new information is available. The impact of this report on the benefit/risk profile of the Pfizer product is evaluated as part of Pfizer procedures for safety evaluation, including the review and analysis of aggregate data for adverse events. Any safety concern identified as part of this review, as well as any appropriate action in response, will be promptly notified to regulatory authorities, Ethics Committees, and Investigators, as appropriate.,Linked Report(s) : US-PFIZER INC-202101468108 Same Reporter/Drug/AE, Different Patient;US-PFIZER INC-202101468109 Same Reporter/Drug/AE, Different Patient; Reported Cause(s) of Death: Covid diagnosis; Covid diagnosis",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "COVID19 (COVID19 (UNKNOWN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-11-05",
+        "sex": 3,
+        "spllt_type": "USPFIZER INC202101466426",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "drug ineffective"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "1845405"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "pharmacodynamic interaction between methotrexate, rituximab and tozinameran was considered; Brain death; COVID-19 pneumonia; systemic lupus erythematosus, had been receiving treatment with rituximab, methotrexate 25mg per week; This is a literature report.  A 60-year-old woman developed brain death secondary to COVID-19 pneumonia following concomitant administration of methotrexate, rituximab and tozinameran [routes not stated; not all dosages and outcomes stated]. The woman, who had a medical history of hypertension, type II diabetes mellitus and systemic lupus erythematosus, had been receiving treatment with rituximab, methotrexate 25mg per week and unspecified steroids. She had also been receiving apixaban for atrial fibrillation. On 02May2021, she presented to the hospital with fever (maximum temperature 104 degree F) and productive cough for a duration of one week. She had been vaccinated with tozinameran [Pfizer] for prevention of COVID-19 disease and received the second dose of vaccination on 18February2021. On 01April2021, she underwent routine COVID testing. At that time, she was tested positive; however, she was asymptomatic. On 24April2021, she developed productive cough and fever. Therefore, she was presented to the hospital. On day of hospital presentation, the polymerase chain reaction (PCR) testing for COVID-19 was found to be positive. Based on the clinical presentation and laboratory findings, COVID-19 pneumonia was considered. Therefore, the woman was admitted to the hospital on 03May2021. On hospital admission, her therapy with methotrexate was stopped and severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) antibodies were found to be negative. On 09May2021, she was admitted to the ICU due to acute hypoxic respiratory failure. Therefore, she received a complex course of treatment including unspecified broad spectrum antibacterial antibiotics, remdesivir and high-dose unspecified steroids for prevention of lupus flair. During the initial 5 days of hospitalisation, she continued receiving apixaban therapy, which was subsequently stopped due to the development of disseminated intravascular coagulation. On admission day 13, an altered mental status was observed, and she also reported headache. Subsequent head CT revealed a new acute to subacute infarct involving the right frontal operculum and insular region, new parenchymal haemorrhage versus haemorrhagic infarct involving the left parietal lobe and left cerebellar hemisphere and multifocal acute subarachnoid haemorrhage. The CT angiogram of the head and neck showed no definite evidence of an acute large vessel intracranial arterial occlusion or substantial arterial stenosis; however, multifocal irregularity within the superior sagittal sinus with sinus venous thrombosis were noted. The brain MRI performed on the following day showed acute left middle cerebral artery territory infarct and evolution of right frontal lobe infarcts on diffusion weight imaging. The contrast-enhanced venogram showed non-occlusive superior sagittal sinus thrombosis. After interdisciplinary discussion with haematology, neurosurgery and neurology, the woman was treated with heparin drip. On admission day 19, head CT showed continued expected evolution of infarcts with sulcal effacement surrounding the dominant left sided infarcts and trace rightward midline shift. On admission day 35, final head CT revealed cessation of contrast opacification of the anterior and posterior intracranial arterial circulation as well as new cerebral oedema with effacement of the gray-white matter borders, sulci, ventricles and cisterns, haemorrhage in the right frontal and left frontoparietal lobes at the site of previous infarctions, and new hyperdensity in the sylvian fissures consistent with subarachnoid haemorrhage. Based on the clinical presentation and laboratory findings, brain death secondary to COVID-19 pneumonia following pharmacodynamic interaction between methotrexate, rituximab and tozinameran was considered. Additionally, acute cerebrovascular disease was considered. Subsequently, she died due to COVID-19 pneumonia.  Pfizer is a marketing authorization holder of Rituximab and Methotrexate Sodium in the country of incidence or the country where the product was purchased (if different). This may be a duplicate report if another marketing authorization holder of Rituximab and Methotrexate Sodium has submitted the same report to the regulatory authorities.; Sender's Comments: Based on a temporal association and known product safety profile, a causal relationship between the reported events and suspect drugs were  assessed as possible. The impact of this report on the benefit/risk profile of the Pfizer product is evaluated as part of Pfizer procedures for safety evaluation, including the review and analysis of aggregate data for adverse events. Any safety concern identified as part of this review, as well as any appropriate action in response, will be promptly notified to RAs, Ethics Committees, and Investigators, as appropriate.; Reported Cause(s) of Death: Brain death; COVID-19 pneumonia; pharmacodynamic interaction between methotrexate, rituximab and tozinameran was considered",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2021-11-24",
+        "sex": 1,
+        "spllt_type": "USPFIZER INC202101573741",
+        "symptoms_listed":
+        [
+            "acute respiratory failure",
+            "angiogram cerebral abnormal",
+            "anticoagulant therapy",
+            "arterial occlusive disease",
+            "arterial stenosis",
+            "arteriogram carotid abnormal",
+            "asymptomatic covid-19",
+            "brain death",
+            "brain oedema",
+            "covid-19",
+            "covid-19 pneumonia",
+            "cerebral haemorrhage",
+            "cerebral infarction",
+            "cerebral mass effect",
+            "cerebral venous sinus thrombosis",
+            "computerised tomogram head abnormal",
+            "death",
+            "disseminated intravascular coagulation",
+            "haemorrhagic cerebellar infarction",
+            "headache",
+            "intensive care",
+            "magnetic resonance imaging head abnormal",
+            "mental status changes",
+            "productive cough",
+            "pyrexia",
+            "sars-cov-2 antibody test negative",
+            "sars-cov-2 test positive",
+            "scan with contrast abnormal",
+            "severe acute respiratory syndrome",
+            "subarachnoid haemorrhage",
+            "superior sagittal sinus thrombosis",
+            "venogram abnormal"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "1896408"
+    },
+    {
+        "deceased_date": "2021-11-28",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Hospitilization, death, fever, chills, SOB, tachycardia, cough, myalgia, light headedness, congestion, super imposed bacterial pneumonia  Second COVID Vaccine, Pfizer, received 11/10/21, Lot # FF2587, RUD IM, Dose 2",
+        "onset_date": "2021-11-25",
+        "patient_age": "89.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-12-15",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "chills",
+            "cough",
+            "death",
+            "dizziness",
+            "dyspnoea",
+            "myalgia",
+            "pneumonia bacterial",
+            "pyrexia",
+            "respiratory tract congestion",
+            "sars-cov-2 test positive",
+            "tachycardia"
+        ],
+        "vaccination_date": "2021-04-08",
+        "vaers_id": "1951822"
+    },
+    {
+        "deceased_date": "2021-12-15",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "several hours(2-4) later went to bed not feeling well; weak; Chills; Fatigue; Labored Breathing; shortly lost consciousness; Died; This spontaneous case was reported by a consumer and describes the occurrence of MALAISE (several hours(2-4) later went to bed not feeling well), ASTHENIA (weak), CHILLS (Chills), FATIGUE (Fatigue), DYSPNOEA (Labored Breathing), LOSS OF CONSCIOUSNESS (shortly lost consciousness) and DEATH (Died) in a 75-year-old patient of an unknown gender who received mRNA-1273 (Moderna COVID-19 Vaccine) (batch no. #069H21A) for COVID-19 vaccination.     Previously administered products included for Product used for unknown indication: Pfizer. Past adverse reactions to the above products included No adverse event with Pfizer. Concurrent medical conditions included Lupus syndrome (lupus).    On 15-Dec-2021 at 4:40 PM, the patient received third dose of mRNA-1273 (Moderna COVID-19 Vaccine) (unknown route) 1 dosage form. On 15-Dec-2021, the patient experienced MALAISE (several hours(2-4) later went to bed not feeling well) (seriousness criterion death), ASTHENIA (weak) (seriousness criterion death), CHILLS (Chills) (seriousness criterion death), FATIGUE (Fatigue) (seriousness criterion death), DYSPNOEA (Labored Breathing) (seriousness criterion death), LOSS OF CONSCIOUSNESS (shortly lost consciousness) (seriousness criteria death and medically significant) and DEATH (Died) (seriousness criteria death and medically significant). The patient died on 15-Dec-2021. The reported cause of death was several hours (2-4) later went to bed not feeling well, weak, Chills, Fatigue, Labored breathing and shortly lost consciousness. It is unknown if an autopsy was performed.            No concomitant medication was provided by reporter. Patient shortly lost consciousness Paramedics called, Husband and Daughter applied CPR in the interim could not Resuscitate. No treatment drug was provided by reporter.; Sender's Comments: This case concerns a 75-year-old patient (gender not provided) with no relevant medical history, who experienced the unexpected events of Malaise, Asthenia, Chills, Fatigue, Dyspnea, Loss of Consciousness. The events occurred several hours after the booster dose of mRNA-1273 (Moderna Covid-19 vaccine); and resulted in death. The rechallenge was not applicable as events occurred after booster dose with fatal outcome. The benefit-risk relationship of mRNA-1273 (Moderna covid-19 vaccine) is not affected by this report.; Reported Cause(s) of Death: several hours (2-4) later went to bed not feeling well; Weak; Chills; Fatigue; Labored Breathing; shortly lost consciousness; Died",
+        "onset_date": "2021-12-15",
+        "patient_age": "75.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "3",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2021-12-31",
+        "sex": 3,
+        "spllt_type": "USMODERNATX, INC.MOD20214",
+        "symptoms_listed":
+        [
+            "asthenia",
+            "chills",
+            "death",
+            "dyspnoea",
+            "fatigue",
+            "loss of consciousness",
+            "malaise"
+        ],
+        "vaccination_date": "2021-12-15",
+        "vaers_id": "1995100"
+    },
+    {
+        "deceased_date": "2021-12-14",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Patient was fully vaccinated against covid-19 and passed away on 12/14/2021 as a probable death from covid-19. This patient also received her booster dose of the Pfizer vaccine on 11/19/2021, Lot # EW0183; administered by the County Health Department.",
+        "onset_date": "2021-12-14",
+        "patient_age": "50.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Public",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-01-03",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "death"
+        ],
+        "vaccination_date": "2021-02-19",
+        "vaers_id": "1999006"
+    },
+    {
+        "deceased_date": "2021-12-06",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Was notified by patients husband that his wife originally received the Pfizer vaccine- He wanted her to have the booster shot and she received the booster of Moderna. Patient became  very sick. Per husband she developed cough and became very weak. She fell down a couple days after dose due to weakness. Patient passed away 2 weeks later. Was told by corner that wife had massive heart attack but he feels it was due to booster shot.",
+        "onset_date": "2021-11-17",
+        "patient_age": "66.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-01-03",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "asthenia",
+            "cough",
+            "death",
+            "fall",
+            "malaise",
+            "myocardial infarction"
+        ],
+        "vaccination_date": "2021-11-17",
+        "vaers_id": "1999726"
+    },
+    {
+        "deceased_date": "2022-01-30",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "he started to have strokes after the 2nd Pfizer vaccination 3 days after the 2nd vaccine.",
+        "onset_date": "2021-05-18",
+        "patient_age": "74.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2022-01-31",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "cerebrovascular accident"
+        ],
+        "vaccination_date": "2021-04-20",
+        "vaers_id": "2076200"
+    },
+    {
+        "deceased_date": "2022-01-24",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Pfizer COVID Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccines on 3/17/2021. Covid + 1/10/22 had exhibited symptoms 10 days prior, Presented to ED 1/9/22 c/o SOB and cough. Admitted for hypoxic respiratory failure, covid pneumonia, sepsis and acute encephalopathy  Treated with dexamethasone, ceftriaxone and doxycycline EOT 1/15/22, vancomycin, cefepime, micafungin and 1,2 Beta D glucan. Admitted to ICU with septic/cardiogenic shock. Course complicated by shock liver, thrombocytopenia, and ongoing hyopoxic respiratory failure. BP remianed low with MAPs in 50-60s. DNR Status. Pt HR and O2 suddenly dropped. Patient expired on 1/24/2022.",
+        "onset_date": "2022-01-24",
+        "patient_age": "70.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-02-02",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "covid-19 pneumonia",
+            "cardiogenic shock",
+            "cough",
+            "death",
+            "dyspnoea",
+            "encephalopathy",
+            "heart rate decreased",
+            "hypotension",
+            "intensive care",
+            "ischaemic hepatitis",
+            "malaise",
+            "mean arterial pressure",
+            "oxygen saturation decreased",
+            "respiratory failure",
+            "sars-cov-2 test positive",
+            "sepsis",
+            "septic shock",
+            "thrombocytopenia"
+        ],
+        "vaccination_date": "2021-03-17",
+        "vaers_id": "2082974"
+    },
+    {
+        "deceased_date": "2021-12-06",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Patient died due to a massive blood clot on her lungs; Hot and cold; Patient had an uncomfortable day; Dizziness; This spontaneous case was reported by a consumer and describes the occurrence of PULMONARY THROMBOSIS (Patient died due to a massive blood clot on her lungs) in a 66-year-old female patient who received mRNA-1273 (Moderna COVID-19 Vaccine) for COVID-19 vaccination. The occurrence of additional non-serious events is detailed below.     No Medical History was provided by reporter.  Previously administered products included for Drug use for unknown indication: Pfizer covid-19 vaccine (1st dose, Batch number: EN6207) on 15-Mar-2021, Pfizer covid-19 vaccine (2nd dose and Batch number: EW0150) on 05-Apr-2021. Past adverse reactions to the above products included No adverse event with Pfizer covid-19 vaccine and Pfizer covid-19 vaccine. Concomitant products included CLOPIDOGREL BISULFATE (PLAVIX) for Anticoagulant therapy.    On 17-Nov-2021, the patient received third dose of mRNA-1273 (Moderna COVID-19 Vaccine) (unknown route) 1 dosage form. On 18-Nov-2021, the patient experienced FEELING OF BODY TEMPERATURE CHANGE (Hot and cold), DISCOMFORT (Patient had an uncomfortable day) and DIZZINESS (Dizziness). On 06-Dec-2021, the patient experienced PULMONARY THROMBOSIS (Patient died due to a massive blood clot on her lungs) (seriousness criteria death and medically significant). On 19-Nov-2021, FEELING OF BODY TEMPERATURE CHANGE (Hot and cold), DISCOMFORT (Patient had an uncomfortable day) and DIZZINESS (Dizziness) had resolved. The patient died on 06-Dec-2021. The reported cause of death was patient died due to a massive blood clot on her lungs. It is unknown if an autopsy was performed.            No treatment information was provided. Husband mentioned that previous to the administration of the booster to his wife, there where warning signs to not to get the Moderna vaccine, and to get a stronger blood thinner first. The reporter stated he would consult the case with a lawyer.  Company Comment- This is a fatal case that concerns a 66-year-old female patient with no medical history, who experienced the unexpected serious adverse event of special interest, Pulmonary Thrombosis. The event was medically significant and caused the sudden demise of the patient. The event occurred in 20 days after receiving the third dose of mRNA-1273 Vaccine. The patient died on 06-Dec-2021. The reported cause of death was patient died due to a massive blood clot on her lungs. It is unknown if an autopsy was performed. The benefit-risk relationship of mRNA-1273 Vaccine is not affected by this report.   Reporter did not allow further contact; Sender's Comments: This is a fatal case that concerns a 66-year-old female patient with no medical history, who experienced the unexpected serious adverse event of special interest, Pulmonary Thrombosis. The event was medically significant and caused the sudden demise of the patient. The event occurred in 20 days after receiving the third dose of mRNA-1273 Vaccine. The patient died on 06-Dec-2021. The reported cause of death was patient died due to a massive blood clot on her lungs. It is unknown if an autopsy was performed. The benefit-risk relationship of mRNA-1273 Vaccine is not affected by this report.; Reported Cause(s) of Death: Patient died due to a massive blood clot on her lungs",
+        "onset_date": "2021-11-18",
+        "patient_age": "66.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "3",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-02-04",
+        "sex": 1,
+        "spllt_type": "USMODERNATX, INC.MOD20224",
+        "symptoms_listed":
+        [
+            "discomfort",
+            "dizziness",
+            "feeling of body temperature change",
+            "pulmonary thrombosis"
+        ],
+        "vaccination_date": "2021-11-17",
+        "vaers_id": "2087149"
+    },
+    {
+        "deceased_date": "2022-01-24",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "fDEATH; CARDIOGENIC SHOCK; ISCHAEMIC HEPATITIS; SEPTIC SHOCK; THROMBOCYTOPENIA; HEART RATE DECREASED; HYPOTENSION; INTENSIVE CARE; MALAISE; MEAN ARTERIAL PRESSURE; OXYGEN SATURATION DECREASED; CONFIRMED COVID-19 INFECTION; COUGH; DYSPNOEA; SARS-COV-2 TEST POSITIVE; RESPIRATORY FAILURE; SEPSIS; ENCEPHALOPATHY; COVID-19 PNEUMONIA; This spontaneous report received from a health care professional by a Regulatory Authority VAERS (Vaccine Adverse Event Reporting System) (VAERS ID 2082974) was received on 11-FEB-2022 and concerned a 70 year old male of unspecified race and ethnicity. The patient's height, and weight were not reported. The patient's past medical history included End-stage renal disease, CHF (congestive heart failure), EF (ejection fraction) 15 percent, implantable cardioverter-defibrillator (ICD), kidney transplant, and partial lobectomy from lymphoma in remission, and concurrent conditions included pneumonia, AFIB (atrial fibrillation), DM (diabetes mellitus), lupus nephritis, and allergy to cephalexin and prednisone. The patient received covid-19 vaccine ad26.cov2.s (suspension for injection, intramuscular, batch number: 1805029, expiry: unknown) dose was not reported, 1 total administered on 17-MAR-2021 for an unspecified indication. Concomitant medications included apixaban, atorvastatin, carvedilol, colecalciferol, ferrous sulfate, gabapentin, insulin detemir, and methoxy polyethylene glycol-epoetin beta. On 17-MAR-2021, patient received Pfizer Vaccine. The drug start period was 298 days. On 09-JAN-2022, the patient experienced covid-19 pneumonia, cough, dyspnea, encephalopathy, respiratory failure, sars-cov-2 test positive and sepsis. On 09-JAN-2022, the patient was presented to ED (emergency department) with complaints of SOB (shortness of breath) and cough. The patient was admitted for hypoxic, respiratory failure, covid pneumonia, sepsis and acute encephalopathy. Laboratory data included: SARS-CoV-2 test (NR: not provided) positive. The patient was treated with dexamethasone, ceftriaxone and doxycycline. On 15-JAN-2022, treatment with dexamethasone, ceftriaxone and doxycycline was stopped. Then patient received vancomycin, cefepime, micafungin and 1 2 Beta D glucan as a treatment medication. On 24-JAN-2022, the patient experienced confirmed covid-19 infection, cardiogenic shock, death, heart rate decreased, hypotension, intensive care, ischaemic hepatitis, malaise, mean arterial pressure, oxygen saturation decreased, septic shock, and thrombocytopenia. Patient admitted to ICU (intensive care unit) with septic cardiogenic shock. Course complicated by shock liver thrombocytopenia and ongoing hyopoxic respiratory failure. Patient's BP (blood pressure) remained low with MAPs (mean arterial pressure) in 50-60s. DNR (do not resuscitate) status was patient's HR (heart rate) and O2 (oxygen) suddenly dropped. Laboratory data included: Heart rate (NR: not provided) decreased, mean arterial pressure (NR: not provided) 50-60s, and Oxygen saturation (NR: not provided) decreased. Laboratory data (dates unspecified) included: BP (NR: not provided) remained low. The patient visited to emergency room for all events. The patient was hospitalized for 15 days for all events. It was not reported if an autopsy was performed. The action taken with covid-19 vaccine ad26.cov2.s was not applicable. The patient died of confirmed covid-19 infection, covid-19 pneumonia, cardiogenic shock, cough, death, dyspnoea, encephalopathy, heart rate decreased, hypotension, intensive care, ischaemic hepatitis, malaise, mean arterial pressure, oxygen saturation decreased, respiratory failure, sars-cov-2 test positive, sepsis, septic shock and thrombocytopenia on 24-JAN-2022. This report was serious (Death, and Hospitalization Caused / Prolonged). This report was associated with a product quality complaint: 90000217505. The suspected product quality complaint has been confirmed to be the reported allegation was not confirmed and the root cause was determined to be not manufacturing related. based on the PQC evaluation/investigation performed.  Additional information received from department on 17-FEB-2022. The following information was updated and incorporated into the case narrative: Product quality complaint investigation result.; Sender's Comments: V1: This version updates- Product quality complaint investigation result. This new  information does not alter prior causality assessment. 20220230459-covid-19 vaccine ad26.cov2.s -Death, Confirmed covid-19 infection, covid-19 pneumonia, cardiogenic shock, cough, dyspnoea, encephalopathy, heart rate decreased, hypotension, intensive care, ischaemic hepatitis, malaise, mean arterial pressure, oxygen saturation decreased, respiratory failure, sars-cov-2 test positive, sepsis, septic shock and thrombocytopenia. The event(s) has a compatible/suggestive temporal relationship, is unlabeled, and has unknown scientific plausibility. There is no information on any other factors potentially associated with the event(s). Therefore, this event(s) is considered unassessable.; Reported Cause(s) of Death: UNKNOWN CAUSE OF DEATH",
+        "onset_date": "2022-01-09",
+        "patient_age": "70.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-02-21",
+        "sex": 2,
+        "spllt_type": "USJNJFOC20220230459",
+        "symptoms_listed":
+        [
+            "blood pressure measurement",
+            "covid-19",
+            "covid-19 pneumonia",
+            "cardiogenic shock",
+            "cough",
+            "death",
+            "dyspnoea",
+            "encephalopathy",
+            "heart rate",
+            "heart rate decreased",
+            "hypotension",
+            "intensive care",
+            "ischaemic hepatitis",
+            "malaise",
+            "mean arterial pressure",
+            "oxygen saturation",
+            "oxygen saturation decreased",
+            "respiratory failure",
+            "sars-cov-2 test",
+            "sars-cov-2 test positive",
+            "sepsis",
+            "septic shock",
+            "thrombocytopenia"
+        ],
+        "vaccination_date": "2021-03-17",
+        "vaers_id": "2128834"
+    },
+    {
+        "deceased_date": "2022-02-11",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Pfizer COVID Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccine on 2/03/21, 3/03/2021 and 11/27/2021. Covid19 + 2/07/22. Presented to ED 2/11/22 c/o generalized weakness fever, back pain and leg pain both legs worse on the R leg with swelling and redness on the R leg as well, denies any trauma to the legs, she had a fever at home. Admitted Covid infx, R leg pain and abnormaol troponin.. CXR w/some left basal opacity. In the ER BP 151/84 with pulse of 111, the last pulse rate prior to the event was 94. INR was 1.2. Due to increasing swelling on the leg stat CT requested w/DIC labs. At the same time started having AMS, taken for stat brain CT. On arrival back to floor  patient was unresponsive and code blue was initiated, Treated with rocephin and steroids. Pt expired 02/11/22.",
+        "onset_date": "2022-02-11",
+        "patient_age": "66.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "3",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-02-24",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "asthenia",
+            "back pain",
+            "covid-19",
+            "cardio-respiratory arrest",
+            "chest x-ray abnormal",
+            "computerised tomogram",
+            "computerised tomogram head",
+            "death",
+            "erythema",
+            "inappropriate schedule of product administration",
+            "international normalised ratio increased",
+            "laboratory test",
+            "lung opacity",
+            "mental status changes",
+            "pain in extremity",
+            "peripheral swelling",
+            "pyrexia",
+            "sars-cov-2 test positive",
+            "troponin abnormal",
+            "unresponsive to stimuli"
+        ],
+        "vaccination_date": "2021-11-27",
+        "vaers_id": "2136988"
+    },
+    {
+        "deceased_date": "2021-11-12",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "COVID Vaccine Breakthrough Case  Pfizer Dose 1 2/12/21 (en6201) Pfizer Dose 2 3/8/21 (EN6199) Pfizer Dose 3 10/18/21 (301308A) COVID Negative 10/30/21 COVID Negative 10/30/21 COVID Positive 11/11/21  10/30/21: Patient is a 81 year old female with past history of multiple myeloma, breast cancer status post right partial mastectomy, JAK2 positive myeloproliferative disorder requiring frequent transfusions, and peripheral arterial disease who was admitted with increased weakness and fever.  History is obtained from chart review as well as discussion with the patient, her husband at bedside, and the ED provider.  Patient has a history of breast cancer in 2011 which required a partial right mastectomy.  She then was diagnosed with multiple myeloma approximately 5 years ago per she completed a course of chemotherapy and had good results without evidence of monoclonal protein on follow-up 24 urine in 2020. She developed essential thrombocytosis and was diagnosed with a right lower extremity arterial occlusion in 2018 requiring right superficial femoral thrombectomy.  Her platelet count at that time was greater than 1 million and has been on hydroxyurea since that time. She is also on Plavix at baby aspirin daily.  She has had frequent blood transfusions for ongoing anemia.  She did develop hemochromatosis secondary to the frequent transfusions and was placed on a chelating agent in the last couple of months.  She states she has been having quite a bit of diarrhea after starting that medication. Also had increasing weakness along with shortness of breath.  Her last transfusion of PRBCs was on the 15th. She was seen in urgent care earlier this week and diagnosed with a UTI given nitrofurantoin.  Continued to have increasing weakness and really unable to even stand at this time.  At baseline she does not require any assistive device to walk.  In the ER she was found to have a continued urinary tract infection along with fever. Hemoglobin also less than 7 and receiving 1 unit PRBCs. She does admit to having fevers and chills along with decreased appetite.  Not having abdominal pain.  She has noticed increasing lower extremity swelling which is unusual for her.  11/12/21: Patient is an 81-year-old female with past medical history of multiple myeloma, breast cancer status post right partial mastectomy, JAK2 positive myeloproliferative disorder requiring frequent transfusions, essential thrombocytosis, hemochromatosis secondary to multiple transfusions, diabetes, GERD, hypertension, hyperlipidemia, and peripheral artery disease who presented on 10/29/2021 with chief complaint of weakness and fever.  She had been diagnosed with the UTI at the urgent care prior to presenting to the ER.  Patient was placed on Rocephin.  She was also anemic and was transfused 1 unit of PRBCs and administered vitamin K as her INR was 2.0.  The cause of her elevated INR was unknown.  Patient was placed on broad-spectrum antibiotics with Rocephin and Zosyn.  Patient's CBC was also notable for blasts concerning for new onset of acute leukemia.  Oncology was consulted.  Patient continued to worsen and her WBC continued to rise.  Patient's fever continued and her mentation became altered.  She later tested positive for COVID-19 and had evidence of pneumonia on her chest CT. The case was once again discussed with Oncology.  Oncology met with the family on 11/12/2021 in the decision was made to transition towards hospice care given her frail state and multiple cor morbidities .  The patient passed away in the hospital this morning at 10:52 a.m..",
+        "onset_date": "2021-10-28",
+        "patient_age": "81.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Private",
+        "products_listed":
+        [
+            {
+                "dose": "3",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-05-02",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "anaemia",
+            "asthenia",
+            "blast cells",
+            "covid-19",
+            "chills",
+            "computerised tomogram thorax abnormal",
+            "condition aggravated",
+            "death",
+            "decreased appetite",
+            "dyspnoea",
+            "dysstasia",
+            "full blood count abnormal",
+            "haemoglobin decreased",
+            "international normalised ratio increased",
+            "mental status changes",
+            "peripheral swelling",
+            "pneumonia",
+            "pyrexia",
+            "red blood cell transfusion",
+            "sars-cov-2 test positive",
+            "urinary tract infection",
+            "vaccine breakthrough infection",
+            "white blood cell count increased"
+        ],
+        "vaccination_date": "2021-10-18",
+        "vaers_id": "2260295"
+    },
+    {
+        "deceased_date": "2022-04-20",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Moderna COVID Vaccine EUA: COVID-19 case resulting in Hospitalization / Death. Patient received Pfizer Vaccine on 2/01/21, 03/05/21 and 08/26/21. Presented to ED 04/16/22 c/o diarrhea, dyspnea, generalized weakness, poor appetite, and confusion x7 days, Covid +. Recently tx'd for acute sinusitis with omnicef in early April. Pt stated she was dx'd with COVID19 03/18/22 after attending a family member's wedding. Initial labs:  Glucose 106, Na +132, K +3.3, calcium 7.8, lactic acid 2.7, procalcitonin 0.9, INR 1.4, WBCs 17.8.  UA positive for glucose and ketones. Imaging showed multi lobar PNA. Hospital course c/b NSVT and afib RVR. Admitted for sepsis w/o acute organ dysfx c/b acute resp failure w/hypoxia 2/2 Covid-19.",
+        "onset_date": "2022-04-20",
+        "patient_age": "74.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "3",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-05-02",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute respiratory failure",
+            "acute sinusitis",
+            "asthenia",
+            "atrial fibrillation",
+            "blood calcium decreased",
+            "blood glucose normal",
+            "blood lactic acid",
+            "blood potassium decreased",
+            "blood sodium decreased",
+            "covid-19",
+            "confusional state",
+            "death",
+            "decreased appetite",
+            "diarrhoea",
+            "dyspnoea",
+            "glucose urine present",
+            "imaging procedure abnormal",
+            "inappropriate schedule of product administration",
+            "international normalised ratio increased",
+            "multiple organ dysfunction syndrome",
+            "pneumonia",
+            "procalcitonin",
+            "sars-cov-2 test positive",
+            "sepsis",
+            "urine analysis abnormal",
+            "urine ketone body present",
+            "ventricular tachycardia",
+            "white blood cell count increased"
+        ],
+        "vaccination_date": "2021-08-26",
+        "vaers_id": "2260407"
+    },
+    {
+        "deceased_date": "2021-12-01",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "She got her vaccine, she was excessively tired.  She attributed it to being her last semester of nursing school, graduation coming up, etc.  She was working and going to school at the same time.  She was having headaches, and she was taking more than her normal amounts of Motrin and Tylenol.  She was on a trip in November, around 11/5/21 and did not go shopping with her friends and went to the car to lie down.  The next time she contacted her mother was on 11/20/21 before she flew home, and felt that she felt that she had a bladder infection.  She then called again around 11:00 AM before her flight and had diarrhea and attributed that to drinking cranberry juice on an empty stomach to relieve her bladder issues.  She made home that evening, and on 11/21/21 she made it through the day, had some Azos for bladder spasms, drinking fluids and resting until she get to the doctor on Monday.  She went to the doctor on Monday 11/22/21, and was given Nitrofurantoin, and felt that she had a residual sinus infection and bladder infection.  She only took one of those throughout that week as she was not feeling well.  She was cultured and nothing grew. She came home on 11/22/21 with severe headache, migraine and had to be escorted into the house, mother  her into a bath and gave her some Aleve PM for that and she went to bed.   She then broke out into a rash faintly on 11/23/21 on her forearms.  She did not take anything for this and then stopped the antibiotics thinking that was the reason for the reaction.   On Wednesday/Thursday she had the headache and continued to treat that, and then managed that with Motrin/Tylenol as needed for the pain (not a medicine taking person).  On Friday in the early evening that she still was not feeling well, and started complaining about her neck hurting.  Mother's thoughts went to meningitis, which she had been thinking as well, and did testing for that (in nursing school), and decided that was not the cause.  On Saturday 11/26/21 in the afternoon they were working on her graduation announcements and party invitations, and mother noticed her face was very flushed.  She took her temperature which was 100.2.    Mother told her to clear her schedule for Sunday.  On 11/28/21 they went and by that time the rash was more pronounced on her arms, back and on her trunk.    At that point it was not itchy, nothing that bad, and later that afternoon it became extremely itching, and mother gave her 5 Benadryl between 1:00 and 10:00 PM, and that's when she called her PCP.  The daughter sent pictures of her rash to her friends who were in the medical field with her and asked if they knew what it was.  They felt that it was 5th disease, and nothing to do for it but Motrin, Tylenol and Benadryl and went home and slept most of the day.    Her boyfriend scratched her back all afternoon and early evening.  Mother put Calamine lotion on her and nothing was helping the itching.  She made a phone call to her PCP, and he said that he was not sure about the diagnosis and wanted her to be seen the next morning at 8:00 AM.    Her mother found her at 3:00 AM vomiting and at 7:00 AM her father told the mother that she was still vomiting and mother went to assess her then.  At that time she was well enough to tell her that she had picked out the wrong clothes to wear to the hospital.  They were probably on the road about 7:30 and she was very unsteady according to the father, dragging her feet, very dizzy.  Mother took her to hospital.  They got to the hospital and mother got a wheelchair to the car and the daughter said \"momma, I can't do it\".  Mother went and got an orderly who helped to get in from the car to the wheelchair.  They took her back rather quickly to triage within 5 minutes.  They asked her her name and she did not respond, just stared blankly at everybody.  Then they went back out to the waiting room as they were getting a room ready for her, and she was continuously vomiting.  They got into a room and the medical assistant was getting ready to start an IV, and mother told him that she was pretty dehydrated and would be hard to find a vein, and daughter was very fidgity and stated \"I don't trust him\".  Then the nurse came in and he ended up doing the IV.  The PA came in that's when she was doing the assessment of the daughter and when she pushed down on her stomach she was coming off the table in pain. Mother believes she yelped and after the IV's were started they did the first blood draw.  The nurses came in and out, not a lot of activity during that time, 11:30 PM, waiting for blood work results ,doctors orders or so.  Around 11:30 mother yelled for help as daughter had a tonic clonic grand mal seizure.  They came in and immediately gave her antiseizure medicine (in medical report), which helped to a point.  They sent her back for a CAT scan of her head.  When she came back to the room mother states that she was reaching to the sky with her arms, feeling she may have been coming out of the seizure.  Her father had arrived at that time.  They asked them to leave as they needed a sterile environment to perform a spinal tap.  When they came back into the room they said they  had to tap her twice as they were not getting a lot of spinal fluid.  They sat with her for a while, did a teleconference call with the neurologist at the main hospital, and while they were telling her everything that had transpired during the week and watched her during that call and was pretty much in a coma.  She was breathing on her own, but not responding.  They came in around 4:00 PM and they were going to push medicines (mother did not know what), and did not push it and her heart rate jumped to 208 and alarms went off in the room and nurses station, and mother \"lost it\".  They came in the crash cart, which mother could not watch, went out into the hall.  They said that she never lost heart beat, and was shocking her to get her back into normal rhythm, which it did go back to normal.  At that time they decided to take her to another hospital by helicopter.    They flew her there, mom packed bags and her family has an EMT went to the hospital and answered the questions for the family.  When parents got to the hospital they were met by three neurologist and the Chaplin.  One of the neurologist told them if they were praying people to start praying.  They sent her for 3 CAT scan's and they took her back also for an in-depth MRI with and without contrast.  They brought her back to the room, she was still unconscious/coma.  Her were slit, a little bit opened, and the priest returned with them, read her the last rites, closed her eyes and did not regain.  The CAT scan did not show anything, and the neurologist noticed that she had something at the base and he diagnosed her with Chiari malformation.   Family came to the hospital, and she was ventilated, was breathing, and there was no brain swelling.   The nurses told the mother that she was one of them (nursing student), they told her to go home and get rest, and she did not want to do so.  She went home and then got a phone call at 3:00 AM on 11/30/21 which was the head charge nurse and she said that she did not want her to be alone and that one of the surgeons came in ready to do any surgery for her, and he did a pretty in-depth test on her and there was no response mother \"lost it\".  They came in the crash cart, which mother could not watch, went out into the hall.  They said that she never lost heart beat, and was shocking her to get her back into normal rhythm, which it did go back to normal.  At that time they decided to take her to other hospital by helicopter.    They flew her there, mom packed bags and her family has an EMT went to the hospital and answered the questions for the family.  When parents got to the hospital they were met by three neurologist and the Chaplin.  One of the neurologist told them if they were praying people to start praying.  They sent her for 3 CAT scan's and they took her back also for an in-depth MRI with and without contrast.  They brought her back to the room, she was still unconscious/coma.  Her were slit, a little bit opened, and the priest returned with them, read her the last rites, closed her eyes and did not regain.  The CAT scan did not show anything, and the neurologist noticed that she had something at the base and he diagnosed her with Chiari malformation.   Family came to the hospital, and she was ventilated, was breathing, and there was no brain swelling.   The nurses told the mother that she was one of them (nursing student), they told her to go home and get rest, and she did not want to do so.  She went home and then got a phone call at 3:00 AM on 11/30/21 which was the head charge nurse and she said that she did not want her to be alone and that one of the surgeons came in ready to do any surgery for her, and he did a pretty in-depth test on her and there was no response.  That doctor had done an indepth neurologic work up on her and informed them that she was brain dead with no brain activity around 12/1/21 at noon.  She was then kept on life support as she was an organ donor to preserve her organs and was taken to the organ donoting hospital after they pronounced her the following day.  Mother did some research and have friends who are doctors and researched transverse myelitis and mother still kept researched Guillain Barre with her symptoms. Info and then she started researching thrombocytopenia.  The key symptoms was the rash, on her legs, thighs and her nephew (EMT) noticed that right off as well.    The autopsy came back as intraparenchymal hemorrhage, peripheral and had hemorrhaged C1-C4 spinal cord.  The coroner listed her death as complications of Chiari malformation, which was felt to be very minimal, and by the time the body came back it was 8 mm, which did not show up on MRI imaging.     She was a very active person, very healthy.    Doctor/lawyer team believe it was the flu vaccine and possibly interaction with the Pfizer vaccine.",
+        "onset_date": "2021-11-05",
+        "patient_age": "24.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "SEQIRUS, INC.",
+                "vaccine_name": "INFLUENZA (SEASONAL) (FLUCELVAX QUADRIVALENT)",
+                "vaccine_type": "FLUC4"
+            }
+        ],
+        "reception_date": "2022-06-24",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "abdominal pain upper",
+            "agitation",
+            "arnold-chiari malformation",
+            "autopsy",
+            "bladder spasm",
+            "blood test",
+            "brain death",
+            "cardiogenic shock",
+            "cerebral haemorrhage",
+            "coma",
+            "computerised tomogram head",
+            "computerised tomogram normal",
+            "culture negative",
+            "dehydration",
+            "diarrhoea",
+            "dizziness",
+            "erythema infectiosum",
+            "fatigue",
+            "flushing",
+            "gait disturbance",
+            "generalised tonic-clonic seizure",
+            "headache",
+            "heart rate increased",
+            "laboratory test abnormal",
+            "life support",
+            "loss of consciousness",
+            "lower urinary tract symptoms",
+            "lumbar puncture",
+            "magnetic resonance imaging",
+            "malaise",
+            "mechanical ventilation",
+            "migraine",
+            "mobility decreased",
+            "neck pain",
+            "neurological examination abnormal",
+            "pain",
+            "rash",
+            "rash pruritic",
+            "scan with contrast",
+            "spinal cord haemorrhage",
+            "staring",
+            "unresponsive to stimuli",
+            "vomiting",
+            "wheelchair user"
+        ],
+        "vaccination_date": "2021-10-18",
+        "vaers_id": "2331936"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Somewhere between 20JUN2022 and 04JUL2022, the patient passed away; tinea corpus; osteoarthritis/Knee pain,hip/hip pain bilaterally/back pain; sciatica; rash; itch; Interchange of vaccine products; reported she had not been feeling well/had not been feeling well since she had received the Moderna vaccine; severe leg pain; This spontaneous case was reported by a patient family member or friend and describes the occurrence of DEATH (Somewhere between 20JUN2022 and 04JUL2022, the patient passed away) in an 82-year-old female patient who received mRNA-1273 (Moderna COVID-19 Vaccine) (batch no. 037A22B) for COVID-19 prophylaxis. The occurrence of additional non-serious events is detailed below.     Patient had never diagnosed with COVID positive test or diagnosis. and No other vaccines were given to the patient within 1 month prior to Moderna COVID-19 vaccine.  The patient's past medical history included Thyroid cancer (Started on 2019 or 2020 (Unsure of exact date) and Cancer in remission) in February 2022. Previously administered products included for Product used for unknown indication: PFIZER BIONTECH COVID-19 VACCINE (Dose 1, Lot number: EM9809) on 13-Feb-2021, Pfizer (Dose 2, Lot number: EN6206) on 06-Mar-2021, Pfizer (Dose 1st booster, Lot number: FJ1620) on 18-Nov-2021, Simvastatin (elevated LFTs) and Cholestyramine (Cholestyramine (tight throat and abdomen)). Past adverse reactions to the above products included LFTs raised with Simvastatin; No adverse event with PFIZER BIONTECH COVID-19 VACCINE, Pfizer and Pfizer; and Throat tightness with Cholestyramine. Concurrent medical conditions included Drug allergy (Allergy to Cholestyramine, Simvastatin and Timolol), Penicillin allergy (Penicillin (vaginal infection)), Type 2 diabetes mellitus (Started 15 years ago), Blood pressure high (Started 20 years ago or so (Unsure of exact date) and currently in Stable condition), Obesity (Started 40 years ago (Unsure of exact date) and improved, with weight loss of about 17-18 lbs in 3 months from FEB2022 to MAY2022) and Glaucoma (Eye drops possibly for glaucoma). Concomitant products included DORZOLAMIDE for Glaucoma, AMLODIPINE, ACETYLSALICYLIC ACID (ASPIRINE), CLOTRIMAZOLE, COD LIVER OIL [COD-LIVER OIL], FLUOCINONIDE, MENTHOL, ZINC OXIDE (GOLD BOND), HYDROCHLOROTHIAZIDE, INSULIN LISPRO, INSULIN, KETOCONAZOLE, INSULIN GLARGINE (LANTUS), LATANOPROST, LEVOTHYROXINE, LEVOTHYROXINE SODIUM (SYNTHROID), LISINOPRIL, METFORMIN, CALCIUM, MAGNESIUM, ZINC, CALCIUM CARBONATE (TUMS [CALCIUM CARBONATE]) and CYANOCOBALAMIN (VIT B12) for an unknown indication.    On 25-May-2022, the patient received dose of mRNA-1273 (Moderna COVID-19 Vaccine) (unknown route) 1 dosage form. On 25-May-2022, the patient experienced MALAISE (reported she had not been feeling well/had not been feeling well since she had received the Moderna vaccine) and PAIN IN EXTREMITY (severe leg pain). On an unknown date, the patient experienced DEATH (Somewhere between 20JUN2022 and 04JUL2022, the patient passed away) (seriousness criteria death and medically significant), BODY TINEA (tinea corpus), OSTEOARTHRITIS (osteoarthritis/Knee pain,hip/hip pain bilaterally/back pain), SCIATICA (sciatica), RASH (rash), PRURITUS (itch) and INTERCHANGE OF VACCINE PRODUCTS (Interchange of vaccine products). The patient was treated with DIPHENHYDRAMINE HYDROCHLORIDE (BENADRYL [DIPHENHYDRAMINE HYDROCHLORIDE]) for Rash and Itch, at an unspecified dose and frequency; LIDOCAINE (LIDODERM) at an unspecified dose and frequency; DICLOFENAC (topical) at an unspecified dose and frequency and PARACETAMOL (TYLENOL) for Pain, at a dose of UNK, prn. The patient died on an unknown date. The cause of death was not reported. An autopsy was performed, but no results were provided. At the time of death, BODY TINEA (tinea corpus), OSTEOARTHRITIS (osteoarthritis/Knee pain,hip/hip pain bilaterally/back pain), SCIATICA (sciatica), RASH (rash), PRURITUS (itch), MALAISE (reported she had not been feeling well/had not been feeling well since she had received the Moderna vaccine), PAIN IN EXTREMITY (severe leg pain) and INTERCHANGE OF VACCINE PRODUCTS (Interchange of vaccine products) outcome was unknown.        For mRNA-1273 (Moderna COVID-19 Vaccine) (Unknown), the reporter considered PAIN IN EXTREMITY (severe leg pain) to be related. No further causality assessments were provided for DEATH (Somewhere between 20JUN2022 and 04JUL2022, the patient passed away), BODY TINEA (tinea corpus), OSTEOARTHRITIS (osteoarthritis/Knee pain,hip/hip pain bilaterally/back pain), SCIATICA (sciatica), RASH (rash), PRURITUS (itch), MALAISE (reported she had not been feeling well/had not been feeling well since she had received the Moderna vaccine) and INTERCHANGE OF VACCINE PRODUCTS (Interchange of vaccine products).    Patient height was reported as 5/4.5  Patient concomitant medications included Multivitamins with Iron and Neocin and Allergy tablet as needed.  Patient had severe leg pain on the evening after receiving the vaccine. The pain had continued, and she had not been feeling well up until 13-Jun-2022. Patient then visited urgent care on 20-Jun-2022 to get a diagnosis and treatment for the leg pain she was experiencing. The urgent care report stated the patient's diagnoses as hip pain bilaterally, tinea corpus, hip, knee, back pain, osteoarthritis, and sciatica.  Urgent care also prescribed medicine for rash and itch for the patient. However, caller was not aware of this complaint. Somewhere between 20-Jun-2022 and 04-Jul-2022, the patient passed away. Her deceased body was found on 04-Jul-2022 at her residence after a wellness check was performed. The exact date of death of patient is unknown. The medical examiner stated that the patient had passed away at least several days before being discovered. Toxicology was performed and however, the result will not be available for 90 days. The medical examiner has also stated that the patient's body had decayed enough, that if a clot was the suspect in the death, it would not be identified due to the decomposition of the body. Patient had not been feeling well since she had received the Moderna vaccine. The reporter thought that patient's leg pain could have been since she was running errands on 25-May-2022. She states that this could be a potential severe, rare side effect of the vaccine and finds it necessary to report it.  Company Comment This spontaneous case concerns an 82-year-old female patient, with concurrent medical conditions of Type 2 diabetes mellitus, Blood pressure high, Obesity and past medical history of Thyroid cancer (Started on 2019 or 2020 and Cancer in remission in February 2022), who experienced the serious Fatal unexpected event of Death (Somewhere between 20JUN2022 and 04JUL2022, the patient passed away) and other non-serious events which occurred approximately after 25 days of fourth dose of mRNA-1273 vaccine in the covid-19 vaccination series. An autopsy was performed and the result and further details were not  provided. Patient had severe leg pain on the evening after receiving the vaccine. The pain continued for 20 days later consulted and diagnosed as hip pain bilaterally, tinea corpus, hip, knee, back pain, osteoarthritis, and sciatica with medicine for rash and itch. Somewhere between 20-Jun-2022 and 04-Jul-2022, the patient passed away and identified by wellness check. The medical examiner has stated that the patient's body had decayed enough, that if a clot was the suspect in the death, it would not be identified due to the decomposition of the body.  It was also noted that patient received 3 doses with PFIZER BIONTECH COVID-19 VACCINE prior to current vaccination (interchange of vaccine products). Patient's Concurrent medical conditions of Type 2 diabetes mellitus, Blood pressure high, Obesity and   elderly age could be the risk factors and Thyroid cancer (Started on 2019 or 2020 and Cancer in remission in February 2022) could be contributing factors for the event death. The benefit-risk relationship of mRNA-1273 vaccine is not affected by this report.; Sender's Comments: This spontaneous case concerns an 82-year-old female patient, with concurrent medical conditions of Type 2 diabetes mellitus, Blood pressure high, Obesity and past medical history of Thyroid cancer (Started on 2019 or 2020 and Cancer in remission in February 2022), who experienced the serious Fatal unexpected event of Death (Somewhere between 20JUN2022 and 04JUL2022, the patient passed away) and other non-serious events which occurred approximately after 25 days of fourth dose of mRNA-1273 vaccine in the covid-19 vaccination series. An autopsy was performed and the result and further details were not  provided. Patient had severe leg pain on the evening after receiving the vaccine. The pain continued for 20 days later consulted and diagnosed as hip pain bilaterally, tinea corpus, hip, knee, back pain, osteoarthritis, and sciatica with medicine for rash and itch. Somewhere between 20-Jun-2022 and 04-Jul-2022, the patient passed away and identified by wellness check.The medical examiner has stated that the patient's body had decayed enough, that if a clot was the suspect in the death, it would not be identified due to the decomposition of the body.  It was also noted that patient received 3 doses with PFIZER BIONTECH COVID-19 VACCINE prior to current vaccination (interchange of vaccine products). Patient's Concurrent medical conditions of Type 2 diabetes mellitus, Blood pressure high, Obesity and   elderly age could be the risk factors and Thyroid cancer (Started on 2019 or 2020 and Cancer in remission in February 2022) could be contributing factors for the event death. The benefit-risk relationship of mRNA-1273 vaccine is not affected by this report.; Reported Cause(s) of Death: Somewhere between 20JUN2022 and 04JUL2022, the patient passed away",
+        "onset_date": "2022-05-25",
+        "patient_age": "82.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "4",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-07-15",
+        "sex": 1,
+        "spllt_type": "USMODERNATX, INC.MOD20226",
+        "symptoms_listed":
+        [
+            "arthralgia",
+            "body tinea",
+            "death",
+            "interchange of vaccine products",
+            "malaise",
+            "osteoarthritis",
+            "pain in extremity",
+            "platelet count decreased",
+            "pruritus",
+            "rash",
+            "sciatica"
+        ],
+        "vaccination_date": "2022-05-25",
+        "vaers_id": "2364312"
+    },
+    {
+        "deceased_date": "2022-01-21",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "PFIZER COVID VACCINE #3 GIVE 1/6/22, LOT #330258D; 12/23/21 pt admitted to hospital with increasing generalized weakness, mild cough, and falls at home throughout the week; 12/25/22 pt c/o epigastric pain; TTR amyloidosis, was to receive treatment once discharged; Echocardiogram revealed left ventricular ejection fraction of 40% with grade II diastolic dysfunction; pt experienced increase in confusion and hallucinations; potassium levels had dropped; uric acid levels were high; medications given; 1/20/22 pt requiring more O2 supplementation; found to be positive for COVID; Infectious Disease consulted; pt had a cardiac arrest the next day and passed away in the hospital",
+        "onset_date": "2022-01-01",
+        "patient_age": "84.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-08-30",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "abdominal pain upper",
+            "amyloidosis senile",
+            "asthenia",
+            "blood potassium decreased",
+            "blood uric acid increased",
+            "covid-19",
+            "cardiac arrest",
+            "condition aggravated",
+            "confusional state",
+            "cough",
+            "death",
+            "diastolic dysfunction",
+            "echocardiogram abnormal",
+            "ejection fraction",
+            "fall",
+            "hallucination",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-02-23",
+        "vaers_id": "2424258"
+    },
+    {
+        "deceased_date": "2022-06-25",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "PFIZER COVID VACCINE #3 GIVEN 12/21/21, LOT #FE3594; 6/16/22 pt presented to hospital after receiving radiation; pt experiencing vomiting and AMS; received Decadron; 6/19/22 pt tested positive for COVID; experienced hypotension and O2 saturation not picking up on NRB; transferred to ICU; DNI; increased hypoxia and hypotension; suffered cardiopulmonary arrest; CPR performed, Epinephrine given; ROSC achieved; transitioned to comfort measures; pt passed away in the hospital",
+        "onset_date": "2022-06-19",
+        "patient_age": "84.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-10-25",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "cardio-respiratory arrest",
+            "death",
+            "hypotension",
+            "hypoxia",
+            "intensive care",
+            "mental status changes",
+            "radiotherapy",
+            "resuscitation",
+            "sars-cov-2 test positive",
+            "vomiting"
+        ],
+        "vaccination_date": "2021-04-20",
+        "vaers_id": "2488373"
+    },
+    {
+        "deceased_date": "2022-07-04",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "PFIZER (COMIRNATY) COVID VACCINE #3 GIVEN 6/23/22, LOT # FM7553); 6/23/22 pt placed in a SNF after recent hospitalization due to falling at home and aspiration pneumonia; 6/27/22 pt  had a positive COVID test while in the facility; pt passed away in the facility",
+        "onset_date": "2022-06-27",
+        "patient_age": "77.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-10-25",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "death",
+            "fall",
+            "pneumonia aspiration",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-03-04",
+        "vaers_id": "2488524"
+    },
+    {
+        "deceased_date": "2022-11-02",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Adverse event note: Per web report received by local County Public Health Department and per local Immunization Registry.   COVID Vaccination information: Moderna 2/4/2021 043L20A Moderna 3/4/2021 032M20A Pfizer 9/29/2021 30155BA Moderna 6/22/2022 014B22A Patient presented to Hospital ED with a chief complaint of 2 falls. This patient was recently admitted for an appendectomy on 10/28/2022. He states that he had been home for a little more than a day and he had 2 falls 1 of those out of bed and another 1 onto the ground. He had difficulty getting up both times. Patient denied complaints of shortness of breath, cough. Patient stated he had a normal appetite but stated that he is constipated. Denies chest pain, headaches, dizziness, lightheadedness, or dysuria. In the ER, the patient was found to be COVID-positive and requiring a supplemental oxygen. Per additional web report notes. ?This patient underwent an appendectomy on 10/28/2022, was discharged after an unremarkable hospital course, and presented to ED after having fallen twice at home within a 24-hour time span, found to be COVID-positive, and a presentation concerning for sepsis. The patient had noted that he had not had a bowel movement following surgery, however chart review demonstrates that the patient had been refused suppositories. The patient was empirically covered with zosyn and blood cultures where obtained which grew with g ram positive rods with subsequent repeat blood cultures without growth. The patient had a new oxygen requirement on admission prompting COVID treatment with dexamethason e and Remdesivir. His oxygen was subsequently weaned to one liter on the morning of 11/1/2022. That evening, a rapid response was called overhead after the patient had vomited and became profoundly hypoxic requiring an oxygen mask at 15 L. Shortly after transfer to the IC U, the patient had another emesis and aspiration event with subsequent respiratory/cardia c arrest with subsequent ROSC at first pulse check. The patient became hypotensive requiring vasopressors. Amiodarone was initiated due to new onset A-fib with RVR. Multiple blood gasses were drawn chest xrays obtained showing worsening respiratory failure and respiratory acidosis secondary to his aspiration. The patient suffered a second cardiac arrest with ROSC achieved after several rounds of CPR and epinephrine pushes. The patient's family made him a DNR following ROSC. The patient again became bradycardic at which point the family requested that we not treat and let him pass peacefully with his daughter present. The patient was pronounced dead at 01:08 on 11/02/2022. No further information",
+        "onset_date": "2022-10-31",
+        "patient_age": "87.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "4",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-11-07",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "appendicectomy",
+            "aspiration",
+            "atrial fibrillation",
+            "bacterial infection",
+            "blood culture positive",
+            "bradycardia",
+            "covid-19",
+            "cardiac arrest",
+            "central venous catheterisation",
+            "chest x-ray abnormal",
+            "constipation",
+            "death",
+            "electrocardiogram",
+            "endotracheal intubation",
+            "fall",
+            "hypotension",
+            "hypoxia",
+            "intensive care",
+            "laboratory test",
+            "mobility decreased",
+            "respiratory acidosis",
+            "respiratory arrest",
+            "respiratory failure",
+            "resuscitation",
+            "sars-cov-2 test positive",
+            "vomiting"
+        ],
+        "vaccination_date": "2022-06-22",
+        "vaers_id": "2500890"
+    },
+    {
+        "deceased_date": "2022-11-04",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Information provided in this adverse event note, is per web report received by Health Department from submitting facility. Covid-19 vaccination information is provided by information that is in Immunization Registry. Pfizer 02/04/2021 EL9264 / public; Pfizer 2/25/2021 EL9267 / public; Moderna 12/01/2021 013F21A / public; Moderna 5/16/2022 038A22A / public PER WEB REPORT RECEIVED: Patient brought into the ED on 10/30/2022 following a fall at home. He fell on 10/29/2022, was able to get up with assistance, but then throughout the next few hours became very weak and was unable to get out of bed. Had COVID symptoms since 10/28/2022. Patient tested positive for COVID-19. Hospital stay was complicated by worsening COVID symptoms, pneumonia, aspiration, NSTEMI, bleeding, need for CBI, and worsening restlessness. Family agreed to hospice care.  Patient to go to Hospice     when possible. Admitted Hospice In-House awaiting bed. Patient?s condition worsened and patient was admitted at 15:10 to Inpatient Hospice ---- Patient died @ 2140 on 11/4/22. Death abstracted received. Death Certificated listed Covid-19 as a contributing cause of death.",
+        "onset_date": "2022-10-30",
+        "patient_age": "95.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "4",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-12-02",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute myocardial infarction",
+            "aspiration",
+            "asthenia",
+            "bladder irrigation",
+            "covid-19",
+            "chest x-ray",
+            "computerised tomogram head",
+            "computerised tomogram thorax",
+            "death",
+            "echocardiogram",
+            "electrocardiogram",
+            "fall",
+            "general physical health deterioration",
+            "haemorrhage",
+            "haemothorax",
+            "laboratory test",
+            "malaise",
+            "mobility decreased",
+            "pneumonia",
+            "restlessness",
+            "rib fracture",
+            "sars-cov-2 test positive",
+            "x-ray of pelvis and hip"
+        ],
+        "vaccination_date": "2022-05-26",
+        "vaers_id": "2521949"
+    },
+    {
+        "deceased_date": "2022-07-05",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "PFIZER COVID VACCINE #3 GIVEN 10/28/2021, LOT # NOT AVAILABLE; pt admitted, with chest pain, cough, SOB; found to have right pneumothorax, chest tube placed; pt worsened; found to have a second right pneumothorax; 2nd chest tube placed, 1st removed; increasing O2 requirement; found to have a right hydropneumothorax; 3rd chest tube placed, 2nd removed; ABX; transferred; A Fib with RVR; O2 supplementation; tested positive for COVID; deferred remdesivir and steroids; eventually transitioned to comfort measures only; pt passed away in the hospital",
+        "onset_date": "2022-07-04",
+        "patient_age": "77.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-12-05",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "atrial fibrillation",
+            "covid-19",
+            "chest pain",
+            "chest tube insertion",
+            "cough",
+            "death",
+            "dyspnoea",
+            "general physical health deterioration",
+            "pneumothorax",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-02-03",
+        "vaers_id": "2523133"
+    },
+    {
+        "deceased_date": "2022-07-17",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "PFIZER COVID VACCINE, 3RD DOSE GIVEN 9/9/21, LOT #FF2587; 7/15/22 pt admitted to hospital with weakness, sore throat, hallucinations; 5 wks earlier, pt was in the hospital and had a hip replacement; dc'd 5 days ago to a rehab facility; 7/11/22 pt also had a positive COVID test; pt now has hospital acquired pneumonia secondary to COVID; given ABX and steroids; DNR; pt's condition worsened, she became tachycardic and passed away in the hospital",
+        "onset_date": "2022-06-01",
+        "patient_age": "78.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2022-12-19",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "asthenia",
+            "covid-19",
+            "death",
+            "general physical health deterioration",
+            "hallucination",
+            "hip arthroplasty",
+            "oropharyngeal pain",
+            "pneumonia",
+            "sars-cov-2 test positive",
+            "tachycardia"
+        ],
+        "vaccination_date": "2021-03-05",
+        "vaers_id": "2536620"
+    },
+    {
+        "deceased_date": "2022-07-31",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "3RD DOSE OF COVID VACCINE, PFIZER GIVEN 12/30/21, LOT #FD0809 - LW pt had a positive COVID test on 7/19/22 at the Medical Center. Dc'd to another location where she passed away on 7/31/22;  Number of days in the hospital and plan of care unknown from medical records.",
+        "onset_date": "2022-07-01",
+        "patient_age": "91.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-01-03",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "death",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-02-23",
+        "vaers_id": "2548881"
+    },
+    {
+        "deceased_date": "2022-10-29",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "stopped breathing; out walking, collapsed; eyes rolled back; This is a spontaneous report received from contactable reporter(s) (Consumer or other non HCP). Other Case identifier(s): 2022SA509379.  A 67-year-old female patient (not pregnant) received BNT162b2 (BNT162B2 NOS), as dose number unknown, single (Batch/Lot number: unknown) at the age of 67 years for covid-19 immunisation; influenza vaccine inact split 4v (FLUZONE HIGH DOSE QUADRIVALENT), as dose number unknown, single (Batch/Lot number: unknown) for immunisation. The patient's relevant medical history and concomitant medications were not reported. The following information was reported: EYE MOVEMENT DISORDER (death) with onset 29Oct2022, outcome \"fatal\", described as \"eyes rolled back\"; LOSS OF CONSCIOUSNESS (death, medically significant) with onset 29Oct2022, outcome \"fatal\", described as \"out walking, collapsed\"; RESPIRATORY ARREST (death, medically significant) with onset 29Oct2022, outcome \"fatal\", described as \"stopped breathing\". The patient date of death was 29Oct2022. Reported cause of death: \"stopped breathing\", \"eyes rolled back\", \"out walking, collapsed\". It was not reported if an autopsy was performed. Clinical course: On an unknown date, the patient received a dose of suspect influenza quadrivial A-B high dose HV vaccine and Pfizer biontech Covid-19 vaccine via unknown route in unknown administration site of Prophylactic vaccination. On 29Oct2022 the patient who went out walking, collapsed (loss of consciousness), eye roiled back (eye movement disorder) and stopped breathing (respiratory arrest) (unknown latency) following the administration of Pfizer biontech covid-19 vaccine. Final diagnosis was (fatal) stopped breathing. It was not reported the patient received a corrective treatment for the events. It was unknown if an autopsy was done. The cause of death was reported as Respiratory arrest.  Company comment: Sanofi company comment on 16Dec2022. This case involved 67 years female patient who went out walking, collapsed, eyes rolled back and stopped breathing after receiving vaccines Pfizer biontech Covid-19 vaccine and influenza quadrival A-B high dose vaccine [Fluzone high dose quadrivalent]. This reported event stopped breathing was assessed as medically significant and fatal. Further information regarding medical history during vaccination, previously vaccination and tolerance, allergic history, laboratory investigations excluding alternative etiologies for the reported event are needed to fully access this case. Based upon the reported information, the role of the individual suspect vaccine cannot be addressed.    No follow-up attempts are possible; information about lot/batch number cannot be obtained. No further information is expected.; Reported Cause(s) of Death: stopped breathing; eyes rolled back; out walking, collapsed",
+        "onset_date": "2022-10-29",
+        "patient_age": "67.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "SANOFI PASTEUR",
+                "vaccine_name": "INFLUENZA (SEASONAL) (FLUZONE HIGH-DOSE QUADRIVALENT)",
+                "vaccine_type": "FLU4"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2023-01-19",
+        "sex": 1,
+        "spllt_type": "USPFIZER INCPV20230001038",
+        "symptoms_listed":
+        [
+            "death",
+            "eye movement disorder",
+            "loss of consciousness",
+            "respiratory arrest",
+            "syncope"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2511688"
+    },
+    {
+        "deceased_date": "2022-11-17",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "3 moderna vacccines  Pharmacy 4-15-21; 5-13-21; 11-23-2021; bivalent pfizer 9-21-22 at local Health Services. Tested + for covid   10/19/2022   had a  fall and not eatig and not taking meds earlier in October.  Later had mucus plugging requiring mech ventilation 10-18-22.  extubated 10-21-22.  became obtunded and bradycardic.  and had shock.  reintubated til 10-31-22. blood cultures + for Klebsiella.  sputum cultures had pseudomonas.  given rocephin and merram,  Anemia requiring transfusion.  small Pulmonary embolus in left lower lobe.  distal bracial vein thrombosis.   Reintubated from 11-7-22 to 11-11-22.   It was decided no intubation, no debrillation or chest compressions .   She passed away 11-17-22 with acute on chronic resp failure hypercapnia and hypoxemia",
+        "onset_date": "2022-11-17",
+        "patient_age": "81.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-01-19",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute respiratory failure",
+            "anaemia",
+            "blood culture positive",
+            "bradycardia",
+            "bronchial secretion retention",
+            "covid-19",
+            "death",
+            "depressed level of consciousness",
+            "endotracheal intubation",
+            "fall",
+            "hypophagia",
+            "klebsiella test positive",
+            "mechanical ventilation",
+            "peripheral artery thrombosis",
+            "pseudomonas test positive",
+            "pulmonary embolism",
+            "respiratory failure",
+            "sars-cov-2 test positive",
+            "shock",
+            "sputum culture positive",
+            "transfusion",
+            "treatment noncompliance"
+        ],
+        "vaccination_date": "2021-04-15",
+        "vaers_id": "2563341"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "drug interaction; COVID-19 PNEUMONIA IN A VACCINATED PATIENT WITH PSORIATIC ARTHRITIS; acute hypoxemic respiratory failure; septic shock; This is a literature report for the following literature source(s):  A 69-year-old female patient received BNT162b2 (COMIRNATY), as dose 2, single (Batch/Lot number: unknown) for covid-19 immunisation; methotrexate sodium (METHOTREXATE SODIUM); tofacitinib citrate (TOFACITINIB CITRATE); folinic acid (FOLINIC ACID), (Batch/Lot number: unknown). The patient's relevant medical history included: \"Type 2 diabetes mellitus\" (unspecified if ongoing); \"hypertension\" (unspecified if ongoing); \"psoriatic arthritis\" (unspecified if ongoing). The patient's concomitant medications were not reported. Vaccination history included: Comirnaty (first dose), for Covid-19 immunization. The following information was reported: DRUG INTERACTION (death, hospitalization, medically significant), outcome \"fatal\"; COVID-19 PNEUMONIA (death, hospitalization, medically significant), outcome \"fatal\", described as \"COVID-19 PNEUMONIA IN A VACCINATED PATIENT WITH PSORIATIC ARTHRITIS\"; SEPTIC SHOCK (death, medically significant), outcome \"fatal\"; RESPIRATORY FAILURE (hospitalization), outcome \"recovered\", described as \"acute hypoxemic respiratory failure\". The patient underwent the following laboratory tests and procedures: Chest X-ray: diffuse patchy opacities; Oxygen saturation: 75 %, notes: on room air; SARS-CoV-2 test: positive. The action taken for methotrexate sodium and tofacitinib citrate was unknown. Therapeutic measures were taken as a result of drug interaction, covid-19 pneumonia, septic shock, respiratory failure. The patient date of death was unknown. Reported cause of death: \"COVID-19 PNEUMONIA\", \"Septic shock\". It was not reported if an autopsy was performed.; Sender's Comments: Based on the temporal relation, the association between the events of drug interaction, COVID-19 pneumonia, septic shock and respiratory failure and the suspect products cannot be completely ruled out. The impact of this report on the benefit/risk profile of the Pfizer product is evaluated as part of Pfizer procedures for safety evaluation, including the review and analysis of aggregate data for adverse events. Any safety concern identified as part of this review, as well as any appropriate action in response, will be promptly notified to regulatory authorities, Ethics Committees, and Investigators, as appropriate.; Reported Cause(s) of Death: COVID-19 PNEUMONIA; Septic shock",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2023-01-25",
+        "sex": 1,
+        "spllt_type": "USPFIZER INC202300028209",
+        "symptoms_listed":
+        [
+            "acute respiratory failure",
+            "covid-19 pneumonia",
+            "chest x-ray abnormal",
+            "death",
+            "drug interaction",
+            "lung opacity",
+            "respiratory failure",
+            "sars-cov-2 test positive",
+            "septic shock"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2567224"
+    },
+    {
+        "deceased_date": "2022-08-31",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "3RD DOSE OF COVID VACCINE (PFIZER) GIVEN 1/25/22, LOT #330258D; 4TH DOSE OF COVID VACCINE (MODERNA) GIVEN 6/2/22, LOT #004M21A; pt brought to ED with SOB; positive COVID test; septic shock, required vasopressor support; cardiopulmonary arrest in ED 2x; pt passed away in the ED",
+        "onset_date": "2022-08-01",
+        "patient_age": "68.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-02-13",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "cardio-respiratory arrest",
+            "death",
+            "dyspnoea",
+            "sars-cov-2 test positive",
+            "septic shock"
+        ],
+        "vaccination_date": "2021-03-29",
+        "vaers_id": "2580349"
+    },
+    {
+        "deceased_date": "2023-02-06",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": 1,
+        "narrative": "Pt. was admitted to a local Hospital on 1/7/2023 with weakness, UTI, some fluid in lungs and slightly elevated cardiac enzymes. Stayed in hospital (being given antibiotics) until discharged to an rehab facility on 1/10/2023. Remained at rehab facility until admitted back to the local Hospital on 1/20/2023 with Respiratory Distress (low Oxygen level, elevated pulse). Treated with Antibiotics for Pneumonia, and given Oxygen via Nasal Cannula. Tested NEGATIVE for Covid, RSV and Flu (did test positive for simple cold viruses eg. Rhinovirus). Discharged back to the Rehab facility on 1/24/2023. Pt. remained at the rehab facility, progressively deteriorating until he passed away on 2/6/2023. Symptoms (from what I, his daughter saw during second admission to the rehab facility): Confusion, Cough at various times (even though lungs were \"clear\"), fatigue, loss of appetite, swallowing issues (aspiration potential), profound and progressing weakness, especially of legs--needed two person assist to transfer, when prior had needed one simple assist when first admitted to the rehab facility, according to staff (prior to his subsequent readmission to the Hospital). At times, O2 level low and/or heart rate elevated (medication and eventually O2 was used to help). During his second admission to the rehab facility, several patients in nearby rooms (including his roommate) tested positive for Covid. He, however, continually tested NEGATIVE for Covid when tested many times during those days. He never did catch Covid, so maybe his \"booster' prevented THAT, but he did, at the end of his long ordeal, pass away....  Diagnoses included: Malignant Neoplasm of Prostate; Acute Cystitis without Hematuria; Weakness; Non-ST Elevation (NSTEMI) Myocardial Infarction; Anemia, Unspecified; Metabolic Encephalopathy; Benign Prostatic Hyperplasia with Lower Urinary Tract Symptoms; Presence of Left Artificial Hip Joint; Chronic Kidney Disease, Stage 3 Unspecified; Retention of Urine, Unspecified. (Also, his heart had been being monitored for some sort of arrhythmia [A-fib?].)  Personal Narrative: I am submitting this VAERS report, because several people in our family had suspected an adverse reaction to a prior Vaccine (J&J) which he had been given back on 4/2/2021 (see question # 23). 51 days later, having been found on the floor in his house by the police (on 5/23/2021), he was admitted to the hospital, and later rehab at these same facilities (Hospital and rehab facility), with extreme muscle weakness and symptoms that were very in line with Guillain-Barre Syndrome (Extreme weakness in his legs, \"pins and needles\", inability to walk, swallowing issues, loss of bladder control, etc.). However, he was diagnosed as having had Rhabdomyolysis. It became clear in the news at the time, that the J&J vaccine had been having GBS side effects. When reported by a family member to his primary care physician, he did not agree with the family's suspicions, and likely this case was never submitted to VAERS. That hospitalization/rehab stay lasted until his discharge on 7/9/2021. Prior to that hospitalization, he had been living independently at home. After that episode, he required a 24/7 hour live-in aide, was incontinent and wheelchair dependent. Thankfully, over the ensuing year and a half, he recovered to a large extent, with most of those disabilities being overcome in many ways, and he was on the verge of being able to live a bit more independently, perhaps with someone checking in now and then (but now he sadly experienced this insurmountable event).  Pt. did have one other booster prior to the current one in question, (Pfizer) on 12/1/2021, and although there were no glaring side effects, when looking back, he did have a period of fairly intense hip pain around 12/28/2021 (not quite four weeks after that booster), that thankfully resolved itself, and didn't need medical intervention. The current episode (explored in this VAERS report) involved the Moderna Bivalent booster. The symptoms and outcome were so similar to his first GBS type symptoms, that it seems best to report here. From his booster shot administration date, until the date he was admitted to the hospital was a total of 50 days, almost identical to the time it took for the first (J&J) vaccine to nearly kill him.  For this report, I reached out to the county and the organization that gave him the booster, as well as his primary care physician (to at least let them know he had passed away). Not only were they not aware of that, but I also asked if they had any policies or procedures for reporting adverse reactions, and none of them did. I think that may be one of the reasons why so few VAERS reports are submitted. It took so much effort to track all this info down, and to actually write the report. I have gladly done it in honor of my father's life, but think the medical professionals should have taken that responsibility on as a routine part of the administration of these products..  It seems that these shots are provided and injected into clients with so little oversight, and the recipients seem to only be monitored for a very short window of time, if even that. I HIGHLY suspect that these shots have long term ramifications, and my father is sadly no longer with us, likely due at LEAST in part to the effects of these products.  He had been a VERY strong person physically, and seemed puzzled that his body would not respond when he was trying to recover. Of course, he was elderly, and I realize no one lives forever here on earth. I do feel, however, that he would have had at least a few more wonderful years to spend, with visits from his children and grandchildren, if this whole Covid fear and vaccine spiral had not happened.  I think a lot of well meaning medical professionals are giving shots to people, thinking they are doing a good thing, and assuming that their clients are progressing well in their lives, and never even realizing how much disability and death those same shots are likely causing. Maybe I'm wrong, but I would hope whoever will eventually read this will at least ponder that possibility, and put an end to these \"vaccines\" and \"boosters\" before more people become disabled or lose their lives.   Originally, these Covid measures were put in place to \"protect our grandmas and grandpas\". It seems they have actually, in may ways, done the exact opposite, sadly. Thank you for letting me have at least some place to report this.",
+        "onset_date": "2023-01-07",
+        "patient_age": "90.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA BIVALENT))",
+                "vaccine_type": "COVID19-2"
+            }
+        ],
+        "reception_date": "2023-03-07",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute myocardial infarction",
+            "anaemia",
+            "arrhythmia",
+            "asthenia",
+            "benign prostatic hyperplasia",
+            "cardiac monitoring",
+            "chronic kidney disease",
+            "confusional state",
+            "cystitis",
+            "death",
+            "decreased appetite",
+            "dysphagia",
+            "fatigue",
+            "general physical health deterioration",
+            "heart rate increased",
+            "human rhinovirus test positive",
+            "influenza virus test negative",
+            "lower urinary tract symptoms",
+            "metabolic encephalopathy",
+            "mobility decreased",
+            "muscular weakness",
+            "myocardial necrosis marker increased",
+            "oxygen saturation decreased",
+            "pneumonia",
+            "prostate cancer",
+            "pulmonary oedema",
+            "respiratory distress",
+            "respiratory syncytial virus test negative",
+            "sars-cov-2 test negative",
+            "urinary retention",
+            "urinary tract infection",
+            "viral test positive"
+        ],
+        "vaccination_date": "2022-11-18",
+        "vaers_id": "2592490"
+    },
+    {
+        "deceased_date": "2022-09-04",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "3RD COVID VACCINE GIVEN 9/21/21, PFIZER, LOT # UNAVAILABLE; pt to ED with abdominal pain and requesting staples to be removed; found to be positive for COVID; DKN and renal failure; pt coded and ROSC was achieved; intubated; ICU; pt's condition worsened; DNR, comfort care; palliatively extubated; pt passed away in the hospital",
+        "onset_date": "2022-08-01",
+        "patient_age": "61.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-03-20",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "abdominal pain",
+            "covid-19",
+            "cardio-respiratory arrest",
+            "death",
+            "endotracheal intubation",
+            "general physical health deterioration",
+            "intensive care",
+            "renal failure",
+            "renal transplant",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-04-20",
+        "vaers_id": "2599665"
+    },
+    {
+        "deceased_date": "2022-09-13",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "3RD DOSE MODERNA COVID VACCINE, GIVEN 1/24/22, #069H21A 4TH DOSE COVID VACCINE, PFIZER, GIVEN 6/16/22, #FM0173 8/25/22 pt had a positive COVID test; hospitalized and dc'd to home; returned 9/12/22 with SOB and worsening hypoxia; presents to ED with terminal care needs; failed to respond to curative tx; transferred to hospice, comfort measures; pt passed away in the hospital",
+        "onset_date": "2022-08-01",
+        "patient_age": "87.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-03-22",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "death",
+            "dyspnoea",
+            "hypoxia",
+            "sars-cov-2 test positive",
+            "treatment failure"
+        ],
+        "vaccination_date": "2021-02-24",
+        "vaers_id": "2601835"
+    },
+    {
+        "deceased_date": "2022-09-30",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "3RD DOSE COVID VACCINE, PFIZER, GIVEN 1/13/22, #FJ1614; pt had a positive COVID test at home on 9/29/22; family found pt unresponsive on 9/30/22 and called EMS; EMS confirmed asystole; pt passed away in his home",
+        "onset_date": "2022-09-01",
+        "patient_age": "74.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-03-24",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "cardiac arrest",
+            "death",
+            "sars-cov-2 test positive",
+            "unresponsive to stimuli"
+        ],
+        "vaccination_date": "2021-03-25",
+        "vaers_id": "2603345"
+    },
+    {
+        "deceased_date": "2022-10-12",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "BIVALENT COVID VACCINE, PFIZER, GIVEN 9/28/22, #GJ524; pt had a positive COVID test 9/7/21 at SNF, Health and Rehab; 9/8/22 admitted to hospital with CP, poor oral intake, dark black stools, nausea; cough, low BP; O2 supplementation; AKI; acute on chronic hypoxic respiratory failure; CXR showed pneumonia; Decadron given; DNR/DNI; dc'd back to SNF on 9/26/22; pt passed away in the SNF",
+        "onset_date": "2022-09-01",
+        "patient_age": "86.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-04-17",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute kidney injury",
+            "acute respiratory failure",
+            "covid-19",
+            "chest x-ray abnormal",
+            "cough",
+            "death",
+            "faeces discoloured",
+            "hypophagia",
+            "hypotension",
+            "nausea",
+            "pneumonia",
+            "respiratory failure",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-05-05",
+        "vaers_id": "2616076"
+    },
+    {
+        "deceased_date": "2023-02-28",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "He had two vaccines that I am aware of:   J and J at Health dept 5-7-21  and Pfizer on 11-26-21 at this locatioin   pharmacy  Nursing Home resident  sent to ER  2-2-2023 with what they thought was chest pain (he is unable to give history)  , did not have MI, had dehydration, covid and renal issues and found to have E coli UTI and was rehydrated.  Also had high sodium.   On 2-7-23 he tested + for covid and had to be kept for five days and then ended up being transferred to med center to consider Peg tube.   His course was complicated and he was sent to hospice for further care.",
+        "onset_date": "2023-02-28",
+        "patient_age": "68.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Other",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-04-20",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "blood sodium increased",
+            "covid-19",
+            "chest pain",
+            "dehydration",
+            "escherichia urinary tract infection",
+            "renal disorder",
+            "sars-cov-2 test positive"
+        ],
+        "vaccination_date": "2021-05-07",
+        "vaers_id": "2618358"
+    },
+    {
+        "deceased_date": "2022-10-31",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "3rd dose of Pfizer COVID vaccine given 11/18/21, #30135ba; 4th dose of Pfizer COVID vaccine given 5/13/22, #fm7553; 10/14/22 pt to hospital and found to be positive for COVID; sepsis, respiratory failure; \"received appropriate medical therapy\" per medical records, specifics not known; pt aspirated during hospital stay; ICU; high flow NC; PICC line for TPN; alternated between BiPAP and OptiFlow therapy; pt's condition worsened; drops in O2 saturations and episodes of hypotension; DNR/DNI; transitioned to hospice and to GIP service; pt passed away in the hospital",
+        "onset_date": "2022-10-01",
+        "patient_age": "84.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-04-27",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "aspiration",
+            "covid-19",
+            "central venous catheterisation",
+            "death",
+            "general physical health deterioration",
+            "hypotension",
+            "intensive care",
+            "oxygen saturation decreased",
+            "positive airway pressure therapy",
+            "respiratory failure",
+            "sars-cov-2 test positive",
+            "sepsis"
+        ],
+        "vaccination_date": "2021-01-27",
+        "vaers_id": "2622209"
+    },
+    {
+        "deceased_date": "2022-10-29",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "3RD COVID VACCINE GIVEN 12/14/2021, PFIZER, #FE3594; pt resides in SNF; EMS called due to pt being unresponsive; SOB before unresponsive; pt suctioned, found food in throat; admitted to hospital; found to be positive for COVID; placed on BiPAP; pt's state worsened; DNR//DNI; family desires no IV pressors for BP support or transferred into ICU; pt expired in the hospital",
+        "onset_date": "2022-10-01",
+        "patient_age": "93.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-04-27",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "death",
+            "dyspnoea",
+            "general physical health deterioration",
+            "intensive care",
+            "oesophageal food impaction",
+            "oropharyngeal suctioning",
+            "positive airway pressure therapy",
+            "sars-cov-2 test positive",
+            "unresponsive to stimuli"
+        ],
+        "vaccination_date": "2021-05-18",
+        "vaers_id": "2622403"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Multiple lung nodules were seen on CT of Abd/Pelvia done on 11/28/2022 (previous Abd/Pelvis CT did not show in 4/2022).  Follow-up chest CT showed nodules ccoalesced into larger mass.  PET scan 12/19/2022 showed \"Intensely hypermetabolic innumerable lung lesions that demonstrate rapid interval growth and formation of new foci, involving the parenchyma and pleura, as well as lesions in the left neck, thoracic and left axilla.\"  Diagnosed by bronchoscopy 12/26/2022 as Diffuse large B Cell lymphoma.  Patient started having fevers and was initiall admitted to hospital from 1/6/23-1/10/23.  Was then admitted to hospital 1/16/2023 and expired 2/25/2023 after many complications and one failed chemotherapy treatment. Patient expired 2/25/2023. Patient had initial series of Pfizer-BioNTech COVID 19 vaccine on 1/20/21 & 2/1/2021 with booster 10/19/2021 and bivalent vaccine booster 9/12/2022.   He was in good health with no infection of COVID prior to findings on CT 11/28/2022.  Was the lymphoma caused by or exacerbated by COVID and/or Flu Vaccine?",
+        "onset_date": "2022-11-28",
+        "patient_age": "76.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2023-05-12",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "axillary mass",
+            "biopsy lymph gland",
+            "biopsy lymph gland abnormal",
+            "blood test",
+            "bronchoscopy abnormal",
+            "chemotherapy",
+            "computerised tomogram",
+            "computerised tomogram abdomen abnormal",
+            "computerised tomogram thorax abnormal",
+            "culture",
+            "death",
+            "diffuse large b-cell lymphoma",
+            "disease complication",
+            "hypermetabolism",
+            "magnetic resonance imaging head",
+            "mass",
+            "neck mass",
+            "neoplasm",
+            "positron emission tomogram abnormal",
+            "pulmonary mass",
+            "pyrexia",
+            "treatment failure"
+        ],
+        "vaccination_date": "2022-10-13",
+        "vaers_id": "2631154"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Death; This spontaneous case was reported by a patient family member or friend and describes the occurrence of DEATH (Death) in a  patient of an unknown age and gender who received mRNA-1273 (Spikevax) for COVID-19 prophylaxis.     No Medical History information was reported.    On an unknown date, the patient received dose of mRNA-1273 (Spikevax) (unknown route) 1 dosage form. Death occurred on an unknown date The cause of death was not reported. It is unknown if an autopsy was performed.        For mRNA-1273 (Spikevax) (Unknown), the reporter did not provide any causality assessments.   No concomitant medications were reported.  It was stated that reporter has lost 22 family members in the past 2 years due to covid vaccine. Of this, 2 received with Moderna vaccine and 2 received the Pfizer.  No treatment medications were reported.  This case was for the first of 2 patients reported who died. Company comment- This is a fatal spontaneous case concerning a patient of unknown age and gender with no reported medical history who experienced the serious (death and medically significant), unexpected event of death.  A dose mRNA-1273 vaccine was administered. Temporal association cannot be assessed due to lack of information on onset date of the event and vaccination date. It is unknown if an autopsy was performed. It was stated that reporter lost family members in the past 2 years due to Moderna vaccine. No further details were provided for medical review. The benefit-risk relationship of mRNA-1273 is not affected by this report.   This case was linked to US-MODERNATX, INC.-MOD-2023-734472, MOD-2023-734863, US-MODERNATX, INC.-MOD-2023-734538, US-MODERNATX, INC.-MOD-2023-734864 (E2B Linked Report).   Reporter did not allow further contact; Sender's Comments:  US-MODERNATX, INC.-MOD-2023-734472:Invalid case (Patient 1 - MOD-2023-734472) MOD-2023-734863:Patient 3 (Fatal outcome) US-MODERNATX, INC.-MOD-2023-734538:Grandmother's case (Patient 2 - MOD-2023-734538) US-MODERNATX, INC.-MOD-2023-734864:Patient 4 (Fatal - MOD-2023-734864); Reported Cause(s) of Death: Death",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-08-01",
+        "sex": 3,
+        "spllt_type": "USMODERNATX, INC.MOD20237",
+        "symptoms_listed":
+        [
+            "death"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2664346"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "sudden death; getting COVID; getting COVID; This is a spontaneous report received from a contactable reporter(s) (Consumer or other non HCP).  An elderly patient received bnt162b2 omi xbb.1.5 (BNT162B2 OMI XBB.1.5), as dose number unknown, single (Batch/Lot number: unknown) for covid-19 immunisation. The patient's relevant medical history and concomitant medications were not reported. The following information was reported: SUDDEN DEATH (death), outcome \"fatal\"; DRUG INEFFECTIVE (medically significant), COVID-19 (medically significant), all with latency 1 week after the suspect product(s) administration, outcome \"unknown\" and all described as \"getting COVID\". The patient date of death was unknown. Reported cause of death: \"sudden death\". It was not reported if an autopsy was performed. No follow-up attempts are possible; information about lot/batch number cannot be obtained. No further information is expected.; Sender's Comments: Linked Report(s) : US-PFIZER INC-PV202300166993 same reporter/drug/event, different patient;; Reported Cause(s) of Death: sudden death",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2023-10-10",
+        "sex": 3,
+        "spllt_type": "USPFIZER INC202300320987",
+        "symptoms_listed":
+        [
+            "covid-19",
+            "drug ineffective",
+            "sudden death"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2693190"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "1 week from the booster dose, the patient had blood clots in her lungs, and died in the hospital; This is a spontaneous report received from contactable reporter(s) (Consumer or other non HCP). Other Case identifier(s): 2023NVX-US-000001226 (Novavax).  An 82-year-old female patient received bnt162b2 omi xbb.1.5 (BNT162B2 OMI XBB.1.5), as dose 1, single (Batch/Lot number: unknown) for covid-19 immunisation. The patient's relevant medical history and concomitant medications were not reported. Vaccination history included: Bnt162b2 (primary immunization series), for Covid-19 immunization. On 26Sep2023, it was reported that a patient started treatment on unreported dates with Pfizer BioNTech COVID-19 vaccine primary series and booster for COVID-19 indication. The following information was reported: PULMONARY THROMBOSIS (death), outcome \"fatal\", described as \"1 week from the booster dose, the patient had blood clots in her lungs, and died in the hospital\". The patient date of death was unknown. Reported cause of death: \"1 week from the booster dose, the patient had blood clots in her lungs, and died in the hospital\". It was not reported if an autopsy was performed. The information on the batch/lot number for bnt162b2 omi xbb.1.5 has been requested and will be submitted if and when received.; Reported Cause(s) of Death: 1 week from the booster dose, the patient had blood clots in her lungs, and died in the hospital",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2023-10-13",
+        "sex": 1,
+        "spllt_type": "USPFIZER INCPV20230016867",
+        "symptoms_listed":
+        [
+            "death",
+            "pulmonary thrombosis"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2695327"
+    },
+    {
+        "deceased_date": "2023-10-12",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "Per patient's daughter-   Patient presented to the ED on 10/8/23 and was discharged with a prescription for Keflex. He presented to ED again the next day and was admitted. The patient was found to have developed Autoimmune Hemolytic Anemia secondary to vaccine and passed away on 10/12/23. Prior to this Moderna vaccine, the patient had received 5 Pfizer Covid vaccines and opted to receive Moderna as that was the vaccine in stock at the time.",
+        "onset_date": "2023-10-08",
+        "patient_age": "83.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-10-24",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "autoimmune haemolytic anaemia",
+            "death"
+        ],
+        "vaccination_date": "2023-10-03",
+        "vaers_id": "2701184"
+    },
+    {
+        "deceased_date": "2023-11-09",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Approximately 35.5 hours post vaccine administration, nursing was called to Resident's room due to \"jerking movements\" observed by staff.  At that time, VS were taken.  T 101.2, 88% O2 on RA, 74/45, 54 bpm, and 24 RR.  Resident did not recover, and was pronounced deceased at 0730 am.  Resident had previously received Pfizer on 1/12/21, 2/05/21, and 1/04/22.  This was her fist Moderna manufactured COVID vaccine.  She received this 2023-2024 updated Spikevax vaccination on the evening of 11/07/23.",
+        "onset_date": "2023-11-09",
+        "patient_age": "72.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Senior Living",
+        "products_listed":
+        [
+            {
+                "dose": "4",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-11-10",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "death",
+            "dyskinesia"
+        ],
+        "vaccination_date": "2023-11-07",
+        "vaers_id": "2712513"
+    },
+    {
+        "deceased_date": "2023-11-09",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "seizures or seizure like activity; Chest pain; hypo or hypertension; This spontaneous case was reported by an other health care professional and describes the occurrence of SEIZURE (seizures or seizure like activity), CHEST PAIN (Chest pain) and BLOOD PRESSURE FLUCTUATION (hypo or hypertension) in an 83-year-old female patient who received mRNA-1273.815 (SPIKEVAX 2023-2024) (batch no. 8058877) for COVID-19 prophylaxis.     Previously administered products included for COVID-19 prophylaxis: Moderna COVID-19 Vaccine (Lot 017B21A Exp. 09/14/21) on 29-Mar-2021, Moderna COVID-19 vaccine (Lot 017B21A Exp. 09/14/21) on 26-Apr-2021, Moderna COVID-19 vaccine (Lot 012F21A Exp. 11/13/21) on 28-Oct-2021 and Moderna COVID-19 vaccine (Lot 017B22A Exp. 07/27/22) on 24-Jun-2022; for Product used for unknown indication: Pfizer (Lot GH9703 Exp. 10/21/22) on 22-Sep-2022. Past adverse reactions to the above products included No adverse event with Moderna COVID-19 Vaccine, Moderna COVID-19 vaccine, Moderna COVID-19 vaccine, Moderna COVID-19 vaccine and Pfizer. Concurrent medical conditions included Drug allergy, Allergic reaction to antibiotics, Drug allergy, Iodine allergy, Drug allergy, Drug allergy, Drug allergy, Drug allergy, Drug allergy, Drug allergy, Allergic reaction to antibiotics, Drug allergy, Drug allergy, Allergic reaction to antibiotics, Drug allergy, Allergic reaction to analgesics, Penicillin allergy, Drug allergy, Sulfonamide allergy, Shellfish allergy, Contrast media allergy, Drug allergy, Allergy to chemicals, Hypertension, Hypothyroidism, Fluid retention, Diabetes mellitus, Shortness of breath, Pain, Depression, Vitamin D deficiency, Dry eye, AFib, CVA and Intestinal functional disorder. Concomitant products included APIXABAN for AFib and CVA, ESCITALOPRAM OXALATE for Depression, INSULIN GLARGINE (LANTUS SOLOSTAR) for Diabetes mellitus, FUROSEMIDE (LASIX [FUROSEMIDE]) for Fluid retention, CARVEDILOL and LOSARTAN POTASSIUM for Hypertension, LEVOTHYROXINE SODIUM for Hypothyroidism, LACTOBACILLUS ACIDOPHILUS (ACIDOPHILUS [LACTOBACILLUS ACIDOPHILUS]) for Intestinal functional disorder, ACETAMINOPHEN and HYDROCODONE BITARTRATE, PARACETAMOL (HYDROCODONE/ACETAMINOPHEN) for Pain, IPRATROPIUM BROMIDE, SALBUTAMOL SULFATE (IPRATROPIUM BROMIDE AND ALBUTEROL SULFATE) for Shortness of breath, ERGOCALCIFEROL for Vitamin D deficiency.    On 08-Nov-2023, the patient received sixth dose of mRNA-1273.815 (SPIKEVAX 2023-2024) (unknown route) 1 dosage form. On an unknown date, the patient experienced SEIZURE (seizures or seizure like activity) (seriousness criteria death and medically significant), CHEST PAIN (Chest pain) (seriousness criterion death) and BLOOD PRESSURE FLUCTUATION (hypo or hypertension) (seriousness criterion death). The patient died on 09-Nov-2023. The reported cause of death was Chest pain, hypo or hypertension and seizures or seizure like activity. It is unknown if an autopsy was performed.        For mRNA-1273.815 (SPIKEVAX 2023-2024) (Unknown), the reporter did not provide any causality assessments.   No treatment medications were reported.  The patient had chest pains, hypo or hypertension and seizures or seizure like activity.  On 09-Nov-2023, the patient was passed away.  Company Comment: This fatal spontaneous case concerns a 83-year-old female patient with medical history  of Moderna and Pfizer COVID-19 Vaccines (without adverse events), Concomitant products included APIXABAN for AFib and CVA, ESCITALOPRAM for Depression, INSULIN for Diabetes mellitus, FUROSEMIDE  for Fluid retention, CARVEDILOL and LOSARTAN for Hypertension, LEVOTHYROXINE for Hypothyroidism, LACTOBACILLUS ACIDOPHILUS for Intestinal functional disorder, ACETAMINOPHEN, HYDROCODONE, PARACETAMOL for Pain, IPRATROPIUM, SALBUTAMOL for Shortness of breath, ERGOCALCIFEROL for Vitamin D deficiency who experienced the unexpected seriousness criteria death and medically significant AESI of seizure; the seriousness criteria death unexpected events of chest pain and blood pressure fluctuation in the context of 6th. dose of mRNA-1273.815 vaccine. As the patient received doses of Pfizer vaccine; \"interchange of vaccine products\" and \"revaccination with different Covid-19 vaccine\" were noted in this case. The patient received the mentioned dose on November, 08, 2023 and death occurred on November 9th. The reported cause of death was Chest pain, hypo or hypertension and seizures or seizure like activity.  It is unknown if an autopsy was performed. The medical history and age are confounders for the events. The benefit-risk relationship of mRNA-1273.815 vaccine is not affected by this report. Events seriousness was assessed based on medical judgement.   This case was linked to US-MODERNATX, INC.-MOD-2023-749140 (Linked Report).   Most recent FOLLOW-UP information incorporated above includes: On 10-Nov-2023: Live significant follow-up received. LOT number updated. On 10-Nov-2023: Live follow-up received with significant information: Dose details added. On 10-Nov-2023: Live follow-up received: medical history and concomitant medication was added. On 13-Nov-2023: Live follow-up received with no new information. On 13-Nov-2023: Live Significant follow up added. reporter was added. Patient age group added.; Sender's Comments:  US-MODERNATX, INC.-MOD-2023-749140:Master case; Reported Cause(s) of Death: Chest pain; hypo or hypertension; Seizures or seizure like activity",
+        "onset_date": null,
+        "patient_age": "83.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "1",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "6",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-11-21",
+        "sex": 1,
+        "spllt_type": "USMODERNATX, INC.MOD20237",
+        "symptoms_listed":
+        [
+            "blood pressure fluctuation",
+            "chest pain",
+            "death",
+            "heart sounds abnormal",
+            "pulse absent",
+            "seizure"
+        ],
+        "vaccination_date": "2023-11-08",
+        "vaers_id": "2712504"
+    },
+    {
+        "deceased_date": "2021-11-25",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "shortness of breath; chest pain; This is a spontaneous report received from a contactable reporter(s) (Lawyer) from legal division.  A 23-year-old male patient received COVID-19 Vaccine - Manufacturer Unknown, in Nov2021 as dose number unknown, single (Batch/Lot number: unknown) for covid-19 immunisation. The patient's relevant medical history and concomitant medications were not reported. The following information was reported: CHEST PAIN (death, medically significant) with onset Nov2021, outcome \"fatal\"; DYSPNOEA (death, medically significant) with onset Nov2021, outcome \"fatal\", described as \"shortness of breath\". The events \"shortness of breath\" and \"chest pain\" required emergency room visit. The patient date of death was 25Nov2021. Reported cause of death: \"shortness of breath\", \"chest pain\". It was not reported if an autopsy was performed. Clinical course: The attached lawsuit was filed on 27Nov in state court in (City withheld), (State withheld) by the estate of a 23-year-old (State withheld). Student who allegedly died after administration of a COVID-19 vaccine. Plaintiff admits that he does not yet know which vaccine was administered to his son, and has therefore named Pfizer, BNT, Moderna, and J&J (but not AZ), and states that he will dismiss the other manufacturers once he knows which vaccine his son took. Plaintiff alleges his son was an intern at (Company name withheld) and (Institution withheld) and was forced to get vaccinated in Nov2021, and died on 25Nov2021 after suffering chest pains and shortness of breath. Most of the allegations focus on the Pfizer/BioNTech vaccine, which he acknowledges was produced for the Department - allegations helpful to a removal. Plaintiff alleges claims under (State withheld) product liability statute, failure to warn, breach of warranty, negligence, wantonness, fraud (misrepresentation and suppression), invasion of privacy, battery, breach of contract, conspiracy, and wrongful death. Plaintiff acknowledges the rules but claims that the rules in that it does not provide Due Process, among other alleged constitutional infirmities.  The information on the batch/lot number for COVID-19 Vaccine - Manufacturer Unknown has been requested and will be submitted if and when received.; Reported Cause(s) of Death: chest pain; shortness of breath",
+        "onset_date": "2021-11-01",
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "COVID19 (COVID19 (UNKNOWN))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "JANSSEN",
+                "vaccine_name": "COVID19 (COVID19 (JANSSEN))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2023-12-05",
+        "sex": 2,
+        "spllt_type": "USPFIZER INCPV20230019677",
+        "symptoms_listed":
+        [
+            "chest pain",
+            "death",
+            "dyspnoea",
+            "respiratory distress"
+        ],
+        "vaccination_date": "2021-11-01",
+        "vaers_id": "2720850"
+    },
+    {
+        "deceased_date": "2023-11-28",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "11/10-11/25 Patient made statements about a Rapid Heart Rate, that he was monitoring with his apple watch. 11/28/23 presumed date of death based on last contact made with patient and clothing he was found in.  12/1/23 found in his home, documented dead. We were told it was likely a \"medical event\", which seemed unlikely as he was very athletic and healthy. He participated in marathons and exercised frequently. Autopsy later revealed a ruptured aortic aneurysm . The coroner never asked about vaccination status. We are surprised that out top rate CDC, the best in the world, does not have a protocol for investigating sudden and unexpected death in healthy young individuals as it relates to vaccination, particularly for such a novel vaccine. Patient had 5 covid vaccines over the course of 2 years. There is no family history of aneurysm. We have not been informed of any underlying genetic conditions that would have caused his aneurysm at such a young age. We hope that scientific attention is given to this particular long term and cumulative side effect of vaccination so that other young and healthy lives are saved.  Here are his other covid doses listed on his card: 1. 3/20/21 Pfizer (EP7534)   2. 4/10/21 Pfizer (EW0153)    3.  12/13/21  Moderna  (030H21B)  4.  9/25/22  Pfizer (GH9693).",
+        "onset_date": "2023-11-28",
+        "patient_age": "36.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "5",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2024-02-19",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "aortic aneurysm rupture",
+            "autopsy",
+            "death",
+            "heart rate increased"
+        ],
+        "vaccination_date": "2023-10-24",
+        "vaers_id": "2747616"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "Patient 4, has since expired; HCP calling to report that 9 patients received a vaccine that was given past the 30 day BUD; HCP stated that the vaccines were delivered on 27OCT2023 and were placed in the fridge on that same day. They were never stored in the freeze; This spontaneous case was reported by a pharmacist and describes the occurrence of DEATH (Patient 4, has since expired) in a 71-year-old female patient who received mRNA-1273.815 (SPIKEVAX 2023-2024 PFS) (batch no. 3030372) for COVID-19 prophylaxis. The occurrence of additional non-serious events is detailed below.     Previously administered products included for Product used for unknown indication: PFIZER BIONTECH COVID-19 VACCINE (Completed Pfizer Primary and booster dose.). Past adverse reactions to the above products included No adverse effect with PFIZER BIONTECH COVID-19 VACCINE. Concomitant products included INFLUENZA VACCINE (FLU [INFLUENZA VACCINE]) from 30-Jan-2024 to an unknown date for an unknown indication.    On 30-Jan-2024, the patient received dose of mRNA-1273.815 (SPIKEVAX 2023-2024 PFS) (unknown route) .5 milliliter. On an unknown date, the patient experienced DEATH (Patient 4, has since expired) (seriousness criteria death and medically significant), EXPIRED PRODUCT ADMINISTERED (HCP calling to report that 9 patients received a vaccine that was given past the 30 day BUD) and PRODUCT STORAGE ERROR (HCP stated that the vaccines were delivered on 27OCT2023 and were placed in the fridge on that same day. They were never stored in the freeze). The patient died on an unknown date. The cause of death was not reported. It is unknown if an autopsy was performed. At the time of death, EXPIRED PRODUCT ADMINISTERED (HCP calling to report that 9 patients received a vaccine that was given past the 30 day BUD) and PRODUCT STORAGE ERROR (HCP stated that the vaccines were delivered on 27OCT2023 and were placed in the fridge on that same day. They were never stored in the freeze) outcome was unknown.        For mRNA-1273.815 (SPIKEVAX 2023-2024 PFS) (Unknown), the reporter did not provide any causality assessments.   No concomitant medication was reported.  9 patients received a vaccine that was given past the 30-day BUD. HCP stated that the vaccines were delivered on 27-Oct-2023 and were placed in the fridge on that same day. They were never stored in the freezer. The 30-day BUD was 26-Nov-2023 and HCP stated that 9 patients were given vaccines from Dec-2023 until Apr-2024. Out of the 9 filled by the pharmacy, only 7 were administered, three patients were current residents, three patients were no longer residents, and 1 patient had expired.   Patient was deceased, Gone to the Lord.  Vaccine was filled on 30-Jan-2024.  No treatment medication was reported.  This case contains information for the 4th of 9 patients described by the reporter.  Company comment:  This case involves a spontaneous report concerning a 71-year-old female patient who had previously received one dose of the Comirnaty vaccine and had no reported medical history. An expired vaccine, which had been stored in the fridge for 30 days past its expiration date, was administered to the patient. The patient passed away after an unspecified period following the administration of the mRNA-1273.815 (SPIKEVAX 2023-2024 PFS) vaccine, which was given at the same time as an influenza vaccine. Cause od dead is reported as Unknown cause of death. It is unknown if autopsy was done. No further information was available in the report. The benefit-risk relationship of mRNA-1273.815 (SPIKEVAX 2023-2024 PFS) Vaccine is not affected by this report.   This case was linked to US-MODERNATX, INC.-MOD-2024-766478 (E2B Linked Report).   Most recent FOLLOW-UP information incorporated above includes: On 02-May-2024: Follow-up received and added patient details, added relevant medical history, added suspect product start date, updated event verbatim, added the new event death and updated narrative. On 02-May-2024: Live follow-up received and added no new significant information.; Sender's Comments:  US-MODERNATX, INC.-MOD-2024-766478:Patient 1 out of 9; Reported Cause(s) of Death: Unknown cause of death",
+        "onset_date": null,
+        "patient_age": null,
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2024-05-10",
+        "sex": 1,
+        "spllt_type": "USMODERNATX, INC.MOD20247",
+        "symptoms_listed":
+        [
+            "death",
+            "expired product administered",
+            "product storage error"
+        ],
+        "vaccination_date": "2024-01-30",
+        "vaers_id": "2766492"
+    },
+    {
+        "deceased_date": "2024-05-23",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "pulmonary edema; AEScongestive cardiac failure; aortic stenosis; ischaemic heart disease; This spontaneous case was reported by a patient family member or friend and describes the occurrence of PULMONARY OEDEMA (pulmonary edema), CARDIAC FAILURE CONGESTIVE (AEScongestive cardiac failure), AORTIC STENOSIS (aortic stenosis) and MYOCARDIAL ISCHAEMIA (ischaemic heart disease) in a 95-year-old female patient who received mRNA-1273.815 (SPIKEVAX 2023-2024) for COVID-19 prophylaxis.     The patient's past medical history included B-cell lymphoma NOS (had cancer several years previously but had been successfully treated with chemotherapy) and Chemotherapy. Previously administered products included for Product used for unknown indication: Pfizer Covid vaccine (multiple times without problems). Past adverse reactions to the above products included No adverse event with Pfizer Covid vaccine. Concurrent medical conditions included Frailty (Frailty of old age).    In 2024, the patient received dose of mRNA-1273.815 (SPIKEVAX 2023-2024) (Intramuscular use) 1 dosage form. In 2024, the patient experienced PULMONARY OEDEMA (pulmonary edema) (seriousness criteria death, hospitalization and medically significant), CARDIAC FAILURE CONGESTIVE (AEScongestive cardiac failure) (seriousness criteria death, hospitalization and medically significant), AORTIC STENOSIS (aortic stenosis) (seriousness criteria death, hospitalization and medically significant) and MYOCARDIAL ISCHAEMIA (ischaemic heart disease) (seriousness criteria death, hospitalization and medically significant). The patient was hospitalized on sometime in May 2024 due to AORTIC STENOSIS, CARDIAC FAILURE CONGESTIVE, MYOCARDIAL ISCHAEMIA and PULMONARY OEDEMA. The patient died on 23-May-2024. The reported cause of death was Congestive cardiac failure, Aortic stenosis, Ischaemic heart disease, frailty of old age and large b cell lymphoma. It is unknown if an autopsy was performed.            No concomitant medication was reported. Patient's date of birth was reported as 1928.  Patient was frail 95-year-old who started feeling unwell, notably shortness of breath, the day after receiving a Moderna Covid shot (late April/early May). She deteriorated and was taken into hospital about a week or 2 later (early May) where she was diagnosed with pulmonary edema and were treating her for that before she passed away on 23-May. She was frail and had multiple health problems. The death certificate lists the cause of death as: 1) Congestive cardiac failure/aortic stenosis and ischaemic heart disease, and 2) Frailty of old age and large B cell lymphoma.  As per reporter, although patient was physically frail, she was mentally fine, and strongly felt that deterioration/shortness of breath was attributable to the vaccine.  It was unknown if the patient experienced any additional symptoms/events.  No treatment medication was reported.     Company Comment: This is a spontaneous case concerning a 95 year-old, female patient with a history of B-cell lymphoma, frailty and multiple health problems, who experienced the serious (due to medically significant and hospitalization), Fatal,  unexpected, events of pulmonary oedema (AESI), cardiac failure congestive (AESI), aortic stenosis and myocardial ischaemia (AESI), which occurred approximately 1-2 weeks after a dose of SPIKEVAX 2023-2024 vaccine, received as a booster dose of COVID-19 vaccination schedule. Patient received previous vaccinations with Pfizer Covid vaccine. It was reported that patient started feeling unwell, with shortness of breath, the day after receiving a Moderna Covid vaccine. She deteriorated and was taken into hospital about a week or 2 later: pulmonary edema was diagnosed. She died while being treated for that condition on May 23. The death certificate listed as causes of death: 1) Congestive cardiac failure/aortic stenosis and ischaemic heart disease, and 2) Frailty of old age and large B cell lymphoma (she had cancer several years previously but had been successfully treated with chemotherapy). The mentioned medical history and elderly age remains as confounders. The benefit-risk relationship of SPIKEVAX 2023-2024 vaccine is not affected by this report.; Reported Cause(s) of Death: Congestive cardiac failure; aortic stenosis; ischaemic heart disease; Frailty of old age; large B cell lymphoma",
+        "onset_date": null,
+        "patient_age": "95.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2024-07-24",
+        "sex": 1,
+        "spllt_type": "USMODERNATX, INC.MOD20247",
+        "symptoms_listed":
+        [
+            "aortic stenosis",
+            "cardiac failure congestive",
+            "myocardial ischaemia",
+            "pulmonary oedema"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2781097"
+    },
+    {
+        "deceased_date": null,
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": 1,
+        "narrative": "Interstitial lung disease; Chronic inflammatory demyelinating polyneuropathy; Right-sided heart failure; Hypoxic vasoconstriction; STEMI; This literature-non-study case was reported in a literature article and describes the occurrence of INTERSTITIAL LUNG DISEASE (Interstitial lung disease), CHRONIC INFLAMMATORY DEMYELINATING POLYRADICULONEUROPATHY (Chronic inflammatory demyelinating polyneuropathy), CARDIAC FAILURE (Right-sided heart failure), VASOCONSTRICTION (Hypoxic vasoconstriction) and ACUTE MYOCARDIAL INFARCTION (STEMI) in a 76-year-old male patient who received SPIKEVAX NOS (SPIKEVAX NOS) for COVID-19 prophylaxis.   LITERATURE REFERENCE:    The patient's past medical history included Coronary artery disease (Right), Aortic regurgitation and Stent placement. Previously administered products included for Product used for unknown indication: Pfizer (first 5 doses). Past adverse reactions to the above products included No adverse reaction with Pfizer. Concurrent medical conditions included Type 2 diabetes mellitus, Hyperlipidemia and Gastroesophageal reflux disease.    On an unknown date, the patient received sixth dose of SPIKEVAX NOS (SPIKEVAX NOS) (unknown route) 1 dosage form. On an unknown date,  after starting SPIKEVAX NOS (SPIKEVAX NOS), the patient experienced INTERSTITIAL LUNG DISEASE (Interstitial lung disease) (seriousness criteria death, hospitalization and medically significant), CHRONIC INFLAMMATORY DEMYELINATING POLYRADICULONEUROPATHY (Chronic inflammatory demyelinating polyneuropathy) (seriousness criteria death, hospitalization and medically significant), CARDIAC FAILURE (Right-sided heart failure) (seriousness criteria death, hospitalization and medically significant), VASOCONSTRICTION (Hypoxic vasoconstriction) (seriousness criteria death, hospitalization and medically significant) and ACUTE MYOCARDIAL INFARCTION (STEMI) (seriousness criteria hospitalization, medically significant and life threatening). The patient was treated with DEXAMETHASONE at an unspecified dose and frequency; IMMUNOGLOBULINS NOS (IMMUNOGLOBULIN I.V) (intravenous use) at an unspecified dose and frequency; NOREPINEPHRINE BITARTRATE (LEVOPHED) at an unspecified dose and frequency and PHENYLEPHRINE at an unspecified dose and frequency. The patient died on an unknown date. The reported cause of death was Interstitial lung disease, Chronic inflammatory demyelinating polyneuropathy, right-sided heart failure and hypoxic vasoconstriction. It is unknown if an autopsy was performed. At the time of death, ACUTE MYOCARDIAL INFARCTION (STEMI) outcome was unknown.      DIAGNOSTIC RESULTS (normal ranges are provided in parenthesis if available): On an unknown date, Anti-cyclic citrullinated peptide antibody: Negative. On an unknown date, Anti-ganglioside antibody: Negative. On an unknown date, Antineutrophil cytoplasmic antibody: (Negative) P-ANCA, C-ANCA. On an unknown date, Antinuclear antibody: Negative, Negative, Negative, Negative, Negative and Negative. On an unknown date, Biopsy muscle: confirmed the diagnosis of chronic inflammatory demyelinating polyneuropathy (CIDP). On an unknown date, Blood creatine phosphokinase: within normal limits. On an unknown date, Blood immunoglobulin G: Monoclonal protein serum levels were measured which revealed low IgG. On an unknown date, Computerised tomogram thorax: showed ground glass opacities consistent with ongoing and diffuse ILD and burst dose steroids were initiated. On an unknown date, Digital radiogram: were highly suggestive of interstitial lung disease (ILD). On an unknown date, Electrocardiogram: revealed a STEMI. On an unknown date, Electromyogram: showed proximal myopathy concerning for chronic inflammatory demyelinating polyneuropathy (CIDP). On an unknown date, HMG CoA reductase antibody test: Negative. On an unknown date, Immunoglobulins: all other immunoglobins were within normal limits. On an unknown date, Mean arterial pressure: dropping below 65 mmHg. On an unknown date, Myoglobin blood: Negative. On an unknown date, Rheumatoid factor: Negative. On an unknown date, Troponin I: 608 ng/L elevated. On an unknown date, Ultrasound scan: Point of care ultrasound showed a dilated right ventricle with left ventricular collapse.     For SPIKEVAX NOS (SPIKEVAX NOS) (Unknown), the reporter did not provide any causality assessments.   Concomitant medications were not reported.  Patient not had symptoms of ILD or CIDP prior to the administration of the Moderna COVID-19 booster. Patient presented to the emergency department with Shortness of breath (three-month history of worsening shortness of breath requiring recurrent hospitalizations). Before admission, the patient was started on dexamethasone with the onset of respiratory symptoms and achieved a partial response. On admission, the initial infectious workup was negative. About a week later, the patient developed bilateral leg weakness. In an attempt to elucidate the cause of chronic inflammatory demyelinating polyneuropathy (CIDP), a paraneoplastic panel was ordered, which was negative. The patient was placed on Bilevel positive airway pressure (BIPAP).  Despite a battery of negative laboratory results, the patient started a course of IVIG for interstitial lung disease (ILD) with CIDP and was unresponsive to therapy.  Over the next week, the patient's respiratory effort continued to decline, requiring intubation and subsequent transfer to the intensive care unit (ICU). While admitted to the ICU, hemodynamic instability, requiring maximum dose pressors. The patient passed away one day later due to right-sided heart failure likely secondary to ILD progression versus hypoxic vasoconstriction.  Author concluded that this case would be the first documented case of concurrent development of ILD and CIDP after the administration of the COVID-19 vaccine, which ultimately led to patient mortality.  Company Comment: This is a Literature non-study case concerning a 76-year-old male patient, with relevant medical history of coronary artery disease, diabetes type 2, stent placement and hyperlipidemia, who experienced fatal events of Interstitial lung disease (ILD), Chronic inflammatory demyelinating polyradiculoneuropathy (CIDP) (AESI), Cardiac failure (AESI) and Vasoconstriction, and the unexpected and serious (due to life-threatening, hospitalization and medically significant) AESI of Acute myocardial infarction, which occurred after SPIKEVAX NOS vaccine, administered as sixth dose within COVID-19 vaccination schedule. Prior five doses were administered with Pfizer vaccine. As reported, the patient presented to the emergency department with a three-month history of worsening shortness of breath requiring recurrent hospitalizations and intermittent BiPAP. The patient's symptoms began two weeks after his 6th dose of SPIKEVAX NOS. Before admission, the patient was started on dexamethasone with the onset of respiratory symptoms and achieved a partial response. On admission, the initial infectious workup was negative, and CT chest showed ground glass opacities consistent with ongoing and diffuse ILD, and burst dose steroids were initiated. About a week later, the patient developed bilateral leg weakness (serum CPK within normal limits), and electromyogram showed proximal myopathy concerning for CIDP, which was consistent with the results of the muscle biopsy. In an attempt to elucidate the cause of CIPD, a paraneoplastic panel was ordered, which was negative. Autoimmune workup including ANA, cyclic citrullinated peptide, P-ANCA, C-ANCA, rheumatoid factor, anti-Ro/La, anti-SM RNP, anti-Scl70, anti-HmG-coA reductase, anti-myoglobin associated glycoprotein, anti-ganglioside G were all negative. Monoclonal protein serum levels were measured which revealed low IgG, but all other immunoglobins were within normal limits. Despite a battery of negative laboratory results, the patient started a 5-day course of IVIG for ILD with CIDP and was unresponsive to therapy. Over the next week, the patient's respiratory effort continued to decline, requiring intubation and subsequent transfer to the intensive care unit (ICU). While admitted to the ICU, hemodynamic instability ensued with mean arterial pressures (MAPs) dropping below 65 mmHg, requiring maximum dose pressors (norepinephrine bitartrate and phenylephrine). EKG revealed a ST-elevation myocardial infarction, with troponin I elevated to 608 ng/L. Point of care ultrasound showed a dilated right ventricle with left ventricular collapse. The patient passed away one day later due to right-sided heart failure likely secondary to ILD progression versus hypoxic vasoconstriction. The benefit-risk relationship of SPIKEVAX NOS vaccine is not affected by this report.   Most recent FOLLOW-UP information incorporated above includes: On 24-Sep-2024: Live follow-up received on 25-Sep-2024 which contains significant information: Literature information, medical history, laboratory tests, treatment medications, events seriousness, outcome, cause of death and narrative was update.; Reported Cause(s) of Death: Right-sided heart failure; Interstitial lung disease; Chronic inflammatory demyelinating polyneuropathy; Hypoxic vasoconstriction",
+        "onset_date": null,
+        "patient_age": "76.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "6",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            }
+        ],
+        "reception_date": "2024-09-27",
+        "sex": 2,
+        "spllt_type": "USMODERNATX, INC.MOD20247",
+        "symptoms_listed":
+        [
+            "acute myocardial infarction",
+            "anti-cyclic citrullinated peptide antibody",
+            "anti-ganglioside antibody",
+            "antineutrophil cytoplasmic antibody",
+            "antinuclear antibody",
+            "biopsy muscle",
+            "blood creatine phosphokinase",
+            "blood immunoglobulin g",
+            "cardiac failure",
+            "chronic inflammatory demyelinating polyradiculoneuropathy",
+            "computerised tomogram thorax",
+            "digital radiogram",
+            "electrocardiogram",
+            "electromyogram",
+            "hmg coa reductase antibody test",
+            "immunoglobulins",
+            "interstitial lung disease",
+            "mean arterial pressure",
+            "myoglobin blood",
+            "rheumatoid factor",
+            "troponin i",
+            "ultrasound scan",
+            "vasoconstriction"
+        ],
+        "vaccination_date": null,
+        "vaers_id": "2794158"
+    },
+    {
+        "deceased_date": "2022-02-03",
+        "died": 1,
+        "hospitalized": 1,
+        "life_threatening": "0",
+        "narrative": "My wife was vaccinated in secret. I found out the day the an individual died. I found my wife's vaccination certificates.  She took 2r pfizer vax. doses I have batch numbers",
+        "onset_date": "2022-02-01",
+        "patient_age": "64.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Unknown",
+        "products_listed":
+        [
+            {
+                "dose": "UNK",
+                "manufacturer_name": "TEVA PHARMACEUTICALS",
+                "vaccine_name": "ADENOVIRUS TYPES 4 & 7, LIVE, ORAL (NO BRAND NAME)",
+                "vaccine_type": "ADEN_4_7"
+            }
+        ],
+        "reception_date": "2024-10-06",
+        "sex": 1,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "death"
+        ],
+        "vaccination_date": "2021-11-01",
+        "vaers_id": "2796228"
+    },
+    {
+        "deceased_date": "2025-05-14",
+        "died": 1,
+        "hospitalized": "0",
+        "life_threatening": "0",
+        "narrative": "2 weeks after 2nd shot April 14) of Moderna Covid 19 - patient began feeling extremely fatigued.  Scheduled Televisit with physician and told to check back of tonsils for white spots.  Did so and told possibly Strep.   Antibiotics given.    Fatigue and increased heart rate continued.  On May 16, 2021, Patient said heart felt that was going to explode.  Went to ER and then diagnosed with Acute Myeloid Leukemia (AML) w/ FLT3 marker.   Patient was perfectly healthy prior to COVID 19 shot.  Diet considered of daily amounts of fruits, vegetables (greens) and meats.  Very healthy/balanced.  He exercised daily - resistance training and cardio.  Never  sick except for a cold.  No history of cancer in family patient was required to take the vaccine due to his company mandate and visiting healthcare facilities.   Again, a healthy individual, exceptional diet - minimal processed foods, exercised daily, not overweight and maintain a disciplined routine.  It seems more than a coincidence   the change in his health was only a couple weeks after the 2nd injection (4/14/21) of the Moderna vaccine.  He had battled this diagnosis for 4 years in/out of remission 3 times.  Ultimately passing due to complications of some of the final preventative treatments.    Previous annual physicals were all good/normal.  Could this vaccine targeted a dormant AML gene?   Did it create the cancer.  Some consulted physicians said it is a possibility but would not know for years and that is ONLY if the data is being gathered.  We know of 3 other patients that were also very healthy within a 5-20 minute radius, also diagnosed with AML and at least 1 with the FLT 3 Marker during the same time frame.  Pfizer Vac in May/June 2022 ; Pfizer Booster in Sept 2022 and SPIKEVAX Oct. 2023.    I hope the CDC and other health agencies (physicians, hospitals, etc.). help with this data gathering with patience to improve patience mortality rates and not to cause cancer, chronic illnesses or death.  We only will know what we are willing to do a \"deep dive\", study, learn, open-minded to build upon the science that constantly evolves.  We need to do the research to build to confidence level in our vaccines.   I know I'm skeptical because of knowing my husband as a healthy man at 63 and the extreme change in health in a matter of a couple weeks.  We as a country did our best to get \"something out there\" for Covid - but it may cause harm to some.",
+        "onset_date": "2021-05-14",
+        "patient_age": "62.0",
+        "permanent_disability": "0",
+        "product_administred_by": "Pharmacy",
+        "products_listed":
+        [
+            {
+                "dose": "2",
+                "manufacturer_name": "MODERNA",
+                "vaccine_name": "COVID19 (COVID19 (MODERNA))",
+                "vaccine_type": "COVID19"
+            },
+            {
+                "dose": "UNK",
+                "manufacturer_name": "UNKNOWN MANUFACTURER",
+                "vaccine_name": "VACCINE NOT SPECIFIED (NO BRAND NAME)",
+                "vaccine_type": "UNK"
+            }
+        ],
+        "reception_date": "2025-06-25",
+        "sex": 2,
+        "spllt_type": "",
+        "symptoms_listed":
+        [
+            "acute myeloid leukaemia",
+            "cardiac discomfort",
+            "death",
+            "fatigue",
+            "heart rate increased"
+        ],
+        "vaccination_date": "2021-03-17",
+        "vaers_id": "2847210"
+    }
+]
